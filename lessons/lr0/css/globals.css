@@ -1,0 +1,23 @@
+/* Базовые стили и сброс */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: var(--font-family-base), sans-serif;
+    line-height: 1.6;
+    color: #333;
+    overflow-x: hidden;
+    background-color: var(--color-primary-600);
+}
+
+/* Typography */
+h1, h2, h3 {
+    font-family: var(--font-family-accent), serif;
+}
