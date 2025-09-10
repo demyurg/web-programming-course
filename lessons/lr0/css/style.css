@@ -1,2 +1,6 @@
 @import "./globals.css";
 @import "./variables.css";
+@import "./media.css";
+@import "./reset.css";
+@import "./sections/header.css";
+@import "./utils.css";

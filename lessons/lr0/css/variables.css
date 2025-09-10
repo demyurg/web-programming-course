@@ -18,7 +18,9 @@
     --space-4: 16px;
     --space-6: 24px;
     --space-8: 32px;
-    --space-12: 48x;
+    --space-12: 48px;
+
+    --border-radius-l: 12px;
 
     --desktop: 1024px;
     --tablet: 768px;
@@ -26,4 +28,6 @@
 
     --font-family-accent: "Playfair Display";
     --font-family-base: "Open Sans";
+
+    --transition-duration: 0.5s;
 }
