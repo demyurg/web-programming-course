@@ -1,0 +1,96 @@
+@use '@/app/global-styles.scss' as *;
+
+.selectTrigger {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px;
+	width: 100%;
+	border-radius: 0.625rem;
+	border: 2px solid $primary-400;
+	background: transparent;
+	padding: 0 12px;
+	height: 36px;
+	font-size: 14px;
+	transition:
+		color 0.2s,
+		box-shadow 0.2s;
+	outline: none;
+	cursor: pointer;
+	white-space: nowrap;
+
+	&:focus-visible {
+		border-color: $accent-mint-500;
+	}
+
+	&:disabled {
+		cursor: not-allowed;
+		opacity: 0.5;
+	}
+}
+
+.selectTriggerIcon {
+	width: 16px;
+	height: 16px;
+	color: $primary-600;
+	pointer-events: none;
+	flex-shrink: 0;
+}
+
+.selectContent {
+	background: white;
+	color: $primary-900;
+	position: relative;
+	z-index: 50;
+	max-height: 300px;
+	min-width: 128px;
+	border-radius: 0.625rem;
+	border: 2px solid $primary-400;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+	overflow-x: hidden;
+	overflow-y: auto;
+}
+
+.selectViewport {
+	padding: 4px;
+	width: 100%;
+	min-width: 100px;
+}
+
+.selectItem {
+	position: relative;
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	width: 100%;
+	cursor: pointer;
+	border-radius: 0.625rem;
+	padding: 6px 32px 6px 8px;
+	font-size: $caption-size;
+	outline: none;
+	user-select: none;
+	background: transparent;
+	transition: background 0.15s;
+
+	&:focus,
+	&[aria-selected='true'] {
+		background: $primary-50;
+		color: $primary-900;
+	}
+
+	&[data-disabled='true'] {
+		pointer-events: none;
+		opacity: 0.5;
+	}
+}
+
+.selectItemIndicator {
+	position: absolute;
+	right: 8px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 20px;
+	height: 20px;
+	color: $primary-900;
+}

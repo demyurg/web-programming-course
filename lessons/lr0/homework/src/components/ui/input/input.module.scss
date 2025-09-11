@@ -1,0 +1,41 @@
+@use '@/app/global-styles.scss' as *;
+
+.input {
+	height: 2.25rem;
+	width: 100%;
+	min-width: 0;
+	border-radius: 0.625rem;
+	border: 2px solid $primary-400;
+	background: transparent;
+	padding: 0.75rem;
+	font-size: $body-size;
+	transition:
+		color 0.2s,
+		box-shadow 0.2s;
+	outline: none;
+	font-weight: $regular;
+	font-family: $font-open-sans;
+
+	&::placeholder {
+		color: $primary-600;
+	}
+
+	&::selection {
+		background: $accent-mint-500;
+		color: white;
+	}
+
+	&:focus-visible {
+		border-color: $accent-mint-500;
+	}
+
+	&:disabled {
+		pointer-events: none;
+		cursor: not-allowed;
+		opacity: 0.5;
+	}
+
+	&[aria-invalid='true'] {
+		border-color: $error;
+	}
+}

@@ -1,0 +1,43 @@
+@use '@/app/global-styles.scss' as *;
+
+.textarea {
+	border: 2px solid $primary-400;
+	background: transparent;
+	color: inherit;
+	min-height: 4rem;
+	width: 100%;
+	border-radius: 0.625rem;
+	padding: 0.75rem;
+	font-size: $body-size;
+	outline: none;
+	transition:
+		color 0.2s,
+		box-shadow 0.2s;
+	font-weight: $regular;
+	font-family: $font-open-sans;
+
+	resize: vertical;
+
+	&::placeholder {
+		color: $primary-600;
+	}
+
+	&::selection {
+		background: $accent-mint-500;
+		color: white;
+	}
+
+	&:focus-visible {
+		border-color: $accent-mint-500;
+	}
+
+	&:disabled {
+		pointer-events: none;
+		cursor: not-allowed;
+		opacity: 0.5;
+	}
+
+	&[aria-invalid='true'] {
+		border-color: $error;
+	}
+}

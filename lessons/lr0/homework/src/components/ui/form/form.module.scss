@@ -1,0 +1,11 @@
+@use '@/app/global-styles.scss' as *;
+
+.formItem {
+	display: grid;
+}
+
+.formMessage {
+	color: $error;
+	font-size: $caption-size;
+	margin-bottom: $space-2;
+}
