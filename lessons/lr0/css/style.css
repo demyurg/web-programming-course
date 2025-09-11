@@ -3,4 +3,6 @@
 @import "./media.css";
 @import "./reset.css";
 @import "./sections/header.css";
+@import "./sections/hero.css";
+@import "./sections/button.css";
 @import "./utils.css";

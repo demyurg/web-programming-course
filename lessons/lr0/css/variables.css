@@ -7,7 +7,8 @@
 
     --color-accent-coral-500: #ff6b6b;
     --color-accent-mint-500: #4ecdc4;
-    --color-gradient: linear-gradient(45deg, var(--color-accent-coral-500),var(--color-accent-mint-500));
+    --color-gradient: linear-gradient(45deg, #ff6b6b,#4ecdc4);
+    --color-gradient-opacity: linear-gradient(45deg, #ff6b6b75,#4ecdc575);
 
     --color-success: #27ae60;
     --color-warning: #f39c12;
