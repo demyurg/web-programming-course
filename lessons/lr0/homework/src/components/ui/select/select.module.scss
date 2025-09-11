@@ -18,6 +18,7 @@
 	outline: none;
 	cursor: pointer;
 	white-space: nowrap;
+	font-family: $font-open-sans;
 
 	&:focus-visible {
 		border-color: $accent-mint-500;
@@ -49,6 +50,7 @@
 	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 	overflow-x: hidden;
 	overflow-y: auto;
+	font-family: $font-open-sans;
 }
 
 .selectViewport {

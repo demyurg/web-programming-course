@@ -1,0 +1,83 @@
+@use '@/app/global-styles.scss' as *;
+
+.card {
+	width: 412px;
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+	border: none;
+	background: white;
+	border-radius: 0.625rem;
+	font-family: $font-open-sans;
+	box-shadow: 0 2px 16px rgba(0, 0, 0, 0.12);
+	transition: 0.2s ease;
+
+	&:hover {
+		box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
+	}
+}
+
+.cardImage {
+	width: 100%;
+	height: 12rem;
+	object-fit: cover;
+}
+
+.cardFooter {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	justify-content: flex-start;
+	padding: 0.5rem 0.75rem;
+	gap: 0.25rem;
+	flex-grow: 1;
+}
+
+.cardTitle {
+	color: $primary-900;
+	font-size: $body-size;
+}
+
+.cardSubtitle {
+	color: $primary-600;
+	font-size: $caption-size;
+}
+
+.dialog {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+	border: 2px solid $primary-400;
+	background: white;
+	border-radius: 0.625rem;
+	width: 100%;
+	pointer-events: auto;
+	@media (min-width: 640px) {
+		width: 500px;
+	}
+}
+
+.dialogImage {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+.dialogBody {
+	padding: 1.5rem;
+}
+
+.dialogTitle {
+	font-size: $h2-size;
+	line-height: $h2-line-height;
+	color: $primary-900;
+}
+
+.dialogSubtitle {
+	color: $primary-600;
+}
+
+.dialogText {
+	color: $primary-800;
+}

@@ -1,0 +1,30 @@
+.trigger {
+	position: relative;
+	cursor: pointer;
+}
+
+.content {
+	overflow: hidden;
+}
+
+.backdrop {
+	position: fixed;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(255, 255, 255, 0.4);
+	backdrop-filter: blur(2px);
+}
+
+.containerWrapper {
+	position: fixed;
+	inset: 0;
+	z-index: 50;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+:global(.morphing-dialog-open) {
+	overflow: hidden;
+}
