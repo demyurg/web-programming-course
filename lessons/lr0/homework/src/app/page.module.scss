@@ -1,9 +1,1 @@
 @use './global-styles.scss' as *;
-
-.heroTitle {
-	@include h1-hero;
-}
-
-.bodyText {
-	@include body-text;
-}

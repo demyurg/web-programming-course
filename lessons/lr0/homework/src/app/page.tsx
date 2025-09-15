@@ -1,13 +1,11 @@
-import ContactForm from '@/components/ContactForm/ContactForm'
-import GalleryCard from '@/components/GalleryCard/GalleryCard'
-import { Button } from '@/components/ui/button'
-
-import styles from './page.module.scss'
+import Header from '@/components/Header/Header'
 
 export default function Home() {
 	return (
 		<div>
-			<h1 className={styles.heroTitle}>Hello world!</h1>
+			<Header />
+
+			{/* <h1 className={styles.heroTitle}>Hello world!</h1>
 			<p className={styles.bodyText}>Lorem</p>
 			<Button>Primary button</Button>
 			<Button variant='secondary'>Secondary</Button>
@@ -29,7 +27,7 @@ export default function Home() {
 						</p>
 					</>
 				}
-			/>
+			/> */}
 		</div>
 	)
 }

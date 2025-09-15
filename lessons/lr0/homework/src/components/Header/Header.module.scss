@@ -1,0 +1,39 @@
+@use '@/app/global-styles.scss' as *;
+
+.header {
+	background-color: $primary-800;
+	height: 60px;
+	color: white;
+	border-radius: calc(infinite * 1px);
+}
+
+.title {
+	font-size: 1.2rem;
+	font-weight: $semi-bold;
+}
+
+.container {
+	max-width: 1024px;
+	margin: 0 auto;
+	padding: 0 20px;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	height: 100%;
+}
+
+.nav {
+	display: flex;
+	gap: $space-6;
+	align-items: center;
+
+	a {
+		text-decoration: none;
+		transition: color 0.2s;
+		cursor: pointer;
+
+		&:hover {
+			color: $primary-400;
+		}
+	}
+}
