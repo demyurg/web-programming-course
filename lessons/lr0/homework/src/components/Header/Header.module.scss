@@ -30,6 +30,7 @@
 		text-decoration: none;
 		transition: color 0.2s;
 		cursor: pointer;
+		color: white;
 
 		&:hover {
 			color: $primary-400;
@@ -37,10 +38,10 @@
 	}
 }
 
-.navToggle {
-	position: absolute;
-	opacity: 0;
-	pointer-events: none;
+.navOpen {
+	@media (max-width: 768px) {
+		display: flex !important;
+	}
 }
 
 .burger {
@@ -58,21 +59,6 @@
 	&:hover {
 		background-color: rgba(255, 255, 255, 0.06);
 	}
-}
-
-.burgerLine {
-	display: block;
-	width: 20px;
-	height: 2px;
-	background-color: white;
-	border-radius: 2px;
-	transition:
-		transform 0.2s ease,
-		opacity 0.2s ease;
-}
-
-.burgerLine + .burgerLine {
-	margin-top: 4px;
 }
 
 @media (max-width: 768px) {
@@ -98,18 +84,8 @@
 		display: inline-flex;
 	}
 
-	.navToggle:checked ~ .nav {
-		display: flex;
-	}
-
-	.navToggle:checked + .burger .burgerLine:nth-child(1) {
-		transform: translateY(6px) rotate(45deg);
-	}
-	.navToggle:checked + .burger .burgerLine:nth-child(2) {
-		opacity: 0;
-	}
-	.navToggle:checked + .burger .burgerLine:nth-child(3) {
-		transform: translateY(-6px) rotate(-45deg);
+	.burgerIcon {
+		color: white;
 	}
 }
 

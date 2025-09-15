@@ -6,7 +6,7 @@ import styles from './ContactSection.module.scss'
 
 export default function InfoSection() {
 	return (
-		<div className={styles.contactSection}>
+		<div id='contacts' className={styles.contactSection}>
 			<div className={styles.contactBlock}>
 				<h3 className={styles.contactTitle}>Обо мне</h3>
 				<Link

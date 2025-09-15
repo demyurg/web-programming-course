@@ -5,7 +5,7 @@ import styles from './Gallery.module.scss'
 export default function Gallery() {
 	return (
 		<>
-			<h2 className={styles.title}>Галерея работ</h2>
+			<h2 id='gallery' className={styles.title}>Галерея работ</h2>
 			<div className={styles.gallery}>
 				<div className={styles.cardContainer}>
 					<GalleryCard

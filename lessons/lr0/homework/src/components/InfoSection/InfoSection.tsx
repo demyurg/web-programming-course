@@ -2,7 +2,7 @@ import styles from './InfoSection.module.scss'
 
 export default function InfoSection() {
 	return (
-		<div className={styles.infoSection}>
+		<div id="about" className={styles.infoSection}>
 			<div className={styles.infoBlock}>
 				<h3 className={styles.infoTitle}>Обо мне</h3>
 				<p className={styles.infoBody}>
