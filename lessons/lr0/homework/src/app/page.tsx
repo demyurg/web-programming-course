@@ -1,3 +1,4 @@
+import ContactSection from '@/components/ContactSection/ContactSection'
 import Footer from '@/components/Footer/Footer'
 import Gallery from '@/components/Gallery/Gallery'
 import Header from '@/components/Header/Header'
@@ -11,6 +12,7 @@ export default function Home() {
 			<Hero />
 			<InfoSection />
 			<Gallery />
+			<ContactSection />
 			<Footer />
 			{/* <h1 className={styles.heroTitle}>Hello world!</h1>
 			<p className={styles.bodyText}>Lorem</p>

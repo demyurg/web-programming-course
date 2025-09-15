@@ -17,6 +17,7 @@ import {
 } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
 
+import styles from './ContactFormField.module.scss'
 import { FieldProps, FormValues } from './types'
 
 export function ContactFormField({
@@ -77,7 +78,7 @@ export function ContactFormField({
 			control={control}
 			name={name}
 			render={({ field }) => (
-				<FormItem>
+				<FormItem className={styles.formItem}>
 					{renderField(field)}
 					<FormMessage />
 				</FormItem>
