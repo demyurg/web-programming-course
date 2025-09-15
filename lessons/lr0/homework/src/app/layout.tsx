@@ -1,5 +1,6 @@
-import type { Metadata } from 'next'
 import { Playfair_Display, Open_Sans } from 'next/font/google'
+
+import type { Metadata } from 'next'
 import './global-styles.scss'
 import './globals.scss'
 

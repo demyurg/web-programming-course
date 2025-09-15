@@ -1,7 +1,8 @@
-import { Button } from '@/components/ui/button'
-import styles from './page.module.scss'
 import ContactForm from '@/components/ContactForm/ContactForm'
 import GalleryCard from '@/components/GalleryCard/GalleryCard'
+import { Button } from '@/components/ui/button'
+
+import styles from './page.module.scss'
 
 export default function Home() {
 	return (

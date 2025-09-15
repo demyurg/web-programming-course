@@ -1,4 +1,3 @@
-import styles from './GalleryCard.module.scss'
 import {
 	MorphingDialog,
 	MorphingDialogTrigger,
@@ -9,6 +8,8 @@ import {
 	MorphingDialogDescription,
 	MorphingDialogContainer,
 } from '@/components/ui/card/card'
+
+import styles from './GalleryCard.module.scss'
 
 import type { AnimationGeneratorType, Transition } from 'framer-motion'
 

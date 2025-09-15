@@ -1,5 +1,12 @@
 'use client'
 
+import {
+	motion,
+	AnimatePresence,
+	MotionConfig,
+	Transition,
+	Variant,
+} from 'motion/react'
 import React, {
 	useCallback,
 	useContext,
@@ -9,15 +16,10 @@ import React, {
 	useRef,
 	useState,
 } from 'react'
-import {
-	motion,
-	AnimatePresence,
-	MotionConfig,
-	Transition,
-	Variant,
-} from 'motion/react'
 import { createPortal } from 'react-dom'
+
 import useClickOutside from '@/hooks/useClickOutside'
+
 import styles from './card.module.scss'
 
 export type MorphingDialogContextType = {

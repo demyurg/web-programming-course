@@ -1,6 +1,7 @@
-import { z } from 'zod'
-import { formSchema } from './formSchema'
 import { Control } from 'react-hook-form'
+import { z } from 'zod'
+
+import { formSchema } from './formSchema'
 
 export type FormValues = z.infer<typeof formSchema>
 
