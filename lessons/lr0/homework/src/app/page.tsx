@@ -1,10 +1,11 @@
+import Footer from '@/components/Footer/Footer'
 import Header from '@/components/Header/Header'
 
 export default function Home() {
 	return (
 		<div>
 			<Header />
-
+			<Footer />
 			{/* <h1 className={styles.heroTitle}>Hello world!</h1>
 			<p className={styles.bodyText}>Lorem</p>
 			<Button>Primary button</Button>

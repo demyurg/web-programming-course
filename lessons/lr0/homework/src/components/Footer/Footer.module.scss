@@ -1,0 +1,16 @@
+@use '@/app/global-styles.scss' as *;
+
+.footer {
+	background-color: $primary-800;
+	height: 52px;
+	color: white;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	font-size: 0.9rem;
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	width: 100%;
+	z-index: 100;
+}
