@@ -1,0 +1,81 @@
+$primary-50: #f8f9fa;
+$primary-400: #d1d5db;
+$primary-600: #5d6d7e;
+$primary-800: #2c3e50;
+$primary-900: #1a252f;
+
+$accent-mint-500: #4ecdc4;
+$accent-coral-500: #ff6b6b;
+
+$gradient-coral-mint: linear-gradient(
+	90deg,
+	$accent-coral-500 0%,
+	$accent-mint-500 100%
+);
+
+$success: #27ae60;
+$warning: #f39c12;
+$error: #e74c3c;
+
+$font-playfair: var(--font-playfair-serif), serif;
+$font-open-sans: var(--font-open-sans), sans-serif;
+
+$h1-size: 3.5rem;
+$h2-size: 2.5rem;
+$h3-size: 1.75rem;
+$body-size: 1rem;
+$caption-size: 0.75rem;
+
+$bold: 700;
+$semi-bold: 600;
+$regular: 400;
+
+$h1-line-height: 1.1;
+$h2-line-height: 1.2;
+$h3-line-height: 1.3;
+$body-line-height: 1.6;
+
+$caption-spacing: 0.05em;
+
+$space-1: 0.25rem;
+$space-2: 0.5rem;
+$space-4: 1rem;
+$space-6: 1.5rem;
+$space-8: 2rem;
+$space-12: 3rem;
+
+@mixin h1-hero {
+	font-family: $font-playfair;
+	font-size: $h1-size;
+	font-weight: $bold;
+	line-height: $h1-line-height;
+}
+
+@mixin h2-section {
+	font-family: $font-playfair;
+	font-size: $h2-size;
+	font-weight: $bold;
+	line-height: $h2-line-height;
+}
+
+@mixin h3-card {
+	font-family: $font-open-sans;
+	font-size: $h3-size;
+	font-weight: $semi-bold;
+	line-height: $h3-line-height;
+}
+
+@mixin body-text {
+	font-family: $font-open-sans;
+	font-size: $body-size;
+	font-weight: $regular;
+	line-height: $body-line-height;
+}
+
+@mixin caption {
+	font-family: $font-open-sans;
+	font-size: $caption-size;
+	font-weight: $regular;
+	text-transform: uppercase;
+	letter-spacing: $caption-spacing;
+}

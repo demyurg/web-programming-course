@@ -1,0 +1,41 @@
+@use '@/app/global-styles.scss' as *;
+
+.hero {
+	background: linear-gradient(
+		90deg,
+		rgba($accent-coral-500, 0.25) 0%,
+		rgba($accent-mint-500, 0.25) 100%
+	);
+	padding: 4rem 1rem;
+	text-align: center;
+	border-radius: 1rem;
+	max-width: 1024px;
+	margin: 1rem auto 0 auto;
+
+	@media (max-width: 600px) {
+		padding: 2rem 0.5rem;
+		border-radius: 0.5rem;
+	}
+}
+
+.title {
+	font-size: $h3-size;
+	margin-bottom: 1rem;
+	color: $primary-800;
+	font-weight: 700;
+
+	@media (max-width: 767px) {
+		font-size: calc($h3-size * 0.8);
+	}
+}
+
+.subtitle {
+	font-size: $body-size;
+	color: $primary-600;
+	margin-bottom: 2rem;
+
+	@media (max-width: 767px) {
+		font-size: calc($body-size * 0.9);
+		margin-bottom: 1rem;
+	}
+}

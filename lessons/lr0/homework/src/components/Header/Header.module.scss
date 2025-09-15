@@ -1,0 +1,96 @@
+@use '@/app/global-styles.scss' as *;
+
+.header {
+	background-color: $primary-800;
+	height: 58px;
+	color: white;
+}
+
+.title {
+	font-size: 1.2rem;
+	font-weight: $semi-bold;
+}
+
+.container {
+	max-width: 1024px;
+	margin: 0 auto;
+	padding: 0 20px;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	height: 100%;
+}
+
+.nav {
+	display: flex;
+	gap: $space-6;
+	align-items: center;
+
+	a {
+		text-decoration: none;
+		transition: color 0.2s;
+		cursor: pointer;
+		color: white;
+
+		&:hover {
+			color: $primary-400;
+		}
+	}
+}
+
+.navOpen {
+	@media (max-width: 768px) {
+		display: flex !important;
+	}
+}
+
+.burger {
+	display: none;
+	align-items: center;
+	justify-content: center;
+	width: 40px;
+	height: 40px;
+	border-radius: 8px;
+	border: 1px solid rgba(255, 255, 255, 0.12);
+	background: transparent;
+	cursor: pointer;
+	transition: background-color 0.2s;
+
+	&:hover {
+		background-color: rgba(255, 255, 255, 0.06);
+	}
+}
+
+@media (max-width: 768px) {
+	.nav {
+		display: none;
+		flex-direction: column;
+		position: fixed;
+		top: 58px;
+		left: 0;
+		right: 0;
+		background-color: $primary-800;
+		padding: $space-4 $space-6;
+		gap: $space-4;
+		border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+		z-index: 1000;
+
+		a {
+			padding: $space-2 0;
+		}
+	}
+
+	.burger {
+		display: inline-flex;
+	}
+
+	.burgerIcon {
+		color: white;
+	}
+}
+
+@media (min-width: 769px) {
+	.nav {
+		display: flex;
+	}
+}
