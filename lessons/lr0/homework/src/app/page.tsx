@@ -1,4 +1,5 @@
 import Footer from '@/components/Footer/Footer'
+import Gallery from '@/components/Gallery/Gallery'
 import Header from '@/components/Header/Header'
 import Hero from '@/components/Hero/Hero'
 import InfoSection from '@/components/InfoSection/InfoSection'
@@ -9,6 +10,7 @@ export default function Home() {
 			<Header />
 			<Hero />
 			<InfoSection />
+			<Gallery />
 			<Footer />
 			{/* <h1 className={styles.heroTitle}>Hello world!</h1>
 			<p className={styles.bodyText}>Lorem</p>
