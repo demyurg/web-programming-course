@@ -351,25 +351,6 @@ export type MorphingDialogImageProps = {
 	style?: React.CSSProperties
 }
 
-function MorphingDialogImage({
-	src,
-	alt,
-	className,
-	style,
-}: MorphingDialogImageProps) {
-	const { uniqueId } = useMorphingDialog()
-
-	return (
-		<motion.img
-			src={src}
-			alt={alt}
-			className={className}
-			layoutId={`dialog-img-${uniqueId}`}
-			style={style}
-		/>
-	)
-}
-
 export {
 	MorphingDialog,
 	MorphingDialogTrigger,
@@ -378,5 +359,4 @@ export {
 	MorphingDialogTitle,
 	MorphingDialogSubtitle,
 	MorphingDialogDescription,
-	MorphingDialogImage,
 }

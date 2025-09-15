@@ -1,6 +1,7 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useMemo } from 'react'
 import { useForm } from 'react-hook-form'
 
 import { Button } from '@/components/ui/button'
@@ -10,10 +11,6 @@ import { ContactFormField } from './ContactFormField'
 import { formSchema } from './formSchema'
 import { FormValues } from './types'
 
-function onSubmit(values: FormValues) {
-	console.log(values)
-}
-
 export default function ContactForm() {
 	const form = useForm<FormValues>({
 		resolver: zodResolver(formSchema),
@@ -21,13 +18,24 @@ export default function ContactForm() {
 			username: '',
 			email: '',
 			message: '',
+			service: undefined,
 		},
 	})
+
+	const serviceOptions = useMemo(() => ['Услуга1', 'Услуга2', 'Услуга3'], [])
+
+	const handleSubmit = (values: FormValues) => {
+		try {
+			console.log(values)
+		} catch (error) {
+			console.error('Ошибка отправки формы:', error)
+		}
+	}
 
 	return (
 		<div>
 			<Form {...form}>
-				<form onSubmit={form.handleSubmit(onSubmit)}>
+				<form onSubmit={form.handleSubmit(handleSubmit)} noValidate>
 					<ContactFormField
 						name='username'
 						control={form.control}
@@ -45,7 +53,7 @@ export default function ContactForm() {
 						control={form.control}
 						placeholder='Выберите услугу'
 						component='select'
-						options={['Услуга1', 'Услуга2', 'Услуга3']}
+						options={serviceOptions}
 					/>
 					<ContactFormField
 						name='message'
@@ -53,7 +61,7 @@ export default function ContactForm() {
 						placeholder='Сообщение'
 						component='textarea'
 					/>
-					<Button type='submit'>Отправить console.log</Button>
+					<Button type='submit'>Отправить consloe.log</Button>
 				</form>
 			</Form>
 		</div>

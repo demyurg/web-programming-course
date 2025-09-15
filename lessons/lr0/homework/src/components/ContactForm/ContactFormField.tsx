@@ -1,3 +1,6 @@
+import { useMemo } from 'react'
+import { ControllerRenderProps } from 'react-hook-form'
+
 import {
 	FormField,
 	FormItem,
@@ -14,7 +17,7 @@ import {
 } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
 
-import { FieldProps } from './types'
+import { FieldProps, FormValues } from './types'
 
 export function ContactFormField({
 	name,
@@ -23,38 +26,59 @@ export function ContactFormField({
 	component,
 	options,
 }: FieldProps) {
+	const selectItems = useMemo(
+		() =>
+			options?.map(option => (
+				<SelectItem key={option} value={option}>
+					{option}
+				</SelectItem>
+			)) ?? [],
+		[options],
+	)
+
+	const renderField = (
+		field: ControllerRenderProps<FormValues, keyof FormValues>,
+	) => {
+		switch (component) {
+			case 'input':
+				return (
+					<FormControl>
+						<Input placeholder={placeholder} {...field} />
+					</FormControl>
+				)
+			case 'textarea':
+				return (
+					<FormControl>
+						<Textarea placeholder={placeholder} {...field} />
+					</FormControl>
+				)
+			case 'select':
+				return (
+					<FormControl>
+						<Select
+							onValueChange={field.onChange}
+							defaultValue={field.value ?? undefined}
+							value={field.value ?? undefined}
+						>
+							<SelectTrigger>
+								<SelectValue placeholder={placeholder} />
+							</SelectTrigger>
+							<SelectContent>{selectItems}</SelectContent>
+						</Select>
+					</FormControl>
+				)
+			default:
+				return null
+		}
+	}
+
 	return (
 		<FormField
 			control={control}
 			name={name}
 			render={({ field }) => (
 				<FormItem>
-					{component === 'input' && (
-						<FormControl>
-							<Input placeholder={placeholder} {...field} />
-						</FormControl>
-					)}
-					{component === 'textarea' && (
-						<FormControl>
-							<Textarea placeholder={placeholder} {...field} />
-						</FormControl>
-					)}
-					{component === 'select' && options && (
-						<FormControl>
-							<Select onValueChange={field.onChange} defaultValue={field.value}>
-								<SelectTrigger>
-									<SelectValue placeholder={placeholder} />
-								</SelectTrigger>
-								<SelectContent>
-									{options.map(option => (
-										<SelectItem key={option} value={option}>
-											{option}
-										</SelectItem>
-									))}
-								</SelectContent>
-							</Select>
-						</FormControl>
-					)}
+					{renderField(field)}
 					<FormMessage />
 				</FormItem>
 			)}
