@@ -1,0 +1,48 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #4ecdc4;
+}
+
+.container {
+    text-align: center;
+    padding: 20px;
+    font-size: 20px;
+}
+
+.about {
+    padding: 1px;
+    font-size: 20px;  
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+.hero-content {
+    background-color: rgba(0, 0, 0, 0.2);
+    padding: 1px;
+    text-align: center;
+    font-size: 20px;
+}
+
+.gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+    gap: 10px;
+}
+
+.gallery-item img {
+    width: 100%;
+    display: block;
+}
+
+#contact {
+    text-align: center;
+    background-color: #f39c12;
+}
+
+.info {
+    padding: 5px;
+    text-align: center;
+    background-color: #f39c12;
+    font-size: 16px;
+}
