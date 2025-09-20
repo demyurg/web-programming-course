@@ -22,7 +22,7 @@
 // - OrderStatus: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled'
 
 // Базовая функция для API запросов
-async function makeApiRequest(url, options) {
+async function makeApiRequest(url:string, options:RequestInit) {
     try {
         const response = await fetch(url, options);
         const data = await response.json();
@@ -40,10 +40,10 @@ async function makeApiRequest(url, options) {
             data: data,
             error: null
         };
-    } catch (error) {
+    } catch (error: unknown) {
         return {
             success: false,
-            error: error.message,
+            error: typeof error === 'object' && error !== null && 'message' in error ? error.message : 'Неизвестная ошибка',
             data: null
         };
     }
