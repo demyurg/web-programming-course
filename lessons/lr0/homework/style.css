@@ -11,7 +11,6 @@ body {
     color: #333;
     background-color: #f4f4f4;
     width: 100vw;
-    align-items: center;
     font-size: large;
 
 }
@@ -173,7 +172,7 @@ footer {
     max-height: 90%;
 }
 
-.modal :active {
+.modal:active {
     display: flex;
 }
 
