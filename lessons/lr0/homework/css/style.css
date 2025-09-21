@@ -40,14 +40,44 @@ li:last-child {
   margin-right: 0;
 }
 
+* {
+    border-radius: 5px;
+}
+
 header, footer {
     background-color: rgb(44, 61, 80);
     color: white;
-    border-radius: 5px;
-    margin: 10px;
+    margin: 44px;
+    margin-bottom: 0px;
+    margin-top: 0px;
     padding: 18px;
+}
+
+header {
+    margin-top: 44px;
 }
 
 footer {
     text-align: center;
+}
+
+.info-blocks {
+    display: flex;
+    margin: 44px;
+    margin-bottom: 0px;
+    margin-top: 0px;
+    padding: 18px;
+    padding-left: 0px;
+    padding-right: 0px;
+}
+
+.info-block {
+    flex: 1;
+    flex-grow: 1;
+    color: rgb(55, 65, 81);
+    border-style: solid;
+    border-width: 2px;
+    background-color: rgb(248, 250, 252);
+    border-color: rgb(226, 232, 240);
+    padding: 30px;
 }
