@@ -253,7 +253,7 @@ main {
 }
 
 .card:hover {
-    transform: translateY(-5px) scale(1.03); /* вся карточка немного увеличивается */
+    transform: translateY(-5px) scale(1.03); 
     box-shadow: 0 8px 25px rgba(0,0,0,0.15);
 }
 
@@ -315,7 +315,6 @@ main {
     align-items: start;
 }
 
-/* Левая колонка */
 .contacts-info {
     font-size: 16px;
     color: var(--color-primary-800);
@@ -342,7 +341,6 @@ main {
     color: var(--color-accent-coral-500);
 }
 
-/* Правая колонка: форма */
 .contacts-form form {
     display: flex;
     flex-direction: column;
