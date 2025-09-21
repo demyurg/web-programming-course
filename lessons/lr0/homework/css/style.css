@@ -81,3 +81,19 @@ footer {
     border-color: rgb(226, 232, 240);
     padding: 30px;
 }
+
+.gallery-section {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-left: 44px;
+    margin-right: 44px;
+    text-align: center;
+    color: rgb(55, 65, 81);
+}
+
+.gallery-item {
+    width: 80%;
+    height: 100px;
+    background: linear-gradient(135deg, rgb(252, 229, 229), rgb(216, 243, 240));
+}
