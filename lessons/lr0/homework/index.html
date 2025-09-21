@@ -8,35 +8,43 @@
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Open+Sans:wght@300;400;600&display=swap" rel="stylesheet">
 </head>
 <body>
-    <header class="horizontal-container">
+    <header class="horizontal-container" id="Main">
         <div class="page-title"><b>Анна Светлова</b></div>
         <ul class="horizontal-container">
             <li>
-                Главная
+                <a href="#Main">Главная</a>
             </li>
             <li>
-                Обо мне
+                <a href="#About">Обо мне</a>
             </li>
             <li>
-                Галерея
+                <a href="#Gallery">Галерея</a>
             </li>
             <li>
-                Контакты
+                <a href="#Contacts">Контакты</a>
             </li>
         </ul>
     </header>
 
     <main>
         <!-- Hero Section -->
-
+        <div class="hero-content">
+            <div class="hero-h">
+                <h1>Захватываю моменты, создаю воспоминания</h1>
+                <h2>Профессиональная фотосъемка портретов и свадеб</h2>
+            </div>
+            <button class="hero-button"><a href="#Gallery">Посмотреть работы</a></button>
+            
+        </div>
+        
         <!-- About Section -->
-        <div class="info-blocks  horizontal-container">
+        <div class="info-blocks  horizontal-container" id="About">
             <div class="info-block">
                 <div>
                     <b>Обо мне</b>
                 </div>
                 <div>
-                    Телефон, email, социальные сети
+                    Я создаю искренние, живые и эмоциональные кадры, будь то трогательная семейная история, яркая страсть или персональная творческая фотосессия. Профессиональная фотосъемка, которая превращает моменты в вечные истории. Моя цель — не просто сделать красивые фотографии, а поймать настоящие чувства, вашу уникальность и атмосферу момента, чтобы вы каждый раз, глядя на фотографии, возвращались в те счастливые мгновения.
                 </div>
             </div>
             <div class="info-block">
@@ -44,13 +52,20 @@
                     <b>Статистика</b>
                 </div>
                 <div>
-                    200+ свадеб, 500+ портретов, 5 лет опыта
+                    <ul class="statistics">
+                        <li>200+ свадеб</li>
+                        <li>500+ портретов</li>
+                        <li>5 лет опыта</li>
+                        <li>70+ успешных проектов и фотосессий</li>
+                        <li>Участие в 5 выставках и фотопроектах</li>
+                        <li>200+ довольных семей и клиентов</li>
+                    </ul>
                 </div>
             </div>
         </div>
 
         <!-- Gallery Section -->
-        <div class="gallery-section">
+        <div class="gallery-section" id="Gallery">
             <p><b>Галерея работ</b></p>
             <div class="horizontal-container">
                 <div class="gallery-item"></div>
@@ -60,28 +75,55 @@
         </div>
 
         <!-- Contacts Section -->
-        <div class="info-blocks  horizontal-container">
+        <div class="info-blocks  horizontal-container" id="Contacts">
             <div class="info-block">
                 <div>
                     <b>Контакты</b>
                 </div>
                 <div>
-                    Телефон, email, социальные сети
+                    <ul class="statistics">
+                        <li>Телефон: +7 (985) 123-45-67</li>
+                        <li>Почта: svetlova.photo@mail.ru</li>
+                        <li>VK: vk.com/svetlova_photo</li>
+                        <li>Pinterest: pinterest.ru/annasvetlova</li>
+                        <li>Telegram: t.me/svetlova_photo</li>
+                    </ul>
                 </div>
             </div>
             <div class="info-block">
                 <div>
                     <b>Форма связи</b>
                 </div>
-                <div>
-                    Имя, email, услуга, сообщение
-                </div>
+                <form>
+                    <div class="horizontal-container">
+                        <div>
+                            <div>Имя:</div>
+                            <input required>
+                        </div>
+                        
+                        <div>
+                            <div>Email:</div>
+                            <input required>
+                        </div>
+                        
+                        <div>
+                            <div>Телефон:</div>
+                            <input required>
+                        </div>
+                    </div>
+                    <div>
+                        <div>Сообщение:</div>
+                        <textarea required></textarea>
+                    </div>
+                    
+                    <button>Отправить</button>
+                </form>
             </div>
         </div>
     </main>
 
     <Footer>
-        <div>© 2024 Анна Светлова. Все права защищены.</div>
+        <div>© 2025 Анна Светлова. Все права защищены.</div>
     </Footer>
 
     <script src="js/script.js"></script>

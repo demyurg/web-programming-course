@@ -48,9 +48,10 @@ header, footer {
     background-color: rgb(44, 61, 80);
     color: white;
     margin: 44px;
-    margin-bottom: 0px;
+    margin-bottom: 20px;
     margin-top: 0px;
     padding: 18px;
+
 }
 
 header {
@@ -96,4 +97,46 @@ footer {
     width: 80%;
     height: 100px;
     background: linear-gradient(135deg, rgb(252, 229, 229), rgb(216, 243, 240));
+}
+
+.statistics {
+    flex-direction: column;
+    list-style:circle;
+    list-style-position: inside;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.hero-content {
+    margin-left: 44px;
+    margin-right: 44px;
+    padding: 40px;
+    flex: 1;
+    flex-direction: column;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: url('https://images.unsplash.com/photo-1554048612-b6a482bc67e5?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80') no-repeat center center/cover;
+    text-align: center;
+}
+
+.hero-h {
+    color: white;
+    background-color: rgb(55, 65, 81);
+    padding: 10px;
+    border-radius: 15px;
+}
+
+.hero-button {
+    margin-top: 20px;
+    border-radius: 20px;
+    padding: 20px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    background-image: linear-gradient(45deg, rgb(235, 119, 118) 0%, rgb(92, 197, 189) 100%);
+    border-style: none;
+    color: white;
 }
