@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Анна Светлова - Фотограф</title>
+    <link rel="stylesheet" href="style.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Open+Sans:wght@300;400;600&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <!-- Header & Navigation -->
+    <header>
+        <h1>Анна Светлова</h1>
+        <h2>Твой личный гид в магию фотографии!</h2>
+        <nav>
+            <ul>
+                <li><a href="#about">Обо мне</a></li>
+                <li><a href="#gallery">Галерея</a></li>
+                <li><a href="#price">Прайс</a></li>
+                <li><a href="#contact">Контакты</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <!-- Hero Section -->
+        <section id="hero" style="text-align: center;">
+            <p>Побалуйте себя созданием неповторимых воспоминаний!</p>
+            <button id=btn_to_gallery>Посмотреть работы</button>
+        </section>
+
+        <!-- About Section -->
+        <section id="about" class="about">
+            <div class="me">
+                <h2>Обо мне</h2>
+                <p> <img src="../images/about.jpeg" class="leftimg"> Я профессиональный фотограф с опытом более 10 лет.
+                    Специализируюсь на портретной, свадебной и
+                    пейзажной съемке.
+                    Мои работы отличаются качеством, креативностью и вниманием к деталям.</p>
+                <p>Предлагаю индивидуальный подход к каждому клиенту, от планирования съемки до постобработки.
+                    Готова работать как на
+                    выезде, так и в студии.</p>
+                <p>Давайте создадим неповторимые воспоминания вместе!</p>
+                <ul>
+                    <li>
+                        <h3> +100 свадеб</h1>
+                    </li>
+                    <li>
+                        <h3> +700 корпоративов</h3>
+                    </li>
+                    <li>
+                        <h3>+3000 фотосессий</h3>
+                    </li>
+                </ul>
+            </div>
+        </section>
+        <!-- Price Section -->
+        <section id="price">
+            <h2>Прайс</h2>
+            <div class="price_grid">
+                <div class="price_container">
+                    <img src="../images/wedding_1.jpg" class="image">
+                    <div class="price_overlay">
+                        <div class="text">Свадьбы от 5000 руб./час</div>
+                    </div>
+                </div>
+                <div class="price_container">
+                    <img src="../images/portrait_1.jpg" class="image">
+                    <div class="price_overlay">
+                        <div class="text">Корпоративы от 3000 руб./час</div>
+                    </div>
+                </div>
+                <div class="price_container">
+                    <img src="../images/nature_1.jpg" class="image">
+                    <div class="price_overlay">
+                        <div class="text">Фотосессии (в т.ч. на природе) от 2000 руб./час</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Gallery Section -->
+        <section id="gallery">
+            <h2>Галерея</h2>
+            <div class="filters">
+                <button class="filter-btn active" data-filter="all">Все</button>
+                <button class="filter-btn" data-filter="portrait">Портреты</button>
+                <button class="filter-btn" data-filter="wedding">Свадьбы</button>
+                <button class="filter-btn" data-filter="nature">Природа</button>
+            </div>
+            <div class="gallery-grid">
+                <img src="../images/portrait_1.jpg" alt="Портрет 1" class="gallery-item portrait" data-category="portrait">
+                <img src="../images/portrait_2.jpg" alt="Портрет 2" class="gallery-item portrait" data-category="portrait">
+                <img src="../images/wedding_1.jpg" alt="Свадьба 1" class="gallery-item wedding" data-category="wedding">
+                <img src="../images/wedding_2.jpg" alt="Свадьба 2" class="gallery-item wedding" data-category="wedding">
+                <img src="../images/nature_1.jpg" alt="Природа 1" class="gallery-item nature" data-category="nature">
+                <img src="../images/nature_2.jpg" alt="Природа 2" class="gallery-item nature" data-category="nature">
+            </div>
+        </section>
+        <!-- Contact Section -->
+        <section id="contact">
+            <h2>Контакты</h2>
+            <div class="contact-info">
+                <p><strong>Телефон:</strong> +7 (960) 960-96-69</p>
+                <p><strong>Email:</strong> anna.Svetl0va@photo.ru</p>
+                <p><strong>Социальные сети:</strong> <a href="#">Instagram</a>, <a href="#">VK</a></p>
+            </div>
+            <form id="contact-form">
+                <input type="text" id="name" placeholder="Ваше имя" required>
+                <input type="email" id="email" placeholder="Ваш email" required>
+                <textarea id="message" placeholder="Ваше сообщение" required></textarea>
+                <button type="submit">Отправить</button>
+            </form>
+        </section>
+
+    </main>
+    <!-- Footer -->
+    <footer>
+        <h5>&copy 2025 Анна Светлова</h5>
+    </footer>
+
+
+    <!-- Modal for enlarged images -->
+    <div id="modal" class="modal">
+        <span class="close">&times;</span>
+        <img id="modal-img" src="" alt="Увеличенное фото">
+    </div>
+    <script src="script.js"></script>
+</body>
+
+</html>
