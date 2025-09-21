@@ -93,10 +93,17 @@ footer {
     color: rgb(55, 65, 81);
 }
 
+img {
+    max-width: 100%;
+    max-height: 100%;
+}
+
 .gallery-item {
-    width: 80%;
-    height: 100px;
     background: linear-gradient(135deg, rgb(252, 229, 229), rgb(216, 243, 240));
+    justify-content: center;
+    display: flex;
+    align-items: center; /* вертикальное выравнивание */
+    justify-content: center; /* горизонтальное выравнивание */
 }
 
 .statistics {
@@ -113,14 +120,17 @@ a {
 .hero-content {
     margin-left: 44px;
     margin-right: 44px;
-    padding: 40px;
+    padding: 60px;
     flex: 1;
     flex-direction: column;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: url('https://images.unsplash.com/photo-1554048612-b6a482bc67e5?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80') no-repeat center center/cover;
+    background: url('../images/foto-pettine-IfjHaIoAoqE-unsplash.jpg') no-repeat center center/cover;
     text-align: center;
+    background-size: cover;
+    background-position: bottom;
+    background-repeat: no-repeat;
 }
 
 .hero-h {
@@ -128,6 +138,7 @@ a {
     background-color: rgb(55, 65, 81);
     padding: 10px;
     border-radius: 15px;
+    opacity: 0.7;
 }
 
 .hero-button {
