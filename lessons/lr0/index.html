@@ -38,14 +38,102 @@
          </section>
 
         <!-- About Section -->
+         <section class="info container">
+            <div class="about">
+                <h2 class="about__title">Обо мне</h2>
+                <div class="about__description">Текст о фотографе</div>
+            </div>
+            <div class="statistic">
+                <h2 class="statistic__title">Статистика</h2>
+                <div class="statistic__description">200+ свадеб, 500+ портретов, 5 лет опыта</div>
+            </div> 
+         </section>
 
         <!-- Gallery Section -->
+         <section class="gallery container">
+            <div class="gallery__inner">
+                <h2 class="gallery__title">Галерея работ</h2>
+                <div class="gallery__photos">
+                    <div class="gallery__wrapper">
+                        <img 
+                            class="gallery__photo"
+                            src="./images/portrait_1.jpg" 
+                            alt=""
+                            height="800"
+                            width="800"
+                            loading="lazy"
+                        >
+                    </div>
+                    <div class="gallery__wrapper">
+                        <img 
+                            class="gallery__photo"
+                            src="./images/wedding_1.jpg" 
+                            alt=""
+                            height="800"
+                            width="800"
+                            loading="lazy"
+                        >
+                    </div><div class="gallery__wrapper">
+                        <img 
+                            class="gallery__photo"
+                            src="./images/wedding_2.jpg" 
+                            alt=""
+                            height="800"
+                            width="800"
+                            loading="lazy"
+                        >
+                    </div>
+                </div>
+            </div> 
+         </section>
 
         <!-- Contact Section -->
+         <section class="info container">
+            <div class="contact">
+                <h2 class="contact__title">Контакты</h2>
+                <address class="contact-info">
+                    <ul class="contact-info__list">
+                        <li class="contact-info__item" title="Phone">
+                            <a href="tel:+12345678901">
+                                (234) 567-89-01
+                            </a>
+                        </li>
+                        <li class="contact-info__item" title="Email">
+                            <a href="mailto:example@mail.ru">example@mail.ru</a>
+                        </li>
+                        <li class="contact-info__item" title="Address">
+                            <p>Россия, Барнаул</p>
+                        </li>
+                    </ul>
+                </address>
+            </div>
+            <form class="contact-form form">
+                <div class="form__group">
+                    <input type="text" placeholder="Имя" required>
+                </div>
+                <div class="form__group">
+                    <input type="text" placeholder="Фамилия" required>
+                </div>
+                <div class="form__group">
+                    <select required>
+                        <option value="">Выберите услугу</option>
+                        <option value="portrait">Портретная съемка</option>
+                        <option value="wedding">Свадебная съемка</option>
+                        <option value="other">Другое</option>
+                    </select>
+                </div>
+                <div class="form__group">
+                    <textarea placeholder="Сообщение" required></textarea>
+                </div>
+                <button type="submit" class="button">Отправить</button>
+            </form>
+         </section>
     </main>
 
     <!-- Footer -->
-
+     <footer class="footer container">
+        <p>© <time datetime="2025">2025</time> Анна Светлова. Все права защищены.</p>
+     </footer>
     <!-- Modal for enlarged images -->
 
     <script src="js/script.js"></script>

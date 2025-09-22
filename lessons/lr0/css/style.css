@@ -2,7 +2,12 @@
 @import "./variables.css";
 @import "./media.css";
 @import "./reset.css";
+@import "./utils.css";
+
 @import "./sections/header.css";
 @import "./sections/hero.css";
 @import "./sections/button.css";
-@import "./utils.css";
+@import "./sections/info.css";
+@import "./sections/gallery.css";
+@import "./sections/footer.css";
+

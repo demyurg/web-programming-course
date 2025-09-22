@@ -1,5 +1,4 @@
 .hero {
-    margin-top: var(--space-4);
     background: var(--color-gradient-opacity);
     height: 250px;
     border-radius: var(--border-radius-l);
