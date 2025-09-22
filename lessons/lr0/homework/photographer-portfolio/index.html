@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Анна Светлова - Фотограф</title>
+    <link rel="stylesheet" href="css/lightbox.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header class="container">
+        <h2>Анна Светлова</h2>
+        <nav>
+            <ul>
+                <li><a href="#">Главная</a></li>
+                <li><a href="#">Обо мне</a></li>
+                <li><a href="#">Галерея</a></li>
+                <li><a href="#">Контакты</a></li>
+            </ul>
+        </nav>
+        <button class="hamburger">☰</button>
+    </header>    
+
+    <main>
+        <!-- Hero Section -->
+        <div class="hero container">
+            <h1>Захватываю моменты, создаю воспоминания</h1>
+            <p>Профессиональная фотосъёмка портретов и свадеб</p>
+            <button class="btn">Посмотреть работы</button>
+        </div>
+
+        <!-- About Section -->
+        <div class="about container">
+            <div class="about-section">
+                <h3>Обо мне</h3>
+                <p>Меня зовут Анна, и я увлечена фотографией уже более 5 лет. Специализируюсь на портретной и свадебной съемке.<br>Я — ваш профессиональный фотограф в Барнауле и не только, готовый воплотить ваши идеи в незабываемые кадры! Свадьбы, семейные фотосессии, портреты, love story или корпоративные мероприятия — я помогу сохранить важные моменты в идеальном качестве.</p>
+            </div>
+            <div class="statistics">
+                <h3>Статистика</h3>
+                <ul>
+                    <li>5 лет ловлю ваши эмоции</li>
+                    <li>Более 250 проведённых съёмок</li>
+                    <li>30 000+ отретушированных кадров</li>
+                    <li>200+ счастливых клиентов</li>
+                    <li>3 профессиональные премии в области фотографии</li>
+                    <li>Более 500 часов мастер-классов и курсов</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Gallery Section -->
+        
+        <div class="galery container">
+            <h3>Галерея работ</h3>
+            <ul>
+                <li><a href="#">Свадьба</a></li>
+                <li><a href="#">Портреты</a></li>
+                <li><a href="#">Природа</a></li>
+            </ul>
+            <div class="galery__slider">
+                <a href="images/wedding1.jpg" data-lightbox="images" data-title="Свадьба"><img src="images/wedding1.jpg" alt=""></a>
+                <a href="images/wedding2.jpg" data-lightbox="images" data-title="Свадьба"><img src="images/wedding2.jpg" alt=""></a>
+                <a href="images/portrait1.jpg" data-lightbox="images" data-title="Портрет"><img src="images/portrait1.jpg" alt=""></a>
+                <a href="images/portrait2.jpg" data-lightbox="images" data-title="Портрет"><img src="images/portrait2.jpg" alt=""></a>
+                <a href="images/nature1.jpg" data-lightbox="images" data-title="Природа"><img src="images/nature1.jpg" alt=""></a>
+                <a href="images/nature2.jpg" data-lightbox="images" data-title="Природа"><img src="images/nature2.jpg" alt=""></a>
+            </div>
+            <button class="btn-second">Больше фото</button>
+        </div>
+
+        <!-- Contact Section -->
+        <div class="contact container">
+            <div class="contact-section">
+                <h3>Контакты</h3>
+                <div>
+                    <h4>Телефон</h4>
+                    <p>+7 (983) 28-09-01</p>
+                </div>
+                <div>
+                    <h4>Email</h4>
+                    <p>annasvet@mail.ru</p>
+                </div>
+                <div>
+                    <h4>Соц. сети</h4>
+                    <div class="social-icons">
+                        <a href="#"><img src="images/vk.svg"></a>
+                        <a href="#"><img src="images/instagram.svg"></a>
+                        <a href="#"><img src="images/telegram.svg"></a>
+                    </div>
+                </div>
+            </div>
+            <div class="bid-section">
+                <h3>Оставьте свою заявку</h3>
+                <div class="input-section">
+                    <input type="text" id="name" placeholder="ФИО">
+                    <input type="number" placeholder="Телефон">
+                    <input type="email" placeholder="Email">
+                    <button class="btn">Отправить</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer container">
+        <p><img src="images/copyright.svg">Анна Светлова. Все права защищены.</p>
+    </footer>
+
+    <!-- Modal for enlarged images -->
+
+    <script src="js/lightbox-plus-jquery.js"></script>
+    <script>
+        lightbox.option({
+            'showImageNumberLabel': false,
+            'wrapAround': true
+        })
+    </script>
+    <script src="js/script.js"></script>
+</body>
+</html>
