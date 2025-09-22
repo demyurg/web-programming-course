@@ -1,29 +1,58 @@
-<!DOCTYPE html>
+
+<!DOCTYPE html> // запуск только один раз
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Анна Светлова - Фотограф</title>
-    <link rel="stylesheet" href="css/style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Open+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Анна Светлова — фотограф</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <!-- Header & Navigation -->
+  <header>
+    <h1>Анна Светлова</h1>
+    <p>Портретная и свадебная фотография. Сохраняю эмоции и создаю истории в каждом кадре.</p>
+  </header>
 
-    <main>
-        <!-- Hero Section -->
+  <nav>
+    <a href="#about">Обо мне</a>
+    <a href="#gallery">Галерея</a>
+    <a href="#contacts">Контакты</a>
+  </nav>
 
-        <!-- About Section -->
+  <main class="container">
+    <section id="about" class="fade-in">
+      <h2>Обо мне</h2>
+      <p>Я специализируюсь на портретной и свадебной съемке, помогая людям сохранить самые важные моменты жизни в профессиональных фотографиях.</p>
+    </section>
 
-        <!-- Gallery Section -->
+    <section id="gallery" class="fade-in">
+      <h2>Галерея</h2>
+      <div class="gallery">
+        <img src="images/1.jpg" alt="Фото 1">
+        <img src="images/2.jpg" alt="Фото 2">
+        <img src="images/3.jpg" alt="Фото 3">
+        <img src="images/4.jpg" alt="Фото 4">
+        <img src="images/5.jpg" alt="Фото 5">
+        <img src="images/6.jpg" alt="Фото 6">
+      </div>
+    </section>
 
-        <!-- Contact Section -->
-    </main>
+    <section id="contacts" class="fade-in">
+      <h2>Контакты</h2>
+      <p>📞 Телефон: +7 (999) 123-45-67</p>
+      <p>📧 Email: anna.svetlova@example.com</p>
+      <p>🌐 Соцсети:
+        <a href="#">Instagram</a> |
+        <a href="#">VK</a> |
+        <a href="#">Facebook</a>
+      </p>
+    </section>
+  </main>
 
-    <!-- Footer -->
+  <footer>
+    <p>© 2025 Анна Светлова. Все права защищены.</p>
+  </footer>
 
-    <!-- Modal for enlarged images -->
-
-    <script src="js/script.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
