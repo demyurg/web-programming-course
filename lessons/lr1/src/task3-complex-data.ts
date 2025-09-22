@@ -16,8 +16,39 @@
 // - Grade: studentId, courseId, score, date
 // - CourseStats: courseId, averageGrade, totalStudents, completionRate
 
+interface Student {
+    id: number,
+    name: string,
+    email: string,
+    enrolledCourses: number[],
+    grades: {[key: number] : Grade[]}
+}
+
+interface Course {
+    id: number,
+    title: string,
+    instructor: string,
+    duration: number,
+    maxStudents: number,
+    enrolledStudents: number[]
+}
+
+interface Grade {
+    studentId?: number,
+    courseId?: number,
+    score: number,
+    date: Date
+}
+
+interface CourseStats {
+    courseId: number,
+    averageGrade: number,
+    totalStudents: number,
+    completionRate: number
+}
+
 // Создание студента
-function createStudent(id, name, email) {
+function createStudent(id: number, name: string, email: string) {
     return {
         id,
         name,
@@ -28,7 +59,7 @@ function createStudent(id, name, email) {
 }
 
 // Создание курса
-function createCourse(id, title, instructor, duration, maxStudents) {
+function createCourse(id: number, title: string, instructor: string, duration: number, maxStudents: number) {
     return {
         id,
         title,
@@ -40,7 +71,7 @@ function createCourse(id, title, instructor, duration, maxStudents) {
 }
 
 // Запись студента на курс
-function enrollStudent(student, course) {
+function enrollStudent(student: Student, course: Course) {
     if (course.enrolledStudents.length >= course.maxStudents) {
         return {
             success: false,
@@ -65,7 +96,7 @@ function enrollStudent(student, course) {
 }
 
 // Выставление оценки
-function assignGrade(student, courseId, score) {
+function assignGrade(student: Student, courseId: number, score: number) {
     if (!student.enrolledCourses.includes(courseId)) {
         return {
             success: false,
@@ -96,24 +127,24 @@ function assignGrade(student, courseId, score) {
 }
 
 // Расчет средней оценки студента
-function calculateStudentAverage(student, courseId) {
+function calculateStudentAverage(student: Student, courseId: number) {
     const grades = student.grades[courseId];
     if (!grades || grades.length === 0) {
         return null;
     }
     
-    const sum = grades.reduce((acc, grade) => acc + grade.score, 0);
+    const sum = grades.reduce((acc: number, grade: Grade) => acc + grade.score, 0);
     return Math.round((sum / grades.length) * 100) / 100;
 }
 
 // Получение статистики по курсу
-function getCourseStats(course, students) {
+function getCourseStats(course: Course, students: Student[]) {
     const enrolledStudents = students.filter(student => 
         student.enrolledCourses.includes(course.id)
     );
     
     const allGrades = enrolledStudents
-        .map(student => student.grades[course.id] || [])
+        .map(student => (student.grades[course.id] as Grade[]) || [])
         .flat()
         .map(grade => grade.score);
     
@@ -122,7 +153,7 @@ function getCourseStats(course, students) {
         : 0;
     
     const studentsWithGrades = enrolledStudents.filter(student => 
-        student.grades[course.id] && student.grades[course.id].length > 0
+        student.grades[course.id] && (student.grades[course.id] as Grade[]).length > 0
     ).length;
     
     const completionRate = enrolledStudents.length > 0 
@@ -138,14 +169,14 @@ function getCourseStats(course, students) {
 }
 
 // Поиск лучших студентов
-function getTopStudents(students, courseId, limit) {
+function getTopStudents(students: Student[], courseId: number, limit: number) {
     return students
         .map(student => ({
             ...student,
             average: calculateStudentAverage(student, courseId)
         }))
         .filter(student => student.average !== null)
-        .sort((a, b) => b.average - a.average)
+        .sort((a, b) => b.average as number - (a.average as number))
         .slice(0, limit);
 }
 
@@ -162,15 +193,15 @@ const courses = [
 ];
 
 // Записываем студентов на курсы
-enrollStudent(students[0], courses[0]);
-enrollStudent(students[1], courses[0]);
-enrollStudent(students[0], courses[1]);
+enrollStudent(students[0] as Student, courses[0] as Course);
+enrollStudent(students[1] as Student, courses[0] as Course);
+enrollStudent(students[0] as Student, courses[1] as Course);
 
 // Выставляем оценки
-assignGrade(students[0], 101, 95);
-assignGrade(students[0], 101, 87);
-assignGrade(students[1], 101, 78);
+assignGrade(students[0] as Student, 101, 95);
+assignGrade(students[0] as Student, 101, 87);
+assignGrade(students[1] as Student, 101, 78);
 
-console.log('Средняя оценка Анны по JS:', calculateStudentAverage(students[0], 101));
-console.log('Статистика курса JS:', getCourseStats(courses[0], students));
+console.log('Средняя оценка Анны по JS:', calculateStudentAverage(students[0] as Student, 101));
+console.log('Статистика курса JS:', getCourseStats(courses[0] as Course, students as Student[]));
 console.log('Лучшие студенты по JS:', getTopStudents(students, 101, 2));
