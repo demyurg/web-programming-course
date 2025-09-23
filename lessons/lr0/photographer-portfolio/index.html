@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Исаев Никита Сергеевич — Портфолио фотографа</title>
+    <meta name="description"
+        content="Портретная и свадебная фотосъемка. Портфолио фотографа Исаева Никиты Сергеевича: лучшие работы, контакты, запись на съемку." />
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Playfair+Display:wght@400;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="css/style.css" />
+</head>
+
+<body>
+    <header class="site-header" id="top">
+        <div class="container header-inner">
+            <div class="brand">
+                <a href="#top" class="logo" aria-label="На главную">Исаев Никита Сергеевич</a>
+                <span class="tagline">Портретная и свадебная фотография</span>
+            </div>
+            <nav class="nav" aria-label="Главная навигация">
+                <button class="nav-toggle" aria-expanded="false" aria-label="Открыть меню">☰</button>
+                <ul class="nav-list">
+                    <li><a href="#about">Обо мне</a></li>
+                    <li><a href="#gallery">Портфолио</a></li>
+                    <li><a href="#contact">Контакты</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <section class="hero" id="about">
+        <div class="container">
+            <h1 class="hero-title">Здравствуйте! Я — <span>Исаев Никита Сергеевич</span></h1>
+            <p class="hero-subtitle">
+                Специализируюсь на портретной и свадебной съемке. Создаю живые и
+                эмоциональные снимки, которые остаются ценными воспоминаниями на долгие годы.
+            </p>
+            <p class="hero-subtitle">
+                Работаю в студии и на выезде, помогу с образом и позированием. Записывайтесь — буду рад
+                сохранить вашу историю в фотографиях.
+            </p>
+            <a href="#gallery" class="btn btn-accent">Смотреть портфолио</a>
+        </div>
+    </section>
+
+    <section class="portfolio" id="gallery">
+        <div class="container">
+            <div class="section-head">
+                <h2>Портфолио</h2>
+                <div class="filters" role="tablist" aria-label="Фильтр работ">
+                    <button class="filter-btn active" data-filter="all" role="tab" aria-selected="true">Все</button>
+                    <button class="filter-btn" data-filter="portrait" role="tab">Портреты</button>
+                    <button class="filter-btn" data-filter="wedding" role="tab">Свадьбы</button>
+                    <button class="filter-btn" data-filter="nature" role="tab">Природа</button>
+                </div>
+            </div>
+
+            <div class="grid">
+                <figure class="grid-item reveal" data-category="portrait">
+                    <img src="images/photo_2025-02-20_18-30-55.jpg" alt="Портрет — работа Исаева Никиты Сергеевича" />
+                </figure>
+                <figure class="grid-item reveal" data-category="portrait">
+                    <img src="images/photo_2025-04-04_11-14-14.jpg" alt="Портрет — работа Исаева Никиты Сергеевича" />
+                </figure>
+                <figure class="grid-item reveal" data-category="wedding">
+                    <img src="images/photo_2025-04-19_11-35-44.jpg"
+                        alt="Свадебная съемка — работа Исаева Никиты Сергеевича" />
+                </figure>
+                <figure class="grid-item reveal" data-category="wedding">
+                    <img src="images/photo_2025-05-10_22-41-07.jpg"
+                        alt="Свадебная съемка — работа Исаева Никиты Сергеевича" />
+                </figure>
+                <figure class="grid-item reveal" data-category="nature">
+                    <img src="images/photo_2025-05-10_22-49-30.jpg"
+                        alt="Природный пейзаж — работа Исаева Никиты Сергеевича" />
+                </figure>
+                <figure class="grid-item reveal" data-category="nature">
+                    <img src="images/photo_2025-05-17_22-54-00.jpg"
+                        alt="Природный пейзаж — работа Исаева Никиты Сергеевича" />
+                </figure>
+            </div>
+        </div>
+    </section>
+
+    <section class="contact" id="contact">
+        <div class="container">
+            <h2>Связаться со мной</h2>
+            <div class="contact-wrap">
+                <div class="contact-info">
+                    <ul>
+                        <li><strong>Телефон:</strong> <a href="tel:+79833806232">+7 (983) 380-62-32</a></li>
+                        <li><strong>Email:</strong> <a href="mailto:worldhero142@gmail.com">worldhero142@gmail.com</a>
+                        </li>
+                        <li><strong>Telegram:</strong> <a href="https://t.me/i_have_no_idea_who_are_u" target="_blank"
+                                rel="noopener">@i_have_no_idea_who_are_u</a></li>
+                        <li class="socials">
+                            <a href="https://instagram.com" target="_blank" rel="noopener"
+                                aria-label="Instagram">Instagram</a>
+                            <a href="https://vk.com" target="_blank" rel="noopener" aria-label="VK">VK</a>
+                        </li>
+                    </ul>
+                </div>
+                <form class="contact-form" novalidate>
+                    <div class="form-row">
+                        <label for="name">Имя</label>
+                        <input type="text" id="name" name="name" placeholder="Ваше имя" required />
+                        <span class="error" data-for="name"></span>
+                    </div>
+                    <div class="form-row">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" placeholder="you@example.com" required />
+                        <span class="error" data-for="email"></span>
+                    </div>
+                    <div class="form-row">
+                        <label for="message">Сообщение</label>
+                        <textarea id="message" name="message" rows="4" placeholder="Расскажите о своей задаче"
+                            required></textarea>
+                        <span class="error" data-for="message"></span>
+                    </div>
+                    <button type="submit" class="btn btn-accent">Отправить</button>
+                    <p class="form-status" aria-live="polite"></p>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <footer class="site-footer">
+        <div class="container">
+            <p>© <span id="year"></span> Исаев Никита Сергеевич. Все права защищены.</p>
+        </div>
+    </footer>
+
+    <!-- Lightbox Modal -->
+    <div class="lightbox" role="dialog" aria-modal="true" aria-hidden="true">
+        <button class="lightbox-close" aria-label="Закрыть">×</button>
+        <img class="lightbox-image" alt="Просмотр изображения крупно" />
+    </div>
+
+    <script src="js/script.js"></script>
+</body>
+
+</html>
