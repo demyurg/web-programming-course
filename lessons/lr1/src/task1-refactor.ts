@@ -9,9 +9,9 @@
  */
 
 // Калькулятор с проблемами типизации
-function calculate(operation, a, b) {
+function calculate(operation: 'add'|'subtract'|'multiply'|'divide', a: number, b: number) {
     switch (operation) {
-        case 'add':
+        case "add":
             return a + b;
         case 'subtract':
             return a - b;
@@ -27,8 +27,17 @@ function calculate(operation, a, b) {
     }
 }
 
+type User = {
+    name:string,
+    age:number,
+    email:string,
+    isAdmin:boolean,
+    createdAt: Date;
+    getId: () => string;
+}
+
 // Функция для работы с пользователем
-function createUser(name, age, email, isAdmin) {
+function createUser(name: string, age: number, email: string, isAdmin: boolean):User {
     return {
         name,
         age,
@@ -42,10 +51,10 @@ function createUser(name, age, email, isAdmin) {
 }
 
 // Обработка списка пользователей
-function processUsers(users) {
+function processUsers(users: User[]) {
     return users.map(user => {
         return {
-            ...user,
+            user,
             displayName: user.name.toUpperCase(),
             isAdult: user.age >= 18
         };
@@ -53,7 +62,7 @@ function processUsers(users) {
 }
 
 // Функция поиска пользователя
-function findUser(users, criteria) {
+function findUser(users: User[], criteria: string) {
     if (typeof criteria === 'string') {
         return users.find(user => user.name === criteria);
     }
@@ -62,7 +71,7 @@ function findUser(users, criteria) {
     }
     if (typeof criteria === 'object') {
         return users.find(user => {
-            return Object.keys(criteria).every(key => user[key] === criteria[key]);
+            return (Object.keys(criteria) as (keyof User)[]).every(key => user[key] === criteria[key]);
         });
     }
     return null;
@@ -72,12 +81,12 @@ function findUser(users, criteria) {
 console.log(calculate('add', 10, 5)); // 15
 console.log(calculate('divide', 10, 0)); // null
 
-const user = createUser('Анна', 25, 'anna@example.com');
+const user = createUser('Анна', 25, 'anna@example.com',true);
 console.log(user);
 
 const users = [
     createUser('Петр', 30, 'peter@example.com', true),
-    createUser('Мария', 16, 'maria@example.com'),
+    createUser('Мария', 16, 'maria@example.com', false),
 ];
 
 const processedUsers = processUsers(users);
@@ -86,8 +95,8 @@ console.log(processedUsers);
 const foundUser = findUser(users, 'Петр');
 console.log(foundUser);
 
-const foundByAge = findUser(users, 30);
+const foundByAge = findUser(users, '30');
 console.log(foundByAge);
 
-const foundByObject = findUser(users, { name: 'Мария', age: 16 });
+const foundByObject = findUser(users, '45');
 console.log(foundByObject);
