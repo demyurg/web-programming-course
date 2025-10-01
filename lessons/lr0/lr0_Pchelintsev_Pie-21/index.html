@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+	<meta charset="UTF-8">
+	<title>ПК Конфигуратор</title>
+	<link rel="stylesheet" href="css/style.css">
+	<link href="https://fonts.googleapis.com/css2?family=Open+Sans&family=Playfair+Display&display=swap" rel="stylesheet">
+</head>
+
+<body>
+	<header>
+		<div class="logo">ПК Конфигуратор</div>
+		<nav>
+			<ul>
+				<li><a href="index.html">Главная</a></li>
+				<li><a href="cpu.html">Процессоры</a></li>
+				<li><a href="motherboard.html">Материнские платы</a></li>
+				<li><a href="gpu.html">Видеокарты</a></li>
+			</ul>
+		</nav>
+	</header>
+
+	<main>
+		<h1>Собери свой ПК</h1>
+		<form id="configForm" class="configurator">
+
+			<!-- CPU -->
+			<div class="config-row">
+			<label for="cpu">Процессор</label>
+			<select id="cpu">
+				<option value="Intel Core i5-12400">Intel Core i5-12400</option>
+				<option value="Intel Core i7-13700K">Intel Core i7-13700K</option>
+				<option value="AMD Ryzen 5 7600X">AMD Ryzen 5 7600X</option>
+				<option value="AMD Ryzen 7 5800X">AMD Ryzen 7 5800X</option>
+			</select>
+			<input type="number" id="cpuPrice" placeholder="Стоимость (₽)" min="0">
+			</div>
+
+			<!-- GPU -->
+			<div class="config-row">
+			<label for="gpu">Видеокарта</label>
+			<select id="gpu">
+				<option value="NVIDIA RTX 3060">NVIDIA RTX 3060</option>
+				<option value="NVIDIA RTX 4070">NVIDIA RTX 4070</option>
+				<option value="AMD Radeon RX 6700 XT">AMD Radeon RX 6700 XT</option>
+				<option value="Intel Arc A770">Intel Arc A770</option>
+			</select>
+			<input type="number" id="gpuPrice" placeholder="Стоимость (₽)" min="0">
+			</div>
+
+			<!-- RAM -->
+			<div class="config-row">
+			<label for="ram">Оперативная память</label>
+			<select id="ram">
+				<option value="Corsair Vengeance 16GB DDR4">Corsair Vengeance 16GB DDR4</option>
+				<option value="Kingston Fury 32GB DDR5">Kingston Fury 32GB DDR5</option>
+				<option value="G.Skill Trident Z 64GB DDR5">G.Skill Trident Z 64GB DDR5</option>
+			</select>
+			<input type="number" id="ramPrice" placeholder="Стоимость (₽)" min="0">
+			</div>
+
+			<!-- Storage -->
+			<div class="config-row">
+			<label for="storage">Хранилище</label>
+			<select id="storage">
+				<option value="Samsung 980 1TB SSD">Samsung 980 1TB SSD</option>
+				<option value="WD Blue 2TB HDD">WD Blue 2TB HDD</option>
+				<option value="Crucial P3 500GB SSD">Crucial P3 500GB SSD</option>
+			</select>
+			<input type="number" id="storagePrice" placeholder="Стоимость (₽)" min="0">
+			</div>
+
+			<button type="button" onclick="calculateTotal()">Рассчитать стоимость</button>
+		</form>
+
+		<div id="result" class="result-block"></div>
+	</main>
+
+	<script src="js/wasm-loader.js"></script>
+	
+</body>
+</html>
