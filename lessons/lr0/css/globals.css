@@ -1,0 +1,50 @@
+/* Базовые стили и сброс */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: var(--font-family-base), sans-serif;
+    line-height: 1.6;
+    color: #333;
+    overflow-x: hidden;
+    background-color: var(--color-primary-50);
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-family-accent), serif;
+}
+
+h2 {
+    font-size: 20px;
+    font-family: var(--font-family-base);
+}
+
+a,
+button,
+label,
+input,
+textarea,
+svg * {
+    transition-duration: var(--transition-duration);
+}
+
+section {
+    margin-block: var(--space-6);
+}
+
+input,
+textarea,
+select {
+    padding: 10px;
+    border-radius: var(--border-radius-s);
+    border: var(--border);
+    width: 100%;
+}
