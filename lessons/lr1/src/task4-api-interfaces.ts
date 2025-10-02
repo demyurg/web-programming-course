@@ -23,7 +23,7 @@
 
 interface ApiResponse<T>{
     data?:T;
-    success?:string;
+    success?:boolean;
     message?:string;
     error?:string;
 }
@@ -162,60 +162,60 @@ function handleApiResponse(response:ApiResponse<Order>, onSuccess:Function, onEr
 }
 
 // Класс для управления состоянием загрузки
-class ApiState {
+class ApiState<T> {
+private _state: { isLoading: boolean; error: string | null; data: T | null };
+
     constructor() {
-        this.isLoading = false;
-        this.error = null;
-        this.data = null;
+        this._state = {
+            isLoading: false,
+            error: null,
+            data: null
+        };
     }
-    
-    setLoading(loading) {
-        this.isLoading = loading;
-        if (loading) {
-            this.error = null;
+
+    setLoading(isLoading: boolean) {
+        this._state.isLoading = isLoading;
+        if (isLoading) {
+            this._state.error = null;
         }
     }
-    
-    setData(data) {
-        this.data = data;
-        this.isLoading = false;
-        this.error = null;
+
+    setData(data: T) {
+        this._state.data = data;
+        this._state.isLoading = false;
+        this._state.error = null;
     }
-    
-    setError(error) {
-        this.error = error;
-        this.isLoading = false;
-        this.data = null;
+
+    setError(error: string) {
+        this._state.error = error;
+        this._state.isLoading = false;
+        this._state.data = null;
     }
-    
-    getState() {
-        return {
-            isLoading: this.isLoading,
-            error: this.error,
-            data: this.data
-        };
+
+    getState(): { isLoading: boolean; error: string | null; data: T | null } {
+        return this._state;
     }
 }
 
 // Композитная функция для загрузки данных с состоянием
-async function loadDataWithState(apiCall, state) {
+async function loadDataWithState<T>(apiCall:() => Promise<ApiResponse<T>>, state:ApiState<T>): Promise<ApiResponse<T>> {
     state.setLoading(true);
     
     try {
         const response = await apiCall();
         
-        if (response.success) {
-            state.setData(response.data);
+        if (response.success && response.data != null) {
+            state.setData(response.data as T);
         } else {
-            state.setError(response.error);
+            state.setError(response.error || 'Неизвестная ошибка');
         }
         
         return response;
     } catch (error) {
-        state.setError(error.message);
+        state.setError((error as Error).message);
         return {
             success: false,
-            error: error.message,
+            error: (error as Error).message,
             data: null
         };
     }
