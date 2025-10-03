@@ -13,20 +13,25 @@
 // TODO: Типизировать с использованием generics
 
 // Утилита для кеширования
-class Cache {
+
+// переименовал класс т.к. ругался на дублирование имен
+class CacheUtils<T> {
+    
+    cache: Map<string, T>;
+
     constructor() {
         this.cache = new Map();
     }
     
-    set(key, value) {
+    set(key: string, value: T) {
         this.cache.set(key, value);
     }
     
-    get(key) {
+    get(key: string) {
         return this.cache.get(key);
     }
     
-    has(key) {
+    has(key: string) {
         return this.cache.has(key);
     }
     
@@ -34,7 +39,7 @@ class Cache {
         this.cache.clear();
     }
     
-    delete(key) {
+    delete(key:string) {
         return this.cache.delete(key);
     }
     
@@ -44,25 +49,27 @@ class Cache {
 }
 
 // Универсальная функция фильтрации
-function filterArray(array, predicate) {
+function filterArray<T>(array: T[], predicate: (item: T) => boolean): T[] {
     return array.filter(predicate);
 }
 
 // Универсальная функция маппинга
+// не разобрался
 function mapArray(array, mapper) {
     return array.map(mapper);
 }
 
 // Функция для получения первого элемента
-function getFirst(array) {
+function getFirst<T>(array: T[]) {
     return array.length > 0 ? array[0] : undefined;
 }
 
 // Функция для получения последнего элемента
-function getLast(array) {
+function getLast<T>(array: T[]) {
     return array.length > 0 ? array[array.length - 1] : undefined;
 }
 
+// не разобрался с кейгеттерами и компараторами
 // Функция группировки по ключу
 function groupBy(array, keyGetter) {
     const groups = {};
@@ -101,26 +108,27 @@ function sortBy(array, compareFn) {
 }
 
 // Класс для работы с коллекцией
-class Collection {
-    constructor(items) {
+class Collection<U> {
+    items: U[];
+    constructor(items: U[]) {
         this.items = items || [];
     }
     
-    add(item) {
+    add(item: U) {
         this.items.push(item);
         return this;
     }
     
-    remove(predicate) {
+    remove(predicate: (item: U) => boolean) {
         this.items = this.items.filter(item => !predicate(item));
         return this;
     }
     
-    find(predicate) {
+    find(predicate: (item: U) => boolean) {
         return this.items.find(predicate);
     }
     
-    filter(predicate) {
+    filter(predicate: (item: U) => boolean) {
         return new Collection(this.items.filter(predicate));
     }
     

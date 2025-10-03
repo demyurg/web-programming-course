@@ -50,14 +50,14 @@ async function makeApiRequest(url:string, options:RequestInit) {
 }
 
 // Получение пользователя по ID
-async function getUser(userId) {
+async function getUser(userId:number) {
     return makeApiRequest(`/api/users/${userId}`, {
         method: 'GET'
     });
 }
 
 // Получение списка товаров с фильтрами
-async function getProducts(filters) {
+async function getProducts(filters:{ category?:string; minPrice?:number; maxPrice?:number; search?:string }) {
     const queryParams = new URLSearchParams();
     
     if (filters.category) queryParams.set('category', filters.category);
@@ -71,7 +71,7 @@ async function getProducts(filters) {
 }
 
 // Создание заказа
-async function createOrder(orderData) {
+async function createOrder(orderData:{ userId:number; items:{ productId:number; quantity:number; price:number }[]; totalAmount:number }) {
     return makeApiRequest('/api/orders', {
         method: 'POST',
         headers: {
@@ -82,7 +82,7 @@ async function createOrder(orderData) {
 }
 
 // Обновление статуса заказа
-async function updateOrderStatus(orderId, newStatus) {
+async function updateOrderStatus(orderId:number, newStatus:'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled') {
     return makeApiRequest(`/api/orders/${orderId}/status`, {
         method: 'PATCH',
         headers: {
@@ -93,6 +93,7 @@ async function updateOrderStatus(orderId, newStatus) {
 }
 
 // Функция для обработки результатов API
+// не разобрался
 function handleApiResponse(response, onSuccess, onError) {
     if (response.success && response.data) {
         onSuccess(response.data);
@@ -101,28 +102,34 @@ function handleApiResponse(response, onSuccess, onError) {
     }
 }
 
+
 // Класс для управления состоянием загрузки
 class ApiState {
+
+    isLoading: boolean;
+    error: string | null;
+    data: any; // может ли сюда попасть объект или массив?
+
     constructor() {
         this.isLoading = false;
         this.error = null;
         this.data = null;
     }
     
-    setLoading(loading) {
+    setLoading(loading: boolean) {
         this.isLoading = loading;
         if (loading) {
             this.error = null;
         }
     }
     
-    setData(data) {
+    setData(data: any) {
         this.data = data;
         this.isLoading = false;
         this.error = null;
     }
     
-    setError(error) {
+    setError(error: string) {
         this.error = error;
         this.isLoading = false;
         this.data = null;
@@ -138,6 +145,7 @@ class ApiState {
 }
 
 // Композитная функция для загрузки данных с состоянием
+// не разобрался
 async function loadDataWithState(apiCall, state) {
     state.setLoading(true);
     
@@ -151,7 +159,7 @@ async function loadDataWithState(apiCall, state) {
         }
         
         return response;
-    } catch (error) {
+    } catch (error: any) {
         state.setError(error.message);
         return {
             success: false,
@@ -189,8 +197,8 @@ async function exampleUsage() {
     
     handleApiResponse(
         orderResponse,
-        (order) => console.log('Заказ создан:', order),
-        (error) => console.error('Ошибка создания заказа:', error)
+        (order: any) => console.log('Заказ создан:', order),
+        (error: string) => console.error('Ошибка создания заказа:', error)
     );
 }
 
