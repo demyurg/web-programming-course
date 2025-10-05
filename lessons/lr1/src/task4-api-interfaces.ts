@@ -21,7 +21,7 @@ interface ApiResponse<T>{
     data?: T,
     success?: boolean,
     message?: string,
-    error?: string
+    error?: string | null
      
 }
 
@@ -203,7 +203,7 @@ class ApiState {
 }
 
 // Композитная функция для загрузки данных с состоянием
-async function loadDataWithState(apiCall: Function, state: ) {
+async function loadDataWithState(apiCall: Function, state: ApiState) {
     state.setLoading(true);
     
     try {
@@ -253,9 +253,9 @@ async function exampleUsage() {
     });
     
     handleApiResponse(
-        orderResponse,
-        (order) => console.log('Заказ создан:', order),
-        (error) => console.error('Ошибка создания заказа:', error)
+        orderResponse as ApiResponse<Order>,
+        (order: Order) => console.log('Заказ создан:', order),
+        (error: Error) => console.error('Ошибка создания заказа:', error)
     );
 }
 
