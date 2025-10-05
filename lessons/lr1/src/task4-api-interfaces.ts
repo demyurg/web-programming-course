@@ -21,9 +21,14 @@
 // - UserRole: 'admin' | 'customer' | 'manager'
 // - OrderStatus: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled'
 
+<<<<<<< Updated upstream
 
 // Обёртка ответа API
  interface ApiResponse<T> {
+=======
+// Обёртка ответа API
+export interface ApiResponse<T> {
+>>>>>>> Stashed changes
     success: boolean;
     data?: T | null;
     message?: string;
@@ -31,10 +36,17 @@
 }
 
 // Роли пользователей
+<<<<<<< Updated upstream
  type UserRole = 'admin' | 'customer' | 'manager';
 
 // Статусы заказов
  type OrderStatus =
+=======
+export type UserRole = 'admin' | 'customer' | 'manager';
+
+// Статусы заказов
+export type OrderStatus =
+>>>>>>> Stashed changes
     | 'pending'
     | 'processing'
     | 'shipped'
@@ -42,7 +54,11 @@
     | 'cancelled';
 
 // Пользователь
+<<<<<<< Updated upstream
  interface User {
+=======
+export interface User {
+>>>>>>> Stashed changes
     id: number;
     name: string;
     email: string;
@@ -51,7 +67,11 @@
 }
 
 // Товар
+<<<<<<< Updated upstream
  interface Product {
+=======
+export interface Product {
+>>>>>>> Stashed changes
     id: number;
     name: string;
     price: number;
@@ -62,14 +82,22 @@
 }
 
 // Позиция заказа
+<<<<<<< Updated upstream
  interface OrderItem {
+=======
+export interface OrderItem {
+>>>>>>> Stashed changes
     productId: number;
     quantity: number;
     price: number;
 }
 
 // Заказ
+<<<<<<< Updated upstream
  interface Order {
+=======
+export interface Order {
+>>>>>>> Stashed changes
     id: number;
     userId: number;
     items: OrderItem[];
@@ -79,14 +107,22 @@
 }
 
 // Параметры фильтрации для списка товаров
+<<<<<<< Updated upstream
  interface ProductFilters {
+=======
+export interface ProductFilters {
+>>>>>>> Stashed changes
     category?: string;
     minPrice?: number;
     maxPrice?: number;
     search?: string;
 }
 
+<<<<<<< Updated upstream
 // Универсальная функция API 
+=======
+// ===== Универсальная функция API =====
+>>>>>>> Stashed changes
 
 async function makeApiRequest<T>(
     url: string,
@@ -118,6 +154,7 @@ async function makeApiRequest<T>(
     }
 }
 
+<<<<<<< Updated upstream
 // API функции
 
 async function getUser(userId: number): Promise<ApiResponse<User>> {
@@ -125,6 +162,15 @@ async function getUser(userId: number): Promise<ApiResponse<User>> {
 }
 
 async function getProducts(filters: ProductFilters): Promise<ApiResponse<Product[]>> {
+=======
+// ===== API функции =====
+
+export async function getUser(userId: number): Promise<ApiResponse<User>> {
+    return makeApiRequest<User>(`/api/users/${userId}`, { method: 'GET' });
+}
+
+export async function getProducts(filters: ProductFilters): Promise<ApiResponse<Product[]>> {
+>>>>>>> Stashed changes
     const queryParams = new URLSearchParams();
 
     if (filters.category) queryParams.set('category', filters.category);
@@ -135,7 +181,11 @@ async function getProducts(filters: ProductFilters): Promise<ApiResponse<Product
     return makeApiRequest<Product[]>(`/api/products?${queryParams}`, { method: 'GET' });
 }
 
+<<<<<<< Updated upstream
 async function createOrder(orderData: Omit<Order, 'id' | 'status' | 'createdAt'>): Promise<ApiResponse<Order>> {
+=======
+export async function createOrder(orderData: Omit<Order, 'id' | 'status' | 'createdAt'>): Promise<ApiResponse<Order>> {
+>>>>>>> Stashed changes
     return makeApiRequest<Order>('/api/orders', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -143,7 +193,11 @@ async function createOrder(orderData: Omit<Order, 'id' | 'status' | 'createdAt'>
     });
 }
 
+<<<<<<< Updated upstream
 async function updateOrderStatus(
+=======
+export async function updateOrderStatus(
+>>>>>>> Stashed changes
     orderId: number,
     newStatus: OrderStatus
 ): Promise<ApiResponse<Order>> {
@@ -154,9 +208,15 @@ async function updateOrderStatus(
     });
 }
 
+<<<<<<< Updated upstream
 // Вспомогательные функции
 
 function handleApiResponse<T>(
+=======
+// ===== Вспомогательные функции =====
+
+export function handleApiResponse<T>(
+>>>>>>> Stashed changes
     response: ApiResponse<T>,
     onSuccess: (data: T) => void,
     onError: (error: string) => void
@@ -168,9 +228,15 @@ function handleApiResponse<T>(
     }
 }
 
+<<<<<<< Updated upstream
 // Класс состояния
 
 class ApiState<T> {
+=======
+// ===== Класс состояния =====
+
+export class ApiState<T> {
+>>>>>>> Stashed changes
     isLoading: boolean;
     error: string | null;
     data: T | null;
@@ -207,9 +273,15 @@ class ApiState<T> {
     }
 }
 
+<<<<<<< Updated upstream
 // Композитная функция
 
 async function loadDataWithState<T>(
+=======
+// ===== Композитная функция =====
+
+export async function loadDataWithState<T>(
+>>>>>>> Stashed changes
     apiCall: () => Promise<ApiResponse<T>>,
     state: ApiState<T>
 ): Promise<ApiResponse<T>> {
@@ -235,9 +307,15 @@ async function loadDataWithState<T>(
     }
 }
 
+<<<<<<< Updated upstream
 // Пример использования 
 
 async function exampleUsage(): Promise<void> {
+=======
+// ===== Пример использования =====
+
+export async function exampleUsage(): Promise<void> {
+>>>>>>> Stashed changes
     const userState = new ApiState<User>();
     const productsState = new ApiState<Product[]>();
 
@@ -264,11 +342,11 @@ async function exampleUsage(): Promise<void> {
 
     handleApiResponse(
         orderResponse,
-        (order) => console.log('Заказ создан:', order),
-        (error) => console.error('Ошибка создания заказа:', error)
+        (order) => console.log('✅ Заказ создан:', order),
+        (error) => console.error('❌ Ошибка создания заказа:', error)
     );
 }
 
 
 // Раскомментируйте для тестирования (не будет работать без реального API)
-// exampleUsage();
+exampleUsage();
