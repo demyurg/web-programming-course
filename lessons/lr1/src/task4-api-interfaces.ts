@@ -22,9 +22,14 @@
 // - OrderStatus: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled'
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 
 // Обёртка ответа API
  interface ApiResponse<T> {
+=======
+// Обёртка ответа API
+export interface ApiResponse<T> {
+>>>>>>> Stashed changes
 =======
 // Обёртка ответа API
 export interface ApiResponse<T> {
@@ -37,15 +42,21 @@ export interface ApiResponse<T> {
 
 // Роли пользователей
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
  type UserRole = 'admin' | 'customer' | 'manager';
 
 // Статусы заказов
  type OrderStatus =
 =======
+=======
+>>>>>>> Stashed changes
 export type UserRole = 'admin' | 'customer' | 'manager';
 
 // Статусы заказов
 export type OrderStatus =
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
     | 'pending'
     | 'processing'
@@ -55,7 +66,11 @@ export type OrderStatus =
 
 // Пользователь
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
  interface User {
+=======
+export interface User {
+>>>>>>> Stashed changes
 =======
 export interface User {
 >>>>>>> Stashed changes
@@ -68,7 +83,11 @@ export interface User {
 
 // Товар
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
  interface Product {
+=======
+export interface Product {
+>>>>>>> Stashed changes
 =======
 export interface Product {
 >>>>>>> Stashed changes
@@ -83,7 +102,11 @@ export interface Product {
 
 // Позиция заказа
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
  interface OrderItem {
+=======
+export interface OrderItem {
+>>>>>>> Stashed changes
 =======
 export interface OrderItem {
 >>>>>>> Stashed changes
@@ -94,7 +117,11 @@ export interface OrderItem {
 
 // Заказ
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
  interface Order {
+=======
+export interface Order {
+>>>>>>> Stashed changes
 =======
 export interface Order {
 >>>>>>> Stashed changes
@@ -108,7 +135,11 @@ export interface Order {
 
 // Параметры фильтрации для списка товаров
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
  interface ProductFilters {
+=======
+export interface ProductFilters {
+>>>>>>> Stashed changes
 =======
 export interface ProductFilters {
 >>>>>>> Stashed changes
@@ -119,7 +150,11 @@ export interface ProductFilters {
 }
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 // Универсальная функция API 
+=======
+// ===== Универсальная функция API =====
+>>>>>>> Stashed changes
 =======
 // ===== Универсальная функция API =====
 >>>>>>> Stashed changes
@@ -155,6 +190,7 @@ async function makeApiRequest<T>(
 }
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 // API функции
 
 async function getUser(userId: number): Promise<ApiResponse<User>> {
@@ -163,6 +199,8 @@ async function getUser(userId: number): Promise<ApiResponse<User>> {
 
 async function getProducts(filters: ProductFilters): Promise<ApiResponse<Product[]>> {
 =======
+=======
+>>>>>>> Stashed changes
 // ===== API функции =====
 
 export async function getUser(userId: number): Promise<ApiResponse<User>> {
@@ -170,6 +208,9 @@ export async function getUser(userId: number): Promise<ApiResponse<User>> {
 }
 
 export async function getProducts(filters: ProductFilters): Promise<ApiResponse<Product[]>> {
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
     const queryParams = new URLSearchParams();
 
@@ -182,7 +223,11 @@ export async function getProducts(filters: ProductFilters): Promise<ApiResponse<
 }
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 async function createOrder(orderData: Omit<Order, 'id' | 'status' | 'createdAt'>): Promise<ApiResponse<Order>> {
+=======
+export async function createOrder(orderData: Omit<Order, 'id' | 'status' | 'createdAt'>): Promise<ApiResponse<Order>> {
+>>>>>>> Stashed changes
 =======
 export async function createOrder(orderData: Omit<Order, 'id' | 'status' | 'createdAt'>): Promise<ApiResponse<Order>> {
 >>>>>>> Stashed changes
@@ -194,7 +239,11 @@ export async function createOrder(orderData: Omit<Order, 'id' | 'status' | 'crea
 }
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 async function updateOrderStatus(
+=======
+export async function updateOrderStatus(
+>>>>>>> Stashed changes
 =======
 export async function updateOrderStatus(
 >>>>>>> Stashed changes
@@ -209,9 +258,15 @@ export async function updateOrderStatus(
 }
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 // Вспомогательные функции
 
 function handleApiResponse<T>(
+=======
+// ===== Вспомогательные функции =====
+
+export function handleApiResponse<T>(
+>>>>>>> Stashed changes
 =======
 // ===== Вспомогательные функции =====
 
@@ -229,9 +284,15 @@ export function handleApiResponse<T>(
 }
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 // Класс состояния
 
 class ApiState<T> {
+=======
+// ===== Класс состояния =====
+
+export class ApiState<T> {
+>>>>>>> Stashed changes
 =======
 // ===== Класс состояния =====
 
@@ -274,9 +335,15 @@ export class ApiState<T> {
 }
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 // Композитная функция
 
 async function loadDataWithState<T>(
+=======
+// ===== Композитная функция =====
+
+export async function loadDataWithState<T>(
+>>>>>>> Stashed changes
 =======
 // ===== Композитная функция =====
 
@@ -308,9 +375,15 @@ export async function loadDataWithState<T>(
 }
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 // Пример использования 
 
 async function exampleUsage(): Promise<void> {
+=======
+// ===== Пример использования =====
+
+export async function exampleUsage(): Promise<void> {
+>>>>>>> Stashed changes
 =======
 // ===== Пример использования =====
 
@@ -347,6 +420,9 @@ export async function exampleUsage(): Promise<void> {
     );
 }
 
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
 // Раскомментируйте для тестирования (не будет работать без реального API)
 exampleUsage();
