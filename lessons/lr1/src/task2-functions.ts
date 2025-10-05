@@ -16,20 +16,27 @@
 // TODO: Создать union тип для категорий
 // electronics | clothing | books | food | other
 
-function createProduct(id, name, price, category, inStock, tags) {
+function createProduct(id:number, name:string, price:number, Category: 'electronics' | 'clothing' | 'books' | 'food' | 'other', inStock:boolean, tags:string[]) {
     return {
         id,
         name,
         price,
-        category,
+        category: Category,
         inStock: inStock ?? true,
         tags: tags || [],
         createdAt: new Date()
     };
 }
+type Product = ReturnType<typeof createProduct>;
+
+interface ProductFilters extends Partial<Product> {
+    minPrice?: number;
+    maxPrice?: number;
+    tag?: string;
+}
 
 // TODO: Типизировать функцию фильтрации товаров
-function filterProducts(products, filters) {
+function filterProducts(products: Product[], filters: ProductFilters) {
     return products.filter(product => {
         if (filters.category && product.category !== filters.category) {
             return false;
@@ -37,10 +44,10 @@ function filterProducts(products, filters) {
         if (filters.inStock !== undefined && product.inStock !== filters.inStock) {
             return false;
         }
-        if (filters.minPrice && product.price < filters.minPrice) {
+        if (filters.minPrice !== undefined && product.price < filters.minPrice) {
             return false;
         }
-        if (filters.maxPrice && product.price > filters.maxPrice) {
+        if (filters.maxPrice !== undefined && product.price > filters.maxPrice) {
             return false;
         }
         if (filters.tag && !product.tags.includes(filters.tag)) {
@@ -51,7 +58,7 @@ function filterProducts(products, filters) {
 }
 
 // TODO: Типизировать функцию расчета скидки
-function calculateDiscount(product, discountType, value) {
+function calculateDiscount(product: Product, discountType: 'percentage' | 'fixed' | 'buy_one_get_one', value: number) {
     let finalPrice = product.price;
     
     switch (discountType) {
@@ -77,7 +84,7 @@ function calculateDiscount(product, discountType, value) {
 }
 
 // TODO: Типизировать функцию сортировки
-function sortProducts(products, sortBy, order) {
+function sortProducts(products: Product[], sortBy: keyof Product, order: 'desc' | 'asc') {
     return [...products].sort((a, b) => {
         let comparison = 0;
         

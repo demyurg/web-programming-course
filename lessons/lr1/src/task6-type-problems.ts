@@ -11,7 +11,7 @@
 // Проблемные функции, которые нужно исправить
 
 // ПРОБЛЕМА 1: Функция с any типом
-function processData(data) {
+function processData(data: any[] | string | 'object'): string[] {
     if (Array.isArray(data)) {
         return data.map(item => item.toString());
     }
@@ -24,9 +24,9 @@ function processData(data) {
 }
 
 // ПРОБЛЕМА 2: Функция с неопределенными возвращаемыми типами
-function getValue(obj, path) {
+function getValue(obj: object | any[], path: string): any {
     const keys = path.split('.');
-    let current = obj;
+    let current: any = obj;
     
     for (const key of keys) {
         if (current && typeof current === 'object' && key in current) {
@@ -40,7 +40,7 @@ function getValue(obj, path) {
 }
 
 // ПРОБЛЕМА 3: Функция с проблемами null/undefined
-function formatUser(user) {
+function formatUser(user: { firstName: string; lastName: string; email: string; age?: number | string; avatar?: any }) {
     return {
         fullName: user.firstName + ' ' + user.lastName,
         email: user.email.toLowerCase(),
@@ -50,7 +50,7 @@ function formatUser(user) {
 }
 
 // ПРОБЛЕМА 4: Функция с union типами без type guards
-function handleResponse(response) {
+function handleResponse(response: { success: true; data: any } | { success: false; error: string }) {
     if (response.success) {
         console.log('Данные:', response.data);
         return response.data;
@@ -61,7 +61,7 @@ function handleResponse(response) {
 }
 
 // ПРОБЛЕМА 5: Функция с проблемами мутации
-function updateArray(arr, index, newValue) {
+function updateArray(arr: any[], index: number, newValue: any) {
     if (index >= 0 && index < arr.length) {
         arr[index] = newValue;
     }
@@ -69,6 +69,7 @@ function updateArray(arr, index, newValue) {
 }
 
 // ПРОБЛЕМА 6: Класс с неправильной типизацией событий
+// я помню события в C# но смутно
 class EventEmitter {
     constructor() {
         this.listeners = {};
@@ -95,7 +96,7 @@ class EventEmitter {
 }
 
 // ПРОБЛЕМА 7: Функция с проблемами асинхронности
-async function fetchWithRetry(url, maxRetries) {
+async function fetchWithRetry(url: string, maxRetries: number){
     let lastError;
     
     for (let i = 0; i < maxRetries; i++) {
@@ -117,8 +118,8 @@ async function fetchWithRetry(url, maxRetries) {
 }
 
 // ПРОБЛЕМА 8: Функция валидации с проблемами типов
-function validateForm(formData, rules) {
-    const errors = {};
+function validateForm(formData: Record<string, string>, rules: any) {
+    const errors: { [key: string]: string } = {};
     
     for (const field in rules) {
         const value = formData[field];
@@ -157,7 +158,7 @@ function pick(obj, keys) {
 }
 
 // ПРОБЛЕМА 10: Функция сравнения с проблемами типов
-function isEqual(a, b) {
+function isEqual(a: any, b: any): boolean {
     if (a === b) return true;
     
     if (a == null || b == null) return a === b;
@@ -189,7 +190,7 @@ console.log(getValue(testObj, 'user.nonexistent'));
 
 console.log('\n=== Тестирование EventEmitter ===');
 const emitter = new EventEmitter();
-emitter.on('test', (message) => console.log('Получено:', message));
+emitter.on('test', (message: unknown) => console.log('Получено:', message));
 emitter.emit('test', 'Привет!');
 
 console.log('\n=== Тестирование pick ===');

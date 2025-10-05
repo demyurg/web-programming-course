@@ -6,10 +6,10 @@
  * 2. Добавьте типизацию ко всем функциям и переменным
  * 3. Исправьте все ошибки типизации
  * 4. Убедитесь что код компилируется без ошибок
- */
-
+ */ 
+type Operation = 'add' | 'subtract' | 'multiply' | 'divide';
 // Калькулятор с проблемами типизации
-function calculate(operation, a, b) {
+function calculate(operation: Operation, a: number, b: number): number {
     switch (operation) {
         case 'add':
             return a + b;
@@ -19,21 +19,21 @@ function calculate(operation, a, b) {
             return a * b;
         case 'divide':
             if (b === 0) {
-                return null;
+                return 0;
             }
             return a / b;
         default:
-            return undefined;
+            return 0;
     }
 }
 
 // Функция для работы с пользователем
-function createUser(name, age, email, isAdmin) {
+function createUser(name:string, age:number, email:string, isAdmin:boolean = false) {
     return {
         name,
         age,
         email,
-        isAdmin: isAdmin || false,
+        isAdmin,
         createdAt: new Date(),
         getId: function() {
             return Math.random().toString(36).substr(2, 9);
@@ -41,8 +41,10 @@ function createUser(name, age, email, isAdmin) {
     };
 }
 
-// Обработка списка пользователей
-function processUsers(users) {
+
+type User = ReturnType<typeof createUser>;
+
+function processUsers(users: User[]) {
     return users.map(user => {
         return {
             ...user,
@@ -52,8 +54,9 @@ function processUsers(users) {
     });
 }
 
+
 // Функция поиска пользователя
-function findUser(users, criteria) {
+function findUser(users: User[], criteria: string | number | Partial<User>) {
     if (typeof criteria === 'string') {
         return users.find(user => user.name === criteria);
     }
@@ -62,7 +65,10 @@ function findUser(users, criteria) {
     }
     if (typeof criteria === 'object') {
         return users.find(user => {
-            return Object.keys(criteria).every(key => user[key] === criteria[key]);
+            return Object.keys(criteria).every(key => {
+                const keyn = key as keyof User;
+                return user[keyn] === criteria[keyn];
+        });
         });
     }
     return null;
