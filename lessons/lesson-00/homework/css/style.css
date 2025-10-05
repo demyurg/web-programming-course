@@ -1,0 +1,355 @@
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=Kapakana:wght@300..400&family=Roboto:ital,wght@0,100..900;1,100..900&family=Zen+Old+Mincho&display=swap');
+
+nav {
+    height: 100px;
+    padding: 0 100px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+nav div {
+    display: flex;
+    flex-direction: column;
+}
+
+
+nav ul {
+    display: flex;
+}
+
+nav div strong {
+    text-align: center;
+}
+
+#name {
+    font-family: "Zen Old Mincho", serif;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 23px;
+    color: #505050;
+}
+
+#name span {
+    font-size: 35px;
+    font-weight: 500;
+    display: inline-block;
+    transform: translateY(3px);
+}
+
+#photographer {
+    font-family: "Kapakana", cursive;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 30px;
+    color: #505050;
+    margin-top: -11px;
+}
+
+#menu {
+    display: flex;
+    column-gap: 50px;
+
+    font-family: "Roboto", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
+    font-variation-settings: "wdth" 100;
+    font-size: 11px;
+}
+
+header img {
+    height: calc(100vh - 100px);
+    width: 100vw;
+    object-fit: cover;
+}
+
+.carousel-container {
+    position: relative;
+    width: 100%;
+    height: calc(100vh - 100px);
+    overflow: hidden;
+}
+
+.carousel {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.5s ease-in-out;
+}
+
+.carousel img {
+    min-width: 100%;
+    height: 100%;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.carousel-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0);
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    font-size: 20px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.carousel-btn:hover {
+    background: rgba(255, 255, 255, 0.5);
+}
+
+.carousel-btn.prev {
+    left: 20px;
+}
+
+
+.carousel-btn.next {
+    right: 20px;
+}
+
+.carousel-indicators {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 10px;
+}
+
+.indicator {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.5);
+    border: none;
+    cursor: pointer;
+}
+
+.indicator.active {
+    background: white;
+}
+
+.portfolio, .price {
+    font-family: "JetBrains Mono", monospace;
+    font-optical-sizing: auto;
+    font-weight: 725;
+    font-style: normal;
+    font-size: 20px;
+}
+
+.portfolio-container {
+    display: grid;
+    grid-template-columns: auto auto auto;
+    column-gap: 15px;
+    padding: 0 100px;
+
+}
+
+.heading-container {
+    height: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-transform: uppercase;
+}
+
+.portfolio-container img {
+    object-fit: cover;
+    aspect-ratio: 2/3;
+}
+
+.portfolio-container-img {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+.portfolio-container-img img {
+    transition: transform 1s;
+}
+
+.portfolio-container-img:hover img {
+    transform: scale(110%);
+    transition: transform 0.7s;
+}
+
+.portfolio-text {
+    color: white;
+    opacity: 0;
+    position: absolute;
+
+    text-transform: uppercase;
+    font-size: 14px;
+    transform: translateY(-25px);
+    transition: transform 0.6s, opacity 0.5s;
+    z-index: 10;
+}
+
+.portfolio-container-img:hover .portfolio-text {
+    transform: translateY(0);
+    opacity: 1;
+    transition: transform 0.7s, opacity 0.7s;
+}
+
+.price-text {
+    color: white;
+    text-align: center;
+
+    text-transform: uppercase;
+    transition: transform 0.6s, opacity 0.5s;
+    z-index: 10;
+}
+
+.price-container {
+    position: absolute;
+    height: 525px;
+    width: 100vw;
+    max-width: 100%;
+    display: grid;
+    grid-template-columns: 30% 40% 30%;
+    grid-template-rows: 40% 10% 15% 13% 22%;
+
+
+}
+
+.time-1 {
+    display: block;
+    grid-column: 1/2;
+    grid-row: 2/3;
+    justify-self: right;
+
+    font-size: 20px;
+
+}
+
+.time-2 {
+    display: block;
+    grid-column: 3/4;
+    grid-row: 2/3;
+    justify-self: left;
+
+    font-size: 20px;
+
+}
+
+.price-1 {
+    display: block;
+    grid-column: 1/2;
+    grid-row: 3/4;
+    justify-self: right;
+    margin-right: 30px;
+
+    font-size: 14px;
+
+}
+
+.price-2 {
+    display: block;
+    grid-column: 3/4;
+    grid-row: 3/4;
+    justify-self: left;
+    margin-left: 30px;
+
+    font-size: 14px;
+
+} 
+
+.description-1 {
+    display: block;
+    grid-column: 2/3;
+    grid-row: 1/2; 
+
+    align-self: end;
+    
+    font-size: 18px;
+}
+
+.description-2 {
+    display: block;
+    grid-column: 2/3;
+    grid-row: 4/5; 
+    align-self: start;
+    
+    font-size: 18px;
+
+}
+
+.price-button {
+    display: block;
+    grid-column: 2/3;
+    grid-row: 5/6;
+    align-self: center;
+    justify-self: center;
+    z-index: 10;
+
+    height: 50px;
+    width: 300px;
+    background-color: #cccccc;
+    border-radius: 10px;
+
+    font-size: 20px;
+    font-weight: 700;
+
+    transition: all 0.3s;
+}
+
+.price-button:hover {
+    background-color: #a0a0a0;
+
+    transition: all 0.3s;
+}
+
+.price-img-bg {
+    height: 525px;
+    width: 100vw;
+
+    object-fit: cover;
+    filter: brightness(80%);
+}
+
+.about-me {
+    height: 700px;
+}
+
+.abount-me-container {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    column-gap: 50px;
+
+}
+
+.about-me-photo img {
+    object-fit: cover;
+    height: 500px;
+    width: 400px;
+}
+
+.about-me-text{
+    width: 400px;
+}
+
+.about-me-text p {
+    text-align: center;
+}
+
+.footer {
+    height: 50px;
+    text-align: center;
+
+
+
+    font-family: "Roboto", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 700;
+    font-style: normal;
+    font-variation-settings: "wdth" 100;
+    font-size: 11px;
+}
