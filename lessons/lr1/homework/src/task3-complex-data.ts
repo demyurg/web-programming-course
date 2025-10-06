@@ -21,9 +21,7 @@ interface Student {
     name: string;
     email: string;
     enrolledCourses: number[];
-    grades: {
-        [courseId: number]: Grade[];
-    };
+    grades: Record<number, Grade[]>;
 }
 
 interface Course {
@@ -47,14 +45,12 @@ interface EnrollmentResult {
     message: string;
 }
 
-// Generic тип для результата операций
 interface OperationResult<T = void> {
     success: boolean;
     message: string;
     data?: T;
 }
 
-// Создание студента
 function createStudent(id: number, name: string, email: string): Student {
     return {
         id,
@@ -65,12 +61,11 @@ function createStudent(id: number, name: string, email: string): Student {
     };
 }
 
-// Создание курса
 function createCourse(
-    id: number, 
-    title: string, 
-    instructor: string, 
-    duration: number, 
+    id: number,
+    title: string,
+    instructor: string,
+    duration: number,
     maxStudents: number
 ): Course {
     return {
@@ -83,103 +78,61 @@ function createCourse(
     };
 }
 
-// Запись студента на курс
 function enrollStudent(student: Student, course: Course): EnrollmentResult {
     if (course.enrolledStudents.length >= course.maxStudents) {
-        return {
-            success: false,
-            message: 'Курс переполнен'
-        };
+        return { success: false, message: 'Курс переполнен' };
     }
-    
     if (student.enrolledCourses.includes(course.id)) {
-        return {
-            success: false,
-            message: 'Студент уже записан на этот курс'
-        };
+        return { success: false, message: 'Студент уже записан на этот курс' };
     }
-    
+
     student.enrolledCourses.push(course.id);
     course.enrolledStudents.push(student.id);
-    
-    return {
-        success: true,
-        message: 'Студент успешно записан на курс'
-    };
+
+    return { success: true, message: 'Студент успешно записан на курс' };
 }
 
-// Выставление оценки
-function assignGrade(
-    student: Student, 
-    courseId: number, 
-    score: number
-): OperationResult<Grade> {
+function assignGrade(student: Student, courseId: number, score: number): OperationResult<Grade> {
     if (!student.enrolledCourses.includes(courseId)) {
-        return {
-            success: false,
-            message: 'Студент не записан на этот курс'
-        };
+        return { success: false, message: 'Студент не записан на этот курс' };
     }
-    
     if (score < 0 || score > 100) {
-        return {
-            success: false,
-            message: 'Оценка должна быть от 0 до 100'
-        };
+        return { success: false, message: 'Оценка должна быть от 0 до 100' };
     }
-    
+
     if (!student.grades[courseId]) {
         student.grades[courseId] = [];
     }
-    
-    const newGrade: Grade = {
-        score,
-        date: new Date()
-    };
-    
+
+    const newGrade: Grade = { score, date: new Date() };
     student.grades[courseId].push(newGrade);
-    
-    return {
-        success: true,
-        message: 'Оценка выставлена',
-        data: newGrade
-    };
+
+    return { success: true, message: 'Оценка выставлена', data: newGrade };
 }
 
-// Расчет средней оценки студента
 function calculateStudentAverage(student: Student, courseId: number): number | null {
     const grades = student.grades[courseId];
-    if (!grades || grades.length === 0) {
-        return null;
-    }
-    
-    const sum = grades.reduce((acc, grade) => acc + grade.score, 0);
+    if (!grades || grades.length === 0) return null;
+
+    const sum = grades.reduce((acc, g) => acc + g.score, 0);
     return Math.round((sum / grades.length) * 100) / 100;
 }
 
-// Получение статистики по курсу
 function getCourseStats(course: Course, students: Student[]): CourseStats {
-    const enrolledStudents = students.filter(student => 
-        student.enrolledCourses.includes(course.id)
-    );
-    
-    const allGrades = enrolledStudents
-        .map(student => student.grades[course.id] || [])
-        .flat()
-        .map(grade => grade.score);
-    
-    const averageGrade = allGrades.length > 0 
-        ? allGrades.reduce((sum, score) => sum + score, 0) / allGrades.length 
+    const enrolledStudents = students.filter(s => s.enrolledCourses.includes(course.id));
+
+    const allGrades = enrolledStudents.flatMap(s => s.grades[course.id] || []).map(g => g.score);
+
+    const averageGrade = allGrades.length > 0
+        ? allGrades.reduce((a, b) => a + b, 0) / allGrades.length
         : 0;
-    
-    const studentsWithGrades = enrolledStudents.filter(student => 
-        student.grades[course.id] && student.grades[course.id].length > 0
-    ).length;
-    
-    const completionRate = enrolledStudents.length > 0 
-        ? (studentsWithGrades / enrolledStudents.length) * 100 
+
+    const studentsWithGrades = enrolledStudents.filter(s => s.grades[course.id]?.length).length;
+
+    const completionRate = enrolledStudents.length > 0
+        ? (studentsWithGrades / enrolledStudents.length) * 100
         : 0;
-    
+
     return {
         courseId: course.id,
         totalStudents: enrolledStudents.length,
@@ -188,33 +141,24 @@ function getCourseStats(course: Course, students: Student[]): CourseStats {
     };
 }
 
-// Поиск лучших студентов с generic типом для результата
 function getTopStudents(
-    students: Student[], 
-    courseId: number, 
+    students: Student[],
+    courseId: number,
     limit: number
 ): Array<Student & { average: number }> {
     return students
-        .map(student => ({
-            ...student,
-            average: calculateStudentAverage(student, courseId)
-        }))
-        .filter((student): student is Student & { average: number } => 
-            student.average !== null
-        )
+        .map(s => ({ ...s, average: calculateStudentAverage(s, courseId) }))
+        .filter((s): s is Student & { average: number } => s.average !== null)
         .sort((a, b) => b.average - a.average)
         .slice(0, limit);
 }
 
-// Utility функция с generic типом для фильтрации
-function filterByCourse<T extends { enrolledCourses: number[] }>(
-    items: T[], 
-    courseId: number
-): T[] {
+function filterByCourse<T extends { enrolledCourses: number[] }>(items: T[], courseId: number): T[] {
     return items.filter(item => item.enrolledCourses.includes(courseId));
 }
 
-// Примеры использования
+// ====== Пример использования ======
+
 const students: Student[] = [
     createStudent(1, 'Анна Иванова', 'anna@example.com'),
     createStudent(2, 'Петр Петров', 'peter@example.com'),
@@ -223,32 +167,28 @@ const students: Student[] = [
 
 const courses: Course[] = [
     createCourse(101, 'JavaScript Основы', 'Иван Учителев', 40, 20),
-    createCourse(102, 'React Advanced', 'Мария Преподователь', 60, 15)
+    createCourse(102, 'React Advanced', 'Мария Преподаватель', 60, 15)
 ];
 
-// Записываем студентов на курсы
-if students[0] and courses[0]:
-    enrollStudent(students[0], courses[0]);
-if 
-    enrollStudent(students[1], courses[0]);
-    enrollStudent(students[0], courses[1]);
+// Проверим, что курсы и студенты точно есть:
+const anna = students.find(s => s.id === 1);
+const peter = students.find(s => s.id === 2);
+const jsCourse = courses.find(c => c.id === 101);
+const reactCourse = courses.find(c => c.id === 102);
 
-// Выставляем оценки
-assignGrade(students[0], 101, 95);
-assignGrade(students[0], 101, 87);
-assignGrade(students[1], 101, 78);
+if (anna && jsCourse && reactCourse && peter) {
+    enrollStudent(anna, jsCourse);
+    enrollStudent(peter, jsCourse);
+    enrollStudent(anna, reactCourse);
 
-// Добавляем проверки для безопасного доступа к элементам массива
-if (students[0]) {
-    console.log('Средняя оценка Анны по JS:', calculateStudentAverage(students[0], 101));
+    assignGrade(anna, 101, 95);
+    assignGrade(anna, 101, 87);
+    assignGrade(peter, 101, 78);
+
+    console.log('Средняя оценка Анны по JS:', calculateStudentAverage(anna, 101));
+    console.log('Статистика курса JS:', getCourseStats(jsCourse, students));
+    console.log('Лучшие студенты по JS:', getTopStudents(students, 101, 2));
+
+    const studentsInJS = filterByCourse(students, 101);
+    console.log('Студенты на курсе JS:', studentsInJS);
 }
-
-if (courses[0]) {
-    console.log('Статистика курса JS:', getCourseStats(courses[0], students));
-}
-
-console.log('Лучшие студенты по JS:', getTopStudents(students, 101, 2));
-
-// Пример использования generic функции
-const studentsInJSCourse = filterByCourse(students, 101);
-console.log('Студенты на курсе JS:', studentsInJSCourse);
