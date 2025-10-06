@@ -1,3 +1,4 @@
+"use strict";
 /*
  * ЗАДАЧА 1: Рефакторинг JavaScript кода в TypeScript
  *
@@ -7,17 +8,7 @@
  * 3. Исправьте все ошибки типизации
  * 4. Убедитесь что код компилируется без ошибок
  */
-var __assign = (this && this.__assign) || function () {
-    __assign = Object.assign || function(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-                t[p] = s[p];
-        }
-        return t;
-    };
-    return __assign.apply(this, arguments);
-};
+Object.defineProperty(exports, "__esModule", { value: true });
 function calculate(operation, a, b) {
     switch (operation) {
         case 'add':
@@ -37,9 +28,9 @@ function calculate(operation, a, b) {
 }
 function createUser(name, age, email, isAdmin) {
     return {
-        name: name,
-        age: age,
-        email: email,
+        name,
+        age,
+        email,
         isAdmin: isAdmin || false,
         createdAt: new Date(),
         getId: function () {
@@ -48,38 +39,42 @@ function createUser(name, age, email, isAdmin) {
     };
 }
 function processUsers(users) {
-    return users.map(function (user) {
-        return __assign(__assign({}, user), { displayName: user.name.toUpperCase(), isAdult: user.age >= 18 });
+    return users.map(user => {
+        return {
+            ...user,
+            displayName: user.name.toUpperCase(),
+            isAdult: user.age >= 18,
+        };
     });
 }
 function findUser(users, criteria) {
-    var _a, _b, _c;
     if (typeof criteria === 'string') {
-        return (_a = users.find(function (user) { return user.name === criteria; })) !== null && _a !== void 0 ? _a : null;
+        return users.find(user => user.name === criteria) ?? null;
     }
     if (typeof criteria === 'number') {
-        return (_b = users.find(function (user) { return user.age === criteria; })) !== null && _b !== void 0 ? _b : null;
+        return users.find(user => user.age === criteria) ?? null;
     }
     if (typeof criteria === 'object' && criteria !== null) {
-        return ((_c = users.find(function (user) {
-            return Object.keys(criteria).every(function (key) { return user[key] === criteria[key]; });
-        })) !== null && _c !== void 0 ? _c : null);
+        return (users.find(user => {
+            return Object.keys(criteria).every(key => user[key] === criteria[key]);
+        }) ?? null);
     }
     return null;
 }
 console.log(calculate('add', 10, 5));
 console.log(calculate('divide', 10, 0));
-var user = createUser('Анна', 25, 'anna@example.com');
+const user = createUser('Анна', 25, 'anna@example.com');
 console.log(user);
-var users = [
+const users = [
     createUser('Петр', 30, 'peter@example.com', true),
     createUser('Мария', 16, 'maria@example.com'),
 ];
-var processedUsers = processUsers(users);
+const processedUsers = processUsers(users);
 console.log(processedUsers);
-var foundUser = findUser(users, 'Петр');
+const foundUser = findUser(users, 'Петр');
 console.log(foundUser);
-var foundByAge = findUser(users, 30);
+const foundByAge = findUser(users, 30);
 console.log(foundByAge);
-var foundByObject = findUser(users, { name: 'Мария', age: 16 });
+const foundByObject = findUser(users, { name: 'Мария', age: 16 });
 console.log(foundByObject);
+//# sourceMappingURL=task1-refactor.js.map
