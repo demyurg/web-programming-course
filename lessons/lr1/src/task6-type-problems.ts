@@ -11,20 +11,24 @@
 // Проблемные функции, которые нужно исправить
 
 // ПРОБЛЕМА 1: Функция с any типом
-function processData(data) {
+function processData(data: any): string[]{
     if (Array.isArray(data)) {
-        return data.map(item => item.toString());
+        return data.map(item => String(item));
     }
     
     if (typeof data === 'object' && data !== null) {
         return Object.keys(data).map(key => `${key}: ${data[key]}`);
     }
     
-    return [data.toString()];
+    return [String(data)];
 }
 
 // ПРОБЛЕМА 2: Функция с неопределенными возвращаемыми типами
-function getValue(obj, path) {
+interface ObjType {
+    [key: string]: any;
+}
+
+function getValue(obj:ObjType, path:string) {
     const keys = path.split('.');
     let current = obj;
     
@@ -40,7 +44,14 @@ function getValue(obj, path) {
 }
 
 // ПРОБЛЕМА 3: Функция с проблемами null/undefined
-function formatUser(user) {
+interface User{
+    firstName?:string;
+    lastName?:string;
+    email:string;
+    age?:number;
+    avatar?:string
+}
+function formatUser(user: User) {
     return {
         fullName: user.firstName + ' ' + user.lastName,
         email: user.email.toLowerCase(),
@@ -50,7 +61,13 @@ function formatUser(user) {
 }
 
 // ПРОБЛЕМА 4: Функция с union типами без type guards
-function handleResponse(response) {
+interface Response{
+    success:boolean;
+    data:Date;
+    error:string
+}
+
+function handleResponse(response:Response) {
     if (response.success) {
         console.log('Данные:', response.data);
         return response.data;
@@ -61,7 +78,7 @@ function handleResponse(response) {
 }
 
 // ПРОБЛЕМА 5: Функция с проблемами мутации
-function updateArray(arr, index, newValue) {
+function updateArray(arr:number[], index:number, newValue:number) {
     if (index >= 0 && index < arr.length) {
         arr[index] = newValue;
     }
@@ -70,24 +87,25 @@ function updateArray(arr, index, newValue) {
 
 // ПРОБЛЕМА 6: Класс с неправильной типизацией событий
 class EventEmitter {
+    private listeners: Record<string, ((...args: any[]) => void)[]> = {};
     constructor() {
         this.listeners = {};
     }
     
-    on(event, callback) {
+    on(event:string, callback:(...args: any[]) => void) {
         if (!this.listeners[event]) {
             this.listeners[event] = [];
         }
         this.listeners[event].push(callback);
     }
     
-    emit(event, ...args) {
+    emit(event:string, ...args:string[]) {
         if (this.listeners[event]) {
             this.listeners[event].forEach(callback => callback(...args));
         }
     }
     
-    off(event, callback) {
+    off(event:string, callback:(...args: any[]) => void) {
         if (this.listeners[event]) {
             this.listeners[event] = this.listeners[event].filter(cb => cb !== callback);
         }
@@ -95,7 +113,7 @@ class EventEmitter {
 }
 
 // ПРОБЛЕМА 7: Функция с проблемами асинхронности
-async function fetchWithRetry(url, maxRetries) {
+async function fetchWithRetry(url:string, maxRetries:number) {
     let lastError;
     
     for (let i = 0; i < maxRetries; i++) {
@@ -117,12 +135,26 @@ async function fetchWithRetry(url, maxRetries) {
 }
 
 // ПРОБЛЕМА 8: Функция валидации с проблемами типов
-function validateForm(formData, rules) {
-    const errors = {};
+interface Rule{
+    required?: boolean;
+    minLength?: number;
+    pattern?: RegExp;   
+    message?: string;
+}
+interface Rules {
+    [field: string]: Rule | undefined;
+}
+interface FormDataType {
+    [field: string]: string | undefined;
+}
+function validateForm(formData:FormDataType, rules:Rules) {
+    const errors: Record<string, string> = {};     
     
     for (const field in rules) {
         const value = formData[field];
         const rule = rules[field];
+
+         if (rule === undefined) continue;
         
         if (rule.required && (!value || value.trim() === '')) {
             errors[field] = 'Поле обязательно для заполнения';
@@ -146,8 +178,8 @@ function validateForm(formData, rules) {
 }
 
 // ПРОБЛЕМА 9: Утилитарная функция с проблемами типов
-function pick(obj, keys) {
-    const result = {};
+function pick(obj:Record<string, any>, keys:string[]) {
+    const result: Record<string, any> = {};
     keys.forEach(key => {
         if (key in obj) {
             result[key] = obj[key];
@@ -157,7 +189,7 @@ function pick(obj, keys) {
 }
 
 // ПРОБЛЕМА 10: Функция сравнения с проблемами типов
-function isEqual(a, b) {
+function isEqual<T>(a:T, b:T):boolean {
     if (a === b) return true;
     
     if (a == null || b == null) return a === b;
@@ -170,7 +202,7 @@ function isEqual(a, b) {
         
         if (keysA.length !== keysB.length) return false;
         
-        return keysA.every(key => isEqual(a[key], b[key]));
+        return keysA.every(key => isEqual((a as any)[key], (b as any)[key]));
     }
     
     return false;

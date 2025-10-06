@@ -13,20 +13,22 @@
 // TODO: Типизировать с использованием generics
 
 // Утилита для кеширования
-class Cache {
+class Cache<T> {
+    private cache: Map<string, T>;
+
     constructor() {
         this.cache = new Map();
     }
     
-    set(key, value) {
+    set(key:string, value: T) {
         this.cache.set(key, value);
     }
     
-    get(key) {
+    get(key:string) {
         return this.cache.get(key);
     }
     
-    has(key) {
+    has(key:string) {
         return this.cache.has(key);
     }
     
@@ -34,7 +36,7 @@ class Cache {
         this.cache.clear();
     }
     
-    delete(key) {
+    delete(key:string) {
         return this.cache.delete(key);
     }
     
@@ -44,28 +46,28 @@ class Cache {
 }
 
 // Универсальная функция фильтрации
-function filterArray(array, predicate) {
+function filterArray<T>(array:T[], predicate:(item: T) => boolean) {
     return array.filter(predicate);
 }
 
 // Универсальная функция маппинга
-function mapArray(array, mapper) {
+function mapArray<T, U>(array:T[], mapper: (item: T) => U) {
     return array.map(mapper);
 }
 
 // Функция для получения первого элемента
-function getFirst(array) {
+function getFirst<T>(array:T[]) {
     return array.length > 0 ? array[0] : undefined;
 }
 
 // Функция для получения последнего элемента
-function getLast(array) {
+function getLast<T>(array:T[]) {
     return array.length > 0 ? array[array.length - 1] : undefined;
 }
 
 // Функция группировки по ключу
-function groupBy(array, keyGetter) {
-    const groups = {};
+function groupBy<T>(array:T[], keyGetter:(item: T) => string | number): Record<string | number, T[]> {
+    const groups: Record<string | number, T[]> = {};;
     
     array.forEach(item => {
         const key = keyGetter(item);
@@ -79,7 +81,7 @@ function groupBy(array, keyGetter) {
 }
 
 // Функция для создания уникального массива
-function unique(array, keyGetter) {
+function unique<T>(array: T[], keyGetter?:(item: T) => string | number): T[] {
     if (!keyGetter) {
         return [...new Set(array)];
     }
@@ -96,39 +98,41 @@ function unique(array, keyGetter) {
 }
 
 // Функция сортировки с кастомным компаратором
-function sortBy(array, compareFn) {
+function sortBy<T>(array:T[], compareFn:(a: T, b: T) => number): T[] {
     return [...array].sort(compareFn);
 }
 
+
 // Класс для работы с коллекцией
-class Collection {
-    constructor(items) {
+class Collection<T> {
+    private items: T[];
+    constructor(items: T[]) {
         this.items = items || [];
     }
     
-    add(item) {
+    add(item:T) {
         this.items.push(item);
         return this;
     }
     
-    remove(predicate) {
+    remove(predicate:(item: T) => boolean) {
         this.items = this.items.filter(item => !predicate(item));
         return this;
     }
     
-    find(predicate) {
+    find(predicate:(item: T) => boolean) {
         return this.items.find(predicate);
     }
     
-    filter(predicate) {
+    filter(predicate:(item: T) => boolean) {
         return new Collection(this.items.filter(predicate));
     }
     
-    map(mapper) {
+    map(mapper:(item: T) => string) {
         return new Collection(this.items.map(mapper));
     }
     
-    reduce(reducer, initialValue) {
+    reduce<R>(reducer:(accumulator:R, currentValue:T) => R, initialValue:R) {
         return this.items.reduce(reducer, initialValue);
     }
     
@@ -141,25 +145,24 @@ class Collection {
     }
 }
 
+
 // Класс Repository для работы с данными
-class Repository {
-    constructor() {
-        this.items = [];
-        this.nextId = 1;
-    }
+class Repository<T extends {id:number; createdAt:Date;updatedAt:Date}> {
+    private nextId: number = 1;
+    private items: T[] = [];
     
-    create(data) {
-        const item = {
+    create(data:Omit<T, 'id' | 'createdAt' | 'updatedAt'>) {
+        const item ={
             id: this.nextId++,
             ...data,
             createdAt: new Date(),
             updatedAt: new Date()
         };
-        this.items.push(item);
+        this.items.push(item as T);
         return item;
     }
     
-    findById(id) {
+    findById(id:number) {
         return this.items.find(item => item.id === id);
     }
     
@@ -167,7 +170,7 @@ class Repository {
         return [...this.items];
     }
     
-    update(id, updates) {
+    update(id:number, updates: T) {
         const index = this.items.findIndex(item => item.id === id);
         if (index === -1) return null;
         
@@ -180,7 +183,7 @@ class Repository {
         return this.items[index];
     }
     
-    delete(id) {
+    delete(id:number) {
         const index = this.items.findIndex(item => item.id === id);
         if (index === -1) return false;
         
@@ -194,30 +197,30 @@ class Repository {
 }
 
 // Функция для объединения объектов
-function merge(target, ...sources) {
+function merge<T>(target:T, ...sources:Partial<T>[]) {
     return Object.assign({}, target, ...sources);
 }
 
 // Функция для deep clone
-function deepClone(obj) {
+function deepClone<T>(obj:T):T {
     if (obj === null || typeof obj !== 'object') {
         return obj;
     }
     
     if (obj instanceof Date) {
-        return new Date(obj.getTime());
+        return new Date(obj.getTime()) as T;
     }
     
     if (obj instanceof Array) {
-        return obj.map(item => deepClone(item));
+        return obj.map(item => deepClone(item)) as T;
     }
     
-    const cloned = {};
+    const cloned = {} as T;
     Object.keys(obj).forEach(key => {
-        cloned[key] = deepClone(obj[key]);
+        cloned[key as keyof T] = deepClone(obj[key as keyof T]);
     });
     
-    return cloned;
+    return cloned as T;
 }
 
 // Примеры использования
