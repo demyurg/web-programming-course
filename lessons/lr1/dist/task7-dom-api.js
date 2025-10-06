@@ -1,3 +1,4 @@
+"use strict";
 /*
  * ЗАДАЧА 7: Работа с DOM API и обработчиками событий
  *
@@ -8,82 +9,83 @@
  * 4. Используйте type guards для проверки элементов
  * 5. Обработайте случаи когда элементы могут не существовать
  */
+Object.defineProperty(exports, "__esModule", { value: true });
 function getElementById(id) {
-    var element = document.getElementById(id);
+    const element = document.getElementById(id);
     if (!element) {
-        throw new Error("\u042D\u043B\u0435\u043C\u0435\u043D\u0442 \u0441 ID \"".concat(id, "\" \u043D\u0435 \u043D\u0430\u0439\u0434\u0435\u043D"));
+        throw new Error(`Элемент с ID "${id}" не найден`);
     }
     return element;
 }
 function getElementByIdAsType(id, type) {
-    var element = getElementById(id);
+    const element = getElementById(id);
     if (!(element instanceof type)) {
-        throw new Error("\u042D\u043B\u0435\u043C\u0435\u043D\u0442 \"".concat(id, "\" \u0434\u043E\u043B\u0436\u0435\u043D \u0431\u044B\u0442\u044C ").concat(type.name, ", \u043D\u043E \u044D\u0442\u043E ").concat(element.constructor.name));
+        throw new Error(`Элемент "${id}" должен быть ${type.name}, но это ${element.constructor.name}`);
     }
     return element;
 }
-var FormManager = /** @class */ (function () {
-    function FormManager(formId) {
+class FormManager {
+    form;
+    fields;
+    errors;
+    constructor(formId) {
         this.form = getElementByIdAsType(formId, HTMLFormElement);
         this.fields = new Map();
         this.errors = new Map();
         this.setupEventListeners();
     }
-    FormManager.prototype.addField = function (fieldName, fieldId, validators) {
-        var _this = this;
-        var element = getElementById(fieldId);
+    addField(fieldName, fieldId, validators) {
+        const element = getElementById(fieldId);
         if (!(element instanceof HTMLInputElement ||
             element instanceof HTMLTextAreaElement ||
             element instanceof HTMLSelectElement)) {
-            throw new Error("\u042D\u043B\u0435\u043C\u0435\u043D\u0442 \u0441 ID \"".concat(fieldId, "\" \u043D\u0435 \u044F\u0432\u043B\u044F\u0435\u0442\u0441\u044F \u044D\u043B\u0435\u043C\u0435\u043D\u0442\u043E\u043C \u0444\u043E\u0440\u043C\u044B (input, textarea, select)."));
+            throw new Error(`Элемент с ID "${fieldId}" не является элементом формы (input, textarea, select).`);
         }
-        var errorElement = document.getElementById("".concat(fieldId, "-error"));
-        var field = {
+        const errorElement = document.getElementById(`${fieldId}-error`);
+        const field = {
             name: fieldName,
             element: element,
             validators: validators || [],
             errorElement: errorElement,
         };
         this.fields.set(fieldName, field);
-        element.addEventListener('input', function (event) {
-            var target = event.target;
-            _this.validateField(fieldName, target.value);
+        element.addEventListener('input', (event) => {
+            const target = event.target;
+            this.validateField(fieldName, target.value);
         });
-        element.addEventListener('blur', function (event) {
-            var target = event.target;
-            _this.validateField(fieldName, target.value);
+        element.addEventListener('blur', (event) => {
+            const target = event.target;
+            this.validateField(fieldName, target.value);
         });
         return this;
-    };
-    FormManager.prototype.setupEventListeners = function () {
-        var _this = this;
-        this.form.addEventListener('submit', function (event) {
+    }
+    setupEventListeners() {
+        this.form.addEventListener('submit', (event) => {
             event.preventDefault();
-            _this.handleSubmit(event);
+            this.handleSubmit(event);
         });
-        var resetButton = this.form.querySelector('button[type="reset"]');
+        const resetButton = this.form.querySelector('button[type="reset"]');
         if (resetButton && resetButton instanceof HTMLButtonElement) {
-            resetButton.addEventListener('click', function (event) {
-                _this.handleReset(event);
+            resetButton.addEventListener('click', (event) => {
+                this.handleReset(event);
             });
         }
-    };
-    FormManager.prototype.validateField = function (fieldName, value) {
-        var field = this.fields.get(fieldName);
+    }
+    validateField(fieldName, value) {
+        const field = this.fields.get(fieldName);
         if (!field)
             return true;
         this.clearFieldError(fieldName);
-        for (var _i = 0, _a = field.validators; _i < _a.length; _i++) {
-            var validator = _a[_i];
+        for (const validator of field.validators) {
             if (!validator.validate(value)) {
                 this.setFieldError(fieldName, validator.message);
                 return false;
             }
         }
         return true;
-    };
-    FormManager.prototype.setFieldError = function (fieldName, message) {
-        var field = this.fields.get(fieldName);
+    }
+    setFieldError(fieldName, message) {
+        const field = this.fields.get(fieldName);
         if (!field)
             return;
         this.errors.set(fieldName, message);
@@ -92,9 +94,9 @@ var FormManager = /** @class */ (function () {
             field.errorElement.textContent = message;
             field.errorElement.style.display = 'block';
         }
-    };
-    FormManager.prototype.clearFieldError = function (fieldName) {
-        var field = this.fields.get(fieldName);
+    }
+    clearFieldError(fieldName) {
+        const field = this.fields.get(fieldName);
         if (!field)
             return;
         this.errors.delete(fieldName);
@@ -103,19 +105,18 @@ var FormManager = /** @class */ (function () {
             field.errorElement.textContent = '';
             field.errorElement.style.display = 'none';
         }
-    };
-    FormManager.prototype.getFormData = function () {
-        var _this = this;
-        var formData = {};
-        this.fields.forEach(function (field, fieldName) {
-            var element = field.element;
+    }
+    getFormData() {
+        const formData = {};
+        this.fields.forEach((field, fieldName) => {
+            const element = field.element;
             if (element instanceof HTMLInputElement && element.type === 'checkbox') {
                 formData[fieldName] = element.checked.toString();
             }
             else if (element instanceof HTMLInputElement &&
                 element.type === 'radio') {
-                var radioGroup = _this.form.querySelectorAll("input[name=\"".concat(element.name, "\"]"));
-                var checked = Array.from(radioGroup).find(function (radio) { return radio.checked; });
+                const radioGroup = this.form.querySelectorAll(`input[name="${element.name}"]`);
+                const checked = Array.from(radioGroup).find(radio => radio.checked);
                 formData[fieldName] = checked ? checked.value : '';
             }
             else {
@@ -123,91 +124,87 @@ var FormManager = /** @class */ (function () {
             }
         });
         return formData;
-    };
-    FormManager.prototype.handleSubmit = function (_event) {
-        var _this = this;
+    }
+    handleSubmit(_event) {
         console.log('Отправка формы...');
-        var isValid = true;
-        this.fields.forEach(function (_field, fieldName) {
-            var fieldValue = _this.getFieldValue(fieldName);
-            if (!_this.validateField(fieldName, fieldValue)) {
+        let isValid = true;
+        this.fields.forEach((_field, fieldName) => {
+            const fieldValue = this.getFieldValue(fieldName);
+            if (!this.validateField(fieldName, fieldValue)) {
                 isValid = false;
             }
         });
         if (isValid) {
-            var formData = this.getFormData();
+            const formData = this.getFormData();
             this.onSubmitSuccess(formData);
         }
         else {
             this.onSubmitError();
         }
-    };
-    FormManager.prototype.getFieldValue = function (fieldName) {
-        var field = this.fields.get(fieldName);
+    }
+    getFieldValue(fieldName) {
+        const field = this.fields.get(fieldName);
         if (!field)
             return '';
         return field.element.value;
-    };
-    FormManager.prototype.handleReset = function (_event) {
-        var _this = this;
+    }
+    handleReset(_event) {
         console.log('Сброс формы...');
         // Очищаем все ошибки
-        this.fields.forEach(function (_field, fieldName) {
-            _this.clearFieldError(fieldName);
+        this.fields.forEach((_field, fieldName) => {
+            this.clearFieldError(fieldName);
         });
         this.errors.clear();
-    };
-    FormManager.prototype.onSubmitSuccess = function (formData) {
+    }
+    onSubmitSuccess(formData) {
         console.log('✅ Форма отправлена успешно:', formData);
         alert('Форма отправлена успешно!');
-    };
-    FormManager.prototype.onSubmitError = function () {
+    }
+    onSubmitError() {
         console.log('❌ Ошибки в форме');
         alert('Пожалуйста, исправьте ошибки в форме');
-    };
-    return FormManager;
-}());
-var Validators = {
-    required: function (message) { return ({
-        validate: function (value) { return value.trim().length > 0; },
+    }
+}
+const Validators = {
+    required: (message) => ({
+        validate: value => value.trim().length > 0,
         message: message || 'Поле обязательно для заполнения',
-    }); },
-    minLength: function (minLen, message) { return ({
-        validate: function (value) { return value.length >= minLen; },
-        message: message || "\u041C\u0438\u043D\u0438\u043C\u0430\u043B\u044C\u043D\u0430\u044F \u0434\u043B\u0438\u043D\u0430: ".concat(minLen, " \u0441\u0438\u043C\u0432\u043E\u043B\u043E\u0432"),
-    }); },
-    email: function (message) { return ({
-        validate: function (value) {
-            var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    }),
+    minLength: (minLen, message) => ({
+        validate: value => value.length >= minLen,
+        message: message || `Минимальная длина: ${minLen} символов`,
+    }),
+    email: (message) => ({
+        validate: value => {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             return emailRegex.test(value);
         },
         message: message || 'Введите корректный email',
-    }); },
-    phone: function (message) { return ({
-        validate: function (value) {
-            var phoneRegex = /^\+?[\d\s\-\(\)]{10,}$/;
+    }),
+    phone: (message) => ({
+        validate: value => {
+            const phoneRegex = /^\+?[\d\s\-\(\)]{10,}$/;
             return phoneRegex.test(value);
         },
         message: message || 'Введите корректный номер телефона',
-    }); },
+    }),
 };
 function addClickListener(elementId, handler) {
-    var element = getElementById(elementId);
+    const element = getElementById(elementId);
     element.addEventListener('click', handler);
     return element;
 }
 function addKeyboardListener(elementId, handler, keyCode) {
-    var element = getElementById(elementId);
-    element.addEventListener('keydown', function (event) {
+    const element = getElementById(elementId);
+    element.addEventListener('keydown', (event) => {
         if (!keyCode || event.code === keyCode) {
             handler(event);
         }
     });
     return element;
 }
-function createElement(tagName, options) {
-    if (options === void 0) { options = {}; }
-    var element = document.createElement(tagName);
+function createElement(tagName, options = {}) {
+    const element = document.createElement(tagName);
     if (options.id)
         element.id = options.id;
     if (options.className)
@@ -217,14 +214,12 @@ function createElement(tagName, options) {
     if (options.innerHTML)
         element.innerHTML = options.innerHTML;
     if (options.attributes) {
-        Object.entries(options.attributes).forEach(function (_a) {
-            var key = _a[0], value = _a[1];
+        Object.entries(options.attributes).forEach(([key, value]) => {
             element.setAttribute(key, value);
         });
     }
     if (options.styles) {
-        Object.entries(options.styles).forEach(function (_a) {
-            var property = _a[0], value = _a[1];
+        Object.entries(options.styles).forEach(([property, value]) => {
             ;
             element.style[property] = value;
         });
@@ -235,7 +230,30 @@ function createElement(tagName, options) {
     return element;
 }
 function initializeForm() {
-    var formHTML = "\n        <form id=\"registration-form\">\n            <div>\n                <label for=\"name\">\u0418\u043C\u044F:</label>\n                <input type=\"text\" id=\"name\" name=\"name\" />\n                <div id=\"name-error\" class=\"error-message\"></div>\n            </div>\n            \n            <div>\n                <label for=\"email\">Email:</label>\n                <input type=\"email\" id=\"email\" name=\"email\" />\n                <div id=\"email-error\" class=\"error-message\"></div>\n            </div>\n            \n            <div>\n                <label for=\"phone\">\u0422\u0435\u043B\u0435\u0444\u043E\u043D:</label>\n                <input type=\"tel\" id=\"phone\" name=\"phone\" />\n                <div id=\"phone-error\" class=\"error-message\"></div>\n            </div>\n            \n            <button type=\"submit\">\u041E\u0442\u043F\u0440\u0430\u0432\u0438\u0442\u044C</button>\n            <button type=\"reset\">\u0421\u0431\u0440\u043E\u0441\u0438\u0442\u044C</button>\n        </form>\n    ";
+    const formHTML = `
+        <form id="registration-form">
+            <div>
+                <label for="name">Имя:</label>
+                <input type="text" id="name" name="name" />
+                <div id="name-error" class="error-message"></div>
+            </div>
+            
+            <div>
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" />
+                <div id="email-error" class="error-message"></div>
+            </div>
+            
+            <div>
+                <label for="phone">Телефон:</label>
+                <input type="tel" id="phone" name="phone" />
+                <div id="phone-error" class="error-message"></div>
+            </div>
+            
+            <button type="submit">Отправить</button>
+            <button type="reset">Сбросить</button>
+        </form>
+    `;
     // В реальном приложении эта форма уже есть в HTML
     console.log('HTML для формы:', formHTML);
     // Пример инициализации (раскомментируйте если есть реальная форма в DOM)
@@ -265,7 +283,7 @@ function initializeForm() {
 }
 function demonstrateEventHandling() {
     console.log('=== Демонстрация типизации событий ===');
-    var eventExamples = {
+    const eventExamples = {
         click: 'MouseEvent',
         keydown: 'KeyboardEvent',
         input: 'InputEvent',
@@ -274,10 +292,10 @@ function demonstrateEventHandling() {
         resize: 'UIEvent',
         scroll: 'Event',
     };
-    Object.entries(eventExamples).forEach(function (_a) {
-        var eventType = _a[0], eventInterface = _a[1];
-        console.log("".concat(eventType, " -> ").concat(eventInterface));
+    Object.entries(eventExamples).forEach(([eventType, eventInterface]) => {
+        console.log(`${eventType} -> ${eventInterface}`);
     });
 }
 demonstrateEventHandling();
 initializeForm();
+//# sourceMappingURL=task7-dom-api.js.map
