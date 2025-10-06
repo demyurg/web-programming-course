@@ -20,28 +20,36 @@ import React, { createContext, useContext, useState, ReactNode } from 'react';
 // - email: string
 // - message: string
 
+interface FormData{
+  name: string;
+  email: string,
+  message: string
+}
+
 // TODO 1.2: Типизируйте компонент SimpleForm
 function SimpleForm() {
   // TODO 1.3: Создайте состояние formData с типом FormData
-  const [formData, setFormData] = useState(/* TODO */);
+  const [formData, setFormData] = useState<FormData>({
+    name: '',
+    email: '',
+    message: ''
+  });
   const [submitted, setSubmitted] = useState(false);
 
   // TODO 1.4: Типизируйте обработчик изменения
-  const handleChange = (e: /* TODO: тип события */) => {
+  const handleChange = (e:React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    // TODO: обновите formData
+    setFormData({...formData, [name]:value})
   };
 
   // TODO 1.5: Типизируйте обработчик отправки
-  const handleSubmit = (e: /* TODO: тип события */) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    console.log('Отправлено:', formData);
+    setSubmitted(true);
+    console.log('Отправлено:', FormData);
+    setTimeout(() => setSubmitted(false), 3000);
 
-    // TODO: установите submitted в true чтобы показать сообщение об успехе
-
-    // TODO: через 3 секунды верните submitted в false
-    // Подсказка: используйте setTimeout(() => setSubmitted(false), 3000)
   };
 
   return (
@@ -60,7 +68,7 @@ function SimpleForm() {
             type="text"
             id="name"
             name="name"
-            value={/* TODO */}
+            value={formData.name}
             onChange={handleChange}
             required
           />
@@ -73,7 +81,7 @@ function SimpleForm() {
             type="email"
             id="email"
             name="email"
-            value={/* TODO */}
+            value={formData.email}
             onChange={handleChange}
             required
           />
@@ -85,7 +93,7 @@ function SimpleForm() {
           <textarea
             id="message"
             name="message"
-            value={/* TODO */}
+            value={formData.message}
             onChange={handleChange}
             rows={4}
             required
@@ -106,6 +114,8 @@ function SimpleForm() {
 // - id: number
 // - name: string
 // - email: string
+
+interface
 
 // TODO 2.2: Создайте интерфейс UserContextType с полями:
 // - user: User | null
