@@ -17,7 +17,7 @@
 // - FormData: [fieldName: string]: string
 
 // Утилита для безопасного получения элемента
-function getElementById(id) {
+function getElementById(id: string) {
     const element = document.getElementById(id);
     if (!element) {
         throw new Error(`Элемент с ID "${id}" не найден`);
@@ -26,7 +26,7 @@ function getElementById(id) {
 }
 
 // Утилита для получения элемента определенного типа
-function getElementByIdAsType(id, expectedType) {
+function getElementByIdAsType(id: string, expectedType: string) {
     const element = getElementById(id);
     
     if (element.tagName.toLowerCase() !== expectedType.toLowerCase()) {
@@ -38,7 +38,7 @@ function getElementByIdAsType(id, expectedType) {
 
 // Класс для управления формой
 class FormManager {
-    constructor(formId) {
+    constructor(formId: string) {
         this.form = getElementByIdAsType(formId, 'form');
         this.fields = new Map();
         this.errors = new Map();

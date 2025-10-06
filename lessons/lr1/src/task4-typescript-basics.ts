@@ -18,11 +18,19 @@
 // - name: string
 // - email: string
 
+interface User {
+    id: number
+    name: string
+    email: string
+}
+
 // TODO 1.2: Создайте тип UserRole как union type:
 // type UserRole = 'admin' | 'user'
 
+type UserRole = 'admin' | 'user'
+
 // TODO 1.3: Типизируйте эту функцию
-function createUser(name, email, role) {
+function createUser(name: string, email: string, role: string) {
     return {
         id: Math.floor(Math.random() * 1000),
         name: name,
@@ -36,12 +44,12 @@ function createUser(name, email, role) {
 // ============================================
 
 // TODO 2.1: Типизируйте функцию с generics
-function getFirst(array) {
+function getFirst<T>(array: Array<T>) {
     return array.length > 0 ? array[0] : undefined;
 }
 
 // TODO 2.2: Типизируйте функцию с generics
-function filterArray(array, predicate) {
+function filterArray<T>(array: Array<T>, predicate: (value: T, index?: number, array?: T[]) => boolean) {
     return array.filter(predicate);
 }
 
@@ -54,8 +62,14 @@ function filterArray(array, predicate) {
 // - data: T | null
 // - error: string | null
 
+interface ApiResponse<T> {
+    success: boolean
+    data: T | null
+    error: string | null
+}
+
 // TODO 3.2: Типизируйте эту функцию
-async function fetchUser(userId) {
+async function fetchUser(userId: number) {
     try {
         const response = await fetch(`/api/users/${userId}`);
         const data = await response.json();
@@ -77,7 +91,7 @@ async function fetchUser(userId) {
         return {
             success: false,
             data: null,
-            error: error.message
+            error: typeof error === 'object' && error != null && 'message' in error ? error.message : 'unk err'
         };
     }
 }
@@ -85,34 +99,33 @@ async function fetchUser(userId) {
 // ============================================
 // ЧАСТЬ 4: DOM API (10-15 минут)
 // ============================================
-
 // TODO 4.1: Типизируйте эту функцию
-function getElementById(id) {
+function getElementById<T extends HTMLElement>(id: string): T {
     const element = document.getElementById(id);
     if (!element) {
         throw new Error(`Element ${id} not found`);
     }
-    return element;
+    return element as T;
 }
 
 // TODO 4.2: Типизируйте класс FormManager
 class FormManager {
-    // private propname: PropType;
-    constructor(formId) {
-        this.form = getElementById(formId);
+    private form: HTMLFormElement;
+    constructor(formId: string) {
+        this.form = getElementById<HTMLFormElement>(formId);
     }
 
-    getValue(fieldId) {
-        const field = getElementById(fieldId);
+    getValue(fieldId: string) {
+        const field = getElementById<HTMLInputElement>(fieldId);
         return field.value;
     }
 
-    setValue(fieldId, value) {
-        const field = getElementById(fieldId);
+    setValue(fieldId: string, value: string) {
+        const field = getElementById<HTMLInputElement>(fieldId);
         field.value = value;
     }
 
-    onSubmit(handler) {
+    onSubmit(handler: (event: SubmitEvent) => void) {
         this.form.addEventListener('submit', (event) => {
             event.preventDefault();
             handler(event);
@@ -133,22 +146,22 @@ console.log('Создан пользователь:', user);
 // Пример 2: Работа с массивами
 const numbers = [1, 2, 3, 4, 5];
 const first = getFirst(numbers);
-const evens = filterArray(numbers, n => n % 2 === 0);
+const evens = filterArray(numbers, (n) => n % 2 === 0);
 console.log('Первый элемент:', first);
 console.log('Четные числа:', evens);
 
 // Пример 3: Работа с API
-// await fetchUser(1).then(response => {
-//     if (response.success) {
-//         console.log('Пользователь:', response.data);
-//     } else {
-//         console.error('Ошибка:', response.error);
-//     }
-// });
+fetchUser(1).then(response => {
+    if (response.success) {
+        console.log('Пользователь:', response.data);
+    } else {
+        console.error('Ошибка:', response.error);
+    } 
+ });
 
 // Пример 4: Работа с формой (требует HTML)
-// const formManager = new FormManager('my-form');
-// formManager.onSubmit((event) => {
-//     const name = formManager.getValue('name');
-//     console.log('Отправлено:', name);
-// });
+const formManager = new FormManager('my-form');
+formManager.onSubmit((event) => {
+    const name = formManager.getValue('name');
+    console.log('Отправлено:', name);
+});
