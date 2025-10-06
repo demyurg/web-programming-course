@@ -132,7 +132,7 @@ class Collection<T> {
         return new Collection(this.items.map(mapper));
     }
     
-    reduce<R>(reducer:(array: T[]) => R, initialValue:R) {
+    reduce<R>(reducer:(accumulator:R, currentValue:T) => R, initialValue:R) {
         return this.items.reduce(reducer, initialValue);
     }
     
@@ -145,29 +145,20 @@ class Collection<T> {
     }
 }
 
-// Интерфейс репозитория
-interface RepositoryInterf<T> {
-    create(data: Partial<T>): T;
-    findById(id: number): T | undefined;
-    findAll(): T[];
-    update(id: number, updates: Partial<T>): T | null | undefined;
-    delete(id: number): boolean;
-    count(): number;
-}
 
 // Класс Repository для работы с данными
-class Repository<T extends {id:number}> implements RepositoryInterf<T>{
+class Repository<T extends {id:number; createdAt:Date;updatedAt:Date}> {
     private nextId: number = 1;
     private items: T[] = [];
     
-    create(data:Partial<T>) {
-        const item: T={
+    create(data:Omit<T, 'id' | 'createdAt' | 'updatedAt'>) {
+        const item ={
             id: this.nextId++,
             ...data,
             createdAt: new Date(),
             updatedAt: new Date()
         };
-        this.items.push(item);
+        this.items.push(item as T);
         return item;
     }
     
@@ -179,7 +170,7 @@ class Repository<T extends {id:number}> implements RepositoryInterf<T>{
         return [...this.items];
     }
     
-    update(id:number, updates: Partial<T>) {
+    update(id:number, updates: T) {
         const index = this.items.findIndex(item => item.id === id);
         if (index === -1) return null;
         
@@ -206,7 +197,7 @@ class Repository<T extends {id:number}> implements RepositoryInterf<T>{
 }
 
 // Функция для объединения объектов
-function merge<T>(target:T, ...sources) {
+function merge<T>(target:T, ...sources:Partial<T>[]) {
     return Object.assign({}, target, ...sources);
 }
 
@@ -224,9 +215,9 @@ function deepClone<T>(obj:T):T {
         return obj.map(item => deepClone(item)) as T;
     }
     
-    const cloned = {};
+    const cloned = {} as T;
     Object.keys(obj).forEach(key => {
-        cloned[key] = deepClone(obj[key]);
+        cloned[key as keyof T] = deepClone(obj[key as keyof T]);
     });
     
     return cloned as T;

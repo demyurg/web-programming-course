@@ -25,7 +25,7 @@ interface ApiResponse<T>{
     data?:T;
     success?:boolean;
     message?:string;
-    error?:string;
+    error?:string|null;
 }
 
 interface User{
@@ -163,7 +163,7 @@ function handleApiResponse(response:ApiResponse<Order>, onSuccess:Function, onEr
 
 // Класс для управления состоянием загрузки
 class ApiState<T> {
-private _state: { isLoading: boolean; error: string | null; data: T | null };
+    private _state: { isLoading: boolean; error: string | null; data: T | null };
 
     constructor() {
         this._state = {
@@ -198,7 +198,7 @@ private _state: { isLoading: boolean; error: string | null; data: T | null };
 }
 
 // Композитная функция для загрузки данных с состоянием
-async function loadDataWithState<T>(apiCall:() => Promise<ApiResponse<T>>, state:ApiState<T>): Promise<ApiResponse<T>> {
+async function loadDataWithState<T>(apiCall:Function, state:ApiState<T>): Promise<ApiResponse<T>> {
     state.setLoading(true);
     
     try {
@@ -216,7 +216,7 @@ async function loadDataWithState<T>(apiCall:() => Promise<ApiResponse<T>>, state
         return {
             success: false,
             error: (error as Error).message,
-            data: null
+            data: null as T  
         };
     }
 }
@@ -248,9 +248,9 @@ async function exampleUsage() {
     });
     
     handleApiResponse(
-        orderResponse,
-        (order) => console.log('Заказ создан:', order),
-        (error) => console.error('Ошибка создания заказа:', error)
+        orderResponse as ApiResponse<Order>,
+        (order:Order) => console.log('Заказ создан:', order),
+        (error:Error) => console.error('Ошибка создания заказа:', error)
     );
 }
 

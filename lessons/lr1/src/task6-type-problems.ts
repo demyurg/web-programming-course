@@ -11,7 +11,7 @@
 // Проблемные функции, которые нужно исправить
 
 // ПРОБЛЕМА 1: Функция с any типом
-function processData(data: string | number[] | object): string[]{
+function processData(data: any): string[]{
     if (Array.isArray(data)) {
         return data.map(item => String(item));
     }
