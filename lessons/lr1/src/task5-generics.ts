@@ -12,21 +12,28 @@
 
 // TODO: Типизировать с использованием generics
 
+interface ApiResponse<T> {
+    data?: Date;
+    success: boolean
+    message?: string
+    error: T
+}
+
 // Утилита для кеширования
 class Cache {
     constructor() {
         this.cache = new Map();
     }
     
-    set(key, value) {
+    set(key: string, value: object) {
         this.cache.set(key, value);
     }
     
-    get(key) {
+    get(key: string) {
         return this.cache.get(key);
     }
     
-    has(key) {
+    has(key: string) {
         return this.cache.has(key);
     }
     
@@ -34,7 +41,7 @@ class Cache {
         this.cache.clear();
     }
     
-    delete(key) {
+    delete(key: string) {
         return this.cache.delete(key);
     }
     
@@ -44,27 +51,27 @@ class Cache {
 }
 
 // Универсальная функция фильтрации
-function filterArray(array, predicate) {
+function filterArray<T>(array: Array<number>, predicate: (value: T, index?: number, array?: T[]) => boolean ) {
     return array.filter(predicate);
 }
 
 // Универсальная функция маппинга
-function mapArray(array, mapper) {
+function mapArray(array: Array<number>, mapper) {
     return array.map(mapper);
 }
 
 // Функция для получения первого элемента
-function getFirst(array) {
+function getFirst(array: Array<number>) {
     return array.length > 0 ? array[0] : undefined;
 }
 
 // Функция для получения последнего элемента
-function getLast(array) {
+function getLast(array: Array<number>) {
     return array.length > 0 ? array[array.length - 1] : undefined;
 }
 
 // Функция группировки по ключу
-function groupBy(array, keyGetter) {
+function groupBy(array: Array<number>, keyGetter: Array<number>) {
     const groups = {};
     
     array.forEach(item => {
@@ -79,7 +86,7 @@ function groupBy(array, keyGetter) {
 }
 
 // Функция для создания уникального массива
-function unique(array, keyGetter) {
+function unique(array: Array<number>, keyGetter: boolean) {
     if (!keyGetter) {
         return [...new Set(array)];
     }
@@ -96,7 +103,7 @@ function unique(array, keyGetter) {
 }
 
 // Функция сортировки с кастомным компаратором
-function sortBy(array, compareFn) {
+function sortBy(array: Array<number>, compareFn) {
     return [...array].sort(compareFn);
 }
 
@@ -148,7 +155,7 @@ class Repository {
         this.nextId = 1;
     }
     
-    create(data) {
+    create(data: Date) {
         const item = {
             id: this.nextId++,
             ...data,
@@ -159,7 +166,7 @@ class Repository {
         return item;
     }
     
-    findById(id) {
+    findById(id: number) {
         return this.items.find(item => item.id === id);
     }
     
@@ -167,7 +174,7 @@ class Repository {
         return [...this.items];
     }
     
-    update(id, updates) {
+    update(id: number, updates) {
         const index = this.items.findIndex(item => item.id === id);
         if (index === -1) return null;
         
@@ -180,7 +187,7 @@ class Repository {
         return this.items[index];
     }
     
-    delete(id) {
+    delete(id: number) {
         const index = this.items.findIndex(item => item.id === id);
         if (index === -1) return false;
         

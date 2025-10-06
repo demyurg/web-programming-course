@@ -9,7 +9,7 @@
  */
 
 // Калькулятор с проблемами типизации
-function calculate(operation, a, b) {
+function calculate(operation: 'add' | 'subtract' | 'multiply' | 'divide', a: number, b: number) {
     switch (operation) {
         case 'add':
             return a + b;
@@ -28,7 +28,7 @@ function calculate(operation, a, b) {
 }
 
 // Функция для работы с пользователем
-function createUser(name, age, email, isAdmin) {
+function createUser(name: string, age: number, email: string, isAdmin?: boolean) {
     return {
         name,
         age,
@@ -41,8 +41,10 @@ function createUser(name, age, email, isAdmin) {
     };
 }
 
+type User = ReturnType<typeof createUser>
+
 // Обработка списка пользователей
-function processUsers(users) {
+function processUsers(users: User[]) {
     return users.map(user => {
         return {
             ...user,
@@ -53,7 +55,7 @@ function processUsers(users) {
 }
 
 // Функция поиска пользователя
-function findUser(users, criteria) {
+function findUser(users: User[], criteria: string | number | Partial<User>) {
     if (typeof criteria === 'string') {
         return users.find(user => user.name === criteria);
     }
@@ -62,7 +64,10 @@ function findUser(users, criteria) {
     }
     if (typeof criteria === 'object') {
         return users.find(user => {
-            return Object.keys(criteria).every(key => user[key] === criteria[key]);
+            return Object.keys(criteria).every(key => {
+                const keyN = key as keyof User; 
+                return user[keyN] === criteria[keyN];
+            });
         });
     }
     return null;
@@ -72,7 +77,7 @@ function findUser(users, criteria) {
 console.log(calculate('add', 10, 5)); // 15
 console.log(calculate('divide', 10, 0)); // null
 
-const user = createUser('Анна', 25, 'anna@example.com');
+const user = createUser('Анна', 25, 'anna@example.com', true);
 console.log(user);
 
 const users = [
