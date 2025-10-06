@@ -185,7 +185,7 @@ class Repository<T extends Omit<BaseEntity, "id" | "createdAt" | "updatedAt">> {
         ...this.items[index],
         ...updates,
         updatedAt: new Date()
-    } ;
+    } as T & BaseEntity;
         
         return this.items[index];
     }

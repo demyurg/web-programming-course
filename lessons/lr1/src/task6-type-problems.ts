@@ -9,7 +9,7 @@
  */
 
 // Проблемные функции, которые нужно исправить
-type Primitive = string | number | boolean | symbol | null | undefined;
+
 type PlainObject = Record<string, unknown>;
 
 type Maybe<T> = T | undefined;
@@ -217,7 +217,7 @@ function pick<T extends Record<string, unknown>, K extends keyof T>(obj: T, keys
     return result;
 }
 // ПРОБЛЕМА 10: Функция сравнения с проблемами типов
-function isEqual<T>(a: T, b: T) {
+function isEqual<T>(a: T, b: T):boolean{
     if (a === b) return true;
     
     if (a == null || b == null) return a === b;
@@ -230,7 +230,8 @@ function isEqual<T>(a: T, b: T) {
         
         if (keysA.length !== keysB.length) return false;
         
-        return keysA.every(key => isEqual(a[key], b[key]));
+        return keysA.every(key => isEqual((a as any)[key], (b as any)[key]));
+
     }
     
     return false;

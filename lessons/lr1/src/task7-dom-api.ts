@@ -26,10 +26,10 @@ interface FormField {
     name: string;
     element: HTMLInputElement;
     validators: ValidationRule[];
-    errorElement?: HTMLElement;
+    errorElement?: HTMLElement| undefined;
 }
 
-type FormData = Record<string, string>;
+type FormData = { [key: string]: string };
 function isHTMLElement(element: unknown): element is HTMLElement {
     return element instanceof HTMLElement;
 }
@@ -436,3 +436,4 @@ function demonstrateEventHandling() {
 // Демонстрация
 demonstrateEventHandling();
 initializeForm();
+export{}
