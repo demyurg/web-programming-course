@@ -12,11 +12,163 @@ html {
 body {
     font-family: 'Open Sans', sans-serif;
     line-height: 1.6;
-    color: #333;
+    color: #671414;
     overflow-x: hidden;
 }
+header, footer {
+    background-color: #2c3e50;
+    margin-bottom: 10px;
+    width: 100%; 
+    padding: 15px; 
+    box-sizing: border-box;
+
+  }
+.logo {
+    font-family: 'Playfair Display', serif;
+    text-transform: uppercase; /* Преобразуем текст в верхний регистр */
+    font-size: 28px;
+    font-weight: 900; 
+  }
 
 /* Typography */
 h1, h2, h3 {
     font-family: 'Playfair Display', serif;
+    color: #1a252f;
 }
+.text_title{
+    color: #5d6d7e;
+    font-family: 'Open Sans';
+    font-size: 12px;
+    text-transform: uppercase;
+    font-weight: 400 ;
+    letter-spacing: 0.05em;
+    padding: 10px;
+}
+p {
+    color: #5d6d7e;
+    font-family: 'Open Sans';
+    font-size: 16px; 
+}
+a {
+    text-decoration: none;
+    color: white;
+   }
+.container {
+    max-width: 1190px;
+    padding: 0 10px; /* Увеличиваем боковые отступы */
+    margin: 0 auto; /* Центрируем контейнер по горизонтали */
+   }
+/* Стилизуем внутренний контейнер шапки */
+.header__inner {
+    display: flex; /* Выстраиваем элементы внутри контейнера в строку */
+    justify-content: space-between; 
+    align-items: center; 
+   }
+.menu__list {
+    display: flex; 
+    list-style: none; /* Убираем стандартные маркеры (чёрные точки) */
+   }
+   
+   /* Стилизуем пункты меню */
+.menu__list-item {
+    margin-right: 5px; /* Добавляем отступ между пунктами меню */
+   }
+   
+   /* Стилизуем ссылки в меню */
+.menu__list-link {
+    padding: 10px 10px; /* Увеличиваем вертикальный и горизонтальный отступы */
+    font-size: 16px;
+    color: #dcf5fe;
+    cursor: pointer; /* Задаём изменение вида курсора при наведении на пункты меню */
+    transition: all 0.3s; /* Добавляем плавное изменение стилей при наведении */
+   }
+   
+   /* Добавляем стилизацию ссылок в меню при наведении курсора */
+.menu__list-link:hover {
+    color: #b9bfc6; 
+   }   
+
+.hero_section {
+    padding: 10px 20px;
+}
+.section {
+    text-align: center;
+    padding: 48px;
+    background: rgba(255, 107, 107, 1);
+    background: linear-gradient(90deg, rgba(255, 107, 107, 0.5) 0%, rgba(78, 205, 196, 0.5) 100%);
+    border-radius: 20px;
+    
+}
+/* кнопка*/
+.btn{
+    background: #FF6B6B;
+    background: linear-gradient(90deg, rgba(255, 107, 107, 1) 0%, rgba(78, 205, 196, 1) 100%);
+    border-radius: 50px;
+    border: none;
+    color: white;
+    padding: 12px 30px;
+    
+}
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(255, 107, 107, 0.3);
+
+}
+.about_section {
+
+    margin: 0 auto;
+    width: 100%;
+    max-width: 1920px;
+    padding:  16px;
+    flex-direction: row;
+    flex-wrap: wrap;
+    display: flex;
+
+}
+
+.info_item {
+    margin-bottom: 10px;
+    padding: 32px 24px;
+    background: rgba(212, 212, 212, 0.5);
+    -webkit-box-shadow: 0 8px 40px rgba(0, 0, 0, .05);
+    box-shadow: 0 8px 40px rgba(0, 0, 0, .05);
+    border-radius: 20px; 
+
+    display: flex;
+	flex-direction: column;
+	flex-basis: 100%;
+	flex: 1;
+	height: 48%;
+}
+.info_item + .info_item {
+    margin-left: 2%;
+}
+
+.gallery_section {
+    padding: 16px; 
+    width: 100%;
+   
+    
+}
+.column {
+   display: inline-flex;
+   
+}
+.column img{
+   padding-right: 7px;
+
+}
+
+input[type="text"] {
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    width: 200px;
+  }
+  input[type="text"]:focus {
+    color: #212529;
+    outline: 0;
+    border:2px solid red;
+   
+    box-shadow: 0 0 0 0.2rem rgba(255, 0, 0, 0.1);
+  }
