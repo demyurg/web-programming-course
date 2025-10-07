@@ -20,14 +20,20 @@ import React, { useState } from 'react';
 // - onClick: () => void
 // - variant?: 'primary' | 'secondary'
 
+interface ButtonProps {
+  children: React.ReactNode
+  onClick: () => void
+  variant?: 'primary' | 'secondary'
+}
+
 // TODO 1.2: Типизируйте компонент Button
-function Button(/* TODO: добавьте типизацию */) {
+function Button({children, onClick, variant}:ButtonProps) {
   return (
     <button
-      className={`btn btn--${/* TODO */}`}
-      onClick={/* TODO */}
+      className={`btn btn--${variant}`}
+      onClick={onClick}
     >
-      {/* TODO */}
+      {children}
     </button>
   );
 }
@@ -36,15 +42,19 @@ function Button(/* TODO: добавьте типизацию */) {
 // - name: string
 // - email: string
 // - isOnline: boolean
-
+interface UserCardProps {
+  name: string
+  email: string
+  isOnline: boolean
+}
 // TODO 1.4: Типизируйте компонент UserCard
-function UserCard(/* TODO: добавьте типизацию */) {
+function UserCard({name,email,isOnline}:UserCardProps) {
   return (
     <div className="user-card">
-      <h3>{/* TODO: name */}</h3>
-      <p>{/* TODO: email */}</p>
-      <span className={/* TODO: добавьте класс на основе isOnline */}>
-        {/* TODO: отобразите статус */}
+      <h3>{name}</h3>
+      <p>{email}</p>
+      <span className={isOnline ? "online" : "offline"}>
+        {isOnline ? "online" : "offline"}
       </span>
     </div>
   );
@@ -59,8 +69,15 @@ function UserCard(/* TODO: добавьте типизацию */) {
 // - text: string
 // - completed: boolean
 
+interface Todo {
+  id: number
+  text: string
+  completed: boolean
+}
+
+
 // TODO 3.2: Типизируйте компонент TodoApp
-function TodoApp() {
+function TodoApp({id,text,completed}: Todo) {
   // TODO 3.3: Создайте состояние todos с типом Todo[]
   const [todos, setTodos] = useState(/* TODO */);
   const [inputValue, setInputValue] = useState('');
