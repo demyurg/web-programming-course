@@ -21,8 +21,59 @@
 // - UserRole: 'admin' | 'customer' | 'manager'
 // - OrderStatus: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled'
 
+
+interface ApiResponse<T>{
+    data?: T
+    success: boolean;
+    message?: string;
+    error?: string;
+}
+type UserRole = 'admin' | 'customer' | 'manager'
+
+interface User{
+    id: number;
+    name: string;
+    email: string;
+    role: UserRole;
+    avatar?: string 
+}
+
+interface Product{
+    Id: number;
+    name: string;
+    price: number;
+    description: string;
+    category: string;
+    images: string[];
+    rating?: number;
+}
+
+type OrderStatus = 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled'
+
+interface Order{
+    id: number;
+    userId: number;
+    items: string[];
+    totalAmount: number;
+    status: OrderStatus;
+    createdAt: Date;
+}
+
+interface OrderItem{
+    productId: number;
+    quantity: number;
+    price: number;
+}
+
+interface ProductFilters{
+    category?: string;
+    minPrice?: number;
+    maxPrice?: number;
+    search?: string;
+}
+
 // Базовая функция для API запросов
-async function makeApiRequest(url, options) {
+async function makeApiRequest(url:string, options?:RequestInit) {
     try {
         const response = await fetch(url, options);
         const data = await response.json();
@@ -50,14 +101,16 @@ async function makeApiRequest(url, options) {
 }
 
 // Получение пользователя по ID
-async function getUser(userId) {
+async function getUser(userId:User['id']) {
     return makeApiRequest(`/api/users/${userId}`, {
         method: 'GET'
     });
 }
 
+
+
 // Получение списка товаров с фильтрами
-async function getProducts(filters) {
+async function getProducts(filters:ProductFilters) {
     const queryParams = new URLSearchParams();
     
     if (filters.category) queryParams.set('category', filters.category);
@@ -71,7 +124,7 @@ async function getProducts(filters) {
 }
 
 // Создание заказа
-async function createOrder(orderData) {
+async function createOrder(orderData:Order) {
     return makeApiRequest('/api/orders', {
         method: 'POST',
         headers: {
@@ -82,7 +135,7 @@ async function createOrder(orderData) {
 }
 
 // Обновление статуса заказа
-async function updateOrderStatus(orderId, newStatus) {
+async function updateOrderStatus(orderId: Order['id'], newStatus: OrderStatus) {
     return makeApiRequest(`/api/orders/${orderId}/status`, {
         method: 'PATCH',
         headers: {
@@ -93,7 +146,7 @@ async function updateOrderStatus(orderId, newStatus) {
 }
 
 // Функция для обработки результатов API
-function handleApiResponse(response, onSuccess, onError) {
+function handleApiResponse(response:ApiResponse<T>, onSuccess, onError) {
     if (response.success && response.data) {
         onSuccess(response.data);
     } else {

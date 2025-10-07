@@ -25,18 +25,25 @@ interface Product{
     category: string;
     inStock: boolean;
     tags: string[];
+    createdAt: Date;
 }
 
 type Category = 'electronics'|'clothing'|'books'|'food'|'other'
 
+interface Filter{
+    category: Category;
+    inStock: boolean;
+    minPrice: number;
+    maxPrice: number;
+    tag: string;
+}
 
-
-function createProduct(id: string, name: string, price: number, category: string, inStock: boolean, tags: string[]) {
+function createProduct(id: number, name: string, price: number, category: string, inStock: boolean, tags: string[]) {
     return {
         id,
         name,
         price,
-        category: Union,
+        category: category,
         inStock: inStock ?? true,
         tags: tags || [],
         createdAt: new Date()
@@ -44,7 +51,7 @@ function createProduct(id: string, name: string, price: number, category: string
 }
 
 // TODO: Типизировать функцию фильтрации товаров
-function filterProducts(products:Product, filters: Product) {
+function filterProducts(products:Product[], filters: Filter) {
     return products.filter(product => {
         if (filters.category && product.category !== filters.category) {
             return false;
@@ -66,7 +73,7 @@ function filterProducts(products:Product, filters: Product) {
 }
 
 // TODO: Типизировать функцию расчета скидки
-function calculateDiscount(product, discountType, value) {
+function calculateDiscount(product: Product, discountType: 'percentage'|'fixed'| 'buy_one_get_one', value: number) {
     let finalPrice = product.price;
     
     switch (discountType) {
@@ -92,7 +99,7 @@ function calculateDiscount(product, discountType, value) {
 }
 
 // TODO: Типизировать функцию сортировки
-function sortProducts(products, sortBy, order) {
+function sortProducts(products:Product[], sortBy: 'name'|'price'|'createdAt', order:any) {
     return [...products].sort((a, b) => {
         let comparison = 0;
         
