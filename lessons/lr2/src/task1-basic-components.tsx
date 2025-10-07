@@ -20,16 +20,26 @@ import React from 'react';
 // - avatar: string (опциональное)
 // - isOnline: boolean
 
+interface UserCardProps {
+  name: string;
+  email: string;
+  age?: number;
+  avatar?: string;
+  isOnline: boolean;
+}
+
 // TODO: Типизируйте компонент UserCard
-function UserCard(/* TODO: добавьте типизацию props */) {
+function UserCard({name, email, age, avatar, isOnline}:UserCardProps) {
   return (
     <div className="user-card">
-      {/* TODO: добавьте отображение avatar если он есть */}
-      <h2>{/* TODO: отобразите name */}</h2>
-      <p>{/* TODO: отобразите email */}</p>
-      {/* TODO: отобразите age если он есть */}
-      <span className={`status ${/* TODO: добавьте класс на основе isOnline */}`}>
-        {/* TODO: отобразите статус онлайн/офлайн */}
+      {avatar && (
+        <img src={avatar} alt={`${name}'s avatar`} className='avatar' />
+      )}
+      <h2>{name}</h2>
+      <p>{email}</p>
+      {age && <p>Возраст: {age}</p>}
+      <span className={`status ${isOnline ? 'online' : 'offline'}`}>
+        {isOnline ? 'онлайн' : 'офлайн'}
       </span>
     </div>
   );
@@ -43,6 +53,15 @@ function UserCard(/* TODO: добавьте типизацию props */) {
 // - size: 'small' | 'medium' | 'large'
 // - disabled: boolean (опциональное, по умолчанию false)
 // - onClick: () => void
+
+interface ButtonProps {
+  children: React.ReactNode;
+  variant: 'primary' | 'secondary' | 'danger';
+  size: 'small' | 'medium' | 'large';
+  disabled: boolean;
+  onClick: () => void;
+}
+
 
 // TODO: Типизируйте компонент Button
 function Button(/* TODO: добавьте типизацию props */) {
