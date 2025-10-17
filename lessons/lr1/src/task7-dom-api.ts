@@ -17,7 +17,25 @@
 // - FormData: [fieldName: string]: string
 
 // Утилита для безопасного получения элемента
-function getElementById(id) {
+
+interface ValidationRule {
+    validate: (value: string) => boolean;
+    message: string;
+};
+
+interface FormField {
+    id: string;
+    name: string;
+    element: HTMLElement;
+    validators: ValidationRule[];
+    errorElement?: HTMLElement | null;
+}
+
+interface CustomFormData {
+    [fieldName: string]: string;
+}
+
+function getElementById(id: string): HTMLElement {
     const element = document.getElementById(id);
     if (!element) {
         throw new Error(`Элемент с ID "${id}" не найден`);
@@ -26,7 +44,7 @@ function getElementById(id) {
 }
 
 // Утилита для получения элемента определенного типа
-function getElementByIdAsType(id, expectedType) {
+function getElementByIdAsType(id: string, expectedType: string): HTMLElement {
     const element = getElementById(id);
     
     if (element.tagName.toLowerCase() !== expectedType.toLowerCase()) {
@@ -35,23 +53,35 @@ function getElementByIdAsType(id, expectedType) {
     
     return element;
 }
-
+interface Field {
+    id: string;
+    name: string;
+    element: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
+    validators: ValidationRule[];
+    errorElement: HTMLElement | null;
+}
 // Класс для управления формой
 class FormManager {
-    constructor(formId) {
-        this.form = getElementByIdAsType(formId, 'form');
+    form: HTMLFormElement;
+    fields: Map<string, FormField>;
+    errors: Map<string, string>;
+
+    constructor(formId: string) {
+        this.form = getElementByIdAsType(formId, 'form') as HTMLFormElement;
         this.fields = new Map();
         this.errors = new Map();
         
         this.setupEventListeners();
     }
     
+    
     // Добавление поля с валидацией
-    addField(fieldName, fieldId, validators) {
+    addField(fieldName: string, fieldId: string, validators: ValidationRule[]) {
         const element = getElementById(fieldId);
         const errorElement = document.getElementById(`${fieldId}-error`);
         
         const field = {
+            id: fieldId,
             name: fieldName,
             element: element,
             validators: validators || [],
@@ -62,11 +92,15 @@ class FormManager {
         
         // Добавляем обработчики событий для поля
         element.addEventListener('input', (event) => {
-            this.validateField(fieldName, event.target.value);
+            if (event.target instanceof HTMLInputElement) {
+                this.validateField(fieldName, event.target.value);
+            }
         });
         
         element.addEventListener('blur', (event) => {
-            this.validateField(fieldName, event.target.value);
+            if (event.target instanceof HTMLInputElement) {
+                this.validateField(fieldName, event.target.value);
+            }
         });
         
         return this;
@@ -89,7 +123,7 @@ class FormManager {
     }
     
     // Валидация отдельного поля
-    validateField(fieldName, value) {
+    validateField(fieldName: string, value: string) {
         const field = this.fields.get(fieldName);
         if (!field) return true;
         
@@ -108,7 +142,7 @@ class FormManager {
     }
     
     // Установка ошибки для поля
-    setFieldError(fieldName, message) {
+    setFieldError(fieldName:string, message:string) {
         const field = this.fields.get(fieldName);
         if (!field) return;
         
@@ -125,7 +159,7 @@ class FormManager {
     }
     
     // Очистка ошибки для поля
-    clearFieldError(fieldName) {
+    clearFieldError(fieldName:string) {
         const field = this.fields.get(fieldName);
         if (!field) return;
         
@@ -140,15 +174,16 @@ class FormManager {
     
     // Получение данных формы
     getFormData() {
-        const formData = {};
+        const formData: Record<string, string> = {};
         
         this.fields.forEach((field, fieldName) => {
-            const element = field.element;
-            
+            const element = field.element as HTMLInputElement;
+            if (!element) return;
+            // мб лучше switch case?
             if (element.type === 'checkbox') {
                 formData[fieldName] = element.checked.toString();
             } else if (element.type === 'radio') {
-                const radioGroup = this.form.querySelectorAll(`input[name="${element.name}"]`);
+                const radioGroup = this.form.querySelectorAll<HTMLInputElement>(`input[name="${element.name}"]`);
                 const checked = Array.from(radioGroup).find(radio => radio.checked);
                 formData[fieldName] = checked ? checked.value : '';
             } else {
@@ -160,7 +195,7 @@ class FormManager {
     }
     
     // Обработка отправки формы
-    handleSubmit(_event) {
+    handleSubmit(_event: SubmitEvent) {
         console.log('Отправка формы...');
         
         // Валидируем все поля
@@ -181,15 +216,15 @@ class FormManager {
     }
     
     // Получение значения поля
-    getFieldValue(fieldName) {
+    getFieldValue(fieldName:string) {
         const field = this.fields.get(fieldName);
         if (!field) return '';
         
-        return field.element.value;
+        return (field.element as HTMLInputElement).value;
     }
     
     // Обработка сброса формы
-    handleReset(_event) {
+    handleReset(_event: Event) {
         console.log('Сброс формы...');
         
         // Очищаем все ошибки
@@ -201,7 +236,7 @@ class FormManager {
     }
     
     // Успешная отправка формы (переопределяется)
-    onSubmitSuccess(formData) {
+    onSubmitSuccess(formData: CustomFormData) {
         console.log('✅ Форма отправлена успешно:', formData);
         alert('Форма отправлена успешно!');
     }
@@ -215,26 +250,26 @@ class FormManager {
 
 // Фабрика валидаторов
 const Validators = {
-    required: (message) => ({
-        validate: (value) => value.trim().length > 0,
+    required: (message:string) => ({
+        validate: (value: string) => value.trim().length > 0,
         message: message || 'Поле обязательно для заполнения'
     }),
     
-    minLength: (minLen, message) => ({
-        validate: (value) => value.length >= minLen,
+    minLength: (minLen:number, message:string) => ({
+        validate: (value:string) => value.length >= minLen,
         message: message || `Минимальная длина: ${minLen} символов`
     }),
     
-    email: (message) => ({
-        validate: (value) => {
+    email: (message:string) => ({
+        validate: (value:string) => {
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             return emailRegex.test(value);
         },
         message: message || 'Введите корректный email'
     }),
     
-    phone: (message) => ({
-        validate: (value) => {
+    phone: (message:string) => ({
+        validate: (value:string) => {
             const phoneRegex = /^\+?[\d\s\-\(\)]{10,}$/;
             return phoneRegex.test(value);
         },
@@ -243,13 +278,13 @@ const Validators = {
 };
 
 // Утилиты для работы с DOM событиями
-function addClickListener(elementId, handler) {
+function addClickListener(elementId:string, handler:EventListener) {
     const element = getElementById(elementId);
     element.addEventListener('click', handler);
     return element;
 }
 
-function addKeyboardListener(elementId, handler, keyCode) {
+function addKeyboardListener(elementId:string, handler:EventListener, keyCode?:string) {
     const element = getElementById(elementId);
     
     element.addEventListener('keydown', (event) => {
@@ -262,7 +297,18 @@ function addKeyboardListener(elementId, handler, keyCode) {
 }
 
 // Утилита для создания элементов
-function createElement(tagName, options) {
+function createElement<K extends keyof HTMLElementTagNameMap>(
+    tagName: K,
+    options: {
+        id?: string;
+        className?: string;
+        textContent?: string;
+        innerHTML?: string;
+        attributes?: Record<string, string>;
+        styles?: Partial<CSSStyleDeclaration>;
+        parent?: HTMLElement;
+    }
+): HTMLElementTagNameMap[K] {
     const element = document.createElement(tagName);
     
     if (options.id) element.id = options.id;
@@ -278,7 +324,7 @@ function createElement(tagName, options) {
     
     if (options.styles) {
         Object.entries(options.styles).forEach(([property, value]) => {
-            element.style[property] = value;
+            (element.style as any)[property] = value;
         });
     }
     

@@ -11,13 +11,15 @@
 // Проблемные функции, которые нужно исправить
 
 // ПРОБЛЕМА 1: Функция с any типом
-function processData(data: any[] | string | 'object'): string[] {
+function processData(data: any[] | string | object): string[] {
     if (Array.isArray(data)) {
         return data.map(item => item.toString());
     }
     
     if (typeof data === 'object' && data !== null) {
-        return Object.keys(data).map(key => `${key}: ${data[key]}`);
+        if (!Array.isArray(data)) {
+            return Object.keys(data).map(key => `${key}: ${(data as Record<string, unknown>)[key]}`);
+        }
     }
     
     return [data.toString()];
@@ -71,24 +73,25 @@ function updateArray(arr: any[], index: number, newValue: any) {
 // ПРОБЛЕМА 6: Класс с неправильной типизацией событий
 // я помню события в C# но смутно
 class EventEmitter {
+    private listeners: { [event: string]: ((...args: unknown[]) => void)[] };
     constructor() {
         this.listeners = {};
     }
-    
-    on(event, callback) {
+
+    on(event: string, callback: (...args: unknown[]) => void) {
         if (!this.listeners[event]) {
             this.listeners[event] = [];
         }
         this.listeners[event].push(callback);
     }
-    
-    emit(event, ...args) {
+
+    emit(event: string, ...args: unknown[]) {
         if (this.listeners[event]) {
             this.listeners[event].forEach(callback => callback(...args));
         }
     }
     
-    off(event, callback) {
+    off(event: string, callback: (...args: unknown[]) => void) {
         if (this.listeners[event]) {
             this.listeners[event] = this.listeners[event].filter(cb => cb !== callback);
         }
@@ -147,8 +150,8 @@ function validateForm(formData: Record<string, string>, rules: any) {
 }
 
 // ПРОБЛЕМА 9: Утилитарная функция с проблемами типов
-function pick(obj, keys) {
-    const result = {};
+function pick<O extends object, K extends keyof O>(obj: O, keys: K[]): Pick<O, K> {
+    const result = {} as Pick<O, K>;
     keys.forEach(key => {
         if (key in obj) {
             result[key] = obj[key];
