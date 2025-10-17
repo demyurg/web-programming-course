@@ -15,19 +15,27 @@ const createLazyComponent = (importPath: string) => (timestamp: number) =>
 // Информация о заданиях
 const TASKS = [
   {
-    text: "Задание 1: Базовые компоненты",
+    text: "Задание 1-2: Основы (упрощенное)",
+    createComponent: createLazyComponent("./task1-2_basic"),
+  },
+  {
+    text: "Задание 3-4: Формы и Context (упрощенное)",
+    createComponent: createLazyComponent("./task3-4_basic"),
+  },
+  {
+    text: "Задание 1: Базовые компоненты (полное)",
     createComponent: createLazyComponent("./task1-basic-components"),
   },
   {
-    text: "Задание 2: Хуки и состояние",
+    text: "Задание 2: Хуки и состояние (полное)",
     createComponent: createLazyComponent("./task2-hooks-state"),
   },
   {
-    text: "Задание 3: Формы и события",
+    text: "Задание 3: Формы и события (полное)",
     createComponent: createLazyComponent("./task3-forms-events"),
   },
   {
-    text: "Задание 4: Продвинутые паттерны",
+    text: "Задание 4: Продвинутые паттерны (полное)",
     createComponent: createLazyComponent("./task4-advanced-patterns"),
   },
 ];
