@@ -1,22 +1,75 @@
-/* Базовые стили и сброс */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-html {
-    scroll-behavior: smooth;
-}
-
 body {
     font-family: 'Open Sans', sans-serif;
-    line-height: 1.6;
-    color: #333;
-    overflow-x: hidden;
+    background-color: #f8f9fa; /* Нейтральный */
+    color: #2c3e50; /* Основной */
+    margin: 0;
+    padding: 0;
 }
 
-/* Typography */
-h1, h2, h3 {
+header {
+    background-color: #2c3e50; /* Основной */
+    color: white;
+    text-align: center;
+    padding: 20px;
+}
+
+h1 {
     font-family: 'Playfair Display', serif;
+    margin: 0;
+}
+
+nav {
+    background-color: #4ecdc4; /* Дополнительный */
+    padding: 10px;
+    text-align: center;
+}
+
+nav a {
+    color: #2c3e50; /* Основной */
+    text-decoration: none;
+    margin: 0 15px;
+    font-weight: 600;
+}
+
+nav a:hover {
+    color: #ff6b6b; /* Акцент */
+}
+
+section {
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+#description {
+    text-align: center;
+    font-size: 1.1em;
+}
+
+#gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+#gallery img {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+#contact {
+    background-color: #ff6b6b; /* Акцент */
+    color: white;
+    text-align: center;
+}
+
+#contact a {
+    color: white;
+    text-decoration: none;
+}
+
+#contact a:hover {
+    text-decoration: underline;
 }
