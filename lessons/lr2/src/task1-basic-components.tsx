@@ -21,15 +21,24 @@ import React from 'react';
 // - isOnline: boolean
 
 // TODO: Типизируйте компонент UserCard
-function UserCard(/* TODO: добавьте типизацию props */) {
+interface UserCardProps {
+  name: string;
+  email: string;
+  age?: number;
+  avatar?: string;
+  isOnline: boolean;
+}
+
+
+function UserCard({ name, email, age, avatar, isOnline }: UserCardProps) {
   return (
     <div className="user-card">
-      {/* TODO: добавьте отображение avatar если он есть */}
-      <h2>{/* TODO: отобразите name */}</h2>
-      <p>{/* TODO: отобразите email */}</p>
-      {/* TODO: отобразите age если он есть */}
-      <span className={`status ${/* TODO: добавьте класс на основе isOnline */}`}>
-        {/* TODO: отобразите статус онлайн/офлайн */}
+      {avatar && <img src={avatar} alt="Avatar" />} {/* Отображаем avatar, если он есть */}
+      <h2>{name}</h2> {/* Отображаем name */}
+      <p>{email}</p> {/* Отображаем email */}
+      {age && <p>Возраст: {age}</p>} {/* Отображаем age, если он есть */}
+      <span className={`status ${isOnline ? 'online' : 'offline'}`}> {/* Класс на основе isOnline */}
+        {isOnline ? 'Онлайн' : 'Офлайн'} {/* Статус онлайн/офлайн */}
       </span>
     </div>
   );
@@ -44,15 +53,23 @@ function UserCard(/* TODO: добавьте типизацию props */) {
 // - disabled: boolean (опциональное, по умолчанию false)
 // - onClick: () => void
 
+
+interface ButtonProps {
+  children: React.ReactNode;
+  variant: 'primary' | 'secondary' | 'danger';
+  size: 'small' | 'medium' | 'large';
+  disabled?: boolean; // Опциональное, по умолчанию false
+  onClick: () => void;
+}
 // TODO: Типизируйте компонент Button
-function Button(/* TODO: добавьте типизацию props */) {
+function Button(props: ButtonProps) {
   return (
     <button
-      className={`btn btn--${/* TODO: используйте variant */} btn--${/* TODO: используйте size */}`}
-      disabled={/* TODO: используйте disabled */}
-      onClick={/* TODO: используйте onClick */}
+      className={`btn btn--${props.variant} btn--${props.size}`}
+      disabled={props.disabled ?? false}
+      onClick={props.onClick}
     >
-      {/* TODO: отобразите children */}
+      {props.children}
     </button>
   );
 }
@@ -63,13 +80,23 @@ function Button(/* TODO: добавьте типизацию props */) {
 // - users: string[] (массив имен пользователей)
 // - emptyMessage: string (опциональное, по умолчанию "Нет пользователей")
 
+
+interface UserListProps {
+  users: string[];
+  emptyMessage?: string; // Опциональное, по умолчанию "Нет пользователей"
+}
+
 // TODO: Типизируйте компонент UserList
-function UserList(/* TODO: добавьте типизацию props */) {
-  // TODO: если users пустой, отобразите emptyMessage
+function UserList(props: UserListProps) {
+  if (props.users.length === 0) {
+    return <p>{props.emptyMessage ?? 'Нет пользователей'}</p>; // Если users пустой, отображаем emptyMessage с дефолтом
+  }
 
   return (
     <ul className="user-list">
-      {/* TODO: отрендерите users как <li> элементы */}
+      {props.users.map((user, index) => (
+        <li key={index}>{user}</li> // Рендерим users как <li> элементы
+      ))}
     </ul>
   );
 }
@@ -83,16 +110,24 @@ function UserList(/* TODO: добавьте типизацию props */) {
 // - className: string (опциональное)
 
 // TODO: Типизируйте компонент Card
-function Card(/* TODO: добавьте типизацию props */) {
+interface CardProps {
+  title: string;
+  children: React.ReactNode;
+  footer?: React.ReactNode; // Опциональное
+  className?: string; // Опциональное
+}
+
+
+function Card(props: CardProps) {
   return (
-    <div className={`card ${/* TODO: добавьте className если есть */}`}>
+    <div className={`card ${props.className ?? ''}`.trim()}> {/* Добавляем className, если есть */}
       <div className="card-header">
-        <h3>{/* TODO: отобразите title */}</h3>
+        <h3>{props.title}</h3> {/* Отображаем title */}
       </div>
       <div className="card-content">
-        {/* TODO: отобразите children */}
+        {props.children} {/* Отображаем children */}
       </div>
-      {/* TODO: отобразите footer если он есть */}
+      {props.footer && <div className="card-footer">{props.footer}</div>} {/* Отображаем footer, если есть */}
     </div>
   );
 }
@@ -108,7 +143,7 @@ interface User {
 }
 
 // TODO: Типизируйте компонент App
-function App() {
+function App(): React.ReactElement {
   const users: User[] = [
     { id: 1, name: 'Анна Иванова', email: 'anna@example.com', age: 28, isOnline: true },
     { id: 2, name: 'Петр Петров', email: 'petr@example.com', age: 35, isOnline: false },
@@ -147,6 +182,7 @@ function App() {
 }
 
 export default App;
+
 
 // ===== БОНУСНЫЕ ЗАДАЧИ =====
 

@@ -19,15 +19,30 @@ import React, { useState } from 'react';
 // - children: React.ReactNode
 // - onClick: () => void
 // - variant?: 'primary' | 'secondary'
+import React, { useState } from 'react';
+
+// ============================================
+// ЧАСТЬ 1: Простые компоненты
+// ============================================
+
+// TODO 1.1: Создайте интерфейс ButtonProps с полями:
+// - children: React.ReactNode
+// - onClick: () => void
+// - variant?: 'primary' | 'secondary'
+interface ButtonProps {
+  children: React.ReactNode;
+  onClick: () => void;
+  variant?: 'primary' | 'secondary';
+}
 
 // TODO 1.2: Типизируйте компонент Button
-function Button(/* TODO: добавьте типизацию */) {
+function Button(props: ButtonProps) {
   return (
     <button
-      className={`btn btn--${/* TODO */}`}
-      onClick={/* TODO */}
+      className={`btn btn--${props.variant}`}
+      onClick={props.onClick}
     >
-      {/* TODO */}
+      {props.children}
     </button>
   );
 }
@@ -36,15 +51,20 @@ function Button(/* TODO: добавьте типизацию */) {
 // - name: string
 // - email: string
 // - isOnline: boolean
+interface UserCardProps {
+  name: string;
+  email: string;
+  isOnline: boolean;
+}
 
 // TODO 1.4: Типизируйте компонент UserCard
-function UserCard(/* TODO: добавьте типизацию */) {
+function UserCard({ name, email, isOnline }: UserCardProps) {
   return (
     <div className="user-card">
-      <h3>{/* TODO: name */}</h3>
-      <p>{/* TODO: email */}</p>
-      <span className={/* TODO: добавьте класс на основе isOnline */}>
-        {/* TODO: отобразите статус */}
+      <h3>{name}</h3>
+      <p>{email}</p>
+      <span className={isOnline ? 'online' : 'offline'}>
+        {isOnline ? 'online' : 'offline'}
       </span>
     </div>
   );
@@ -58,6 +78,12 @@ function UserCard(/* TODO: добавьте типизацию */) {
 // - id: number
 // - text: string
 // - completed: boolean
+
+interface Todo {
+  id: number;
+  text: string;
+  completed: boolean;
+}
 
 // TODO 3.2: Типизируйте компонент TodoApp
 function TodoApp() {
