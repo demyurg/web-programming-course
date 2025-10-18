@@ -1,4 +1,4 @@
-import React, { useState, Suspense } from "react";
+import React, { useState, Suspense, ComponentType } from "react";
 import { createRoot } from "react-dom/client";
 import { ErrorBoundary } from "react-error-boundary";
 
@@ -40,12 +40,19 @@ const TASKS = [
   },
 ];
 
-// Компонент для отображения ошибок
-const TaskErrorFallback: React.FC<{
+// Тип для пропсов компонента ошибки
+interface TaskErrorFallbackProps {
   error: Error;
   resetErrorBoundary: () => void;
   onRetry?: () => void;
-}> = ({ error, resetErrorBoundary, onRetry }) => (
+}
+
+// Компонент для отображения ошибок
+const TaskErrorFallback: React.FC<TaskErrorFallbackProps> = ({ 
+  error, 
+  resetErrorBoundary, 
+  onRetry 
+}) => (
   <div
     style={{
       padding: "20px",
@@ -98,10 +105,11 @@ const TaskErrorFallback: React.FC<{
 
 const App: React.FC = () => {
   const [currentTaskIndex, setCurrentTaskIndex] = useState<number | undefined>(() => {
-    const hash = window.location.hash.slice(1); // убираем #
+    const hash = window.location.hash.slice(1);
     const index = parseInt(hash, 10);
     return !isNaN(index) && index >= 0 && index < TASKS.length ? index : undefined;
   });
+  
   const [refreshTimestamps, setRefreshTimestamps] = useState<Record<number, number>>({});
 
   // Функция для принудительного обновления компонента задания
@@ -118,6 +126,13 @@ const App: React.FC = () => {
     window.location.hash = index.toString();
     forceRefresh(index);
   };
+
+  // Получение текущего компонента задания
+  const CurrentTaskComponent = currentTaskIndex !== undefined 
+    ? TASKS[currentTaskIndex]?.createComponent(
+        refreshTimestamps[currentTaskIndex] || Date.now()
+      )
+    : null;
 
   return (
     <div className="app">
@@ -144,17 +159,32 @@ const App: React.FC = () => {
               onRetry={() => currentTaskIndex !== undefined && forceRefresh(currentTaskIndex)}
             />
           )}
-          resetKeys={[currentTaskIndex, currentTaskIndex !== undefined ? refreshTimestamps[currentTaskIndex] : 0]}
+          resetKeys={[
+            currentTaskIndex, 
+            currentTaskIndex !== undefined ? refreshTimestamps[currentTaskIndex] : 0
+          ]}
         >
-          <Suspense fallback={<div>Загружается задание...</div>}>
-            {currentTaskIndex === undefined && <div>Задание не выбрано</div>}
-            {currentTaskIndex !== undefined &&
-              TASKS[currentTaskIndex] &&
-              React.createElement(
-                TASKS[currentTaskIndex].createComponent(refreshTimestamps[currentTaskIndex] || Date.now())
-              )}
+          <Suspense 
+            fallback={
+              <div style={{ padding: "20px", textAlign: "center" }}>
+                Загружается задание...
+              </div>
+            }
+          >
+            {currentTaskIndex === undefined && (
+              <div style={{ padding: "20px", textAlign: "center" }}>
+                Выберите задание из меню выше
+              </div>
+            )}
+            
+            {currentTaskIndex !== undefined && CurrentTaskComponent && (
+              React.createElement(CurrentTaskComponent)
+            )}
+            
             {currentTaskIndex !== undefined && !TASKS[currentTaskIndex] && (
-              <div>Задание не найдено</div>
+              <div style={{ padding: "20px", textAlign: "center" }}>
+                Задание не найдено
+              </div>
             )}
           </Suspense>
         </ErrorBoundary>
