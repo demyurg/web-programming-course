@@ -9,6 +9,7 @@
  * - Custom hooks
  */
 
+import { error } from 'console';
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 
 // ============================================
@@ -126,19 +127,31 @@ function SimpleForm() {
 // - login: (user: User) => void
 // - logout: () => void
 
+interface User{
+  id: number;
+  name: string;
+  email: string;
+}
+
+interface UserContextType{
+  user: User | null;
+  login: (user: User) => void;
+  logout: () => void;
+}
+
 // TODO 2.3: Создайте Context
-const UserContext = createContext</* TODO: тип */ | undefined>(undefined);
+const UserContext = createContext<UserContextType | undefined>(undefined);
 
 // TODO 2.4: Типизируйте UserProvider
 function UserProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
 
   const login = (userData: User) => {
-    // TODO: реализуйте вход
+    setUser(userData)
   };
 
   const logout = () => {
-    // TODO: реализуйте выход
+    setUser(null)
   };
 
   return (
@@ -151,16 +164,22 @@ function UserProvider({ children }: { children: ReactNode }) {
 // TODO 2.5: Создайте custom hook useUser
 // Должен возвращать тип UserContextType
 // Должен проверять, что context не undefined и выбрасывать ошибку
-function useUser(): /* TODO: добавьте возвращаемый тип */ {
+function useUser(): UserContextType {
   // TODO: получите context с помощью useContext
   // TODO: если context undefined, выбросьте ошибку
   // TODO: верните context
+  const context = useContext(UserContext);
+  if (!context){
+    throw new Error ('Контекст отсутствует');
+  }
+  return context
 }
 
 // TODO 2.6: Создайте компонент UserStatus
 // Этот компонент показывает статус пользователя в header
 function UserStatus() {
   // TODO: получите user и logout из useUser()
+  const {user, logout} = useUser();
 
   if (!user) {
     return <span>Не авторизован</span>;
