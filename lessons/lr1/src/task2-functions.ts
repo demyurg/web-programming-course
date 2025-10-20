@@ -16,8 +16,20 @@
 // TODO: Создать union тип для категорий
 // electronics | clothing | books | food | other
 
-function createProduct(id, name, price, category, inStock, tags) {
-    return {
+type Category = 'electronics' | 'clothing' | 'books' | 'food' | 'other';
+
+interface Product {
+    id: number;
+    name: string;
+    price: number;
+    category: Category;
+    inStock: boolean;
+    tags: string[];
+    createdAt?: any;
+}
+
+function createProduct(id: number, name: string, price: number, category: Category, inStock: boolean, tags: string[]) {
+    const prod: Product = {
         id,
         name,
         price,
@@ -26,10 +38,19 @@ function createProduct(id, name, price, category, inStock, tags) {
         tags: tags || [],
         createdAt: new Date()
     };
+    return prod;
 }
 
+type Filters = {
+    tag?: string;
+    minPrice?: number;
+    maxPrice?: number;
+    category?: Category;
+    inStock?: boolean;
+};
+
 // TODO: Типизировать функцию фильтрации товаров
-function filterProducts(products, filters) {
+function filterProducts(products: Product[], filters: Filters) {
     return products.filter(product => {
         if (filters.category && product.category !== filters.category) {
             return false;
@@ -50,10 +71,11 @@ function filterProducts(products, filters) {
     });
 }
 
+type Discount = 'percentage' | 'fixed' | 'buy_one_get_one';
+
 // TODO: Типизировать функцию расчета скидки
-function calculateDiscount(product, discountType, value) {
+function calculateDiscount(product: Product, discountType: Discount, value: number) {
     let finalPrice = product.price;
-    
     switch (discountType) {
         case 'percentage':
             finalPrice = product.price * (1 - value / 100);
@@ -67,7 +89,7 @@ function calculateDiscount(product, discountType, value) {
         default:
             break;
     }
-    
+
     return {
         originalPrice: product.price,
         finalPrice: Math.round(finalPrice * 100) / 100,
@@ -77,10 +99,9 @@ function calculateDiscount(product, discountType, value) {
 }
 
 // TODO: Типизировать функцию сортировки
-function sortProducts(products, sortBy, order) {
+function sortProducts(products: Product[], sortBy: 'name' | 'price' | 'createdAt', order: 'desc' | 'asc') {
     return [...products].sort((a, b) => {
         let comparison = 0;
-        
         switch (sortBy) {
             case 'name':
                 comparison = a.name.localeCompare(b.name);
@@ -89,10 +110,12 @@ function sortProducts(products, sortBy, order) {
                 comparison = a.price - b.price;
                 break;
             case 'createdAt':
-                comparison = a.createdAt.getTime() - b.createdAt.getTime();
+                if (a.createdAt && b.createdAt) {
+                    comparison = a.createdAt.getTime() - b.createdAt.getTime();
+                }
                 break;
         }
-        
+
         return order === 'desc' ? -comparison : comparison;
     });
 }
@@ -107,14 +130,24 @@ const products = [
 
 console.log('Все товары:', products);
 
-const electronicsProducts = filterProducts(products, { 
-    category: 'electronics', 
-    inStock: true 
+const electronicsProducts = filterProducts(products, {
+    category: 'electronics',
+    inStock: true
 });
 console.log('Электроника в наличии:', electronicsProducts);
 
-const discountedPhone = calculateDiscount(products[0], 'percentage', 10);
-console.log('Скидка на телефон:', discountedPhone);
+
+let index: number = 0;
+// Сделать проверку, есть ли индекс
+if (index >= 0 && index < products.length) {
+    const product = products[index];
+    if (product) {
+        const discountedPhone = calculateDiscount(product, 'percentage', 10);
+        console.log('Скидка на телефон:', discountedPhone);
+    } else {
+        console.error('Ошибка: товар по индексу не найден');
+    }
+}
 
 const sortedByPrice = sortProducts(products, 'price', 'asc');
 console.log('Товары по цене (возрастание):', sortedByPrice);
