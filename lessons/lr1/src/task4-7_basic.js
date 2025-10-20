@@ -22,7 +22,15 @@
 // type UserRole = 'admin' | 'user'
 
 // TODO 1.3: Типизируйте эту функцию
-function createUser(name, email, role) {
+
+interface User{
+    id: number;
+    email: string
+}
+
+type UserRole = 'admin'|'user'
+
+function createUser(name: string, email: string, role: UserRole) {
     return {
         id: Math.floor(Math.random() * 1000),
         name: name,
@@ -36,12 +44,12 @@ function createUser(name, email, role) {
 // ============================================
 
 // TODO 2.1: Типизируйте функцию с generics
-function getFirst(array) {
+function getFirst<T>(array: T[]) {
     return array.length > 0 ? array[0] : undefined;
 }
 
 // TODO 2.2: Типизируйте функцию с generics
-function filterArray(array, predicate) {
+function filterArray<T>(array: T[], predicate: (items: T) => boolean) {
     return array.filter(predicate);
 }
 
@@ -54,8 +62,15 @@ function filterArray(array, predicate) {
 // - data: T | null
 // - error: string | null
 
+interface ApiResponse<T>{
+    success: boolean;
+    data: T|null;
+    error: string|null;
+
+}
+
 // TODO 3.2: Типизируйте эту функцию
-async function fetchUser(userId) {
+async function fetchUser(userId: number) {
     try {
         const response = await fetch(`/api/users/${userId}`);
         const data = await response.json();
@@ -77,7 +92,7 @@ async function fetchUser(userId) {
         return {
             success: false,
             data: null,
-            error: error.message
+            error: error
         };
     }
 }
@@ -87,33 +102,35 @@ async function fetchUser(userId) {
 // ============================================
 
 // TODO 4.1: Типизируйте эту функцию
-function getElementById(id) {
+function getElementById(id:string) {
     const element = document.getElementById(id);
     if (!element) {
         throw new Error(`Element ${id} not found`);
+        throw new Error(`Элемент с ID "${id}" не найден`);
+
     }
     return element;
 }
 
 // TODO 4.2: Типизируйте класс FormManager
 class FormManager {
-    // private propname: PropType;
-    constructor(formId) {
-        this.form = getElementById(formId);
+    private form: HTMLElement;
+    constructor(formId:string) {
+        this.form = getElementById(formId) as HTMLFormElement;
     }
 
-    getValue(fieldId) {
-        const field = getElementById(fieldId);
+    getValue(fieldId: string): string{
+        const field = getElementById(fieldId) as HTMLInputElement;
         return field.value;
     }
 
-    setValue(fieldId, value) {
-        const field = getElementById(fieldId);
+    setValue(fieldId: string, value: string) {
+        const field = getElementById(fieldId) as HTMLInputElement;
         field.value = value;
     }
 
-    onSubmit(handler) {
-        this.form.addEventListener('submit', (event) => {
+    onSubmit(handler: (event: Event) => void): void {
+        this.form.addEventListener('submit', (event: Event) => {
             event.preventDefault();
             handler(event);
         });
