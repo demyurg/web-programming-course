@@ -27,7 +27,19 @@ const products: Product[] = [
     name: 'Смарт-часы',
     price: 12990,
     image: 'https://avatars.mds.yandex.net/i?id=b637a804e34a4e866423e0b5a1a0ba18_l-5878855-images-thumbs&n=13'
-  }
+  },
+  {
+    id: 3,
+    name: 'Смартфон',
+    price: 59990,
+    image: 'https://avatars.mds.yandex.net/get-mpic/15433220/2a000001987e0f3fe54decbffc9d7ef11548/orig'
+  },
+  {
+    id: 4,
+    name: 'Клавиатура',
+    price: 4990,
+    image: 'https://avatars.mds.yandex.net/get-mpic/3614670/img_id1026953123708275295.jpeg/orig'
+  },
 ];
 
 function Task1() {
@@ -39,7 +51,7 @@ function Task1() {
         Откройте <code className="bg-blue-100 px-1 rounded">src/tasks/Task1.tsx</code> и добавьте классы
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         {products.map(product => (
           <div key={product.id}>
             {/* TODO: bg-white shadow-md rounded-lg p-4 hover:shadow-xl transition-shadow */}
