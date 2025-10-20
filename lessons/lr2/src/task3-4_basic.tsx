@@ -170,11 +170,13 @@ function useUser(): UserContextType {
 // TODO 2.6: Создайте компонент UserStatus
 // Этот компонент показывает статус пользователя в header
 function UserStatus() {
-  const { user, logout } = useUser();
-  // TODO: получите user и logout из useUser()
+
+    const { user, logout } = useUser();
 
   if (!user) {
+    
     return <span>Не авторизован</span>;
+    
   }
 
   return (
