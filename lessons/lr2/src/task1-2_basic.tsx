@@ -79,26 +79,35 @@ interface Todo {
 // TODO 3.2: Типизируйте компонент TodoApp
 function TodoApp({id,text,completed}: Todo) {
   // TODO 3.3: Создайте состояние todos с типом Todo[]
-  const [todos, setTodos] = useState(/* TODO */);
+  const [todos, setTodos] = useState<Todo[]>([]);
   const [inputValue, setInputValue] = useState('');
 
   // TODO 3.4: Реализуйте addTodo
   const addTodo = () => {
     if (inputValue.trim()) {
-      // TODO: создайте новый todo и добавьте в массив
-      // Подсказка: id можно сделать как Date.now()
+      const newTodo: Todo = {
+        id: Date.now(),
+        text: inputValue.trim(),
+        completed: false
+      };
+      setTodos(prevTodos => [...prevTodos, newTodo]);
       setInputValue('');
     }
   };
 
+
   // TODO 3.5: Реализуйте toggleTodo
   const toggleTodo = (id: number) => {
-    // TODO: измените completed для todo с данным id
+    setTodos(prevTodos => 
+      prevTodos.map(todo => 
+        todo.id === id ? { ...todo, completed: !todo.completed } : todo
+      )
+    );
   };
 
   // TODO 3.6: Реализуйте deleteTodo
   const deleteTodo = (id: number) => {
-    // TODO: удалите todo с данным id
+    setTodos(prevTodos => prevTodos.filter(todo => todo.id !== id));
   };
 
   return (
