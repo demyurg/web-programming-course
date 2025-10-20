@@ -58,20 +58,27 @@ interface ButtonProps {
   children: React.ReactNode;
   variant: 'primary' | 'secondary' | 'danger';
   size: 'small' | 'medium' | 'large';
-  disabled: boolean;
+  disabled?: boolean;
   onClick: () => void;
 }
 
 
 // TODO: Типизируйте компонент Button
-function Button(/* TODO: добавьте типизацию props */) {
+function Button({
+  /* TODO: добавьте типизацию props */
+  children,
+  variant,
+  size,
+  disabled = false,
+  onClick,
+}: ButtonProps) {
   return (
     <button
-      className={`btn btn--${/* TODO: используйте variant */} btn--${/* TODO: используйте size */}`}
-      disabled={/* TODO: используйте disabled */}
-      onClick={/* TODO: используйте onClick */}
+      className={`btn btn--${variant} btn--${size}`}
+      disabled={disabled}
+      onClick={onClick}
     >
-      {/* TODO: отобразите children */}
+      {children}
     </button>
   );
 }
@@ -82,13 +89,23 @@ function Button(/* TODO: добавьте типизацию props */) {
 // - users: string[] (массив имен пользователей)
 // - emptyMessage: string (опциональное, по умолчанию "Нет пользователей")
 
+interface UserListProps {
+  users: string[];
+  emptyMessage?: string;
+}
+
 // TODO: Типизируйте компонент UserList
-function UserList(/* TODO: добавьте типизацию props */) {
+function UserList({ users, emptyMessage = 'Нет пользователей' }: UserListProps) {
   // TODO: если users пустой, отобразите emptyMessage
+  if (users.length === 0) {
+    return <p>{emptyMessage}</p>;
+  }
 
   return (
     <ul className="user-list">
-      {/* TODO: отрендерите users как <li> элементы */}
+      {users.map((user, index) => (
+        <li key={index}>{user}</li>
+      ))}
     </ul>
   );
 }
@@ -101,17 +118,24 @@ function UserList(/* TODO: добавьте типизацию props */) {
 // - footer: React.ReactNode (опциональное)
 // - className: string (опциональное)
 
+interface CardProps {
+  title: string;
+  children: React.ReactNode;
+  footer?: React.ReactNode;
+  className?: string;
+}
+
 // TODO: Типизируйте компонент Card
-function Card(/* TODO: добавьте типизацию props */) {
+function Card({ title, children, footer, className }: CardProps) {
   return (
-    <div className={`card ${/* TODO: добавьте className если есть */}`}>
+    <div className={`card ${className ?? ''}`}>
       <div className="card-header">
-        <h3>{/* TODO: отобразите title */}</h3>
+        <h3>{title}</h3>
       </div>
       <div className="card-content">
-        {/* TODO: отобразите children */}
+        {children}
       </div>
-      {/* TODO: отобразите footer если он есть */}
+      {footer && <div className="card-footer">{footer}</div>}
     </div>
   );
 }
