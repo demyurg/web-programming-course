@@ -43,7 +43,7 @@ function Task1() {
         {products.map(product => (
           <div key={product.id}>
             {/* TODO: bg-white shadow-md rounded-lg p-4 hover:shadow-xl transition-shadow */}
-            <div>
+            <div className="bg-white shadow-md rounded-lg p-4 hover:shadow-xl transition-shadow">
               {/* TODO: rounded w-full h-40 object-cover */}
               <img src={product.image} alt={product.name} />
               {/* TODO: text-lg font-bold mt-3 */}
