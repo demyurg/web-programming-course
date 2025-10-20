@@ -9,147 +9,206 @@
  * 3. Убедитесь что все компоненты работают без ошибок TypeScript
  */
 
-import React from 'react';
+import { forwardRef, useMemo, useState, useCallback } from 'react'
 
 // ===== ЗАДАЧА 1.1: Простая карточка пользователя =====
 
-// TODO: Создайте интерфейс UserCardProps со следующими свойствами:
-// - name: string
-// - email: string
-// - age: number (опциональное)
-// - avatar: string (опциональное)
-// - isOnline: boolean
+interface UserCardProps {
+	name: string
+	email: string
+	age?: number
+	avatar?: string
+	isOnline: boolean
+}
 
-// TODO: Типизируйте компонент UserCard
-function UserCard(/* TODO: добавьте типизацию props */) {
-  return (
-    <div className="user-card">
-      {/* TODO: добавьте отображение avatar если он есть */}
-      <h2>{/* TODO: отобразите name */}</h2>
-      <p>{/* TODO: отобразите email */}</p>
-      {/* TODO: отобразите age если он есть */}
-      <span className={`status ${/* TODO: добавьте класс на основе isOnline */}`}>
-        {/* TODO: отобразите статус онлайн/офлайн */}
-      </span>
-    </div>
-  );
+function UserCard({ name, email, age, avatar, isOnline }: UserCardProps) {
+	return (
+		<div className='user-card'>
+			{avatar && (
+				<img src={avatar} alt={`${name}'s avatar`} className='avatar' />
+			)}
+			<h2>{name}</h2>
+			<p>{email}</p>
+			{age && <p>Возраст: {age}</p>}
+			<span className={`status ${isOnline ? 'online' : 'offline'}`}>
+				{isOnline ? 'онлайн' : 'офлайн'}
+			</span>
+		</div>
+	)
 }
 
 // ===== ЗАДАЧА 1.2: Кнопка с вариантами =====
 
-// TODO: Создайте интерфейс ButtonProps со следующими свойствами:
-// - children: React.ReactNode
-// - variant: 'primary' | 'secondary' | 'danger'
-// - size: 'small' | 'medium' | 'large'
-// - disabled: boolean (опциональное, по умолчанию false)
-// - onClick: () => void
-
-// TODO: Типизируйте компонент Button
-function Button(/* TODO: добавьте типизацию props */) {
-  return (
-    <button
-      className={`btn btn--${/* TODO: используйте variant */} btn--${/* TODO: используйте size */}`}
-      disabled={/* TODO: используйте disabled */}
-      onClick={/* TODO: используйте onClick */}
-    >
-      {/* TODO: отобразите children */}
-    </button>
-  );
+interface ButtonProps {
+	children: React.ReactNode
+	variant: 'primary' | 'secondary' | 'danger'
+	size: 'small' | 'medium' | 'large'
+	disabled?: boolean
+	onClick: () => void
 }
+
+const Button = forwardRef<HTMLButtonElement, ButtonProps>(
+	({ children, variant, size, disabled = false, onClick }, ref) => {
+		return (
+			<button
+				ref={ref}
+				className={`btn btn--${variant} btn--${size}`}
+				disabled={disabled}
+				onClick={onClick}
+			>
+				{children}
+			</button>
+		)
+	},
+)
+
+Button.displayName = 'Button'
 
 // ===== ЗАДАЧА 1.3: Простой список пользователей =====
 
-// TODO: Создайте интерфейс UserListProps со следующими свойствами:
-// - users: string[] (массив имен пользователей)
-// - emptyMessage: string (опциональное, по умолчанию "Нет пользователей")
+interface UserListProps {
+	users: string[]
+	emptyMessage?: string
+}
 
-// TODO: Типизируйте компонент UserList
-function UserList(/* TODO: добавьте типизацию props */) {
-  // TODO: если users пустой, отобразите emptyMessage
+function UserList({
+	users,
+	emptyMessage = 'Нет пользователей',
+}: UserListProps) {
+	if (users.length === 0) {
+		return <p>{emptyMessage}</p>
+	}
 
-  return (
-    <ul className="user-list">
-      {/* TODO: отрендерите users как <li> элементы */}
-    </ul>
-  );
+	return (
+		<ul className='user-list'>
+			{users.map((user, index) => (
+				<li key={index}>{user}</li>
+			))}
+		</ul>
+	)
 }
 
 // ===== ЗАДАЧА 1.4: Карточка с children =====
 
-// TODO: Создайте интерфейс CardProps со следующими свойствами:
-// - title: string
-// - children: React.ReactNode
-// - footer: React.ReactNode (опциональное)
-// - className: string (опциональное)
+interface CardProps {
+	title: string
+	children: React.ReactNode
+	footer?: React.ReactNode
+	className?: string
+}
 
-// TODO: Типизируйте компонент Card
-function Card(/* TODO: добавьте типизацию props */) {
-  return (
-    <div className={`card ${/* TODO: добавьте className если есть */}`}>
-      <div className="card-header">
-        <h3>{/* TODO: отобразите title */}</h3>
-      </div>
-      <div className="card-content">
-        {/* TODO: отобразите children */}
-      </div>
-      {/* TODO: отобразите footer если он есть */}
-    </div>
-  );
+function Card({ title, children, footer, className }: CardProps) {
+	return (
+		<div className={`card ${className || ''}`}>
+			<div className='card-header'>
+				<h3>{title}</h3>
+			</div>
+			<div className='card-content'>{children}</div>
+			{footer && <div className='card-footer'>{footer}</div>}
+		</div>
+	)
 }
 
 // ===== ЗАДАЧА 1.5: Демо компонент =====
 
 interface User {
-  id: number;
-  name: string;
-  email: string;
-  age: number;
-  isOnline: boolean;
+	id: number
+	name: string
+	email: string
+	age: number
+	isOnline: boolean
 }
 
-// TODO: Типизируйте компонент App
-function App() {
-  const users: User[] = [
-    { id: 1, name: 'Анна Иванова', email: 'anna@example.com', age: 28, isOnline: true },
-    { id: 2, name: 'Петр Петров', email: 'petr@example.com', age: 35, isOnline: false },
-    { id: 3, name: 'Мария Сидорова', email: 'maria@example.com', age: 24, isOnline: true }
-  ];
+function App(): React.ReactElement {
+	const [users, setUsers] = useState<User[]>([
+		{
+			id: 1,
+			name: 'Анна Иванова',
+			email: 'anna@example.com',
+			age: 28,
+			isOnline: true,
+		},
+		{
+			id: 2,
+			name: 'Петр Петров',
+			email: 'petr@example.com',
+			age: 35,
+			isOnline: false,
+		},
+		{
+			id: 3,
+			name: 'Мария Сидорова',
+			email: 'maria@example.com',
+			age: 24,
+			isOnline: true,
+		},
+	])
 
-  const userNames = users.map(user => user.name);
+	const userNames = useMemo(() => users.map(user => user.name), [users])
 
-  const handleButtonClick = () => {
-    console.log('Кнопка нажата!');
-  };
+	const handleAddUser = useCallback(() => {
+		setUsers(prevUsers => [
+			...prevUsers,
+			{
+				id:
+					prevUsers.length > 0 ? Math.max(...prevUsers.map(u => u.id)) + 1 : 1,
+				name: `Новый пользователь ${prevUsers.length + 1}`,
+				email: `newuser${prevUsers.length + 1}@example.com`,
+				age: 25,
+				isOnline: false,
+			},
+		])
+	}, [])
 
-  return (
-    <div className="app">
-      <Card
-        title="Список пользователей"
-        footer={<p>Всего пользователей: {users.length}</p>}
-      >
-        <UserList
-          users={userNames}
-          emptyMessage="Пользователей не найдено"
-        />
+	return (
+		<div className='app'>
+			<Card
+				title='Список пользователей'
+				footer={<p>Всего пользователей: {users.length}</p>}
+			>
+				<UserList users={userNames} emptyMessage='Пользователей не найдено' />
 
-        <div style={{ marginTop: '20px' }}>
-          <Button
-            variant="primary"
-            size="medium"
-            onClick={handleButtonClick}
-          >
-            Добавить пользователя
-          </Button>
-        </div>
-      </Card>
-    </div>
-  );
+				<div style={{ marginTop: '20px' }}>
+					<Button variant='primary' size='medium' onClick={handleAddUser}>
+						Добавить пользователя
+					</Button>
+				</div>
+			</Card>
+
+			<Card title='Бонусный компонент GenericList'>
+				<GenericList
+					items={users}
+					renderItem={user => (
+						<UserCard
+							key={user.id}
+							name={user.name}
+							email={user.email}
+							age={user.age}
+							isOnline={user.isOnline}
+						/>
+					)}
+				/>
+			</Card>
+		</div>
+	)
 }
 
-export default App;
+export default App
 
 // ===== БОНУСНЫЕ ЗАДАЧИ =====
 
-// TODO BONUS 1: Примените utility типы для типизации параметров компонента
-// TODO BONUS 2: Создайте generic компонент List<T> с render prop паттерном
-// TODO BONUS 3: Добавьте поддержку ref forwarding в Button компонент
+// BONUS 1: Примените utility типы для типизации параметров компонента
+// в компоненте Button
+
+// BONUS 2: Создайте generic компонент List<T> с render prop паттерном
+interface GenericListProps<T> {
+	items: T[]
+	renderItem: (item: T) => React.ReactNode
+}
+
+function GenericList<T>({ items, renderItem }: GenericListProps<T>) {
+	return <div>{items.map(renderItem)}</div>
+}
+
+// BONUS 3: Добавьте поддержку ref forwarding в Button компонент
+// в компоненте Button
