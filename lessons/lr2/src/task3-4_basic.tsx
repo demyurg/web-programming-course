@@ -15,33 +15,38 @@ import React, { createContext, useContext, useState, ReactNode } from 'react';
 // ЧАСТЬ 1: Простая форма
 // ============================================
 
-// TODO 1.1: Создайте интерфейс FormData с полями:
-// - name: string
-// - email: string
-// - message: string
+// TODO 1.1: Интерфейс FormData
+interface FormData {
+  name: string;
+  email: string;
+  message: string;
+}
 
-// TODO 1.2: Типизируйте компонент SimpleForm
-function SimpleForm() {
-  // TODO 1.3: Создайте состояние formData с типом FormData
-  const [formData, setFormData] = useState(/* TODO */);
+// TODO 1.2: Типизация компонента SimpleForm
+function SimpleForm(): JSX.Element {
+  // TODO 1.3: Состояние formData
+  const [formData, setFormData] = useState<FormData>({
+    name: '',
+    email: '',
+    message: ''
+  });
+
   const [submitted, setSubmitted] = useState(false);
 
-  // TODO 1.4: Типизируйте обработчик изменения
-  const handleChange = (e: /* TODO: тип события */) => {
-    const { name, value } = e.target;
-    // TODO: обновите formData
+  // TODO 1.4: Обработчик изменения
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const { name, value } = e.target;
+  setFormData(prevState => ({ ...prevState, [name]: value }));
   };
-
-  // TODO 1.5: Типизируйте обработчик отправки
-  const handleSubmit = (e: /* TODO: тип события */) => {
+  // TODO 1.5: Обработчик отправки
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
     console.log('Отправлено:', formData);
 
-    // TODO: установите submitted в true чтобы показать сообщение об успехе
+    setSubmitted(true); // Устанавливаем флаг успешной отправки
 
-    // TODO: через 3 секунды верните submitted в false
-    // Подсказка: используйте setTimeout(() => setSubmitted(false), 3000)
+    setTimeout(() => setSubmitted(false), 3000); // Через три секунды сбрасываем этот флаг обратно
   };
 
   return (
@@ -53,39 +58,36 @@ function SimpleForm() {
       )}
 
       <form onSubmit={handleSubmit}>
-        {/* TODO: Поле имени */}
         <div className="form-group">
           <label htmlFor="name">Имя:</label>
           <input
             type="text"
             id="name"
             name="name"
-            value={/* TODO */}
+            value={formData.name}
             onChange={handleChange}
             required
           />
         </div>
 
-        {/* TODO: Поле email */}
         <div className="form-group">
           <label htmlFor="email">Email:</label>
           <input
             type="email"
             id="email"
             name="email"
-            value={/* TODO */}
+            value={formData.email}
             onChange={handleChange}
             required
           />
         </div>
 
-        {/* TODO: Поле сообщения */}
         <div className="form-group">
           <label htmlFor="message">Сообщение:</label>
           <textarea
             id="message"
             name="message"
-            value={/* TODO */}
+            value={formData.message}
             onChange={handleChange}
             rows={4}
             required
@@ -102,29 +104,33 @@ function SimpleForm() {
 // ЧАСТЬ 2: Context API
 // ============================================
 
-// TODO 2.1: Создайте интерфейс User с полями:
-// - id: number
-// - name: string
-// - email: string
+// TODO 2.1: Интерфейс User
+interface User {
+  id: number;
+  name: string;
+  email: string;
+}
 
-// TODO 2.2: Создайте интерфейс UserContextType с полями:
-// - user: User | null
-// - login: (user: User) => void
-// - logout: () => void
+// TODO 2.2: Интерфейс UserContextType
+interface UserContextType {
+  user: User | null;
+  login: (user: User) => void;
+  logout: () => void;
+}
 
-// TODO 2.3: Создайте Context
-const UserContext = createContext</* TODO: тип */ | undefined>(undefined);
+// TODO 2.3: Контекст UserContext
+const UserContext = createContext<UserContextType | undefined>(undefined);
 
-// TODO 2.4: Типизируйте UserProvider
-function UserProvider({ children }: { children: ReactNode }) {
+// TODO 2.4: Типизация UserProvider
+function UserProvider({ children }: { children: ReactNode }): JSX.Element {
   const [user, setUser] = useState<User | null>(null);
 
   const login = (userData: User) => {
-    // TODO: реализуйте вход
+    setUser(userData);
   };
 
   const logout = () => {
-    // TODO: реализуйте выход
+    setUser(null);
   };
 
   return (
@@ -134,19 +140,16 @@ function UserProvider({ children }: { children: ReactNode }) {
   );
 }
 
-// TODO 2.5: Создайте custom hook useUser
-// Должен возвращать тип UserContextType
-// Должен проверять, что context не undefined и выбрасывать ошибку
-function useUser(): /* TODO: добавьте возвращаемый тип */ {
-  // TODO: получите context с помощью useContext
-  // TODO: если context undefined, выбросьте ошибку
-  // TODO: верните context
+// TODO 2.5: Custom Hook useUser
+function useUser(): UserContextType {
+  const context = useContext(UserContext);
+  if (!context) throw new Error("useUser must be used within a UserProvider");
+  return context;
 }
 
-// TODO 2.6: Создайте компонент UserStatus
-// Этот компонент показывает статус пользователя в header
+// TODO 2.6: Компонент UserStatus
 function UserStatus() {
-  // TODO: получите user и logout из useUser()
+  const { user, logout } = useUser(); // Получаем данные пользователя и функцию выхода
 
   if (!user) {
     return <span>Не авторизован</span>;
@@ -160,39 +163,8 @@ function UserStatus() {
   );
 }
 
-// TODO 2.7: Создайте компонент Profile
-function Profile() {
-  const { user, login } = useUser();
-
-  const handleLogin = () => {
-    login({
-      id: 1,
-      name: 'Иван Иванов',
-      email: 'ivan@example.com'
-    });
-  };
-
-  if (!user) {
-    return (
-      <div className="profile">
-        <h2>Вы не авторизованы</h2>
-        <button onClick={handleLogin}>Войти</button>
-      </div>
-    );
-  }
-
-  return (
-    <div className="profile">
-      <h2>Профиль</h2>
-      <p>Имя: {user.name}</p>
-      <p>Email: {user.email}</p>
-      <p>ID: {user.id}</p>
-    </div>
-  );
-}
-
 // ============================================
-// Главный компонент
+// Общий компонент App
 // ============================================
 
 function AppContent() {
@@ -202,8 +174,7 @@ function AppContent() {
     <div className="app">
       <header className="app-header">
         <h1>Приложение с формами и авторизацией</h1>
-        {/* TODO 2.8: Добавьте компонент UserStatus здесь */}
-        {/* <UserStatus /> */}
+        <UserStatus />
       </header>
 
       <nav className="tabs">
