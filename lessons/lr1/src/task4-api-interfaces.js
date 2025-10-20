@@ -22,7 +22,58 @@
 // - OrderStatus: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled'
 
 // Базовая функция для API запросов
-async function makeApiRequest(url, options) {
+type UserRole= 'admin' | 'customer' | 'manager'
+type OrderStatus ='pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled'
+
+interface OrderItem {
+    productId: number;
+    quantity: number;
+    price: number;
+}
+
+
+interface Order {
+    id: number;
+    userId: number;
+    items: OrderItem[];
+    totalAmount: number;
+    status: OrderStatus;
+    createdAt: Date;
+}
+
+interface Product {
+    id: number;
+    name: string;
+    price: number;
+    description: string;
+    category: string;
+    images: string[];
+    rating?: number;
+}
+
+interface User {
+    id: number;
+    name: string;
+    email: string;
+    role: UserRole;
+    avatar?: string;
+}
+
+interface ApiResponse<T> {
+    success: boolean;
+    data?: T | null;
+    message?: string;
+    error?: string;
+}
+
+interface ProductFilters {
+    category?: string;
+    minPrice?: number;
+    maxPrice?: number;
+    search?: string;
+}
+
+async function makeApiRequest<T>(url: string, options: RequestInit): Promise<ApiResponse<T>> {
     try {
         const response = await fetch(url, options);
         const data = await response.json();
@@ -30,34 +81,30 @@ async function makeApiRequest(url, options) {
         if (!response.ok) {
             return {
                 success: false,
-                error: data.message || 'Произошла ошибка',
-                data: null
+                error: (data as any).message || 'Произошла ошибка'
             };
         }
         
         return {
             success: true,
-            data: data,
-            error: null
+            data: data as T
         };
     } catch (error) {
         return {
             success: false,
-            error: error.message,
-            data: null
-        };
+            error: (error as Error).message
     }
 }
 
 // Получение пользователя по ID
-async function getUser(userId) {
+async function getUser(userId:number) {
     return makeApiRequest(`/api/users/${userId}`, {
         method: 'GET'
     });
 }
 
 // Получение списка товаров с фильтрами
-async function getProducts(filters) {
+async function getProducts(filters: ProductFilters) {
     const queryParams = new URLSearchParams();
     
     if (filters.category) queryParams.set('category', filters.category);
@@ -71,7 +118,7 @@ async function getProducts(filters) {
 }
 
 // Создание заказа
-async function createOrder(orderData) {
+async function createOrder(orderData: { userId: number; items: OrderItem[]; totalAmount: number }): Promise<ApiResponse<Order>> {
     return makeApiRequest('/api/orders', {
         method: 'POST',
         headers: {
@@ -82,7 +129,7 @@ async function createOrder(orderData) {
 }
 
 // Обновление статуса заказа
-async function updateOrderStatus(orderId, newStatus) {
+async function updateOrderStatus(orderId: Number, newStatus: OrderStatus) {
     return makeApiRequest(`/api/orders/${orderId}/status`, {
         method: 'PATCH',
         headers: {
@@ -93,7 +140,11 @@ async function updateOrderStatus(orderId, newStatus) {
 }
 
 // Функция для обработки результатов API
-function handleApiResponse(response, onSuccess, onError) {
+function handleApiResponse<T>(
+    response: ApiResponse<T>, 
+    onSuccess: (data: T) => void, 
+    onError: (error: string) => void
+) {
     if (response.success && response.data) {
         onSuccess(response.data);
     } else {
@@ -102,27 +153,25 @@ function handleApiResponse(response, onSuccess, onError) {
 }
 
 // Класс для управления состоянием загрузки
-class ApiState {
-    constructor() {
-        this.isLoading = false;
-        this.error = null;
-        this.data = null;
-    }
+class ApiState<T> {
+    isLoading: boolean = false;
+    error: string | null = null;
+    data: T | null = null;
     
-    setLoading(loading) {
+    setLoading(loading: boolean) {
         this.isLoading = loading;
         if (loading) {
             this.error = null;
         }
     }
     
-    setData(data) {
+    setData(data:T) {
         this.data = data;
         this.isLoading = false;
         this.error = null;
     }
     
-    setError(error) {
+    setError(error:string) {
         this.error = error;
         this.isLoading = false;
         this.data = null;
@@ -138,25 +187,26 @@ class ApiState {
 }
 
 // Композитная функция для загрузки данных с состоянием
-async function loadDataWithState(apiCall, state) {
+async function loadDataWithState<T>(apiCall: () => Promise<ApiResponse<T>>, state: ApiState<T>): Promise<ApiResponse<T>> {
     state.setLoading(true);
     
     try {
         const response = await apiCall();
         
         if (response.success) {
-            state.setData(response.data);
+            state.setData(response.data!);
         } else {
-            state.setError(response.error);
+            state.setError(response.error || 'Неизвестная ошибка');
         }
         
         return response;
     } catch (error) {
-        state.setError(error.message);
+        const errorMsg = (error as Error).message;
+        state.setError(errorMsg);
         return {
             success: false,
-            error: error.message,
-            data: null
+            data: null,
+            error: errorMsg
         };
     }
 }
@@ -192,7 +242,5 @@ async function exampleUsage() {
         (order) => console.log('Заказ создан:', order),
         (error) => console.error('Ошибка создания заказа:', error)
     );
-}
+}}
 
-// Раскомментируйте для тестирования (не будет работать без реального API)
-// exampleUsage();
