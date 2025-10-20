@@ -1,29 +1,66 @@
 <!DOCTYPE html>
 <html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Анна Светлова - Фотограф</title>
-    <link rel="stylesheet" href="css/style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Open+Sans:wght@300;400;600&display=swap" rel="stylesheet">
-</head>
-<body>
-    <!-- Header & Navigation -->
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<link rel="stylesheet" href="style.css" />
+		<title>Photographer Anna</title>
+	</head>
+	<body>
+		<div class="heading">
+			<p class="heading-text1">Фотограф</p>
+			<p class="heading-text2">Анна Светлова</p>
+		</div>
 
-    <main>
-        <!-- Hero Section -->
+		<div class="box">
+			<p id="box-heading">Ваш любимый фотограф</p>
+			<p>
+				Фотограф с 10 летним стажем, снимаю свадьбы, дни рождения, корпоративы.
+				Снимаю на проффесиональный фотоаппарат Sony
+			</p>
+			<div class="phototab">
+				<p class="tab-buttom" data-tab="1" onclick="toggleTab(this)">Галерея</p>
+				<div class="tab-content" id="tab-1">
+					<img
+						src="Vintage cam wedding photo.jpg"
+						alt="Фото - 1"
+						class="tab-image"
+					/>
+					<img src="1.jpg" alt="Фото - 2" class="tab-image" />
+					<img src="2.jpg" alt="Фото - 3" class="tab-image" />
+					<img
+						src="день рождение розовый 14 лет.jpg"
+						alt="Фото - 4"
+						class="tab -image"
+					/>
+					<img src="Birthday party.jpg" alt="Фото - 5" class="tab -image" />
+					<img
+						src="Просто вместе_ свадьба с фотосессией в Аптекарском огороде.jpg"
+						alt="Фото - 6"
+						class="tab -image"
+					/>
+				</div>
+			</div>
+			<div class="phototab">
+				<p class="tab-buttom" data-tab="2" onclick="toggleTab(this)">
+					Наши контакты
+				</p>
+				<div class="tab-content" id="tab-2">
+					<p class="tab-text">Телефон - 88005553535</p>
+					<p class="tab-text">Email - milo@gmail.com</p>
+					<p class="tab-text">Соц.сети - вк</p>
+				</div>
+			</div>
 
-        <!-- About Section -->
-
-        <!-- Gallery Section -->
-
-        <!-- Contact Section -->
-    </main>
-
-    <!-- Footer -->
-
-    <!-- Modal for enlarged images -->
-
-    <script src="js/script.js"></script>
-</body>
+			<footer>
+				<nav class="tab-links">
+					<ul>
+						<li><a href="#tab-1">Галерея</a></li>
+						<li><a href="#tab-2">Контакты</a></li>
+					</ul>
+				</nav>
+			</footer>
+		</div>
+		<script src="script.js"></script>
+	</body>
 </html>
