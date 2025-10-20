@@ -1,155 +1,286 @@
 /**
- * Задание 1: Базовые типизированные компоненты
+ * Задание 2: Типизация хуков и состояния
  *
- * Цель: Научиться создавать простые типизированные React компоненты
+ * Цель: Освоить типизацию useState, useEffect и простых кастомных хуков
  *
  * Инструкции:
- * 1. Создайте интерфейсы для всех props
- * 2. Добавьте правильную типизацию к компонентам
- * 3. Убедитесь что все компоненты работают без ошибок TypeScript
+ * 1. Добавьте правильную типизацию ко всем хукам
+ * 2. Создайте простые типизированные кастомные хуки
+ * 3. Обработайте основные состояния приложения
  */
 
-import React from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
-// ===== ЗАДАЧА 1.1: Простая карточка пользователя =====
+// ===== ЗАДАЧА 2.1: Счетчик с расширенным состоянием =====
 
-// TODO: Создайте интерфейс UserCardProps со следующими свойствами:
-// - name: string
-// - email: string
-// - age: number (опциональное)
-// - avatar: string (опциональное)
-// - isOnline: boolean
+// TODO: Определите интерфейс CounterState со следующими свойствами:
+// - count: number
+// - step: number
+// - isRunning: boolean
+// - history: number[]
 
-// TODO: Типизируйте компонент UserCard
-function UserCard(/* TODO: добавьте типизацию props */) {
+interface CounterState {
+  count: number;
+  step: number;
+  isRunning: boolean;
+  history: number[];
+}
+
+// TODO: Типизируйте компонент Counter
+function Counter(): JSX.Element {
+  // TODO: Добавьте типизацию к useState
+  const [state, setState] = useState<CounterState>({
+    count: 0,
+    step: 1,
+    isRunning: false,
+    history: []
+  });
+
+  // TODO: Добавьте типизацию к функциям
+  const increment = useCallback((): void => {
+    // TODO: реализуйте increment с обновлением истории
+  }, []);
+
+  const decrement = useCallback((): void => {
+    // TODO: реализуйте decrement с обновлением истории
+  }, []);
+
+  const setStep = (newStep: number): void => {
+    // TODO: реализуйте изменение шага
+  };
+
+  const toggleRunning = (): void => {
+    // TODO: реализуйте переключение автоинкремента
+  };
+
+  const reset = (): void => {
+    // TODO: реализуйте сброс состояния
+  };
+
+  // TODO: Добавьте useEffect с типизацией для автоинкремента
+  useEffect(() => {
+    // TODO: реализуйте автоинкремент когда isRunning === true
+  }, [state.isRunning, state.step]);
+
   return (
-    <div className="user-card">
-      {/* TODO: добавьте отображение avatar если он есть */}
-      <h2>{/* TODO: отобразите name */}</h2>
-      <p>{/* TODO: отобразите email */}</p>
-      {/* TODO: отобразите age если он есть */}
-      <span className={`status ${/* TODO: добавьте класс на основе isOnline */}`}>
-        {/* TODO: отобразите статус онлайн/офлайн */}
-      </span>
+    <div className="counter">
+      <h2>Счетчик: {state.count}</h2>
+      <p>Шаг: {state.step}</p>
+
+      <div className="controls">
+        <button onClick={increment}>+</button>
+        <button onClick={decrement}>-</button>
+        <button onClick={toggleRunning}>
+          {state.isRunning ? 'Остановить' : 'Запустить'}
+        </button>
+        <button onClick={reset}>Сброс</button>
+      </div>
+
+      <div className="step-control">
+        <label>
+          Шаг:
+          <input
+            type="number"
+            value={state.step}
+            onChange={(e) => setStep(Number(e.target.value))}
+            min="1"
+          />
+        </label>
+      </div>
+
+      <div className="history">
+        <h3>История:</h3>
+        <ul>
+          {state.history.map((value, index) => (
+            <li key={index}>{value}</li>
+          ))}
+        </ul>
+      </div>
     </div>
   );
 }
 
-// ===== ЗАДАЧА 1.2: Кнопка с вариантами =====
+// ===== ЗАДАЧА 2.2: Простое todo приложение =====
 
-// TODO: Создайте интерфейс ButtonProps со следующими свойствами:
-// - children: React.ReactNode
-// - variant: 'primary' | 'secondary' | 'danger'
-// - size: 'small' | 'medium' | 'large'
-// - disabled: boolean (опциональное, по умолчанию false)
-// - onClick: () => void
-
-// TODO: Типизируйте компонент Button
-function Button(/* TODO: добавьте типизацию props */) {
-  return (
-    <button
-      className={`btn btn--${/* TODO: используйте variant */} btn--${/* TODO: используйте size */}`}
-      disabled={/* TODO: используйте disabled */}
-      onClick={/* TODO: используйте onClick */}
-    >
-      {/* TODO: отобразите children */}
-    </button>
-  );
+interface Todo {
+  id: string;
+  text: string;
+  completed: boolean;
 }
 
-// ===== ЗАДАЧА 1.3: Простой список пользователей =====
+// TODO: Типизируйте компонент TodoApp
+function TodoApp(): JSX.Element {
+  const [todos, setTodos] = useState<Todo[]>([]);
+  const [newTodoText, setNewTodoText] = useState<string>('');
 
-// TODO: Создайте интерфейс UserListProps со следующими свойствами:
-// - users: string[] (массив имен пользователей)
-// - emptyMessage: string (опциональное, по умолчанию "Нет пользователей")
+  const addTodo = (e: React.FormEvent<HTMLFormElement>): void => {
+    e.preventDefault();
+    // TODO: создайте новую todo и добавьте в массив
+  };
 
-// TODO: Типизируйте компонент UserList
-function UserList(/* TODO: добавьте типизацию props */) {
-  // TODO: если users пустой, отобразите emptyMessage
+  const toggleTodo = (id: string): void => {
+    // TODO: измените completed статус для todo с данным id
+  };
+
+  const deleteTodo = (id: string): void => {
+    // TODO: удалите todo с данным id
+  };
+
+  // TODO: Посчитайте количество завершенных todos
+  const completedCount: number = 0;
 
   return (
-    <ul className="user-list">
-      {/* TODO: отрендерите users как <li> элементы */}
-    </ul>
-  );
-}
+    <div className="todo-app">
+      <h2>Todo приложение</h2>
 
-// ===== ЗАДАЧА 1.4: Карточка с children =====
+      {/* TODO: Форма добавления */}
+      <form onSubmit={addTodo}>
+        <input
+          type="text"
+          value={newTodoText}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewTodoText(e.target.value)}
+          placeholder="Добавить новую задачу..."
+        />
+        <button type="submit">
+          Добавить
+        </button>
+      </form>
 
-// TODO: Создайте интерфейс CardProps со следующими свойствами:
-// - title: string
-// - children: React.ReactNode
-// - footer: React.ReactNode (опциональное)
-// - className: string (опциональное)
+      {/* TODO: Список todos */}
+      <ul className="todo-list">
+        {todos.map(todo => (
+          <li key={todo.id} className={todo.completed ? 'completed' : ''}>
+            <input
+              type="checkbox"
+              checked={todo.completed}
+              onChange={() => toggleTodo(todo.id)}
+            />
+            <span>{todo.text}</span>
+            <button onClick={() => deleteTodo(todo.id)}>Удалить</button>
+          </li>
+        ))}
+      </ul>
 
-// TODO: Типизируйте компонент Card
-function Card(/* TODO: добавьте типизацию props */) {
-  return (
-    <div className={`card ${/* TODO: добавьте className если есть */}`}>
-      <div className="card-header">
-        <h3>{/* TODO: отобразите title */}</h3>
+      {/* TODO: Отобразите статистику */}
+      <div className="stats">
+        <p>Всего: {todos.length}</p>
+        <p>Завершено: {completedCount}</p>
       </div>
-      <div className="card-content">
-        {/* TODO: отобразите children */}
-      </div>
-      {/* TODO: отобразите footer если он есть */}
     </div>
   );
 }
 
-// ===== ЗАДАЧА 1.5: Демо компонент =====
+// ===== ЗАДАЧА 2.3: Кастомные хуки =====
 
-interface User {
-  id: number;
-  name: string;
-  email: string;
-  age: number;
-  isOnline: boolean;
+// TODO: Создайте типизированный хук useToggle
+// Параметры: initialValue?: boolean
+// Возвращает: [boolean, () => void] (value, toggle)
+function useToggle(initialValue: boolean = false): [boolean, () => void] {
+  const [value, setValue] = useState<boolean>(initialValue);
+
+  const toggle = useCallback(() => {
+    // TODO: реализуйте логику переключения
+  }, []);
+
+  return [value, toggle];
 }
+
+// TODO: Создайте типизированный хук useCounter
+// Параметры: initialValue?: number
+// Возвращает: { count: number, increment: () => void, decrement: () => void, reset: () => void }
+function useCounter(initialValue: number = 0): {
+  count: number;
+  increment: () => void;
+  decrement: () => void;
+  reset: () => void;
+} {
+  const [count, setCount] = useState<number>(initialValue);
+
+  const increment = useCallback(() => {
+    // TODO: реализуйте увеличение
+  }, []);
+
+  const decrement = useCallback(() => {
+    // TODO: реализуйте уменьшение
+  }, []);
+
+  const reset = useCallback(() => {
+    // TODO: реализуйте сброс
+  }, []);
+
+  return { count, increment, decrement, reset };
+}
+
+// ===== ЗАДАЧА 2.4: Демо компонент для кастомных хуков =====
+
+// TODO: Типизируйте компонент HooksDemo
+function HooksDemo(): JSX.Element {
+  // TODO: Используйте созданные кастомные хуки
+  const [value, toggle] = useToggle();
+  const { count, increment, decrement, reset } = useCounter();
+
+  return (
+    <div className="hooks-demo">
+      <h2>Демо кастомных хуков</h2>
+
+      {/* TODO: Демо useCounter */}
+      <div className="demo-section">
+        <h3>useCounter</h3>
+        <p>Счётчик: {count}</p>
+        <button onClick={increment}>+</button>
+        <button onClick={decrement}>-</button>
+        <button onClick={reset}>Сброс</button>
+      </div>
+
+      {/* TODO: Демо useToggle */}
+      <div className="demo-section">
+        <h3>useToggle</h3>
+        <p>Состояние: {value ? 'Вкл' : 'Выкл'}</p>
+        <button onClick={toggle}>Переключить</button>
+      </div>
+    </div>
+  );
+}
+
+// ===== ГЛАВНЫЙ КОМПОНЕНТ =====
+const TABS = {
+  'counter': {
+    'text': 'Счетчик',
+    'component': () => <Counter />,
+  },
+  'todos': {
+    'text': 'Todo',
+    'component': () => <TodoApp />,
+  },
+  'hooks':{
+    'text': 'Хуки',
+    'component': () => <HooksDemo />,
+  },
+};
 
 // TODO: Типизируйте компонент App
-function App() {
-  const users: User[] = [
-    { id: 1, name: 'Анна Иванова', email: 'anna@example.com', age: 28, isOnline: true },
-    { id: 2, name: 'Петр Петров', email: 'petr@example.com', age: 35, isOnline: false },
-    { id: 3, name: 'Мария Сидорова', email: 'maria@example.com', age: 24, isOnline: true }
-  ];
-
-  const userNames = users.map(user => user.name);
-
-  const handleButtonClick = () => {
-    console.log('Кнопка нажата!');
-  };
+function App(): JSX.Element {
+  const [activeTab, setActiveTab] = useState<keyof typeof TABS>('counter');
 
   return (
     <div className="app">
-      <Card
-        title="Список пользователей"
-        footer={<p>Всего пользователей: {users.length}</p>}
-      >
-        <UserList
-          users={userNames}
-          emptyMessage="Пользователей не найдено"
-        />
-
-        <div style={{ marginTop: '20px' }}>
-          <Button
-            variant="primary"
-            size="medium"
-            onClick={handleButtonClick}
+      <nav className="tabs">
+        {Object.entries(TABS).map(([key, tab]) => (
+          <button
+            key={key}
+            className={activeTab === key ? 'active' : ''}
+            onClick={() => setActiveTab(key as keyof typeof TABS)}
           >
-            Добавить пользователя
-          </Button>
-        </div>
-      </Card>
+            {tab.text}
+          </button>
+        ))}
+      </nav>
+
+      <div className="tab-content">
+        {TABS[activeTab].component()}
+      </div>
     </div>
   );
 }
 
 export default App;
-
-// ===== БОНУСНЫЕ ЗАДАЧИ =====
-
-// TODO BONUS 1: Примените utility типы для типизации параметров компонента
-// TODO BONUS 2: Создайте generic компонент List<T> с render prop паттерном
-// TODO BONUS 3: Добавьте поддержку ref forwarding в Button компонент
