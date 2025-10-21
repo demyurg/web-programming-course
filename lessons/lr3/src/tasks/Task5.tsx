@@ -71,7 +71,7 @@ function Task5() {
           <h3 className="text-lg font-semibold mb-3">4. Кнопка: полная ширина → обычная</h3>
           <div className="bg-white p-4 rounded shadow">
             {/* TODO: добавьте w-full lg:w-auto */}
-            <button className="bg-blue-500 text-white px-6 py-2 rounded w-full lg:w-auto">
+            <button className="bg-blue-500 text-white px-6 py-2 rounded  w-full lg:w-auto">
               Купить
             </button>
           </div>
