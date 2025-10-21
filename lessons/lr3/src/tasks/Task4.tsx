@@ -1,12 +1,3 @@
-/**
- * Задание 4: Flex и Grid layouts
- *
- * Задачи:
- * 1. Создайте flex контейнер с кнопками (TODO: используйте flex, gap, justify)
- * 2. Создайте grid галерею (TODO: используйте grid, grid-cols, gap)
- * 3. Центрируйте карточку (TODO: используйте flex, items-center, justify-center)
- */
-
 const colors = ['red', 'blue', 'green', 'yellow', 'purple', 'pink'];
 const images = [
   'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=200',
@@ -16,6 +7,15 @@ const images = [
 ];
 
 function Task4() {
+  const colorClasses: Record<string, string> = {
+    red: 'bg-red-500 hover:bg-red-600',
+    blue: 'bg-blue-500 hover:bg-blue-600',
+    green: 'bg-green-500 hover:bg-green-600',
+    yellow: 'bg-yellow-400 hover:bg-yellow-500 text-black',
+    purple: 'bg-purple-500 hover:bg-purple-600',
+    pink: 'bg-pink-500 hover:bg-pink-600',
+  };
+
   return (
     <div>
       <h2 className="text-2xl font-bold mb-4">Задание 4: Flex и Grid layouts</h2>
@@ -28,10 +28,13 @@ function Task4() {
         {/* Flex: горизонтальные кнопки */}
         <div>
           <h3 className="text-lg font-semibold mb-3">1. Flex: кнопки в ряд</h3>
-          {/* TODO: добавьте flex gap-3 */}
-          <div>
+          {/* ✅ flex gap-3 justify-center */}
+          <div className="flex gap-3 justify-center flex-wrap">
             {colors.map(color => (
-              <button key={color} className="bg-blue-500 text-white px-4 py-2 rounded">
+              <button
+                key={color}
+                className={`${colorClasses[color]} text-white px-4 py-2 rounded font-medium transition-colors`}
+              >
                 {color}
               </button>
             ))}
@@ -41,21 +44,26 @@ function Task4() {
         {/* Grid: галерея изображений */}
         <div>
           <h3 className="text-lg font-semibold mb-3">2. Grid: галерея 2x2</h3>
-          {/* TODO: добавьте grid grid-cols-2 gap-4 */}
-          <div>
+          {/* ✅ grid grid-cols-2 gap-4 */}
+          <div className="grid grid-cols-2 gap-4">
             {images.map((img, i) => (
-              <img key={i} src={img} alt={`Image ${i + 1}`} className="w-full h-32 object-cover rounded" />
+              <img
+                key={i}
+                src={img}
+                alt={`Image ${i + 1}`}
+                className="w-full h-32 object-cover rounded"
+              />
             ))}
           </div>
         </div>
 
-        {/* Flex: центрирование */}
+        {/* Flex: центрирование карточки */}
         <div>
           <h3 className="text-lg font-semibold mb-3">3. Flex: центрирование карточки</h3>
-          {/* TODO: добавьте flex items-center justify-center h-64 bg-gray-200 rounded */}
-          <div>
+          {/* ✅ flex items-center justify-center h-64 bg-gray-200 rounded */}
+          <div className="flex items-center justify-center h-64 bg-gray-200 rounded">
             <div className="bg-white p-6 rounded-lg shadow-md">
-              <p className="text-gray-700">Я по центру!</p>
+              <p className="text-gray-700">ЦЕНТР КАРТОЧКИ</p>
             </div>
           </div>
         </div>
@@ -64,9 +72,9 @@ function Task4() {
         <div>
           <h3 className="text-lg font-semibold mb-3">4. Flex: space-between</h3>
           <div className="bg-white p-4 rounded shadow">
-            {/* TODO: добавьте flex justify-between items-center */}
-            <div>
-              <span className="font-semibold">Товар</span>
+            {/* ✅ flex justify-between items-center */}
+            <div className="flex justi  fy-between items-center">
+              <span className="font-semibold">ТОВАР</span>
               <span className="text-blue-600 font-bold">5990 ₽</span>
             </div>
           </div>
