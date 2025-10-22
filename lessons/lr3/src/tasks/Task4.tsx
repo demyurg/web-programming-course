@@ -1,3 +1,4 @@
+
 /**
  * Задание 4: Flex и Grid layouts
  *
@@ -28,8 +29,8 @@ function Task4() {
         {/* Flex: горизонтальные кнопки */}
         <div>
           <h3 className="text-lg font-semibold mb-3">1. Flex: кнопки в ряд</h3>
-          {/* TODO: добавьте flex gap-3 */}
-          <div>
+          {/* Реализованный flex-контейнер с разрывом между элементами */}
+          <div className="flex gap-3">
             {colors.map(color => (
               <button key={color} className="bg-blue-500 text-white px-4 py-2 rounded">
                 {color}
@@ -41,8 +42,8 @@ function Task4() {
         {/* Grid: галерея изображений */}
         <div>
           <h3 className="text-lg font-semibold mb-3">2. Grid: галерея 2x2</h3>
-          {/* TODO: добавьте grid grid-cols-2 gap-4 */}
-          <div>
+          {/* Реализована сетка с двумя столбцами и интервалом между ячейками */}
+          <div className="grid grid-cols-2 gap-4">
             {images.map((img, i) => (
               <img key={i} src={img} alt={`Image ${i + 1}`} className="w-full h-32 object-cover rounded" />
             ))}
@@ -52,28 +53,24 @@ function Task4() {
         {/* Flex: центрирование */}
         <div>
           <h3 className="text-lg font-semibold mb-3">3. Flex: центрирование карточки</h3>
-          {/* TODO: добавьте flex items-center justify-center h-64 bg-gray-200 rounded */}
-          <div>
+          {/* Реализовано вертикальное и горизонтальное центрирование */
+          <div className="flex items-center justify-center h-64 bg-gray-200 rounded">
             <div className="bg-white p-6 rounded-lg shadow-md">
               <p className="text-gray-700">Я по центру!</p>
             </div>
           </div>
-        </div>
-
+        }</div>
         {/* Flex: space-between */}
         <div>
           <h3 className="text-lg font-semibold mb-3">4. Flex: space-between</h3>
-          <div className="bg-white p-4 rounded shadow">
-            {/* TODO: добавьте flex justify-between items-center */}
-            <div>
-              <span className="font-semibold">Товар</span>
-              <span className="text-blue-600 font-bold">5990 ₽</span>
-            </div>
+          {/* Элементы расположены друг напротив друга */
+          <div className="flex justify-between items-center bg-white p-4 rounded shadow">
+            <span className="font-semibold">Товар</span>
+            <span className="text-blue-600 font-bold">5990 ₽</span>
           </div>
-        </div>
+        }</div>
       </div>
     </div>
   );
 }
-
 export default Task4;
