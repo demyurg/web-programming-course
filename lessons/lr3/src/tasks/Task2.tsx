@@ -1,13 +1,3 @@
-/**
- * Задание 2: Кнопки с вариантами
- *
- * Задачи:
- * 1. baseClasses: rounded font-medium transition-colors
- * 2. primary: bg-blue-500 text-white hover:bg-blue-600
- * 3. secondary: bg-gray-500 text-white hover:bg-gray-600
- * 4. small: px-3 py-1 text-sm | medium: px-4 py-2
- */
-
 import { ButtonHTMLAttributes, ReactNode } from 'react';
 
 type ButtonVariant = 'primary' | 'secondary';
@@ -26,19 +16,23 @@ function Button({
   children,
   ...props
 }: ButtonProps) {
-  // TODO: заполните классы
+  // Базовые классы, общие для всех кнопок
+  const baseClasses =
+    'rounded font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500';
+
+  // Классы стилей для разных вариантов кнопок
   const variantClasses: Record<ButtonVariant, string> = {
-    primary: '',
-    secondary: '',
+    primary: 'bg-blue-500 text-white hover:bg-blue-600', // Первичная кнопка
+    secondary: 'bg-gray-500 text-white hover:bg-gray-600', // Вторичная кнопка
   };
 
+  // Размерные классы
   const sizeClasses: Record<ButtonSize, string> = {
-    small: '',
-    medium: '',
+    small: 'px-3 py-1 text-sm', // Маленькая кнопка
+    medium: 'px-4 py-2', // Средняя кнопка
   };
 
-  const baseClasses = '';
-
+  // Объединяем все классы вместе
   const buttonClasses = `${baseClasses} ${variantClasses[variant]} ${sizeClasses[size]} ${className}`;
 
   return (
