@@ -41,16 +41,24 @@ function Task1() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {products.map(product => (
-          <div key={product.id}>
-            {/* TODO: bg-white shadow-md rounded-lg p-4 hover:shadow-xl transition-shadow */}
-            <div>
+          <div key={product.id} className="bg-white shadow-md rounded-lg p-4 hover:shadow-xl transition-shadow ">
+           {/* TODO: bg-white shadow-md rounded-lg p-4 hover:shadow-xl transition-shadow */}
+            {/*<div>*/}
               {/* TODO: rounded w-full h-40 object-cover */}
-              <img src={product.image} alt={product.name} />
+              <img 
+                src={product.image} 
+                alt={product.name}
+                className="rounded w-full h-40 object-cover " 
+              />
               {/* TODO: text-lg font-bold mt-3 */}
-              <h3>{product.name}</h3>
+              <h3 className="text-lg font-bold mt-3 "> 
+                {product.name}
+              </h3>
               {/* TODO: text-xl font-bold text-blue-600 mt-2 */}
-              <p>{product.price.toLocaleString('ru-RU')} ₽</p>
-            </div>
+              <p className="text-xl font-bold text-blue-600 mt-2">
+                {product.price.toLocaleString('ru-RU')} ₽
+              </p>
+            {/*</div>*/}
           </div>
         ))}
       </div>
