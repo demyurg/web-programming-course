@@ -20,13 +20,13 @@ const products: Product[] = [
     id: 1,
     name: 'Наушники',
     price: 5990,
-    image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=300&fit=crop'
+    image: 'https://www.drivereasy.com/wp-content/uploads/2018/09/Snap48-1.jpg'
   },
   {
     id: 2,
     name: 'Смарт-часы',
     price: 12990,
-    image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&h=300&fit=crop'
+    image: 'https://br.atsit.in/ru/wp-content/uploads/2021/06/d0bbd183d187d188d0b8d0b5-d187d0b0d181d18b-samsung-d0b2-2021-d0b3d0bed0b4d183-1.jpg'
   }
 ];
 
@@ -43,13 +43,13 @@ function Task1() {
         {products.map(product => (
           <div key={product.id}>
             {/* TODO: bg-white shadow-md rounded-lg p-4 hover:shadow-xl transition-shadow */}
-            <div>
+            <div className="bg-white shadow-md rounded-lg p-4 hover:shadow-xl transition-shadow">
               {/* TODO: rounded w-full h-40 object-cover */}
-              <img src={product.image} alt={product.name} />
+              <img src={product.image} alt={product.name} className="rounded w-full h-40 object-cover" />
               {/* TODO: text-lg font-bold mt-3 */}
-              <h3>{product.name}</h3>
+              <h3 className="text-lg font-bold mt-3">{product.name}</h3>
               {/* TODO: text-xl font-bold text-blue-600 mt-2 */}
-              <p>{product.price.toLocaleString('ru-RU')} ₽</p>
+              <p className="text-xl font-bold text-blue-600 mt-2">{product.price.toLocaleString('ru-RU')} ₽</p>
             </div>
           </div>
         ))}
