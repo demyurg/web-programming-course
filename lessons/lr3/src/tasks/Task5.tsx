@@ -9,12 +9,12 @@
  */
 
 const products = [
-  { id: 1, name: 'Товар 1', price: 1990, desc: 'Описание товара', img: 'https://avatars.mds.yandex.net/i?id=b3e0779bafca81c809829419d8d3b1018d791b00-4120598-images-thumbs&n=13' },
-  { id: 2, name: 'Товар 2', price: 2990, desc: 'Описание товара', img: 'https://avatars.mds.yandex.net/i?id=39f6eb3e0b22f9800d8664256987f0378866f83c-5398918-images-thumbs&n=13' },
-  { id: 3, name: 'Товар 3', price: 3990, desc: 'Описание товара', img: 'https://avatars.mds.yandex.net/i?id=24e1d7f496b87e3bf08770a3c1db514c1ed9b08b-11193111-images-thumbs&n=13' },
-  { id: 4, name: 'Товар 4', price: 4990, desc: 'Описание товара', img: 'https://avatars.mds.yandex.net/i?id=f46eb45032e12bdd949b58aa00574b79cce02b85-6458590-images-thumbs&n=13' },
-  { id: 5, name: 'Товар 5', price: 5990, desc: 'Описание товара', img: 'https://avatars.mds.yandex.net/i?id=1acff73911309a541e6216e18424ff89_l-5331866-images-thumbs&n=13' },
-  { id: 6, name: 'Товар 6', price: 6990, desc: 'Описание товара', img: 'https://avatars.mds.yandex.net/i?id=808e866114247a8b9c01570d8b74b05d76fe1fbd-5509039-images-thumbs&n=13' },
+  { id: 1, name: 'Товар 1', price: 1990, desc: 'Описание товара' },
+  { id: 2, name: 'Товар 2', price: 2990, desc: 'Описание товара' },
+  { id: 3, name: 'Товар 3', price: 3990, desc: 'Описание товара' },
+  { id: 4, name: 'Товар 4', price: 4990, desc: 'Описание товара' },
+  { id: 5, name: 'Товар 5', price: 5990, desc: 'Описание товара' },
+  { id: 6, name: 'Товар 6', price: 6990, desc: 'Описание товара' },
 ];
 
 function Task5() {
@@ -32,11 +32,10 @@ function Task5() {
         <div>
           <h3 className="text-lg font-semibold mb-3">1. Responsive grid (1→2→3 колонки)</h3>
           {/* TODO: добавьте grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div>
             {products.map(p => (
               <div key={p.id} className="bg-white p-4 rounded shadow">
                 <h4 className="font-bold">{p.name}</h4>
-                <img src={p.img} alt={p.name} className="w-full h-40 object-cover rounded" />
                 <p className="text-gray-600 text-sm">{p.desc}</p>
                 <p className="text-blue-600 font-bold mt-2">{p.price} ₽</p>
               </div>
@@ -50,7 +49,7 @@ function Task5() {
           <div className="bg-white p-4 rounded shadow">
             <p className="font-semibold">Основной текст (всегда виден)</p>
             {/* TODO: добавьте hidden md:block */}
-            <p className="text-gray-600 mt-2 hidden md:block">
+            <p className="text-gray-600 mt-2">
               Дополнительная информация (только на планшетах и десктопах)
             </p>
           </div>
@@ -61,7 +60,7 @@ function Task5() {
           <h3 className="text-lg font-semibold mb-3">3. Responsive размер текста</h3>
           <div className="bg-white p-4 rounded shadow">
             {/* TODO: добавьте text-sm md:text-base lg:text-lg */}
-            <p className="text-sm md:text-base lg:text-lg">
+            <p>
               Этот текст меняет размер: маленький на мобильных, средний на планшетах, большой на десктопах
             </p>
           </div>
@@ -72,7 +71,7 @@ function Task5() {
           <h3 className="text-lg font-semibold mb-3">4. Кнопка: полная ширина → обычная</h3>
           <div className="bg-white p-4 rounded shadow">
             {/* TODO: добавьте w-full lg:w-auto */}
-            <button className="bg-blue-500 text-white px-6 py-2 rounded w-full lg:w-auto">
+            <button className="bg-blue-500 text-white px-6 py-2 rounded">
               Купить
             </button>
           </div>

@@ -19,20 +19,15 @@ import React, { useState } from 'react';
 // - children: React.ReactNode
 // - onClick: () => void
 // - variant?: 'primary' | 'secondary'
-interface ButtonProps {
-  children: React.ReactNode;
-  onClick: () => void;
-  variant?: 'primary' | 'secondary';
-}
 
 // TODO 1.2: Типизируйте компонент Button
-function Button({children, onClick, variant = 'primary'}: ButtonProps) {
+function Button(/* TODO: добавьте типизацию */) {
   return (
     <button
-      className={`btn btn--${variant}`} 
-      onClick={onClick}
+      className={`btn btn--${/* TODO */}`}
+      onClick={/* TODO */}
     >
-      {children}
+      {/* TODO */}
     </button>
   );
 }
@@ -42,20 +37,14 @@ function Button({children, onClick, variant = 'primary'}: ButtonProps) {
 // - email: string
 // - isOnline: boolean
 
-interface UserCardProps {
-  name: string;
-  email: string;
-  isOnline: boolean;
-}
-
 // TODO 1.4: Типизируйте компонент UserCard
-function UserCard({name, email, isOnline}: UserCardProps) {
+function UserCard(/* TODO: добавьте типизацию */) {
   return (
     <div className="user-card">
-      <h3>{name}</h3>
-      <p>{email}</p>
-      <span className={`isOnline isOnline--${isOnline}`}>
-        {isOnline}
+      <h3>{/* TODO: name */}</h3>
+      <p>{/* TODO: email */}</p>
+      <span className={/* TODO: добавьте класс на основе isOnline */}>
+        {/* TODO: отобразите статус */}
       </span>
     </div>
   );
@@ -70,27 +59,17 @@ function UserCard({name, email, isOnline}: UserCardProps) {
 // - text: string
 // - completed: boolean
 
-interface Todo {
-  id: number;
-  text: string;
-  completed: boolean;
-}
-
 // TODO 3.2: Типизируйте компонент TodoApp
 function TodoApp() {
   // TODO 3.3: Создайте состояние todos с типом Todo[]
-  const [todos, setTodos] = useState<Todo[]>([]);
+  const [todos, setTodos] = useState(/* TODO */);
   const [inputValue, setInputValue] = useState('');
 
   // TODO 3.4: Реализуйте addTodo
   const addTodo = () => {
     if (inputValue.trim()) {
-      const newTodo: Todo = {
-        id: Date.now(),
-        text: inputValue.trim(),
-        completed: false,
-      };
-      setTodos([...todos, newTodo]);
+      // TODO: создайте новый todo и добавьте в массив
+      // Подсказка: id можно сделать как Date.now()
       setInputValue('');
     }
   };
@@ -98,17 +77,11 @@ function TodoApp() {
   // TODO 3.5: Реализуйте toggleTodo
   const toggleTodo = (id: number) => {
     // TODO: измените completed для todo с данным id
-    setTodos(
-      todos.map(todo =>
-        todo.id === id ? { ...todo, completed: !todo.completed } : todo
-      )
-    );
   };
 
   // TODO 3.6: Реализуйте deleteTodo
   const deleteTodo = (id: number) => {
     // TODO: удалите todo с данным id
-    setTodos(todos.filter(todo => todo.id !== id));
   };
 
   return (
@@ -163,7 +136,6 @@ function App() {
   return (
     <div className="app">
       <h1>Todo приложение на React + TypeScript</h1>
-      <UserCard name='Полина' email='poli806@mail.ru' isOnline={true}/>
       <TodoApp />
     </div>
   );

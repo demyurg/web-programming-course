@@ -9,20 +9,11 @@
 
 const colors = ['red', 'blue', 'green', 'yellow', 'purple', 'pink'];
 const images = [
-  'https://avatars.mds.yandex.net/i?id=b39974a84c5ac887ceeacfd1e0e9288319cfef4a-9182046-images-thumbs&n=13',
-  'https://avatars.mds.yandex.net/i?id=e2d5f99949117a9f350a7da43c9cf1594365e797-5026382-images-thumbs&n=13',
-  'https://avatars.mds.yandex.net/i?id=0de4537f83fdb36dbcba04fa6fb5ef1602f9c9b1-5120760-images-thumbs&n=13',
-  'https://avatars.mds.yandex.net/i?id=4b2303456625e6164eb3115b800f60704259a4ca-4236999-images-thumbs&n=13',
+  'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=200',
+  'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=200',
+  'https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=200',
+  'https://images.unsplash.com/photo-1505751172876-fa1923c5c528?w=200',
 ];
-
-const colorObj: Record<string, string> = {
-  red: 'bg-red-500',
-  blue: 'bg-blue-500',
-  green: 'bg-green-500',
-  yellow: 'bg-yellow-500',
-  purple: 'bg-purple-500',
-  pink: 'bg-pink-500'
-}
 
 function Task4() {
   return (
@@ -38,9 +29,9 @@ function Task4() {
         <div>
           <h3 className="text-lg font-semibold mb-3">1. Flex: кнопки в ряд</h3>
           {/* TODO: добавьте flex gap-3 */}
-          <div className="flex gap-3">
+          <div>
             {colors.map(color => (
-              <button key={color} className={`${colorObj[color]} text-white px-4 py-2 rounded`}>
+              <button key={color} className="bg-blue-500 text-white px-4 py-2 rounded">
                 {color}
               </button>
             ))}
@@ -51,7 +42,7 @@ function Task4() {
         <div>
           <h3 className="text-lg font-semibold mb-3">2. Grid: галерея 2x2</h3>
           {/* TODO: добавьте grid grid-cols-2 gap-4 */}
-          <div className="grid grid-cols-2 gap-4">
+          <div>
             {images.map((img, i) => (
               <img key={i} src={img} alt={`Image ${i + 1}`} className="w-full h-32 object-cover rounded" />
             ))}
@@ -62,7 +53,7 @@ function Task4() {
         <div>
           <h3 className="text-lg font-semibold mb-3">3. Flex: центрирование карточки</h3>
           {/* TODO: добавьте flex items-center justify-center h-64 bg-gray-200 rounded */}
-          <div className="flex items-center justify-center h-64 bg-gray-200 rounded">
+          <div>
             <div className="bg-white p-6 rounded-lg shadow-md">
               <p className="text-gray-700">Я по центру!</p>
             </div>
@@ -74,7 +65,7 @@ function Task4() {
           <h3 className="text-lg font-semibold mb-3">4. Flex: space-between</h3>
           <div className="bg-white p-4 rounded shadow">
             {/* TODO: добавьте flex justify-between items-center */}
-            <div className="flex justify-between items-center">
+            <div>
               <span className="font-semibold">Товар</span>
               <span className="text-blue-600 font-bold">5990 ₽</span>
             </div>

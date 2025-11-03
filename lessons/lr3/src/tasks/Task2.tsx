@@ -28,16 +28,16 @@ function Button({
 }: ButtonProps) {
   // TODO: заполните классы
   const variantClasses: Record<ButtonVariant, string> = {
-    primary: 'bg-blue-500 text-white hover:bg-blue-600',
-    secondary: 'bg-gray-500 text-white hover:bg-gray-600',
+    primary: '',
+    secondary: '',
   };
 
   const sizeClasses: Record<ButtonSize, string> = {
-    small: 'px-3 py-1 text-sm',
-    medium: 'px-4 py-2',
+    small: '',
+    medium: '',
   };
 
-  const baseClasses = 'rounded font-medium transition-colors';
+  const baseClasses = '';
 
   const buttonClasses = `${baseClasses} ${variantClasses[variant]} ${sizeClasses[size]} ${className}`;
 
