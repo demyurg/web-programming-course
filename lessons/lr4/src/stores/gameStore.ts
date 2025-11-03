@@ -119,14 +119,11 @@ class GameStore {
       if (this.timeRemaining > 0) {
         this.timeRemaining--;
       } else {
-        // Время вышло - автоматически переходим к следующему вопросу
         this.stopTimer();
         if (this.selectedAnswer === null) {
-          // Если ответ не выбран, считаем неправильным
-          this.selectAnswer(-1); // -1 означает, что ответ не выбран
+          this.selectAnswer(5);
         }
         
-        // Автопереход через 2 секунды после истечения времени
         setTimeout(() => {
           if (this.gameStatus === 'playing' && this.selectedAnswer !== null) {
             this.nextQuestion();
