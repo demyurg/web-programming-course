@@ -18,6 +18,11 @@ class GameStore {
   selectedAnswer: number | null = null;
   answeredQuestions: Answer[] = [];
 
+  timeRemaining = 0;
+  totalTimeSpent = 0;
+  gameStartTime = 0;
+  timerInterval: number | null = null;
+
   constructor() {
     makeAutoObservable(this);
   }
@@ -34,6 +39,11 @@ class GameStore {
     this.score = 0;
     this.selectedAnswer = null;
     this.answeredQuestions = [];
+    this.totalTimeSpent = 0;
+
+    this.timeRemaining = 30;
+    this.gameStartTime = Date.now();
+    this.startTimer();
   }
 
   selectAnswer(answerIndex: number) {
@@ -66,6 +76,7 @@ class GameStore {
     if (isCorrect) {
         this.score += 1;
       }
+      this.stopTimer();
   }
 
   // TODO: Добавьте другие методы:
@@ -85,6 +96,8 @@ class GameStore {
 
   finishGame() {
     this.gameStatus = 'finished';
+    this.totalTimeSpent = Date.now() - this.gameStartTime;
+    this.stopTimer();
   }
 
   resetGame() {
@@ -94,8 +107,41 @@ class GameStore {
     this.selectedAnswer = null;
     this.answeredQuestions = [];
     this.questions = [];
+    this.timeRemaining = 0;
+    this.totalTimeSpent = 0;
+    this.stopTimer();
   }
 
+  startTimer() {
+    this.stopTimer(); // Останавливаем предыдущий таймер
+    
+    this.timerInterval = setInterval(() => {
+      if (this.timeRemaining > 0) {
+        this.timeRemaining--;
+      } else {
+        // Время вышло - автоматически переходим к следующему вопросу
+        this.stopTimer();
+        if (this.selectedAnswer === null) {
+          // Если ответ не выбран, считаем неправильным
+          this.selectAnswer(-1); // -1 означает, что ответ не выбран
+        }
+        
+        // Автопереход через 2 секунды после истечения времени
+        setTimeout(() => {
+          if (this.gameStatus === 'playing' && this.selectedAnswer !== null) {
+            this.nextQuestion();
+          }
+        }, 2000);
+      }
+    }, 1000);
+  }
+
+  stopTimer() {
+    if (this.timerInterval) {
+      clearInterval(this.timerInterval);
+      this.timerInterval = null;
+    }
+  }
   // Computed values - вычисляемые значения
 
   get currentQuestion(): Question | null {
