@@ -11,29 +11,32 @@ import { Theme } from '../types/quiz';
 interface UIStore {
   // Состояние
   theme: Theme;
-  // TODO: Добавьте другие UI-состояния (soundEnabled)
-
+  soundEnabled: boolean;
   // Actions
   setTheme: (theme: Theme) => void;
-  // TODO: Добавьте другие actions (toggleTheme, toggleSound)
+  toggleTheme: () => void;
+  toggleSound: () => void;
 }
 
-// TODO: Создайте store с помощью create<UIStore>()
-// Оберните в persist middleware для автосохранения в localStorage
+// Создаем store с помощью create<UIStore>()
+// Обернули в persist middleware для автосохранения в localStorage
 export const useUIStore = create<UIStore>()(
   persist(
     (set) => ({
       // Начальное состояние
-      theme: 'light', // TODO: Добавьте другие поля (soundEnabled и т.д.)
+      theme: 'light',
+      soundEnabled: true,
 
       // Actions
       setTheme: (theme: Theme) => set({ theme }),
-
-      // TODO: Добавьте другие actions
-      //   toggleTheme: () => set((state) => ...,
-      //
-      // Пример toggleSound:
-      //   toggleSound: () => set((state) => ({ soundEnabled: !state.soundEnabled })),
+      
+      toggleTheme: () => set((state) => ({ 
+        theme: state.theme === 'light' ? 'dark' : 'light' 
+      })),
+      
+      toggleSound: () => set((state) => ({ 
+        soundEnabled: !state.soundEnabled 
+      })),
     }),
     {
       name: 'ui-storage', // ключ в localStorage

@@ -22,21 +22,22 @@ import { useUIStore } from '../stores/uiStore';
 
 const Task4 = observer(() => {
   // MobX - бизнес-логика
-  const { gameStatus, currentQuestion,
-    // TODO: убрать комментарий после реализации gameStore
-    // selectedAnswer, score, progress
+  const { 
+    gameStatus, 
+    currentQuestion,
+    selectedAnswer, 
+    score, 
+    progress,
+    questions,
+    correctAnswersCount,
+    currentQuestionIndex,
+    isLastQuestion
   } = gameStore;
-  const selectedAnswer = null; // TODO: заменить на gameStore.selectedAnswer
-  const score = 0; // TODO: заменить на gameStore.score
-  const progress = 0; // TODO: заменить на gameStore.progress
 
   // Zustand - UI состояние
   const theme = useUIStore((state) => state.theme);
-  // TODO: убрать комментарий после реализации uiStore
-  // const soundEnabled = useUIStore((state) => state.soundEnabled);
-  // const toggleTheme = useUIStore((state) => state.toggleTheme);
-  const soundEnabled = true; // TODO: заменить на селектор
-  const toggleTheme = () => {}; // TODO: заменить на селектор
+  const soundEnabled = useUIStore((state) => state.soundEnabled);
+  const toggleTheme = useUIStore((state) => state.toggleTheme);
 
   // Цвета в зависимости от темы
   const bgGradient = theme === 'light'
@@ -48,6 +49,18 @@ const Task4 = observer(() => {
   const mutedText = theme === 'light' ? 'text-gray-600' : 'text-gray-400';
   const primaryColor = theme === 'light' ? 'bg-purple-600' : 'bg-purple-700';
   const primaryHover = theme === 'light' ? 'hover:bg-purple-700' : 'hover:bg-purple-800';
+
+  // Расчет процентов для экрана результатов
+  const percentage = questions.length > 0 
+    ? Math.round((correctAnswersCount / questions.length) * 100)
+    : 0;
+
+  const getEmoji = () => {
+    if (percentage >= 80) return '🏆';
+    if (percentage >= 60) return '😊';
+    if (percentage >= 40) return '🤔';
+    return '😢';
+  };
 
   // Стартовый экран
   if (gameStatus === 'idle') {
@@ -96,16 +109,6 @@ const Task4 = observer(() => {
 
   // Экран результатов
   if (gameStatus === 'finished') {
-    // TODO: убрать комментарий после реализации gameStore
-    // const percentage = Math.round((gameStore.correctAnswersCount / gameStore.questions.length) * 100);
-    const percentage = 0;
-    const getEmoji = () => {
-      if (percentage >= 80) return '🏆';
-      if (percentage >= 60) return '😊';
-      if (percentage >= 40) return '🤔';
-      return '😢';
-    };
-
     return (
       <div className={`min-h-screen bg-gradient-to-br ${bgGradient} flex items-center justify-center p-4 transition-colors duration-300`}>
         <div className={`${cardBg} rounded-2xl shadow-2xl p-8 max-w-md w-full text-center transition-colors duration-300`}>
@@ -122,23 +125,21 @@ const Task4 = observer(() => {
             <p className={mutedText}>очков заработано</p>
           </div>
 
-          {/* TODO: убрать комментарий после реализации gameStore */}
-          {/* <div className={`${theme === 'light' ? 'bg-gray-100' : 'bg-gray-700'} rounded-lg p-4 mb-6`}>
+          <div className={`${theme === 'light' ? 'bg-gray-100' : 'bg-gray-700'} rounded-lg p-4 mb-6`}>
             <p className={`text-lg ${textColor}`}>
-              Правильных ответов: <span className="font-bold">{gameStore.correctAnswersCount} из {gameStore.questions.length}</span>
+              Правильных ответов: <span className="font-bold">{correctAnswersCount} из {questions.length}</span>
             </p>
             <p className={`text-2xl font-bold mt-2 ${theme === 'light' ? 'text-purple-600' : 'text-purple-400'}`}>
               {percentage}%
             </p>
-          </div> */}
+          </div>
 
-          {/* TODO: убрать комментарий после реализации gameStore */}
-          {/* <button
+          <button
             onClick={() => gameStore.resetGame()}
             className={`w-full ${primaryColor} ${primaryHover} text-white py-3 px-6 rounded-xl font-semibold transition-all transform hover:scale-105`}
           >
             Играть снова
-          </button> */}
+          </button>
         </div>
       </div>
     );
@@ -153,10 +154,9 @@ const Task4 = observer(() => {
         {/* Заголовок с темой */}
         <div className={`${cardBg} rounded-lg shadow-md p-4 mb-4 transition-colors duration-300`}>
           <div className="flex justify-between items-center mb-2">
-            {/* TODO: убрать комментарий после реализации gameStore */}
-            {/* <span className={`text-sm ${mutedText}`}>
-              Вопрос {gameStore.currentQuestionIndex + 1} из {gameStore.questions.length}
-            </span> */}
+            <span className={`text-sm ${mutedText}`}>
+              Вопрос {currentQuestionIndex + 1} из {questions.length}
+            </span>
             <div className="flex items-center gap-3">
               <span className={`text-xl font-bold ${theme === 'light' ? 'text-purple-600' : 'text-purple-400'}`}>
                 Счёт: {score}
@@ -237,15 +237,14 @@ const Task4 = observer(() => {
           </div>
 
           {/* Кнопка "Далее" */}
-          {/* TODO: убрать комментарий после реализации gameStore */}
-          {/* {selectedAnswer !== null && (
+          {selectedAnswer !== null && (
             <button
               onClick={() => gameStore.nextQuestion()}
               className={`mt-6 w-full ${primaryColor} ${primaryHover} text-white py-3 px-6 rounded-lg font-semibold transition-colors`}
             >
-              {gameStore.isLastQuestion ? 'Завершить' : 'Следующий вопрос'}
+              {isLastQuestion ? 'Завершить' : 'Следующий вопрос'}
             </button>
-          )} */}
+          )}
         </div>
 
         {/* Подсказка */}
