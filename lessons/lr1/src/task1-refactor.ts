@@ -9,7 +9,7 @@
  */
 
 // Калькулятор с проблемами типизации
-function calculate(operation, a, b) {
+function calculate(operation: 'add'|'subtract'|'multiply'|'divide', a: number, b: number) {
     switch (operation) {
         case 'add':
             return a + b;
@@ -28,7 +28,7 @@ function calculate(operation, a, b) {
 }
 
 // Функция для работы с пользователем
-function createUser(name, age, email, isAdmin) {
+function createUser   (name: string, age: number, email: string, isAdmin?: boolean) {
     return {
         name,
         age,
@@ -40,9 +40,9 @@ function createUser(name, age, email, isAdmin) {
         }
     };
 }
-
+type User = ReturnType<typeof createUser>
 // Обработка списка пользователей
-function processUsers(users) {
+function processUsers(users: Array<User>) {
     return users.map(user => {
         return {
             ...user,
@@ -53,7 +53,7 @@ function processUsers(users) {
 }
 
 // Функция поиска пользователя
-function findUser(users, criteria) {
+function findUser(users: Array<User>, criteria: string|number|Partial<User>) {
     if (typeof criteria === 'string') {
         return users.find(user => user.name === criteria);
     }
@@ -62,7 +62,10 @@ function findUser(users, criteria) {
     }
     if (typeof criteria === 'object') {
         return users.find(user => {
-            return Object.keys(criteria).every(key => user[key] === criteria[key]);
+            return Object.keys(criteria).every(key => {
+                let keyNew = key as keyof User;
+                return user[keyNew] === criteria[keyNew]
+            } );
         });
     }
     return null;
@@ -72,22 +75,24 @@ function findUser(users, criteria) {
 console.log(calculate('add', 10, 5)); // 15
 console.log(calculate('divide', 10, 0)); // null
 
-const user = createUser('Анна', 25, 'anna@example.com');
-console.log(user);
+const user1 = createUser('Анна', 25, 'anna@example.com');
+console.log(user1);
 
-const users = [
+const users1 = [
     createUser('Петр', 30, 'peter@example.com', true),
     createUser('Мария', 16, 'maria@example.com'),
 ];
 
-const processedUsers = processUsers(users);
+const processedUsers = processUsers(users1);
 console.log(processedUsers);
 
-const foundUser = findUser(users, 'Петр');
+const foundUser = findUser(users1, 'Петр');
 console.log(foundUser);
 
-const foundByAge = findUser(users, 30);
+const foundByAge = findUser(users1, 30);
 console.log(foundByAge);
 
-const foundByObject = findUser(users, { name: 'Мария', age: 16 });
+const foundByObject = findUser(users1, { name: 'Мария', age: 16 });
 console.log(foundByObject);
+
+export {}
