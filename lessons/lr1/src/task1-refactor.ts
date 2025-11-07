@@ -1,24 +1,16 @@
 /*
  * ЗАДАЧА 1: Рефакторинг JavaScript кода в TypeScript
- *
+ * 
  * Инструкции:
  * 1. Переименуйте этот файл в .ts
  * 2. Добавьте типизацию ко всем функциям и переменным
  * 3. Исправьте все ошибки типизации
  * 4. Убедитесь что код компилируется без ошибок
  */
-var __assign = (this && this.__assign) || function () {
-    __assign = Object.assign || function(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-                t[p] = s[p];
-        }
-        return t;
-    };
-    return __assign.apply(this, arguments);
-};
-function calculate(operation, a, b) {
+
+// Калькулятор с проблемами типизации
+type Operation = 'add' | 'subtract'| 'multiply' | 'divide';
+function calculate(operation:Operation, a:number, b:number) {
     switch (operation) {
         case 'add':
             return a + b;
@@ -35,58 +27,71 @@ function calculate(operation, a, b) {
             return undefined;
     }
 }
+
 // Функция для работы с пользователем
-function createUser(name, age, email, isAdmin) {
-    if (isAdmin === void 0) { isAdmin = false; }
+function createUser(name:string, age:number, email:string, isAdmin:boolean=false) {
     return {
-        name: name,
-        age: age,
-        email: email,
+        name,
+        age,
+        email,
         isAdmin: isAdmin || false,
         createdAt: new Date(),
-        getId: function () {
+        getId: function() {
             return Math.random().toString(36).substr(2, 9);
         }
     };
 }
+type User = ReturnType<typeof createUser>
 // Обработка списка пользователей
-function processUsers(users) {
-    return users.map(function (user) {
-        return __assign(__assign({}, user), { displayName: user.name.toUpperCase(), isAdult: user.age >= 18 });
+function processUsers(users:Array<User>) {
+    return users.map(user => {
+        return {
+            ...user,
+            displayName: user.name.toUpperCase(),
+            isAdult: user.age >= 18
+        };
     });
 }
+type Criteria = 'string' | 'number' | 'object';
 // Функция поиска пользователя
-function findUser(users, criteria) {
+function findUser(users:Array<User>, criteria: string | number | Omit<Partial<User>, 'getId'>) {
     if (typeof criteria === 'string') {
-        return users.find(function (user) { return user.name === criteria; });
+        return users.find(user => user.name === criteria);
     }
     if (typeof criteria === 'number') {
-        return users.find(function (user) { return user.age === criteria; });
+        return users.find(user => user.age === criteria);
     }
     if (typeof criteria === 'object') {
-        return users.find(function (user) {
-            return Object.keys(criteria).every(function (key) {
-                var key1 = key;
+        return users.find(user => {
+            return Object.keys(criteria).every(key => {
+                let key1 = key as keyof typeof criteria;
                 return user[key1] === criteria[key1];
-            });
+            });     
         });
     }
     return null;
 }
+
 // Примеры использования (должны работать после типизации)
 console.log(calculate('add', 10, 5)); // 15
 console.log(calculate('divide', 10, 0)); // null
-var user = createUser('Анна', 25, 'anna@example.com');
+
+const user = createUser('Анна', 25, 'anna@example.com');
 console.log(user);
-var users = [
+
+const users = [
     createUser('Петр', 30, 'peter@example.com', true),
     createUser('Мария', 16, 'maria@example.com'),
 ];
-var processedUsers = processUsers(users);
+
+const processedUsers = processUsers(users);
 console.log(processedUsers);
-var foundUser = findUser(users, 'Петр');
+
+const foundUser = findUser(users, 'Петр');
 console.log(foundUser);
-var foundByAge = findUser(users, 30);
+
+const foundByAge = findUser(users, 30);
 console.log(foundByAge);
-var foundByObject = findUser(users, { name: "Мария", age: 16 });
+
+const foundByObject = findUser(users, {name: "Мария", age: 16});
 console.log(foundByObject);
