@@ -16,14 +16,11 @@ import { useUIStore } from '../stores/uiStore';
 const Task3 = () => {
   // TODO: Используйте селекторы для получения состояния
   // Пример: const theme = useUIStore((state) => state.theme);
-  const theme = useUIStore((state) => state.theme);
-  // TODO: убрать комментарий после реализации стора
-  // const soundEnabled = useUIStore((state) => state.soundEnabled);
-  // const toggleTheme = useUIStore((state) => state.toggleTheme);
-  // const toggleSound = useUIStore((state) => state.toggleSound);
-  const soundEnabled = true; // TODO: заменить на селектор
-  const toggleTheme = () => {}; // TODO: заменить на селектор
-  const toggleSound = () => {}; // TODO: заменить на селектор
+const theme = useUIStore((state) => state.theme);
+const soundEnabled = useUIStore((state) => state.soundEnabled);
+const toggleTheme = useUIStore((state) => state.toggleTheme);
+const toggleSound = useUIStore((state) => state.toggleSound);
+
 
   // Цвета для светлой и тёмной темы
   const bgGradient = theme === 'light'
