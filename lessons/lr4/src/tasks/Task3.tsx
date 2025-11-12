@@ -16,14 +16,10 @@ import { useUIStore } from '../stores/uiStore';
 const Task3 = () => {
   // TODO: Используйте селекторы для получения состояния
   // Пример: const theme = useUIStore((state) => state.theme);
-  const theme = useUIStore((state) => state.theme);
-  // TODO: убрать комментарий после реализации стора
-  // const soundEnabled = useUIStore((state) => state.soundEnabled);
-  // const toggleTheme = useUIStore((state) => state.toggleTheme);
-  // const toggleSound = useUIStore((state) => state.toggleSound);
-  const soundEnabled = true; // TODO: заменить на селектор
-  const toggleTheme = () => {}; // TODO: заменить на селектор
-  const toggleSound = () => {}; // TODO: заменить на селектор
+const theme = useUIStore((state) => state.theme);
+const soundEnabled = useUIStore((state) => state.soundEnabled);
+const toggleTheme = useUIStore((state) => state.toggleTheme);
+const toggleSound = useUIStore((state) => state.toggleSound);
 
   // Цвета для светлой и тёмной темы
   const bgGradient = theme === 'light'
@@ -105,7 +101,7 @@ const Task3 = () => {
               className={`
                 w-full py-4 px-6 rounded-lg font-semibold transition-all
                 ${theme === 'light'
-                  ? 'bg-gradient-to-r from-orange-400 to-pink-500 text-white'
+                  ?'bg-gradient-to-r from-orange-400 to-pink-500 text-white'
                   : 'bg-gradient-to-r from-gray-700 to-gray-600 text-white'
                 }
                 hover:shadow-lg transform hover:scale-105
