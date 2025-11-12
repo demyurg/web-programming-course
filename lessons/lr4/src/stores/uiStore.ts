@@ -9,31 +9,45 @@ import { Theme } from '../types/quiz';
  */
 
 interface UIStore {
-  // Состояние
-  theme: Theme;
-  // TODO: Добавьте другие UI-состояния (soundEnabled)
+  // === Состояние ===
+  theme: Theme;                // светлая / тёмная тема
+  soundEnabled: boolean;       // звук включен / выключен
+  activeModal: string | null;  // имя открытого модального окна (Task4)
 
-  // Actions
+  // === Действия ===
   setTheme: (theme: Theme) => void;
-  // TODO: Добавьте другие actions (toggleTheme, toggleSound)
+  toggleTheme: () => void;
+  toggleSound: () => void;
+
+  // Управление модальными окнами (Task4)
+  openModal: (name: string) => void;
+  closeModal: () => void;
 }
 
-// TODO: Создайте store с помощью create<UIStore>()
-// Оберните в persist middleware для автосохранения в localStorage
+// === Реализация store ===
 export const useUIStore = create<UIStore>()(
   persist(
     (set) => ({
       // Начальное состояние
-      theme: 'light', // TODO: Добавьте другие поля (soundEnabled и т.д.)
+      theme: 'light',
+      soundEnabled: true,
+      activeModal: null,
 
-      // Actions
+      // === Actions ===
       setTheme: (theme: Theme) => set({ theme }),
 
-      // TODO: Добавьте другие actions
-      //   toggleTheme: () => set((state) => ...,
-      //
-      // Пример toggleSound:
-      //   toggleSound: () => set((state) => ({ soundEnabled: !state.soundEnabled })),
+      toggleTheme: () =>
+        set((state) => ({
+          theme: state.theme === 'light' ? 'dark' : 'light',
+        })),
+
+      toggleSound: () =>
+        set((state) => ({
+          soundEnabled: !state.soundEnabled,
+        })),
+
+      openModal: (name: string) => set({ activeModal: name }),
+      closeModal: () => set({ activeModal: null }),
     }),
     {
       name: 'ui-storage', // ключ в localStorage
