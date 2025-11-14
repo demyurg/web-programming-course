@@ -11,46 +11,59 @@
 // Проблемные функции, которые нужно исправить
 
 // ПРОБЛЕМА 1: Функция с any типом
-function processData(data) {
+function processData(data: unknown): string[] {
     if (Array.isArray(data)) {
-        return data.map(item => item.toString());
+        return data.map(item => String(item));
     }
-    
+
     if (typeof data === 'object' && data !== null) {
-        return Object.keys(data).map(key => `${key}: ${data[key]}`);
+        return Object.entries(data).map(([key, value]) => `${key}: ${String(value)}`);
     }
-    
-    return [data.toString()];
+
+    return [String(data)];
 }
 
 // ПРОБЛЕМА 2: Функция с неопределенными возвращаемыми типами
-function getValue(obj, path) {
+function getValue(obj: Record<string, unknown>, path: string): unknown {
     const keys = path.split('.');
-    let current = obj;
-    
+    let current: unknown = obj;
+
     for (const key of keys) {
         if (current && typeof current === 'object' && key in current) {
-            current = current[key];
+            current = (current as Record<string, unknown>)[key];
         } else {
             return undefined;
         }
     }
-    
+
     return current;
 }
 
 // ПРОБЛЕМА 3: Функция с проблемами null/undefined
-function formatUser(user) {
+
+interface User {
+    firstName: string;
+    lastName: string;
+    email: string;
+    age?: number;
+    avatar?: string | null;
+}
+
+function formatUser(user:User) {
     return {
         fullName: user.firstName + ' ' + user.lastName,
         email: user.email.toLowerCase(),
-        age: user.age || 'Не указан',
+        age: user.age  || 'Не указан',
         avatar: user.avatar ? user.avatar : '/default-avatar.png'
     };
 }
 
 // ПРОБЛЕМА 4: Функция с union типами без type guards
-function handleResponse(response) {
+type SuccessResponse = { success: true; data: any };
+type ErrorResponse = { success: false; error: string };
+type ApiResponse = SuccessResponse | ErrorResponse;
+
+function handleResponse(response: ApiResponse): any {
     if (response.success) {
         console.log('Данные:', response.data);
         return response.data;
@@ -61,33 +74,31 @@ function handleResponse(response) {
 }
 
 // ПРОБЛЕМА 5: Функция с проблемами мутации
-function updateArray(arr, index, newValue) {
+function updateArray(arr: any[], index: number, newValue: any): any[] {
     if (index >= 0 && index < arr.length) {
-        arr[index] = newValue;
+        return [...arr.slice(0, index), newValue, ...arr.slice(index + 1)];
     }
     return arr;
 }
 
 // ПРОБЛЕМА 6: Класс с неправильной типизацией событий
+type Listener = (...args: any[]) => void;
+
 class EventEmitter {
-    constructor() {
-        this.listeners = {};
-    }
-    
-    on(event, callback) {
+    private listeners: Record<string, Listener[]> = {};
+
+    on(event: string, callback: Listener) {
         if (!this.listeners[event]) {
             this.listeners[event] = [];
         }
         this.listeners[event].push(callback);
     }
-    
-    emit(event, ...args) {
-        if (this.listeners[event]) {
-            this.listeners[event].forEach(callback => callback(...args));
-        }
+
+    emit(event: string, ...args: any[]) {
+        this.listeners[event]?.forEach(cb => cb(...args));
     }
-    
-    off(event, callback) {
+
+    off(event: string, callback: Listener) {
         if (this.listeners[event]) {
             this.listeners[event] = this.listeners[event].filter(cb => cb !== callback);
         }
@@ -95,16 +106,16 @@ class EventEmitter {
 }
 
 // ПРОБЛЕМА 7: Функция с проблемами асинхронности
-async function fetchWithRetry(url, maxRetries) {
-    let lastError;
-    
+async function fetchWithRetry(url: string, maxRetries: number): Promise<any> {
+    let lastError: unknown;
+
     for (let i = 0; i < maxRetries; i++) {
         try {
             const response = await fetch(url);
             if (!response.ok) {
                 throw new Error(`HTTP ${response.status}: ${response.statusText}`);
             }
-            return response.json();
+            return await response.json();
         } catch (error) {
             lastError = error;
             if (i < maxRetries - 1) {
@@ -112,33 +123,43 @@ async function fetchWithRetry(url, maxRetries) {
             }
         }
     }
-    
+
     throw lastError;
 }
 
 // ПРОБЛЕМА 8: Функция валидации с проблемами типов
-function validateForm(formData, rules) {
-    const errors = {};
-    
+interface ValidationRule {
+    required?: boolean;
+    minLength?: number;
+    pattern?: RegExp;
+    message?: string;
+}
+type ValidationRules<T> = { [K in keyof T]?: ValidationRule };
+
+function validateForm<T extends Record<string, string>>(formData: T, rules: ValidationRules<T>) {
+    const errors: Partial<Record<keyof T, string>> = {};
+
     for (const field in rules) {
         const value = formData[field];
         const rule = rules[field];
-        
+
+        if (!rule) continue;
+
         if (rule.required && (!value || value.trim() === '')) {
             errors[field] = 'Поле обязательно для заполнения';
             continue;
         }
-        
+
         if (value && rule.minLength && value.length < rule.minLength) {
             errors[field] = `Минимальная длина: ${rule.minLength} символов`;
             continue;
         }
-        
+
         if (value && rule.pattern && !rule.pattern.test(value)) {
             errors[field] = rule.message || 'Неверный формат';
         }
     }
-    
+
     return {
         isValid: Object.keys(errors).length === 0,
         errors
@@ -146,8 +167,8 @@ function validateForm(formData, rules) {
 }
 
 // ПРОБЛЕМА 9: Утилитарная функция с проблемами типов
-function pick(obj, keys) {
-    const result = {};
+function pick(obj: Record<string, any>, keys: string[]): Record<string, any> {
+    const result: Record<string, any> = {};
     keys.forEach(key => {
         if (key in obj) {
             result[key] = obj[key];
@@ -157,22 +178,24 @@ function pick(obj, keys) {
 }
 
 // ПРОБЛЕМА 10: Функция сравнения с проблемами типов
-function isEqual(a, b) {
+function isEqual(a: any, b: any): boolean {
     if (a === b) return true;
-    
+
     if (a == null || b == null) return a === b;
-    
+
     if (typeof a !== typeof b) return false;
-    
-    if (typeof a === 'object') {
-        const keysA = Object.keys(a);
-        const keysB = Object.keys(b);
-        
+
+    if (typeof a === 'object' && typeof b === 'object') {
+        const objA = a as Record<string, any>;
+        const objB = b as Record<string, any>;
+        const keysA = Object.keys(objA);
+        const keysB = Object.keys(objB);
+
         if (keysA.length !== keysB.length) return false;
-        
-        return keysA.every(key => isEqual(a[key], b[key]));
+
+        return keysA.every(key => isEqual(objA[key], objB[key]));
     }
-    
+
     return false;
 }
 

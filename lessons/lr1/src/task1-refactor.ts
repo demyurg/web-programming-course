@@ -9,7 +9,7 @@
  */
 
 // Калькулятор с проблемами типизации
-function calculate(operation, a, b) {
+function calculate(operation: 'add'|'subtract'|'multiply'|'divide', a:number, b:number) {
     switch (operation) {
         case 'add':
             return a + b;
@@ -28,21 +28,30 @@ function calculate(operation, a, b) {
 }
 
 // Функция для работы с пользователем
-function createUser(name, age, email, isAdmin) {
+function createUser(name: string, age: number, email: string, isAdmin: boolean = false): User {
     return {
         name,
         age,
         email,
         isAdmin: isAdmin || false,
         createdAt: new Date(),
-        getId: function() {
-            return Math.random().toString(36).substr(2, 9);
+        getId: function () {
+            return Math.random().toString(36).substring(2, 9);
         }
     };
 }
 
+interface User {
+    name: string;
+    age: number;
+    email?: string;
+    isAdmin: boolean;
+    createdAt: Date;
+    getId: () => string;
+};
+
 // Обработка списка пользователей
-function processUsers(users) {
+function processUsers(users: User[]) {
     return users.map(user => {
         return {
             ...user,
@@ -53,7 +62,7 @@ function processUsers(users) {
 }
 
 // Функция поиска пользователя
-function findUser(users, criteria) {
+function findUser(users: User[], criteria: string | number | Partial<User>) {
     if (typeof criteria === 'string') {
         return users.find(user => user.name === criteria);
     }
@@ -62,7 +71,7 @@ function findUser(users, criteria) {
     }
     if (typeof criteria === 'object') {
         return users.find(user => {
-            return Object.keys(criteria).every(key => user[key] === criteria[key]);
+            return (Object.keys(criteria) as Array<keyof User>).every(key => user[key] === criteria[key]);
         });
     }
     return null;

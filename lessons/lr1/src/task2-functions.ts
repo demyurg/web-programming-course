@@ -16,8 +16,19 @@
 // TODO: Создать union тип для категорий
 // electronics | clothing | books | food | other
 
-function createProduct(id, name, price, category, inStock, tags) {
-    return {
+type Category = 'electronics'|'clothing'|'books'|'food'|'other'
+
+interface Product{
+    id: number,
+    name: string,
+    price: number,
+    category: Category,
+    inStock: boolean
+    tags: Array<string>,
+    createdAt: Date,
+}
+function createProduct(id:number, name:string, price:number, category:Category, inStock:boolean, tags:string[]) {
+   let prod: Product = {
         id,
         name,
         price,
@@ -26,10 +37,19 @@ function createProduct(id, name, price, category, inStock, tags) {
         tags: tags || [],
         createdAt: new Date()
     };
+    return prod
+}
+
+type Filters = {
+    minPrice?: number,
+    maxPrice?: number,
+    category?: Category,
+    inStock?: boolean,
+    tag?: string,
 }
 
 // TODO: Типизировать функцию фильтрации товаров
-function filterProducts(products, filters) {
+function filterProducts(products: Product[], filters:Filters) {
     return products.filter(product => {
         if (filters.category && product.category !== filters.category) {
             return false;
@@ -51,7 +71,7 @@ function filterProducts(products, filters) {
 }
 
 // TODO: Типизировать функцию расчета скидки
-function calculateDiscount(product, discountType, value) {
+function calculateDiscount(product:Product, discountType:'percentage'|'fixed'|'buy_one_get_one', value:number) {
     let finalPrice = product.price;
     
     switch (discountType) {
@@ -77,7 +97,7 @@ function calculateDiscount(product, discountType, value) {
 }
 
 // TODO: Типизировать функцию сортировки
-function sortProducts(products, sortBy, order) {
+function sortProducts(products:Product[], sortBy: 'name'|'price'|'createdAt', order:'desc'|'asc') {
     return [...products].sort((a, b) => {
         let comparison = 0;
         
@@ -113,8 +133,10 @@ const electronicsProducts = filterProducts(products, {
 });
 console.log('Электроника в наличии:', electronicsProducts);
 
-const discountedPhone = calculateDiscount(products[0], 'percentage', 10);
-console.log('Скидка на телефон:', discountedPhone);
+if (products[0]) {
+    const discountedPhone = calculateDiscount(products[0], 'percentage', 10);
+    console.log('Скидка на телефон:', discountedPhone);
+}
 
 const sortedByPrice = sortProducts(products, 'price', 'asc');
 console.log('Товары по цене (возрастание):', sortedByPrice);
