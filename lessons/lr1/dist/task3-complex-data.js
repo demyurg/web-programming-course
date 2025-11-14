@@ -1,3 +1,4 @@
+"use strict";
 /*
  * ЗАДАЧА 3: Работа с массивами и объектами сложной структуры
  *
@@ -7,33 +8,23 @@
  * 3. Типизируйте все функции работы с данными
  * 4. Используйте generic типы где это уместно
  */
-var __assign = (this && this.__assign) || function () {
-    __assign = Object.assign || function(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-                t[p] = s[p];
-        }
-        return t;
-    };
-    return __assign.apply(this, arguments);
-};
+Object.defineProperty(exports, "__esModule", { value: true });
 function createStudent(id, name, email) {
     return {
-        id: id,
-        name: name,
-        email: email,
+        id,
+        name,
+        email,
         enrolledCourses: [],
         grades: {},
     };
 }
 function createCourse(id, title, instructor, duration, maxStudents) {
     return {
-        id: id,
-        title: title,
-        instructor: instructor,
-        duration: duration,
-        maxStudents: maxStudents,
+        id,
+        title,
+        instructor,
+        duration,
+        maxStudents,
         enrolledStudents: [],
     };
 }
@@ -75,8 +66,8 @@ function assignGrade(student, courseId, score) {
     }
     student.grades[courseId].push({
         studentId: student.id,
-        courseId: courseId,
-        score: score,
+        courseId,
+        score,
         date: new Date(),
     });
     return {
@@ -85,26 +76,23 @@ function assignGrade(student, courseId, score) {
     };
 }
 function calculateStudentAverage(student, courseId) {
-    var _a;
-    var grades = (_a = student.grades) === null || _a === void 0 ? void 0 : _a[courseId];
+    const grades = student.grades?.[courseId];
     if (!grades || grades.length === 0) {
         return null;
     }
-    var sum = grades.reduce(function (acc, grade) { return acc + grade.score; }, 0);
+    const sum = grades.reduce((acc, grade) => acc + grade.score, 0);
     return Math.round((sum / grades.length) * 100) / 100;
 }
 function getCourseStats(course, students) {
-    var enrolledStudents = students.filter(function (student) {
-        return student.enrolledCourses.includes(course.id);
-    });
-    var allGrades = enrolledStudents
-        .flatMap(function (student) { var _a; return ((_a = student.grades) === null || _a === void 0 ? void 0 : _a[course.id]) || []; })
-        .map(function (grade) { return grade.score; });
-    var averageGrade = allGrades.length > 0
-        ? allGrades.reduce(function (sum, score) { return sum + score; }, 0) / allGrades.length
+    const enrolledStudents = students.filter(student => student.enrolledCourses.includes(course.id));
+    const allGrades = enrolledStudents
+        .flatMap(student => student.grades?.[course.id] || [])
+        .map(grade => grade.score);
+    const averageGrade = allGrades.length > 0
+        ? allGrades.reduce((sum, score) => sum + score, 0) / allGrades.length
         : 0;
-    var studentsWithGrades = enrolledStudents.filter(function (student) { var _a; return ((_a = student.grades) === null || _a === void 0 ? void 0 : _a[course.id]) && student.grades[course.id].length > 0; }).length;
-    var completionRate = enrolledStudents.length > 0
+    const studentsWithGrades = enrolledStudents.filter(student => student.grades?.[course.id] && student.grades[course.id].length > 0).length;
+    const completionRate = enrolledStudents.length > 0
         ? (studentsWithGrades / enrolledStudents.length) * 100
         : 0;
     return {
@@ -116,17 +104,20 @@ function getCourseStats(course, students) {
 }
 function getTopStudents(students, courseId, limit) {
     return students
-        .map(function (student) { return (__assign(__assign({}, student), { average: calculateStudentAverage(student, courseId) })); })
-        .filter(function (student) { return student.average !== null; })
-        .sort(function (a, b) { return b.average - a.average; })
+        .map(student => ({
+        ...student,
+        average: calculateStudentAverage(student, courseId),
+    }))
+        .filter((student) => student.average !== null)
+        .sort((a, b) => b.average - a.average)
         .slice(0, limit);
 }
-var students = [
+const students = [
     createStudent(1, 'Анна Иванова', 'anna@example.com'),
     createStudent(2, 'Петр Петров', 'peter@example.com'),
     createStudent(3, 'Мария Сидорова', 'maria@example.com'),
 ];
-var courses = [
+const courses = [
     createCourse(101, 'JavaScript Основы', 'Иван Учителев', 40, 20),
     createCourse(102, 'React Advanced', 'Мария Преподователь', 60, 15),
 ];
@@ -149,3 +140,4 @@ if (courses[0]) {
     console.log('Статистика курса JS:', getCourseStats(courses[0], students));
 }
 console.log('Лучшие студенты по JS:', getTopStudents(students, 101, 2));
+//# sourceMappingURL=task3-complex-data.js.map

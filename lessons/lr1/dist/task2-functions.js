@@ -1,3 +1,4 @@
+"use strict";
 /*
  * ЗАДАЧА 2: Создание типизированных функций и объектов
  *
@@ -7,28 +8,20 @@
  * 3. Создайте интерфейсы для всех объектов
  * 4. Используйте union типы где необходимо
  */
-var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
-    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
-        if (ar || !(i in from)) {
-            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
-            ar[i] = from[i];
-        }
-    }
-    return to.concat(ar || Array.prototype.slice.call(from));
-};
+Object.defineProperty(exports, "__esModule", { value: true });
 function createProduct(id, name, price, category, inStock, tags) {
     return {
-        id: id,
-        name: name,
-        price: price,
-        category: category,
-        inStock: inStock !== null && inStock !== void 0 ? inStock : true,
+        id,
+        name,
+        price,
+        category,
+        inStock: inStock ?? true,
         tags: tags || [],
         createdAt: new Date(),
     };
 }
 function filterProducts(products, filters) {
-    return products.filter(function (product) {
+    return products.filter(product => {
         if (filters.category && product.category !== filters.category) {
             return false;
         }
@@ -48,7 +41,7 @@ function filterProducts(products, filters) {
     });
 }
 function calculateDiscount(product, discountType, value) {
-    var finalPrice = product.price;
+    let finalPrice = product.price;
     switch (discountType) {
         case 'percentage':
             finalPrice = product.price * (1 - value / 100);
@@ -66,12 +59,12 @@ function calculateDiscount(product, discountType, value) {
         originalPrice: product.price,
         finalPrice: Math.round(finalPrice * 100) / 100,
         discount: Math.round((product.price - finalPrice) * 100) / 100,
-        discountType: discountType,
+        discountType,
     };
 }
 function sortProducts(products, sortBy, order) {
-    return __spreadArray([], products, true).sort(function (a, b) {
-        var comparison = 0;
+    return [...products].sort((a, b) => {
+        let comparison = 0;
         switch (sortBy) {
             case 'name':
                 comparison = a.name.localeCompare(b.name);
@@ -86,7 +79,7 @@ function sortProducts(products, sortBy, order) {
         return order === 'desc' ? -comparison : comparison;
     });
 }
-var products = [
+const products = [
     createProduct(1, 'iPhone 15', 80000, 'electronics', true, [
         'smartphone',
         'apple',
@@ -99,15 +92,16 @@ var products = [
     createProduct(4, 'Хлеб', 50, 'food', true, ['bakery', 'daily']),
 ];
 console.log('Все товары:', products);
-var electronicsProducts = filterProducts(products, {
+const electronicsProducts = filterProducts(products, {
     category: 'electronics',
     inStock: true,
 });
 console.log('Электроника в наличии:', electronicsProducts);
-var firstProduct = products[0];
+const firstProduct = products[0];
 if (firstProduct) {
-    var discountedPhone = calculateDiscount(firstProduct, 'percentage', 10);
+    const discountedPhone = calculateDiscount(firstProduct, 'percentage', 10);
     console.log('Скидка на телефон:', discountedPhone);
 }
-var sortedByPrice = sortProducts(products, 'price', 'asc');
+const sortedByPrice = sortProducts(products, 'price', 'asc');
 console.log('Товары по цене (возрастание):', sortedByPrice);
+//# sourceMappingURL=task2-functions.js.map
