@@ -15,8 +15,26 @@
 
 // TODO: Создать union тип для категорий
 // electronics | clothing | books | food | other
-
-function createProduct(id, name, price, category, inStock, tags) {
+interface Product {
+    id: number,
+    name: string,
+    price: number,
+    category: category,
+    inStock: boolean,
+    tags: string[]
+    minPrice?: number,
+    maxPrice?: number,
+    tag?: string,
+    createdAt: Date
+}
+enum category {
+    electronics,
+    clothing,
+    books,
+    food,
+    other
+}
+function createProduct(id:number, name:string, price:number, category:Product['category'], inStock?:boolean, tags?:string[]): Product {
     return {
         id,
         name,
@@ -27,9 +45,8 @@ function createProduct(id, name, price, category, inStock, tags) {
         createdAt: new Date()
     };
 }
-
 // TODO: Типизировать функцию фильтрации товаров
-function filterProducts(products, filters) {
+function filterProducts(products: Product[], filters: Partial<Product>) {
     return products.filter(product => {
         if (filters.category && product.category !== filters.category) {
             return false;
@@ -51,7 +68,7 @@ function filterProducts(products, filters) {
 }
 
 // TODO: Типизировать функцию расчета скидки
-function calculateDiscount(product, discountType, value) {
+function calculateDiscount(product: Product, discountType: 'percentage'|'fixed'|'buy_one_get_one', value: number) {
     let finalPrice = product.price;
     
     switch (discountType) {
@@ -77,7 +94,7 @@ function calculateDiscount(product, discountType, value) {
 }
 
 // TODO: Типизировать функцию сортировки
-function sortProducts(products, sortBy, order) {
+function sortProducts(products: Product[], sortBy: 'name'|'price'|'createdAt', order: 'asc'|'desc') {
     return [...products].sort((a, b) => {
         let comparison = 0;
         
@@ -99,21 +116,21 @@ function sortProducts(products, sortBy, order) {
 
 // Примеры использования
 const products = [
-    createProduct(1, 'iPhone 15', 80000, 'electronics', true, ['smartphone', 'apple']),
-    createProduct(2, 'Джинсы Levis', 5000, 'clothing', false, ['jeans', 'denim']),
-    createProduct(3, 'JavaScript книга', 1500, 'books', true, ['programming', 'js']),
-    createProduct(4, 'Хлеб', 50, 'food', true, ['bakery', 'daily'])
+    createProduct(1, 'iPhone 15', 80000, category.electronics, true, ['smartphone', 'apple']),
+    createProduct(2, 'Джинсы Levis', 5000, category.clothing, false, ['jeans', 'denim']),
+    createProduct(3, 'JavaScript книга', 1500, category.books, true, ['programming', 'js']),
+    createProduct(4, 'Хлеб', 50, category.food, true, ['bakery', 'daily'])
 ];
 
 console.log('Все товары:', products);
 
 const electronicsProducts = filterProducts(products, { 
-    category: 'electronics', 
+    category: category.electronics, 
     inStock: true 
 });
 console.log('Электроника в наличии:', electronicsProducts);
 
-const discountedPhone = calculateDiscount(products[0], 'percentage', 10);
+const discountedPhone = calculateDiscount(products[0] as Product, 'percentage', 10);
 console.log('Скидка на телефон:', discountedPhone);
 
 const sortedByPrice = sortProducts(products, 'price', 'asc');
