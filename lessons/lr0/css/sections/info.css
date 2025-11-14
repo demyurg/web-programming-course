@@ -1,0 +1,29 @@
+.info {
+    display: flex;
+    justify-content: space-between;
+    column-gap: 16px;
+}
+
+.about, 
+.statistic,
+.form,
+.contact {
+    display:flex;
+    flex-direction: column;
+    row-gap: var(--space-2);
+    border-radius: var(--border-radius-l);
+    background-color: var(--color-primary-grey);
+    border: var(--border);
+    padding: var(--space-8);
+    width: 100%;
+}
+
+.about__title,
+.statistic__title {
+    font-weight: 600;
+}
+
+.about__description,
+.statistic__description {
+    font-size: 14px;
+}

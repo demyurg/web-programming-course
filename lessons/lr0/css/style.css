@@ -1,22 +1,13 @@
-/* Базовые стили и сброс */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
+@import "./globals.css";
+@import "./variables.css";
+@import "./media.css";
+@import "./reset.css";
+@import "./utils.css";
 
-html {
-    scroll-behavior: smooth;
-}
+@import "./sections/header.css";
+@import "./sections/hero.css";
+@import "./sections/button.css";
+@import "./sections/info.css";
+@import "./sections/gallery.css";
+@import "./sections/footer.css";
 
-body {
-    font-family: 'Open Sans', sans-serif;
-    line-height: 1.6;
-    color: #333;
-    overflow-x: hidden;
-}
-
-/* Typography */
-h1, h2, h3 {
-    font-family: 'Playfair Display', serif;
-}
