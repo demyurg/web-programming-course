@@ -1,0 +1,11 @@
+.footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: var(--border-radius-l);
+    background-color: var(--color-primary-800);
+    padding-inline: var(--space-8);
+    height: 65px;
+    margin-top: var(--space-8);
+    color: var(--color-primary-50);
+}
