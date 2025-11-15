@@ -18,9 +18,6 @@ const Task2 = observer(() => {
   const { 
     gameStatus, 
     currentQuestion,
-    selectedAnswer,
-    score,
-    progress,
     questions,
     correctAnswersCount
     // TODO: убрать комментарий после реализации стора

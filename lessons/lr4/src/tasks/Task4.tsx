@@ -25,9 +25,6 @@ const Task4 = observer(() => {
   const { 
     gameStatus, 
     currentQuestion,
-    selectedAnswer,
-    score,
-    progress,
     questions,
     correctAnswersCount,
     currentQuestionIndex,
