@@ -31,8 +31,8 @@ function Task5() {
         {/* 1. Responsive grid */}
         <div>
           <h3 className="text-lg font-semibold mb-3">1. Responsive grid (1→2→3 колонки)</h3>
-          {/* TODO: добавьте grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 */}
-          <div>
+          {/* grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {products.map(p => (
               <div key={p.id} className="bg-white p-4 rounded shadow">
                 <h4 className="font-bold">{p.name}</h4>
@@ -48,8 +48,8 @@ function Task5() {
           <h3 className="text-lg font-semibold mb-3">2. Скрыть на мобильных, показать на планшетах+</h3>
           <div className="bg-white p-4 rounded shadow">
             <p className="font-semibold">Основной текст (всегда виден)</p>
-            {/* TODO: добавьте hidden md:block */}
-            <p className="text-gray-600 mt-2">
+            {/* hidden md:block */}
+            <p className="text-gray-600 mt-2 hidden md:block">
               Дополнительная информация (только на планшетах и десктопах)
             </p>
           </div>
@@ -59,8 +59,8 @@ function Task5() {
         <div>
           <h3 className="text-lg font-semibold mb-3">3. Responsive размер текста</h3>
           <div className="bg-white p-4 rounded shadow">
-            {/* TODO: добавьте text-sm md:text-base lg:text-lg */}
-            <p>
+            {/* text-sm md:text-base lg:text-lg */}
+            <p className="text-sm md:text-base lg:text-lg">
               Этот текст меняет размер: маленький на мобильных, средний на планшетах, большой на десктопах
             </p>
           </div>
@@ -70,8 +70,8 @@ function Task5() {
         <div>
           <h3 className="text-lg font-semibold mb-3">4. Кнопка: полная ширина → обычная</h3>
           <div className="bg-white p-4 rounded shadow">
-            {/* TODO: добавьте w-full lg:w-auto */}
-            <button className="bg-blue-500 text-white px-6 py-2 rounded">
+            {/* w-full lg:w-auto */}
+            <button className="bg-blue-500 text-white px-6 py-2 rounded w-full lg:w-auto">
               Купить
             </button>
           </div>
