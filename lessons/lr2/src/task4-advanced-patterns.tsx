@@ -72,7 +72,7 @@ function UserProvider({ children }: { children: ReactNode }) {
 function useUser(): UserContextType {
   const context = useContext(UserContext);
 
-  if (context === undefined) {
+  if (!context) {
     throw new Error('useUser must be used within a UserProvider');
   }
 
@@ -103,27 +103,23 @@ interface CardFooterProps {
 
 // TODO: Реализуйте основной компонент Card
 function Card({ children, className }: CardProps) {
-  return (
-    <div className={`card ${className || ''}`}>
-      {children}
-    </div>
-  );
+  return <div className={`card ${className || ''}`}>{children}</div>;
 }
 
 // TODO: Реализуйте Card.Header
-const CardHeader = ({ children }: CardHeaderProps) => {
-  return <div className="card-header">{children}</div>;
-};
+const CardHeader = ({ children }: CardHeaderProps) => (
+  <div className="card-header">{children}</div>
+);
 
 // TODO: Реализуйте Card.Content
-const CardContent = ({ children }: CardContentProps) => {
-  return <div className="card-content">{children}</div>;
-};
+const CardContent = ({ children }: CardContentProps) => (
+  <div className="card-content">{children}</div>
+);
 
 // TODO: Реализуйте Card.Footer
-const CardFooter = ({ children }: CardFooterProps) => {
-  return <div className="card-footer">{children}</div>;
-};
+const CardFooter = ({ children }: CardFooterProps) => (
+  <div className="card-footer">{children}</div>
+)
 
 // TODO: Присоедините compound components к Card
 Card.Header = CardHeader;
@@ -134,31 +130,22 @@ Card.Footer = CardFooter;
 
 // TODO: Создайте custom hook useCounter
 function useCounter(initialValue = 0) {
-  const [count, setCount] = useState(initialValue);
+  const [count, setCount] = useState<number>(initialValue);
 
-  const increment = useCallback(() => {
-    // TODO: реализуйте увеличение
-  }, []);
+  const increment = useCallback(() => setCount((c) => c + 1), []);
 
-  const decrement = useCallback(() => {
-    // TODO: реализуйте уменьшение
-  }, []);
+  const decrement = useCallback(() => setCount((c) => c - 1), []);
 
-  const reset = useCallback(() => {
-    // TODO: реализуйте сброс
-  }, [initialValue]);
+  const reset = useCallback(() => setCount(initialValue), [initialValue]);
 
   return { count, increment, decrement, reset };
 }
 
 // TODO: Создайте custom hook useToggle
 function useToggle(initialValue = false) {
-  const [value, setValue] = useState(initialValue);
+  const [value, setValue] = useState<boolean>(initialValue);
 
-  const toggle = useCallback(() => {
-    // TODO: реализуйте переключение
-  }, []);
-
+  const toggle = useCallback(() => setValue((v) => !v), []);
   return [value, toggle] as const;
 }
 
@@ -166,7 +153,7 @@ function useToggle(initialValue = false) {
 // ===== ЗАДАЧА 4.4: Пример демо приложения =====
 
 // TODO: Создайте демо компонент с использованием всех паттернов
-const Demo = () => {
+const Demo: React.FC = () => {
   const { user, login, logout, isLoggedIn } = useUser();
   const { count, increment, decrement, reset } = useCounter(0);
   const [isVisible, toggleVisible] = useToggle(false);
@@ -174,30 +161,31 @@ const Demo = () => {
   return (
     <div className="demo">
       <h1>Демо приложение</h1>
-
-      {/* TODO: Пример Context + hooks */}
+      {/* Context + hooks */}
       <div className="user-section">
         <h2>Пользователь</h2>
         {isLoggedIn ? (
           <div>
-            <p>Привет, {/* TODO: отобразите имя */}!</p>
+            <p>Привет, {user?.name}!</p>
             <button onClick={logout}>Выйти</button>
           </div>
         ) : (
           <button
-            onClick={() => login({
-              id: 1,
-              name: 'Иван Иванов',
-              email: 'ivan@example.com',
-              role: 'user'
-            })}
+            onClick={() =>
+              login({
+                id: 1,
+                name: 'Иван Иванов',
+                email: 'ivan@example.com',
+                role: 'user',
+              })
+            }
           >
             Войти
           </button>
         )}
       </div>
 
-      {/* TODO: Пример custom hooks */}
+      {/* Custom hooks */}
       <div className="counter-section">
         <h2>Счетчик: {count}</h2>
         <button onClick={increment}>+</button>
@@ -205,7 +193,7 @@ const Demo = () => {
         <button onClick={reset}>Сброс</button>
       </div>
 
-      {/* TODO: Пример compound components */}
+      {/* Compound components */}
       <div className="card-section">
         <Card className="demo-card">
           <Card.Header>
@@ -215,9 +203,7 @@ const Demo = () => {
             </button>
           </Card.Header>
           <Card.Content>
-            {isVisible && (
-              <p>Содержимое карточки стало видимым!</p>
-            )}
+            {isVisible && <p>Содержимое карточки стало видимым!</p>}
           </Card.Content>
           <Card.Footer>
             <small>Подвал карточки</small>

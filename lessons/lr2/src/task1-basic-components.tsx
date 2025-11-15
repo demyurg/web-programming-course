@@ -19,17 +19,24 @@ import React from 'react';
 // - age: number (опциональное)
 // - avatar: string (опциональное)
 // - isOnline: boolean
+interface UserCardProps {
+  name: string;
+  email: string;
+  age?: number;
+  avatar?: string;
+  isOnline: boolean;
+}
 
 // TODO: Типизируйте компонент UserCard
-function UserCard(/* TODO: добавьте типизацию props */) {
+function UserCard({ name, email, age, avatar, isOnline }: UserCardProps) {
   return (
     <div className="user-card">
-      {/* TODO: добавьте отображение avatar если он есть */}
-      <h2>{/* TODO: отобразите name */}</h2>
-      <p>{/* TODO: отобразите email */}</p>
-      {/* TODO: отобразите age если он есть */}
-      <span className={`status ${/* TODO: добавьте класс на основе isOnline */}`}>
-        {/* TODO: отобразите статус онлайн/офлайн */}
+      {avatar && <img src={avatar} alt={`${name} avatar`} className="avatar" />}
+      <h2>{name}</h2>
+      <p>{email}</p>
+      {age && <p>Возраст: {age}</p>}
+      <span className={`status ${isOnline ? 'online' : 'offline'}`}>
+        {isOnline ? 'Онлайн' : 'Оффлайн'}
       </span>
     </div>
   );
@@ -44,15 +51,23 @@ function UserCard(/* TODO: добавьте типизацию props */) {
 // - disabled: boolean (опциональное, по умолчанию false)
 // - onClick: () => void
 
+interface ButtonProps {
+  children: React.ReactNode;
+  variant: 'primary' | 'secondary' | 'danger';
+  size: 'small' | 'medium' | 'large';
+  disabled?: boolean;
+  onClick: () => void;
+}
+
 // TODO: Типизируйте компонент Button
-function Button(/* TODO: добавьте типизацию props */) {
+function Button({children, variant, size, disabled = false, onClick}: ButtonProps) {
   return (
     <button
-      className={`btn btn--${/* TODO: используйте variant */} btn--${/* TODO: используйте size */}`}
-      disabled={/* TODO: используйте disabled */}
-      onClick={/* TODO: используйте onClick */}
+      className={`btn btn--${variant} btn--${size}`}
+      disabled={disabled}
+      onClick={onClick}
     >
-      {/* TODO: отобразите children */}
+      {children}
     </button>
   );
 }
@@ -63,14 +78,31 @@ function Button(/* TODO: добавьте типизацию props */) {
 // - users: string[] (массив имен пользователей)
 // - emptyMessage: string (опциональное, по умолчанию "Нет пользователей")
 
+interface UserListProps {
+  users: UserCardProps[]; // теперь передаём массив объектов пользователей
+  emptyMessage?: string;
+}
+
 // TODO: Типизируйте компонент UserList
-function UserList(/* TODO: добавьте типизацию props */) {
+function UserList({ users, emptyMessage = 'Нет пользователей' }: UserListProps) {
+  if (!users.length) {
+    return <p>{emptyMessage}</p>;
+  }
   // TODO: если users пустой, отобразите emptyMessage
 
   return (
-    <ul className="user-list">
-      {/* TODO: отрендерите users как <li> элементы */}
-    </ul>
+    <div className="user-list">
+      {users.map((user, index) => (
+        <UserCard
+          key={index}
+          name={user.name}
+          email={user.email}
+          age={user.age}
+          avatar={user.avatar}
+          isOnline={user.isOnline}
+        />
+      ))}
+    </div>
   );
 }
 
@@ -81,18 +113,22 @@ function UserList(/* TODO: добавьте типизацию props */) {
 // - children: React.ReactNode
 // - footer: React.ReactNode (опциональное)
 // - className: string (опциональное)
+interface CardProps {
+  title: string;
+  children: React.ReactNode;
+  footer?: React.ReactNode;
+  className?: string;
+}
 
 // TODO: Типизируйте компонент Card
-function Card(/* TODO: добавьте типизацию props */) {
+function Card({ title, children, footer, className }: CardProps) {
   return (
-    <div className={`card ${/* TODO: добавьте className если есть */}`}>
+    <div className={`card ${className ? className : ''}`}>
       <div className="card-header">
-        <h3>{/* TODO: отобразите title */}</h3>
+        <h3>{title}</h3>
       </div>
-      <div className="card-content">
-        {/* TODO: отобразите children */}
-      </div>
-      {/* TODO: отобразите footer если он есть */}
+      <div className="card-content">{children}</div>
+      {footer && <div className="card-footer">{footer}</div>}
     </div>
   );
 }
@@ -115,7 +151,13 @@ function App() {
     { id: 3, name: 'Мария Сидорова', email: 'maria@example.com', age: 24, isOnline: true }
   ];
 
-  const userNames = users.map(user => user.name);
+ const userCards: UserCardProps[] = users.map((user) => ({
+    name: user.name,
+    email: user.email,
+    age: user.age,
+    isOnline: user.isOnline,
+    avatar: undefined, // можно добавить URL при необходимости
+  }));
 
   const handleButtonClick = () => {
     console.log('Кнопка нажата!');
@@ -123,21 +165,11 @@ function App() {
 
   return (
     <div className="app">
-      <Card
-        title="Список пользователей"
-        footer={<p>Всего пользователей: {users.length}</p>}
-      >
-        <UserList
-          users={userNames}
-          emptyMessage="Пользователей не найдено"
-        />
+      <Card title="Список пользователей" footer={<p>Всего пользователей: {users.length}</p>}>
+        <UserList users={userCards} emptyMessage="Пользователей не найдено" />
 
         <div style={{ marginTop: '20px' }}>
-          <Button
-            variant="primary"
-            size="medium"
-            onClick={handleButtonClick}
-          >
+          <Button variant="primary" size="medium" onClick={handleButtonClick}>
             Добавить пользователя
           </Button>
         </div>
