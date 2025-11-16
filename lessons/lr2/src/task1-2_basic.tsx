@@ -19,20 +19,20 @@ import React, { useState } from 'react';
 // - children: React.ReactNode
 // - onClick: () => void
 // - variant?: 'primary' | 'secondary'
-interface ButtonProps{
+interface ButtonProps {
   children: React.ReactNode;
   onClick: () => void;
-  variant?: 'primary' | 'secondary'
+  variant?: 'primary' | 'secondary';
 }
 
 // TODO 1.2: Типизируйте компонент Button
-function Button(bp: ButtonProps) {
+function Button({ children, onClick, variant = 'primary' }: ButtonProps) {
   return (
     <button
-      className={`btn btn--${bp.variant}`}
-      onClick={bp.onClick}
+      className={`btn btn--${variant}`}
+      onClick={onClick}
     >
-      {bp.children}
+      {children}
     </button>
   );
 }
@@ -41,20 +41,20 @@ function Button(bp: ButtonProps) {
 // - name: string
 // - email: string
 // - isOnline: boolean
-interface UserCardProps{
+interface UserCardProps {
   name: string;
   email: string;
   isOnline: boolean;
 }
 
 // TODO 1.4: Типизируйте компонент UserCard
-function UserCard(ucp: UserCardProps) {
+function UserCard({ name, email, isOnline }: UserCardProps) {
   return (
     <div className="user-card">
-      <h3>{ucp.name}</h3>
-      <p>{ucp.email}</p>
-      <span className={`user card--${ucp.isOnline}`}>
-        {ucp.isOnline}
+      <h3>{name}</h3>
+      <p>{email}</p>
+      <span className={`status ${isOnline ? 'online' : 'offline'}`}>
+        {isOnline ? 'Online' : 'Offline'}
       </span>
     </div>
   );
@@ -68,62 +68,64 @@ function UserCard(ucp: UserCardProps) {
 // - id: number
 // - text: string
 // - completed: boolean
-interface Todo{
+interface Todo {
   id: number;
   text: string;
   completed: boolean;
 }
 
 // TODO 3.2: Типизируйте компонент TodoApp
-function TodoApp(todo: Todo) {
+function TodoApp() {
   // TODO 3.3: Создайте состояние todos с типом Todo[]
   const [todos, setTodos] = useState<Todo[]>([]);
-  const [inputValue, setInputValue] = useState('');
+  const [inputValue, setInputValue] = useState<string>('');
 
   // TODO 3.4: Реализуйте addTodo
   const addTodo = () => {
     if (inputValue.trim()) {
-      // TODO: создайте новый todo и добавьте в массив
-      // Подсказка: id можно сделать как Date.now()
       const newTodo: Todo = {
-      id: Date.now(),
-      text: inputValue.trim(),
-      completed: false,            
+        id: Date.now(),
+        text: inputValue.trim(),
+        completed: false,            
       };
+      setTodos(prevTodos => [...prevTodos, newTodo]);
       setInputValue('');
     }
   };
 
   // TODO 3.5: Реализуйте toggleTodo
   const toggleTodo = (id: number) => {
-    // TODO: измените completed для todo с данным id
-    todos[id].completed != todos[id].completed
+    setTodos(prevTodos => 
+      prevTodos.map(todo => 
+        todo.id === id ? { ...todo, completed: !todo.completed } : todo
+      )
+    );
   };
 
   // TODO 3.6: Реализуйте deleteTodo
   const deleteTodo = (id: number) => {
-    // TODO: удалите todo с данным id
+    setTodos(prevTodos => prevTodos.filter(todo => todo.id !== id));
   };
 
   return (
     <div className="todo-app">
       <h2>Todo список</h2>
 
-      {/* TODO: Форма добавления */}
+      {/* Форма добавления */}
       <div className="add-todo">
         <input
           type="text"
           value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setInputValue(e.target.value)}
           placeholder="Новая задача..."
-          onKeyPress={(e) => e.key === 'Enter' && addTodo()}
+          onKeyPress={(e: React.KeyboardEvent<HTMLInputElement>) => e.key === 'Enter' && addTodo()}
         />
         <Button onClick={addTodo} variant="primary">
           Добавить
         </Button>
       </div>
 
-      {/* TODO: Список todos */}
+      {/* Список todos */}
       <ul className="todo-list">
         {todos.map(todo => (
           <li key={todo.id}>
@@ -157,6 +159,16 @@ function App() {
   return (
     <div className="app">
       <h1>Todo приложение на React + TypeScript</h1>
+      
+      {/* Пример использования UserCard */}
+      <div style={{ marginBottom: '20px' }}>
+        <UserCard 
+          name="Иван Иванов" 
+          email="ivan@example.com" 
+          isOnline={true} 
+        />
+      </div>
+      
       <TodoApp />
     </div>
   );
