@@ -19,15 +19,20 @@ import React, { useState } from 'react';
 // - children: React.ReactNode
 // - onClick: () => void
 // - variant?: 'primary' | 'secondary'
+interface ButtonProps{
+  children: React.ReactNode;
+  onClick: () => void;
+  variant?: 'primary' | 'secondary'
+}
 
 // TODO 1.2: Типизируйте компонент Button
-function Button(/* TODO: добавьте типизацию */) {
+function Button(bp: ButtonProps) {
   return (
     <button
-      className={`btn btn--${/* TODO */}`}
-      onClick={/* TODO */}
+      className={`btn btn--${bp.variant}`}
+      onClick={bp.onClick}
     >
-      {/* TODO */}
+      {bp.children}
     </button>
   );
 }
@@ -36,15 +41,20 @@ function Button(/* TODO: добавьте типизацию */) {
 // - name: string
 // - email: string
 // - isOnline: boolean
+interface UserCardProps{
+  name: string;
+  email: string;
+  isOnline: boolean;
+}
 
 // TODO 1.4: Типизируйте компонент UserCard
-function UserCard(/* TODO: добавьте типизацию */) {
+function UserCard(ucp: UserCardProps) {
   return (
     <div className="user-card">
-      <h3>{/* TODO: name */}</h3>
-      <p>{/* TODO: email */}</p>
-      <span className={/* TODO: добавьте класс на основе isOnline */}>
-        {/* TODO: отобразите статус */}
+      <h3>{ucp.name}</h3>
+      <p>{ucp.email}</p>
+      <span className={`user card--${ucp.isOnline}`}>
+        {ucp.isOnline}
       </span>
     </div>
   );
@@ -58,11 +68,16 @@ function UserCard(/* TODO: добавьте типизацию */) {
 // - id: number
 // - text: string
 // - completed: boolean
+interface Todo{
+  id: number;
+  text: string;
+  completed: boolean;
+}
 
 // TODO 3.2: Типизируйте компонент TodoApp
-function TodoApp() {
+function TodoApp(todo: Todo) {
   // TODO 3.3: Создайте состояние todos с типом Todo[]
-  const [todos, setTodos] = useState(/* TODO */);
+  const [todos, setTodos] = useState<Todo[]>([]);
   const [inputValue, setInputValue] = useState('');
 
   // TODO 3.4: Реализуйте addTodo
@@ -70,6 +85,11 @@ function TodoApp() {
     if (inputValue.trim()) {
       // TODO: создайте новый todo и добавьте в массив
       // Подсказка: id можно сделать как Date.now()
+      const newTodo: Todo = {
+      id: Date.now(),
+      text: inputValue.trim(),
+      completed: false,            
+      };
       setInputValue('');
     }
   };
@@ -77,6 +97,7 @@ function TodoApp() {
   // TODO 3.5: Реализуйте toggleTodo
   const toggleTodo = (id: number) => {
     // TODO: измените completed для todo с данным id
+    todos[id].completed != todos[id].completed
   };
 
   // TODO 3.6: Реализуйте deleteTodo
