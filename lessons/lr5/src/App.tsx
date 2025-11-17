@@ -1,4 +1,4 @@
-// import Task4 from './tasks/Task4';
+import Task4 from './tasks/Task4';
 
 import { userAuth } from './userAuth';
 
