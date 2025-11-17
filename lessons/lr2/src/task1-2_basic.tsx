@@ -77,7 +77,8 @@ interface Todo {
 
 
 // TODO 3.2: Типизируйте компонент TodoApp
-function TodoApp({id,text,completed}: Todo) {
+function TodoApp(
+) {
   // TODO 3.3: Создайте состояние todos с типом Todo[]
   const [todos, setTodos] = useState<Todo[]>([]);
   const [inputValue, setInputValue] = useState('');
