@@ -26,12 +26,12 @@ const Task1 = () => {
 
   // TODO: Создайте состояние score для подсчёта правильных ответов
   // Подсказка: используйте useState, тип number, начальное значение 0
-  const [score, setScore] = useState(0);
+  const [score, setScore] = useState<number>(0);
 
 
   // TODO: Создайте состояние isFinished для отслеживания завершения игры
   // Подсказка: используйте useState, тип boolean, начальное значение false
-  const [isFinished, setIsFinished] = useState(false);
+  const [isFinished, setIsFinished] = useState<boolean>(false);
 
   const currentQuestion: Question = mockQuestions[currentQuestionIndex];
 
