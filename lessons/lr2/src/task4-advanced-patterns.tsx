@@ -138,14 +138,17 @@ function useCounter(initialValue = 0) {
 
   const increment = useCallback(() => {
     // TODO: реализуйте увеличение
+    setCount(prev => prev + 1);
   }, []);
 
   const decrement = useCallback(() => {
     // TODO: реализуйте уменьшение
+    setCount(prev => prev - 1);
   }, []);
 
   const reset = useCallback(() => {
     // TODO: реализуйте сброс
+    setCount(initialValue);
   }, [initialValue]);
 
   return { count, increment, decrement, reset };
@@ -157,11 +160,11 @@ function useToggle(initialValue = false) {
 
   const toggle = useCallback(() => {
     // TODO: реализуйте переключение
+    setValue(prev => !prev);
   }, []);
 
   return [value, toggle] as const;
 }
-
 
 // ===== ЗАДАЧА 4.4: Пример демо приложения =====
 
@@ -180,7 +183,9 @@ const Demo = () => {
         <h2>Пользователь</h2>
         {isLoggedIn ? (
           <div>
-            <p>Привет, {/* TODO: отобразите имя */}!</p>
+            <p>Привет, {user?.name}!</p>
+            <p>Email: {user?.email}</p>
+            <p>Роль: {user?.role}</p>
             <button onClick={logout}>Выйти</button>
           </div>
         ) : (
