@@ -15,7 +15,7 @@ class GameStore {
   questions: Question[] = [];
   currentQuestionIndex = 0;
   score = 0;
-  selectedAnswer: number | null = null;
+  selectedAnswers: number[] = [];
   answeredQuestions: Answer[] = [];
 
   timeRemaining = 0;
@@ -37,13 +37,41 @@ class GameStore {
     this.questions = [...mockQuestions];
     this.currentQuestionIndex = 0;
     this.score = 0;
-    this.selectedAnswer = null;
+    this.selectedAnswers = [];
     this.answeredQuestions = [];
     this.totalTimeSpent = 0;
 
     this.timeRemaining = 30;
     this.gameStartTime = Date.now();
     this.startTimer();
+  }
+
+  // Новый метод для загрузки вопросов из API
+  setQuestionsFromAPI(apiQuestions: any[]) {
+    // Преобразуем вопросы из API в наш формат
+    this.questions = apiQuestions.map((q, index) => ({
+      id: q.id || `api-${index}`,
+      question: q.question || q.text || '',
+      options: q.options || q.answers || [],
+      correctAnswer: q.correctAnswer || q.correctIndex || 0,
+      difficulty: q.difficulty || 'medium',
+      category: q.category || 'general'
+    }));
+  }
+
+  toggleAnswer(answerIndex: number) {
+    if (this.gameStatus !== 'playing') {
+      return;
+    }
+
+    const currentAnswers = this.selectedAnswers;
+    if (currentAnswers.includes(answerIndex)) {
+      // Удаляем ответ, если он уже выбран
+      this.selectedAnswers = currentAnswers.filter(idx => idx !== answerIndex);
+    } else {
+      // Добавляем ответ, если он не выбран
+      this.selectedAnswers = [...currentAnswers, answerIndex];
+    }
   }
 
   selectAnswer(answerIndex: number) {
@@ -54,11 +82,11 @@ class GameStore {
     // 3. Проверьте правильность (сравните с correctAnswer)
     // 4. Увеличьте счёт если правильно
     // 5. Сохраните в историю ответов
-    if (this.selectedAnswer !== null || this.gameStatus !== 'playing') {
+    if (this.selectedAnswers.length > 0 || this.gameStatus !== 'playing') {
       return;
     }
 
-    this.selectedAnswer = answerIndex;
+    this.selectedAnswers = [answerIndex];
 
     const currentQuestion = this.currentQuestion;
     if (!currentQuestion) return;
@@ -79,6 +107,63 @@ class GameStore {
       this.stopTimer();
   }
 
+  // Новый метод для сохранения текущего ответа в историю
+  saveCurrentAnswer() {
+    const currentQuestion = this.currentQuestion;
+    if (!currentQuestion || this.selectedAnswers.length === 0) return;
+
+    // Проверяем, не сохранен ли уже ответ для этого вопроса
+    const existingAnswerIndex = this.answeredQuestions.findIndex(
+      answer => answer.questionId === currentQuestion.id
+    );
+
+    if (existingAnswerIndex === -1) {
+      // Локальная проверка правильности (временная, до ответа от API)
+      const isCorrect = this.selectedAnswers.includes(currentQuestion.correctAnswer);
+      
+      this.answeredQuestions.push({
+        questionId: currentQuestion.id,
+        selectedAnswer: this.selectedAnswers[0], // для совместимости с текущей структурой
+        selectedAnswers: this.selectedAnswers, // новый поле для множественных ответов
+        isCorrect: isCorrect,
+      });
+
+      // Временно начисляем очки (могут быть пересчитаны после ответа API)
+      if (isCorrect) {
+        this.score += 1;
+      }
+    }
+  }
+
+  // Новый метод для обновления результата ответа на основе данных от API
+  updateAnswerResult(questionId: string, isCorrect: boolean, pointsEarned: number) {
+    // Находим ответ в истории
+    const answerIndex = this.answeredQuestions.findIndex(
+      answer => answer.questionId === questionId
+    );
+
+    if (answerIndex !== -1) {
+      // Обновляем правильность ответа
+      this.answeredQuestions[answerIndex].isCorrect = isCorrect;
+      
+      // Пересчитываем счет
+      const previousScore = this.score;
+      
+      // Если ответ был помечен как правильный локально, но API говорит что неправильный - вычитаем очки
+      if (this.answeredQuestions[answerIndex].isCorrect && !isCorrect) {
+        this.score = Math.max(0, previousScore - 1);
+      }
+      // Если ответ был помечен как неправильный локально, но API говорит что правильный - добавляем очки
+      else if (!this.answeredQuestions[answerIndex].isCorrect && isCorrect) {
+        this.score = previousScore + pointsEarned;
+      }
+      // Если используется другая система очков
+      else if (pointsEarned > 0) {
+        this.score = previousScore + pointsEarned;
+      }
+    }
+  }
+
   // TODO: Добавьте другие методы:
   // nextQuestion() - переход к следующему вопросу
   // finishGame() - завершение игры
@@ -91,7 +176,11 @@ class GameStore {
     }
 
     this.currentQuestionIndex++;
-    this.selectedAnswer = null;
+    this.selectedAnswers = [];
+    
+    // Сбрасываем таймер для нового вопроса
+    this.timeRemaining = 30;
+    this.startTimer();
   }
 
   finishGame() {
@@ -104,7 +193,7 @@ class GameStore {
     this.gameStatus = 'idle';
     this.currentQuestionIndex = 0;
     this.score = 0;
-    this.selectedAnswer = null;
+    this.selectedAnswers = [];
     this.answeredQuestions = [];
     this.questions = [];
     this.timeRemaining = 0;
@@ -120,12 +209,15 @@ class GameStore {
         this.timeRemaining--;
       } else {
         this.stopTimer();
-        if (this.selectedAnswer === null) {
-          this.selectAnswer(5);
+        if (this.selectedAnswers.length === 0) {
+          // Автоматически выбираем ответ при истечении времени
+          if (this.currentQuestion) {
+            this.selectAnswer(0); // Выбираем первый вариант по умолчанию
+          }
         }
         
         setTimeout(() => {
-          if (this.gameStatus === 'playing' && this.selectedAnswer !== null) {
+          if (this.gameStatus === 'playing' && this.selectedAnswers.length > 0) {
             this.nextQuestion();
           }
         }, 2000);
