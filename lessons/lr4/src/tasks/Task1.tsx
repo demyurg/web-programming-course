@@ -2,65 +2,51 @@ import { useState } from 'react';
 import { mockQuestions } from '../data/questions';
 import { Question } from '../types/quiz';
 
-/**
- * Task 1: Управление состоянием с помощью useState
- *
- * Цель: Создать простой Quiz используя только встроенные хуки React
- *
- * Задание:
- * 1. Реализовать отображение текущего вопроса
- * 2. Обработать выбор ответа
- * 3. Подсчитать количество правильных ответов
- * 4. Показать результат в конце
- * 5. Добавить кнопку "Начать заново"
- */
-
 const Task1 = () => {
-  // Пример создания состояния с помощью useState
+  // Индекс текущего вопроса
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
 
-  // TODO: Создайте состояние selectedAnswer для хранения выбранного ответа
-  // Подсказка: используйте useState, тип number | null, начальное значение null
-  // Формат: const [selectedAnswer, setSelectedAnswer] = useState<тип>(начальное_значение);
+  // Выбранный ответ (null до выбора)
+  const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
 
-  // TODO: Создайте состояние score для подсчёта правильных ответов
-  // Подсказка: используйте useState, тип number, начальное значение 0
+  // Количество правильных ответов
+  const [score, setScore] = useState(0);
 
-  // TODO: Создайте состояние isFinished для отслеживания завершения игры
-  // Подсказка: используйте useState, тип boolean, начальное значение false
+  // Флаг окончания игры
+  const [isFinished, setIsFinished] = useState(false);
 
   const currentQuestion: Question = mockQuestions[currentQuestionIndex];
 
-  // Временные значения (удалите эти строки после создания состояний выше)
-  const selectedAnswer = null;
-  const score = 0;
-  const isFinished = false;
-
+  // Обработка клика по варианту ответа
   const handleAnswerClick = (answerIndex: number) => {
-    // TODO: Реализуйте логику выбора ответа
-    // 1. Проверьте, что ответ еще не был выбран (selectedAnswer === null)
-    // 2. Сохраните выбранный ответ: setSelectedAnswer(answerIndex)
-    // 3. Проверьте правильность: answerIndex === currentQuestion.correctAnswer
-    // 4. Если ответ правильный - увеличьте счёт: setScore(score + 1)
+    if (selectedAnswer !== null) return; // уже выбран
+
+    setSelectedAnswer(answerIndex);
+
+    const isCorrect = answerIndex === currentQuestion.correctAnswer;
+    if (isCorrect) {
+      setScore(score + 1);
+    }
   };
 
+  // Переход к следующему вопросу
   const handleNextQuestion = () => {
-    // TODO: Реализуйте переход к следующему вопросу
-    // 1. Проверьте, последний ли это вопрос:
-    //    currentQuestionIndex === mockQuestions.length - 1
-    // 2. Если последний - завершите игру: setIsFinished(true)
-    // 3. Если не последний:
-    //    - Увеличьте индекс: setCurrentQuestionIndex(currentQuestionIndex + 1)
-    //    - Сбросьте выбранный ответ: setSelectedAnswer(null)
+    const lastQuestion = currentQuestionIndex === mockQuestions.length - 1;
+
+    if (lastQuestion) {
+      setIsFinished(true);
+    } else {
+      setCurrentQuestionIndex(currentQuestionIndex + 1);
+      setSelectedAnswer(null);
+    }
   };
 
+  // Начать заново
   const handleRestart = () => {
-    // TODO: Реализуйте перезапуск игры
-    // Сбросьте все состояния к начальным значениям:
-    // setCurrentQuestionIndex(0);
-    // setSelectedAnswer(null);
-    // setScore(0);
-    // setIsFinished(false);
+    setCurrentQuestionIndex(0);
+    setSelectedAnswer(null);
+    setScore(0);
+    setIsFinished(false);
   };
 
   // Экран результатов
