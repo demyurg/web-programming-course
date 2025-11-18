@@ -2,41 +2,32 @@ import { observer } from 'mobx-react-lite';
 import { gameStore } from '../stores/gameStore';
 import { useUIStore } from '../stores/uiStore';
 
-/**
- * Task 4: Комбинированное использование MobX + Zustand
- *
- * Цель: Объединить MobX (бизнес-логика) и Zustand (UI) в одном приложении
- *
- * Задание:
- * 1. Возьмите готовый GameStore (MobX) из Task2
- * 2. Возьмите готовый UIStore (Zustand) из Task3
- * 3. Доработайте GameStore: добавьте таймер, сохранение статистики
- * 4. Доработайте UIStore: добавьте управление модальными окнами
- * 5. Создайте компонент, который использует ОБА store одновременно
- * 6. Примените тему из UIStore к игровому интерфейсу
- *
- * Разделение ответственности:
- * - MobX (GameStore): вопросы, счёт, прогресс, таймер, статистика
- * - Zustand (UIStore): тема, звук, модальные окна, настройки UI
- */
+// Добавляем тип для UIStore
+interface UIStore {
+  theme: 'light' | 'dark';
+  soundEnabled: boolean;
+  toggleTheme: () => void;
+}
 
 const Task4 = observer(() => {
   // MobX - бизнес-логика
-  const { gameStatus, currentQuestion,
-    // TODO: убрать комментарий после реализации gameStore
-    // selectedAnswer, score, progress
+  const {
+    gameStatus,
+    currentQuestion,
+    selectedAnswers,
+    score,
+    progress,
+    correctAnswersCount,
+    questions,
+    currentQuestionIndex,
+    isLastQuestion,
+    isAnswerSelected
   } = gameStore;
-  const selectedAnswer = null; // TODO: заменить на gameStore.selectedAnswer
-  const score = 0; // TODO: заменить на gameStore.score
-  const progress = 0; // TODO: заменить на gameStore.progress
 
-  // Zustand - UI состояние
-  const theme = useUIStore((state) => state.theme);
-  // TODO: убрать комментарий после реализации uiStore
-  // const soundEnabled = useUIStore((state) => state.soundEnabled);
-  // const toggleTheme = useUIStore((state) => state.toggleTheme);
-  const soundEnabled = true; // TODO: заменить на селектор
-  const toggleTheme = () => {}; // TODO: заменить на селектор
+  // Zustand - UI состояние с явной типизацией
+  const theme = useUIStore((state: UIStore) => state.theme);
+  const soundEnabled = useUIStore((state: UIStore) => state.soundEnabled);
+  const toggleTheme = useUIStore((state: UIStore) => state.toggleTheme);
 
   // Цвета в зависимости от темы
   const bgGradient = theme === 'light'
@@ -44,7 +35,7 @@ const Task4 = observer(() => {
     : 'from-gray-900 to-black';
 
   const cardBg = theme === 'light' ? 'bg-white' : 'bg-gray-800';
-  const textColor = theme === 'light' ? 'text-gray-800' : 'text-white';
+  const textColor = theme === 'light' ? 'text-gray-800' : 'text-gray-400';
   const mutedText = theme === 'light' ? 'text-gray-600' : 'text-gray-400';
   const primaryColor = theme === 'light' ? 'bg-purple-600' : 'bg-purple-700';
   const primaryHover = theme === 'light' ? 'hover:bg-purple-700' : 'hover:bg-purple-800';
@@ -96,9 +87,7 @@ const Task4 = observer(() => {
 
   // Экран результатов
   if (gameStatus === 'finished') {
-    // TODO: убрать комментарий после реализации gameStore
-    // const percentage = Math.round((gameStore.correctAnswersCount / gameStore.questions.length) * 100);
-    const percentage = 0;
+    const percentage = Math.round((correctAnswersCount / questions.length) * 100);
     const getEmoji = () => {
       if (percentage >= 80) return '🏆';
       if (percentage >= 60) return '😊';
@@ -122,23 +111,21 @@ const Task4 = observer(() => {
             <p className={mutedText}>очков заработано</p>
           </div>
 
-          {/* TODO: убрать комментарий после реализации gameStore */}
-          {/* <div className={`${theme === 'light' ? 'bg-gray-100' : 'bg-gray-700'} rounded-lg p-4 mb-6`}>
+          <div className={`${theme === 'light' ? 'bg-gray-100' : 'bg-gray-700'} rounded-lg p-4 mb-6`}>
             <p className={`text-lg ${textColor}`}>
-              Правильных ответов: <span className="font-bold">{gameStore.correctAnswersCount} из {gameStore.questions.length}</span>
+              Правильных ответов: <span className="font-bold">{correctAnswersCount} из {questions.length}</span>
             </p>
             <p className={`text-2xl font-bold mt-2 ${theme === 'light' ? 'text-purple-600' : 'text-purple-400'}`}>
               {percentage}%
             </p>
-          </div> */}
+          </div>
 
-          {/* TODO: убрать комментарий после реализации gameStore */}
-          {/* <button
+          <button
             onClick={() => gameStore.resetGame()}
             className={`w-full ${primaryColor} ${primaryHover} text-white py-3 px-6 rounded-xl font-semibold transition-all transform hover:scale-105`}
           >
             Играть снова
-          </button> */}
+          </button>
         </div>
       </div>
     );
@@ -153,10 +140,9 @@ const Task4 = observer(() => {
         {/* Заголовок с темой */}
         <div className={`${cardBg} rounded-lg shadow-md p-4 mb-4 transition-colors duration-300`}>
           <div className="flex justify-between items-center mb-2">
-            {/* TODO: убрать комментарий после реализации gameStore */}
-            {/* <span className={`text-sm ${mutedText}`}>
-              Вопрос {gameStore.currentQuestionIndex + 1} из {gameStore.questions.length}
-            </span> */}
+            <span className={`text-sm ${mutedText}`}>
+              Вопрос {currentQuestionIndex + 1} из {questions.length}
+            </span>
             <div className="flex items-center gap-3">
               <span className={`text-xl font-bold ${theme === 'light' ? 'text-purple-600' : 'text-purple-400'}`}>
                 Счёт: {score}
@@ -200,15 +186,15 @@ const Task4 = observer(() => {
           {/* Варианты ответов */}
           <div className="space-y-3">
             {currentQuestion.options.map((option, index) => {
-              const isSelected = selectedAnswer === index;
+              const isSelected = selectedAnswers.includes(index);
               const isCorrect = index === currentQuestion.correctAnswer;
-              const showResult = selectedAnswer !== null;
+              const showResult = isAnswerSelected;
 
               return (
                 <button
                   key={index}
-                  onClick={() => gameStore.selectAnswer(index)}
-                  disabled={selectedAnswer !== null}
+                  onClick={() => gameStore.toggleAnswer(index)}
+                  disabled={showResult && !isSelected}
                   className={`
                     w-full p-4 text-left rounded-lg border-2 transition-all
                     ${!showResult && theme === 'light' && 'hover:border-purple-400 hover:bg-purple-50'}
@@ -223,11 +209,13 @@ const Task4 = observer(() => {
                   <div className="flex items-center">
                     <span className={`
                       w-8 h-8 rounded-full flex items-center justify-center mr-3 font-semibold
-                      ${!showResult && (theme === 'light' ? 'bg-gray-200' : 'bg-gray-600 text-white')}
+                      ${!showResult && isSelected && (theme === 'light' ? 'bg-purple-500 text-white' : 'bg-purple-500 text-white')}
+                      ${!showResult && !isSelected && (theme === 'light' ? 'bg-gray-200' : 'bg-gray-600 text-white')}
                       ${showResult && isCorrect && 'bg-green-500 text-white'}
                       ${showResult && isSelected && !isCorrect && 'bg-red-500 text-white'}
+                      ${showResult && !isCorrect && !isSelected && (theme === 'light' ? 'bg-gray-200' : 'bg-gray-600 text-white')}
                     `}>
-                      {String.fromCharCode(65 + index)}
+                      {isSelected ? '✓' : String.fromCharCode(65 + index)}
                     </span>
                     <span className={`flex-1 ${textColor}`}>{option}</span>
                   </div>
@@ -237,15 +225,14 @@ const Task4 = observer(() => {
           </div>
 
           {/* Кнопка "Далее" */}
-          {/* TODO: убрать комментарий после реализации gameStore */}
-          {/* {selectedAnswer !== null && (
+          {isAnswerSelected && (
             <button
               onClick={() => gameStore.nextQuestion()}
               className={`mt-6 w-full ${primaryColor} ${primaryHover} text-white py-3 px-6 rounded-lg font-semibold transition-colors`}
             >
-              {gameStore.isLastQuestion ? 'Завершить' : 'Следующий вопрос'}
+              {isLastQuestion ? 'Завершить' : 'Следующий вопрос'}
             </button>
-          )} */}
+          )}
         </div>
 
         {/* Подсказка */}
