@@ -1,6 +1,6 @@
-import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
-import { Theme } from '../types/quiz';
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
+import { Theme } from "../types/quiz";
 
 /**
  * UIStore - Zustand Store для управления UI состоянием
@@ -11,32 +11,66 @@ import { Theme } from '../types/quiz';
 interface UIStore {
   // Состояние
   theme: Theme;
-  // TODO: Добавьте другие UI-состояния (soundEnabled)
+  soundEnabled: boolean;
+  animationsEnabled: boolean;
+  fontSize: "small" | "medium" | "large";
 
   // Actions
   setTheme: (theme: Theme) => void;
-  // TODO: Добавьте другие actions (toggleTheme, toggleSound)
+  toggleTheme: () => void;
+  toggleSound: () => void;
+  toggleAnimations: () => void;
+  setFontSize: (size: "small" | "medium" | "large") => void;
+  resetSettings: () => void;
 }
 
-// TODO: Создайте store с помощью create<UIStore>()
-// Оберните в persist middleware для автосохранения в localStorage
 export const useUIStore = create<UIStore>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       // Начальное состояние
-      theme: 'light', // TODO: Добавьте другие поля (soundEnabled и т.д.)
+      theme: "light",
+      soundEnabled: true,
+      animationsEnabled: true,
+      fontSize: "medium",
 
       // Actions
       setTheme: (theme: Theme) => set({ theme }),
 
-      // TODO: Добавьте другие actions
-      //   toggleTheme: () => set((state) => ...,
-      //
-      // Пример toggleSound:
-      //   toggleSound: () => set((state) => ({ soundEnabled: !state.soundEnabled })),
+      toggleTheme: () =>
+        set((state) => ({
+          theme: state.theme === "light" ? "dark" : "light",
+        })),
+
+      toggleSound: () =>
+        set((state) => ({
+          soundEnabled: !state.soundEnabled,
+        })),
+
+      toggleAnimations: () =>
+        set((state) => ({
+          animationsEnabled: !state.animationsEnabled,
+        })),
+
+      setFontSize: (fontSize: "small" | "medium" | "large") =>
+        set({ fontSize }),
+
+      resetSettings: () =>
+        set({
+          theme: "light",
+          soundEnabled: true,
+          animationsEnabled: true,
+          fontSize: "medium",
+        }),
     }),
     {
-      name: 'ui-storage', // ключ в localStorage
+      name: "ui-storage", // ключ в localStorage
+      // Опционально: можно указать какие поля сохранять
+      partialize: (state) => ({
+        theme: state.theme,
+        soundEnabled: state.soundEnabled,
+        animationsEnabled: state.animationsEnabled,
+        fontSize: state.fontSize,
+      }),
     }
   )
 );

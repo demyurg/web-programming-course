@@ -1,20 +1,20 @@
-import { useState } from 'react';
-import Task1 from './tasks/Task1';
-import Task2 from './tasks/Task2';
-import Task3 from './tasks/Task3';
-import Task4 from './tasks/Task4';
+import { useState } from "react";
+import Task1 from "./tasks/Task1";
+import Task2 from "./tasks/Task2";
+import Task3 from "./tasks/Task3";
+import Task4 from "./tasks/Task4";
 
-type TaskId = 'task1' | 'task2' | 'task3' | 'task4';
+type TaskId = "task1" | "task2" | "task3" | "task4";
 
 const TASKS = {
-  task1: { text: 'Task 1: useState', component: Task1 },
-  task2: { text: 'Task 2: MobX', component: Task2 },
-  task3: { text: 'Task 3: Zustand', component: Task3 },
-  task4: { text: 'Task 4: MobX + Zustand', component: Task4 },
+  task1: { text: "Task 1: useState", component: Task1 },
+  task2: { text: "Task 2: MobX", component: Task2 },
+  task3: { text: "Task 3: Zustand", component: Task3 },
+  task4: { text: "Task 4: MobX + Zustand", component: Task4 },
 };
 
 function App() {
-  const [activeTask, setActiveTask] = useState<TaskId>('task1');
+  const [activeTask, setActiveTask] = useState<TaskId>("task1");
   const ActiveComponent = TASKS[activeTask].component;
 
   return (
@@ -34,8 +34,8 @@ function App() {
                 onClick={() => setActiveTask(key as TaskId)}
                 className={`px-4 py-2 rounded-t-lg transition-colors whitespace-nowrap ${
                   activeTask === key
-                    ? 'bg-indigo-500 text-white'
-                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                    ? "bg-indigo-500 text-white"
+                    : "bg-gray-200 text-gray-700 hover:bg-gray-300"
                 }`}
               >
                 {task.text}
