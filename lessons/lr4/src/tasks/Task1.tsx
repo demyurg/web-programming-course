@@ -1,66 +1,44 @@
-import { useState } from 'react';
-import { mockQuestions } from '../data/questions';
-import { Question } from '../types/quiz';
-
-/**
- * Task 1: Управление состоянием с помощью useState
- *
- * Цель: Создать простой Quiz используя только встроенные хуки React
- *
- * Задание:
- * 1. Реализовать отображение текущего вопроса
- * 2. Обработать выбор ответа
- * 3. Подсчитать количество правильных ответов
- * 4. Показать результат в конце
- * 5. Добавить кнопку "Начать заново"
- */
+import { useState } from "react";
+import { mockQuestions } from "../data/questions";
+import { Question } from "../types/quiz";
 
 const Task1 = () => {
-  // Пример создания состояния с помощью useState
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
 
-  // TODO: Создайте состояние selectedAnswer для хранения выбранного ответа
-  // Подсказка: используйте useState, тип number | null, начальное значение null
-  // Формат: const [selectedAnswer, setSelectedAnswer] = useState<тип>(начальное_значение);
-
-  // TODO: Создайте состояние score для подсчёта правильных ответов
-  // Подсказка: используйте useState, тип number, начальное значение 0
-
-  // TODO: Создайте состояние isFinished для отслеживания завершения игры
-  // Подсказка: используйте useState, тип boolean, начальное значение false
+  // ГОТОВО: состояния
+  const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
+  const [score, setScore] = useState(0);
+  const [isFinished, setIsFinished] = useState(false);
 
   const currentQuestion: Question = mockQuestions[currentQuestionIndex];
 
-  // Временные значения (удалите эти строки после создания состояний выше)
-  const selectedAnswer = null;
-  const score = 0;
-  const isFinished = false;
-
   const handleAnswerClick = (answerIndex: number) => {
-    // TODO: Реализуйте логику выбора ответа
-    // 1. Проверьте, что ответ еще не был выбран (selectedAnswer === null)
-    // 2. Сохраните выбранный ответ: setSelectedAnswer(answerIndex)
-    // 3. Проверьте правильность: answerIndex === currentQuestion.correctAnswer
-    // 4. Если ответ правильный - увеличьте счёт: setScore(score + 1)
+    if (selectedAnswer !== null) return; // нельзя менять ответ
+
+    setSelectedAnswer(answerIndex);
+
+    // Правильная строка:
+    if (answerIndex === currentQuestion.correctAnswer) {
+      setScore((prev) => prev + 1); // ← только один setScore!
+    }
   };
 
   const handleNextQuestion = () => {
-    // TODO: Реализуйте переход к следующему вопросу
-    // 1. Проверьте, последний ли это вопрос:
-    //    currentQuestionIndex === mockQuestions.length - 1
-    // 2. Если последний - завершите игру: setIsFinished(true)
-    // 3. Если не последний:
-    //    - Увеличьте индекс: setCurrentQuestionIndex(currentQuestionIndex + 1)
-    //    - Сбросьте выбранный ответ: setSelectedAnswer(null)
+    const isLastQuestion = currentQuestionIndex === mockQuestions.length - 1;
+
+    if (isLastQuestion) {
+      setIsFinished(true);
+    } else {
+      setCurrentQuestionIndex((prev) => prev + 1);
+      setSelectedAnswer(null);
+    }
   };
 
   const handleRestart = () => {
-    // TODO: Реализуйте перезапуск игры
-    // Сбросьте все состояния к начальным значениям:
-    // setCurrentQuestionIndex(0);
-    // setSelectedAnswer(null);
-    // setScore(0);
-    // setIsFinished(false);
+    setCurrentQuestionIndex(0);
+    setSelectedAnswer(null);
+    setScore(0);
+    setIsFinished(false);
   };
 
   // Экран результатов
@@ -68,14 +46,27 @@ const Task1 = () => {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center p-4">
         <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full text-center">
-          <h2 className="text-3xl font-bold mb-4">Игра завершена!</h2>
-          <div className="mb-6">
-            <p className="text-5xl font-bold text-blue-600 mb-2">{score}</p>
-            <p className="text-gray-600">из {mockQuestions.length} правильных</p>
+          <h2 className="text-4xl font-bold mb-6 text-gray-800">
+            Игра завершена!
+          </h2>
+          <div className="mb-8">
+            <p className="text-6xl font-bold text-blue-600 mb-4">{score}</p>
+            <p className="text-xl text-gray-600">
+              из {mockQuestions.length} правильных ответов
+            </p>
+            <p className="text-2xl font-bold text-gray-800 mt-4">
+              {score === mockQuestions.length
+                ? "🏆 Идеально!"
+                : score >= mockQuestions.length * 0.7
+                ? "Отлично!"
+                : score >= mockQuestions.length * 0.5
+                ? "Неплохо!"
+                : "Можно лучше!"}
+            </p>
           </div>
           <button
             onClick={handleRestart}
-            className="w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
+            className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-4 px-8 rounded-xl font-bold text-xl hover:from-blue-700 hover:to-purple-700 transition-all transform hover:scale-105 shadow-lg"
           >
             Начать заново
           </button>
@@ -89,34 +80,35 @@ const Task1 = () => {
     <div className="min-h-screen bg-gradient-to-br from-blue-500 to-purple-600 p-4">
       <div className="max-w-2xl mx-auto">
         {/* Заголовок с прогрессом */}
-        <div className="bg-white rounded-lg shadow-md p-4 mb-4">
-          <div className="flex justify-between items-center mb-2">
-            <span className="text-sm text-gray-600">
+        <div className="bg-white/10 backdrop-blur-md rounded-2xl shadow-2xl p-6 mb-6 text-white">
+          <div className="flex justify-between items-center mb-4">
+            <span className="text-lg font-semibold">
               Вопрос {currentQuestionIndex + 1} из {mockQuestions.length}
             </span>
-            <span className="text-xl font-bold text-blue-600">
-              Счёт: {score}
-            </span>
+            <span className="text-3xl font-bold">Счёт: {score}</span>
           </div>
-          {/* Прогресс бар */}
-          <div className="w-full bg-gray-200 rounded-full h-2">
+          <div className="w-full bg-white/30 rounded-full h-4 overflow-hidden">
             <div
-              className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+              className="bg-gradient-to-r from-green-400 to-blue-500 h-full rounded-full transition-all duration-500"
               style={{
-                width: `${((currentQuestionIndex + 1) / mockQuestions.length) * 100}%`
+                width: `${
+                  ((currentQuestionIndex + (selectedAnswer !== null ? 1 : 0)) /
+                    mockQuestions.length) *
+                  100
+                }%`,
               }}
             />
           </div>
         </div>
 
         {/* Карточка с вопросом */}
-        <div className="bg-white rounded-2xl shadow-2xl p-6">
-          <h2 className="text-2xl font-bold mb-6 text-gray-800">
+        <div className="bg-white rounded-3xl shadow-2xl p-8">
+          <h2 className="text-3xl font-bold mb-8 text-gray-800 text-center">
             {currentQuestion.question}
           </h2>
 
           {/* Варианты ответов */}
-          <div className="space-y-3">
+          <div className="space-y-4">
             {currentQuestion.options.map((option, index) => {
               const isSelected = selectedAnswer === index;
               const isCorrect = index === currentQuestion.correctAnswer;
@@ -128,25 +120,59 @@ const Task1 = () => {
                   onClick={() => handleAnswerClick(index)}
                   disabled={selectedAnswer !== null}
                   className={`
-                    w-full p-4 text-left rounded-lg border-2 transition-all
-                    ${!showResult && 'hover:border-blue-400 hover:bg-blue-50'}
-                    ${!showResult && !isSelected && 'border-gray-200 bg-white'}
-                    ${!showResult && isSelected && 'border-blue-500 bg-blue-50'}
-                    ${showResult && isCorrect && 'border-green-500 bg-green-50'}
-                    ${showResult && isSelected && !isCorrect && 'border-red-500 bg-red-50'}
-                    ${showResult && !isCorrect && !isSelected && 'opacity-60'}
+                    w-full p-6 text-left rounded-2xl border-4 font-medium text-lg transition-all duration-300 transform
+                    ${
+                      !showResult &&
+                      "hover:border-blue-400 hover:bg-blue-50 hover:scale-105 hover:shadow-xl border-gray-300 bg-gray-50"
+                    }
+                    ${
+                      !showResult &&
+                      isSelected &&
+                      "border-blue-600 bg-blue-100 shadow-xl"
+                    }
+                    ${
+                      showResult &&
+                      isCorrect &&
+                      "border-green-500 bg-green-100 shadow-2xl scale-105"
+                    }
+                    ${
+                      showResult &&
+                      isSelected &&
+                      !isCorrect &&
+                      "border-red-500 bg-red-100 shadow-2xl"
+                    }
+                    ${
+                      showResult &&
+                      !isCorrect &&
+                      !isSelected &&
+                      "opacity-60 grayscale"
+                    }
+                    disabled:cursor-not-allowed
                   `}
                 >
                   <div className="flex items-center">
-                    <span className={`
-                      w-8 h-8 rounded-full flex items-center justify-center mr-3 font-semibold
-                      ${!showResult && 'bg-gray-200'}
-                      ${showResult && isCorrect && 'bg-green-500 text-white'}
-                      ${showResult && isSelected && !isCorrect && 'bg-red-500 text-white'}
-                    `}>
+                    <span
+                      className={`
+                      w-12 h-12 rounded-full flex items-center justify-center mr-4 font-bold text-xl
+                      ${!showResult && "bg-gray-300 text-gray-700"}
+                      ${showResult && isCorrect && "bg-green-500 text-white"}
+                      ${
+                        showResult &&
+                        isSelected &&
+                        !isCorrect &&
+                        "bg-red-500 text-white"
+                      }
+                    `}
+                    >
                       {String.fromCharCode(65 + index)}
                     </span>
                     <span className="flex-1">{option}</span>
+                    {showResult && isCorrect && (
+                      <span className="ml-4 text-3xl">✓</span>
+                    )}
+                    {showResult && isSelected && !isCorrect && (
+                      <span className="ml-4 text-3xl">✗</span>
+                    )}
                   </div>
                 </button>
               );
@@ -155,23 +181,17 @@ const Task1 = () => {
 
           {/* Кнопка "Далее" */}
           {selectedAnswer !== null && (
-            <button
-              onClick={handleNextQuestion}
-              className="mt-6 w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
-            >
-              {currentQuestionIndex === mockQuestions.length - 1
-                ? 'Завершить'
-                : 'Следующий вопрос'}
-            </button>
+            <div className="mt-8 text-center">
+              <button
+                onClick={handleNextQuestion}
+                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold py-4 px-12 rounded-2xl text-xl shadow-2xl transform hover:scale-110 transition-all duration-300"
+              >
+                {currentQuestionIndex === mockQuestions.length - 1
+                  ? "🏁 Завершить квиз"
+                  : "Следующий вопрос →"}
+              </button>
+            </div>
           )}
-        </div>
-
-        {/* Подсказка */}
-        <div className="mt-4 bg-white/20 backdrop-blur-sm rounded-lg p-4 text-white">
-          <p className="text-sm">
-            <strong>Task 1:</strong> Управление состоянием с помощью useState.
-            Реализуйте недостающую логику в обработчиках событий.
-          </p>
         </div>
       </div>
     </div>
