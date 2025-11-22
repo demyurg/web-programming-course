@@ -1,144 +1,157 @@
-/**
- * ЗАДАНИЕ 1-2: Основы React + TypeScript
- *
- * Упрощенное задание, объединяющее базовые компоненты и хуки
- *
- * Что будем изучать:
- * - Типизация компонентов и props
- * - Работа с useState
- * - Обработка событий
- */
-
-import React, { useState } from 'react';
-
-// ============================================
-// ЧАСТЬ 1: Простые компоненты
-// ============================================
-
-// TODO 1.1: Создайте интерфейс ButtonProps с полями:
-// - children: React.ReactNode
-// - onClick: () => void
-// - variant?: 'primary' | 'secondary'
-
-// TODO 1.2: Типизируйте компонент Button
-function Button(/* TODO: добавьте типизацию */) {
-  return (
-    <button
-      className={`btn btn--${/* TODO */}`}
-      onClick={/* TODO */}
-    >
-      {/* TODO */}
-    </button>
-  );
+import React, { useState } from "react";
+// TODO 1.1
+interface ButtonProps {
+  children: React.ReactNode;
+  onClick: () => void;
+  variant?: "primary" | "secondary";
 }
 
-// TODO 1.3: Создайте интерфейс UserCardProps с полями:
-// - name: string
-// - email: string
-// - isOnline: boolean
+// TODO 1.2
+const Button: React.FC<ButtonProps> = ({
+  children,
+  onClick,
+  variant = "primary",
+}) => {
+  return (
+    <button className={`btn btn--${variant}`} onClick={onClick}>
+      {children}
+    </button>
+  );
+};
 
-// TODO 1.4: Типизируйте компонент UserCard
-function UserCard(/* TODO: добавьте типизацию */) {
+// TODO 1.3
+interface UserCardProps {
+  name: string;
+  email: string;
+  isOnline: boolean;
+}
+
+// TODO 1.4
+const UserCard: React.FC<UserCardProps> = ({ name, email, isOnline }) => {
   return (
     <div className="user-card">
-      <h3>{/* TODO: name */}</h3>
-      <p>{/* TODO: email */}</p>
-      <span className={/* TODO: добавьте класс на основе isOnline */}>
-        {/* TODO: отобразите статус */}
+      <h3>{name}</h3>
+      <p>{email}</p>
+      <span className={isOnline ? "status-online" : "status-offline"}>
+        {isOnline ? "🟢 Онлайн" : "🔴 Оффлайн"}
       </span>
     </div>
   );
+};
+
+// TODO 3.1
+interface Todo {
+  id: number;
+  text: string;
+  completed: boolean;
 }
 
-// ============================================
-// ЧАСТЬ 2: Todo список
-// ============================================
+// TODO 3.2 + 3.3
+const TodoApp: React.FC = () => {
+  const [todos, setTodos] = useState<Todo[]>([]);
+  const [inputValue, setInputValue] = useState("");
 
-// TODO 3.1: Создайте интерфейс Todo с полями:
-// - id: number
-// - text: string
-// - completed: boolean
-
-// TODO 3.2: Типизируйте компонент TodoApp
-function TodoApp() {
-  // TODO 3.3: Создайте состояние todos с типом Todo[]
-  const [todos, setTodos] = useState(/* TODO */);
-  const [inputValue, setInputValue] = useState('');
-
-  // TODO 3.4: Реализуйте addTodo
+  // TODO 3.4
   const addTodo = () => {
     if (inputValue.trim()) {
-      // TODO: создайте новый todo и добавьте в массив
-      // Подсказка: id можно сделать как Date.now()
-      setInputValue('');
+      setTodos((prev) => [
+        ...prev,
+        {
+          id: Date.now(),
+          text: inputValue.trim(),
+          completed: false,
+        },
+      ]);
+      setInputValue("");
     }
   };
 
-  // TODO 3.5: Реализуйте toggleTodo
+  // TODO 3.5
   const toggleTodo = (id: number) => {
-    // TODO: измените completed для todo с данным id
+    setTodos((prev) =>
+      prev.map((todo) =>
+        todo.id === id ? { ...todo, completed: !todo.completed } : todo
+      )
+    );
   };
 
-  // TODO 3.6: Реализуйте deleteTodo
+  // TODO 3.6
   const deleteTodo = (id: number) => {
-    // TODO: удалите todo с данным id
+    setTodos((prev) => prev.filter((todo) => todo.id !== id));
   };
 
   return (
     <div className="todo-app">
       <h2>Todo список</h2>
 
-      {/* TODO: Форма добавления */}
       <div className="add-todo">
         <input
           type="text"
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
+          onKeyPress={(e) => e.key === "Enter" && addTodo()}
           placeholder="Новая задача..."
-          onKeyPress={(e) => e.key === 'Enter' && addTodo()}
         />
         <Button onClick={addTodo} variant="primary">
           Добавить
         </Button>
       </div>
 
-      {/* TODO: Список todos */}
       <ul className="todo-list">
-        {todos.map(todo => (
-          <li key={todo.id}>
+        {todos.map((todo) => (
+          <li key={todo.id} className={todo.completed ? "completed-item" : ""}>
             <input
               type="checkbox"
               checked={todo.completed}
               onChange={() => toggleTodo(todo.id)}
             />
-            <span className={todo.completed ? 'completed' : ''}>
+            <span className={todo.completed ? "completed" : ""}>
               {todo.text}
             </span>
-            <button onClick={() => deleteTodo(todo.id)}>✕</button>
+            <button onClick={() => deleteTodo(todo.id)} className="delete-btn">
+              ✕
+            </button>
           </li>
         ))}
       </ul>
 
-      {/* Статистика */}
       <div className="stats">
-        Всего: {todos.length} | Завершено: {todos.filter(t => t.completed).length}
+        Всего: {todos.length} | Завершено:{" "}
+        {todos.filter((t) => t.completed).length}
       </div>
     </div>
   );
-}
-
-// ============================================
-// Главный компонент
-// ============================================
-
-// TODO 3.7: Типизируйте компонент App
-function App() {
+};
+// TODO 3.7
+const App: React.FC = () => {
   return (
     <div className="app">
       <h1>Todo приложение на React + TypeScript</h1>
+
+      {/* Примеры использования компонентов */}
+      <div
+        style={{
+          marginBottom: "40px",
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
+          gap: "20px",
+        }}
+      >
+        <UserCard
+          name="Анна Иванова"
+          email="anna@example.com"
+          isOnline={true}
+        />
+        <UserCard
+          name="Пётр Петров"
+          email="peter@example.com"
+          isOnline={false}
+        />
+      </div>
+
       <TodoApp />
     </div>
   );
-}
+};
 
 export default App;
