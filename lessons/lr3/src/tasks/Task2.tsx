@@ -8,10 +8,10 @@
  * 4. small: px-3 py-1 text-sm | medium: px-4 py-2
  */
 
-import { ButtonHTMLAttributes, ReactNode } from 'react';
+import { ButtonHTMLAttributes, ReactNode } from "react";
 
-type ButtonVariant = 'primary' | 'secondary';
-type ButtonSize = 'small' | 'medium';
+type ButtonVariant = "primary" | "secondary";
+type ButtonSize = "small" | "medium";
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant;
@@ -20,24 +20,23 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 function Button({
-  variant = 'primary',
-  size = 'medium',
-  className = '',
+  variant = "primary",
+  size = "medium",
+  className = "",
   children,
   ...props
 }: ButtonProps) {
-  // TODO: заполните классы
   const variantClasses: Record<ButtonVariant, string> = {
-    primary: '',
-    secondary: '',
+    primary: "bg-blue-500 text-white hover:bg-blue-600",
+    secondary: "bg-gray-500 text-white hover:bg-gray-600",
   };
 
   const sizeClasses: Record<ButtonSize, string> = {
-    small: '',
-    medium: '',
+    small: "px-3 py-1 text-sm",
+    medium: "px-4 py-2",
   };
 
-  const baseClasses = '';
+  const baseClasses = "rounded font-medium transition-colors";
 
   const buttonClasses = `${baseClasses} ${variantClasses[variant]} ${sizeClasses[size]} ${className}`;
 
@@ -51,11 +50,9 @@ function Button({
 function Task2() {
   return (
     <div>
-      <h2 className="text-2xl font-bold mb-4">Задание 2: Кнопки с вариантами</h2>
-
-      <div className="bg-blue-50 border-l-4 border-blue-500 p-3 mb-4 text-sm">
-        Откройте <code className="bg-blue-100 px-1 rounded">src/tasks/Task2.tsx</code> и заполните объекты классов
-      </div>
+      <h2 className="text-2xl font-bold mb-4">
+        Задание 2: Кнопки с вариантами
+      </h2>
 
       <div className="space-y-6">
         <div>
