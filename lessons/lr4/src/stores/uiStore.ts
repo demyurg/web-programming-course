@@ -1,8 +1,3 @@
-/**
- * src/stores/uiStore.ts
- * Zustand UI Store — ГОТОВО И БЕЗ ОШИБОК!
- */
-
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
