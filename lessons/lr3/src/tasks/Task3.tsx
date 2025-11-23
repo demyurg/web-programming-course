@@ -27,11 +27,11 @@ function Task3() {
       {/* TODO: grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 */}
       <div>
         {products.map(p => (
-          <div key={p.id} className="bg-white rounded-lg shadow-md p-4">
+          <div key={p.id} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <img src={p.image} alt={p.name} className="w-full h-40 object-cover rounded" />
             <h3 className="text-lg font-bold mt-3">{p.name}</h3>
             {/* TODO: hidden md:flex */}
-            <div className="mt-2 items-center gap-2">
+            <div className="mt-2 items-center gap-2 hidden md:flex">
               <span>⭐ {p.rating}</span>
             </div>
             <p className="text-xl font-bold text-blue-600 mt-2">{p.price.toLocaleString()} ₽</p>
@@ -40,7 +40,7 @@ function Task3() {
       </div>
 
       <div className="mt-6 p-3 bg-gray-800 text-white rounded">
-        <span className="md:hidden">📱 Mobile</span>
+        <span className="hidden md:flex">📱 Mobile</span>
         <span className="hidden md:inline lg:hidden">💻 Tablet</span>
         <span className="hidden lg:inline">🖥 Desktop</span>
       </div>
