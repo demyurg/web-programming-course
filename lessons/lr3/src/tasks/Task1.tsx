@@ -20,13 +20,13 @@ const products: Product[] = [
     id: 1,
     name: 'Наушники',
     price: 5990,
-    image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=300&fit=crop'
+    image: 'https://content.instructables.com/ORIG/FHB/19NM/FU0HZ0ZI/FHB19NMFU0HZ0ZI.jpg?frame=1'
   },
   {
     id: 2,
     name: 'Смарт-часы',
     price: 12990,
-    image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&h=300&fit=crop'
+    image: 'https://habrastorage.org/r/w1560/getpro/habr/upload_files/ead/659/f02/ead659f020d4bf69ca6f31674af32082.png'
   }
 ];
 
