@@ -151,14 +151,14 @@ const Task2 = observer(() => {
 
           {/* Кнопка "Далее" */}
           {/* TODO: убрать комментарий после реализации стора */}
-          {{selectedAnswer !== null && (
+          {selectedAnswer !== null && (
             <button
               onClick={() => gameStore.nextQuestion()}
               className="mt-6 w-full bg-green-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-green-700 transition-colors"
             >
               {gameStore.isLastQuestion ? 'Завершить' : 'Следующий вопрос'}
             </button>
-          )}}
+          )}
         </div>
 
         {/* Подсказка */}
