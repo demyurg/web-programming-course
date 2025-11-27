@@ -213,7 +213,11 @@ const handleNextQuestion = () => {
     // Отправляем ответ на сервер
     submitAnswer.mutate(
       {
-        ...
+        sessionId,
+        data: {
+          questionId: currentQuestion.id as never as string,
+          selectedOptions: selectedAnswers
+        }
       },
       {
         onSuccess: (response) => {
@@ -302,7 +306,7 @@ export interface Answer {
 
 ## Проверка работы
 
-1. **Авторизация**: Нажмите "Login" - должен появиться токен в localStorage
+1. **Авторизация**: Нажмите "Login" - должен появиться токен в 
 2. **Старт игры**: Нажмите "Начать игру" - должны загрузиться вопросы с сервера
 3. **Выбор ответов**: Выберите несколько вариантов - они должны подсвечиваться
 4. **Отправка ответа**: Нажмите "Следующий вопрос" - ответ отправится на сервер

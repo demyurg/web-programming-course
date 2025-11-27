@@ -15,7 +15,7 @@ class GameStore {
   questions: Question[] = [];
   currentQuestionIndex = 0;
   score = 0;
-  selectedAnswer: number | null = null;
+  selectedAnswers: number[] = []; 
   answeredQuestions: Answer[] = [];
 
   constructor() {
@@ -32,7 +32,7 @@ class GameStore {
     this.questions = mockQuestions;
     this.currentQuestionIndex = 0;
     this.score = 0;
-    this.selectedAnswer = null;
+    this.selectedAnswers = []; // Обновлено
     this.answeredQuestions = [];
   }
 
@@ -44,8 +44,8 @@ class GameStore {
     // 3. Проверьте правильность (сравните с correctAnswer)
     // 4. Увеличьте счёт если правильно
     // 5. Сохраните в историю ответов
-    if (this.answeredQuestions === null && this.currentQuestion) {
-      this.selectedAnswer = answerIndex;
+    if (this.currentQuestion && !this.selectedAnswers.includes(answerIndex)) {
+      this.selectedAnswers.push(answerIndex);
 
       const isCorrect = answerIndex === this.currentQuestion.correctAnswer;
       if (isCorrect) {
@@ -54,7 +54,7 @@ class GameStore {
       
       this.answeredQuestions.push({
         questionId: this.currentQuestion.id,
-        selectedAnswer: answerIndex,
+        selectedAnswers: answerIndex,
         isCorrect
       });
     }
@@ -65,21 +65,34 @@ class GameStore {
   nextQuestion() {
     if (this.currentQuestionIndex < this.questions.length - 1) {
       this.currentQuestionIndex += 1;
-      this.selectedAnswer = null;
+      this.selectedAnswers = []; // Обновлено
     } else {
       this.finishGame();
     }
   }
+
+  toggleAnswer(answerIndex: number) {
+    // Переключение выбора ответа (добавить/удалить из массива)
+    if (this.selectedAnswers.includes(answerIndex)) {
+      this.selectedAnswers = this.selectedAnswers.filter(
+        index => index !== answerIndex
+      );
+    } else {
+      this.selectedAnswers.push(answerIndex);
+    }
+  }
+  
   // finishGame() - завершение игры
   finishGame() {
     this.gameStatus = 'finished';
   }
+  
   // resetGame() - сброс к начальным значениям
   resetGame() {
     this.gameStatus = 'idle';
     this.currentQuestionIndex = 0;
     this.score = 0;
-    this.selectedAnswer = null;
+    this.selectedAnswers = []; // Обновлено
     this.answeredQuestions = [];
   }
 
@@ -99,7 +112,8 @@ class GameStore {
   get isLastQuestion(): boolean {
     return this.currentQuestionIndex === this.questions.length - 1;
   }
-    get correctAnswersCount(): number {
+  
+  get correctAnswersCount(): number {
     return this.score;
   }
 }
