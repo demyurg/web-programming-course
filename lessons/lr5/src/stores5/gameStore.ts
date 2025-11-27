@@ -1,6 +1,6 @@
 import { makeAutoObservable } from 'mobx';
-import { Question, Answer } from '../types/quiz';
-import { mockQuestions } from '../data/questions';
+import { Question, Answer } from '../types5/quiz';
+import { mockQuestions } from '../data5/questions';
 
 /**
  * GameStore - MobX Store для управления игровой логикой
@@ -13,7 +13,7 @@ class GameStore {
   questions: Question[] = [];
   currentQuestionIndex = 0;
   score = 0;
-  selectedAnswer: number | null = null;
+  selectedAnswers: number[] = [];
   answeredQuestions: Answer[] = [];
 
   constructor() {
@@ -22,23 +22,32 @@ class GameStore {
 
   // Actions - методы для изменения состояния
 
-  startGame() {
+  startGame(questions) {
     this.gameStatus = 'playing';
-    this.questions = [...mockQuestions];
+    this.questions = questions.map(item => ({...item, correctAnswer: -1}));
     this.currentQuestionIndex = 0;
     this.score = 0;
-    this.selectedAnswer = null;
+    this.selectedAnswers = [];
     this.answeredQuestions = [];
   }
 
   selectAnswer(answerIndex: number) {
     // Проверяем, что ответ еще не был выбран и игра идет
-    if (this.selectedAnswer !== null || this.gameStatus !== 'playing') {
+    if (this.gameStatus !== 'playing') {
       return;
     }
 
-    this.selectedAnswer = answerIndex;
-    
+     // Проверяем, выбран ли уже этот ответ
+     if (this.selectedAnswers.includes(answerIndex)) {
+      // Ответ уже выбран - удаляем из массива
+      this.selectedAnswers = this.selectedAnswers.filter(
+          selectedIndex => selectedIndex !== answerIndex
+      );
+    } else {
+      // Ответ еще не выбран - добавляем в массив
+      this.selectedAnswers.push(answerIndex);
+    }
+  
     const currentQuestion = this.currentQuestion;
     if (!currentQuestion) return;
 
@@ -52,19 +61,19 @@ class GameStore {
     // Сохраняем в историю ответов
     this.answeredQuestions.push({
       questionId: currentQuestion.id,
-      selectedAnswer: answerIndex,
+      selectedAnswers: [...this.selectedAnswers],
       isCorrect: isCorrect
     });
   }
 
   nextQuestion() {
     if (this.isLastQuestion) {
-      this.finishGame();
-      return;
+      return false;
     }
 
     this.currentQuestionIndex++;
-    this.selectedAnswer = null;
+    this.selectedAnswers = [];
+    return true;
   }
 
   finishGame() {
@@ -76,7 +85,7 @@ class GameStore {
     this.questions = [];
     this.currentQuestionIndex = 0;
     this.score = 0;
-    this.selectedAnswer = null;
+    this.selectedAnswers = [];
     this.answeredQuestions = [];
   }
 
@@ -108,6 +117,7 @@ class GameStore {
   get correctAnswersCount(): number {
     return this.answeredQuestions.filter(answer => answer.isCorrect).length;
   }
+
 }
 
 export const gameStore = new GameStore();

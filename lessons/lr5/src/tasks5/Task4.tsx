@@ -1,6 +1,11 @@
 import { observer } from 'mobx-react-lite';
-import { gameStore } from '../stores/gameStore';
-import { useUIStore } from '../stores/uiStore';
+import { gameStore } from '../stores5/gameStore';
+import { useUIStore } from '../stores5/uiStore';
+import { usePostApiSessions } from '../../generated/api/sessions/sessions';
+import { usePostApiSessionsSessionIdAnswers } from '../../generated/api/sessions/sessions';
+import { usePostApiSessionsSessionIdSubmit } from '../../generated/api/sessions/sessions';
+import * as React from 'react'
+
 
 /**
  * Task 4: Комбинированное использование MobX + Zustand
@@ -25,19 +30,100 @@ const Task4 = observer(() => {
   const { 
     gameStatus, 
     currentQuestion,
-    selectedAnswer, 
+    selectedAnswers, 
     score, 
     progress,
     questions,
     correctAnswersCount,
     currentQuestionIndex,
-    isLastQuestion
+    isLastQuestion,
   } = gameStore;
 
   // Zustand - UI состояние
   const theme = useUIStore((state) => state.theme);
   const soundEnabled = useUIStore((state) => state.soundEnabled);
   const toggleTheme = useUIStore((state) => state.toggleTheme);
+
+  const [sessionId, setSessionId] = React.useState<string | null>(null);
+  const createSession = usePostApiSessions();
+  const submitAnswer = usePostApiSessionsSessionIdAnswers();
+  const submitSession = usePostApiSessionsSessionIdSubmit();
+
+  const handleStartGame = () => {
+    createSession.mutate(
+      {
+        data: {
+          questionCount: 5,
+          difficulty: 'medium'
+        }
+      },
+      {
+        onSuccess: (response) => {
+          setSessionId(response.sessionId);
+          // Загружаем вопросы в gameStore
+          gameStore.startGame(response.questions);
+        },
+        onError: (error) => {
+          console.error('Failed to create session:', error);
+        },
+      }
+    );
+  };
+
+  const handleNextQuestion = () => {
+    if (sessionId && currentQuestion && selectedAnswers.length > 0) {
+      // Сохраняем ответ в истории
+      // gameStore.saveCurrentAnswer();
+  
+      // Отправляем ответ на сервер
+      submitAnswer.mutate(
+        {
+          sessionId,
+          data: {
+            questionId: currentQuestion.id as never as string,
+            selectedOptions: selectedAnswers
+          }
+        },
+        {
+          onSuccess: (response) => {
+            // Обновляем счет на основе ответа сервера
+            if ('pointsEarned' in response) {
+              // const isCorrect = response.status === 'correct';
+              // ... обновляем результат ...
+            }
+            // Переходим к следующему вопросу
+            if (!gameStore.nextQuestion()) {
+              handleFinishGame();
+            };
+          },
+          onError: (error) => {
+            console.error('Failed to submit answer:', error);
+            gameStore.nextQuestion();
+          },
+        }
+      );
+    }
+  };
+
+  const handleFinishGame = () => {
+    if (sessionId) {
+      submitSession.mutate(
+        { sessionId },
+        {
+          onSuccess: (response) => {
+            console.log('Session completed:', response);
+            gameStore.finishGame();
+          },
+          onError: (error) => {
+            console.error('Failed to submit session:', error);
+            gameStore.finishGame();
+          },
+        }
+      );
+    } else {
+      gameStore.finishGame();
+    }
+  };
 
   // Цвета в зависимости от темы
   const bgGradient = theme === 'light'
@@ -86,7 +172,7 @@ const Task4 = observer(() => {
           </p>
 
           <button
-            onClick={() => gameStore.startGame()}
+            onClick={() => handleStartGame()}
             className={`w-full ${primaryColor} ${primaryHover} text-white py-4 px-6 rounded-xl font-semibold transition-all transform hover:scale-105`}
           >
             Начать игру
@@ -200,15 +286,15 @@ const Task4 = observer(() => {
           {/* Варианты ответов */}
           <div className="space-y-3">
             {currentQuestion.options.map((option, index) => {
-              const isSelected = selectedAnswer === index;
-              const isCorrect = index === currentQuestion.correctAnswer;
-              const showResult = selectedAnswer !== null;
+              const isSelected = selectedAnswers.includes(index);
+              const isCorrect = false // index === currentQuestion.correctAnswer;
+              const showResult = selectedAnswers !== null;
 
               return (
                 <button
                   key={index}
                   onClick={() => gameStore.selectAnswer(index)}
-                  disabled={selectedAnswer !== null}
+                  // disabled={selectedAnswers !== null}
                   className={`
                     w-full p-4 text-left rounded-lg border-2 transition-all
                     ${!showResult && theme === 'light' && 'hover:border-purple-400 hover:bg-purple-50'}
@@ -227,7 +313,7 @@ const Task4 = observer(() => {
                       ${showResult && isCorrect && 'bg-green-500 text-white'}
                       ${showResult && isSelected && !isCorrect && 'bg-red-500 text-white'}
                     `}>
-                      {String.fromCharCode(65 + index)}
+                      {isSelected ? '✓' : String.fromCharCode(65 + index)}
                     </span>
                     <span className={`flex-1 ${textColor}`}>{option}</span>
                   </div>
@@ -237,9 +323,9 @@ const Task4 = observer(() => {
           </div>
 
           {/* Кнопка "Далее" */}
-          {selectedAnswer !== null && (
+          {selectedAnswers !== null && (
             <button
-              onClick={() => gameStore.nextQuestion()}
+              onClick={() => handleNextQuestion()}
               className={`mt-6 w-full ${primaryColor} ${primaryHover} text-white py-3 px-6 rounded-lg font-semibold transition-colors`}
             >
               {isLastQuestion ? 'Завершить' : 'Следующий вопрос'}
