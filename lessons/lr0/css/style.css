@@ -12,8 +12,169 @@ html {
 body {
     font-family: 'Open Sans', sans-serif;
     line-height: 1.6;
-    color: #333;
     overflow-x: hidden;
+}
+
+
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 32px;
+}
+
+header {
+    background: #2c3e50;
+    color: white;
+    padding: 16px 24px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.layout-hero {
+    background: linear-gradient(45deg, #ff6b6b40, #4ecdc440);
+    padding: 48px 24px;
+    text-align: center;
+    border-radius: 8px;
+    margin-bottom: 16px;
+}
+
+.layout-hero h2 {
+    font-size: 1.75rem;
+    margin-bottom: 8px;
+    color: #374151;
+}
+
+.layout-hero p {
+    color: #6b7280;
+    margin-bottom: 16px;
+}
+
+.layout-sections {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+span:hover{
+    background-image: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+    background-clip: text;
+    color: transparent;
+    cursor: pointer;
+}
+
+.layout-section {
+    background: #f8fafc;
+    padding: 20px;
+    border-radius: 8px;
+    min-height: 80px;
+    border: 1px solid #e2e8f0;
+}
+
+.layout-section h4 {
+    color: #374151;
+    margin-bottom: 8px;
+    font-size: 1rem;
+}
+
+.layout-section p {
+    color: #6b7280;
+    font-size: 0.875rem;
+}
+
+.layout-gallery {
+    overflow: hidden; 
+    max-width: 500px;
+}
+
+.slide {
+    min-width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.gallery-img{
+    width: auto;
+    height: 100%;
+    object-fit: contain;
+    max-height: 100%;
+    border-radius: 5px;
+}
+
+.btn-primary-demo {
+    background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 50px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-right: 12px;
+    margin-bottom: 8px;
+}
+
+.btn-primary-demo:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(255, 107, 107, 0.3);
+}
+
+.prev, .next {
+    border-radius: 20%;
+    max-height: fit-content;
+    top: 50%; /* Размещаем по вертикали по центру */
+    background: rgba(0, 0, 0, 0.3); /* Полупрозрачный фон кнопок */
+    color: white; /* Белый цвет текста */
+    border: none; /* Убираем границы */
+    padding: 10px; /* Отступы внутри кнопки */
+    margin-inline: 10px;
+    cursor: pointer; /* Изменяем курсор на указатель */
+    font-size: 18px; /* Размер шрифта */
+    font-weight: bold; /* Делаем текст жирным */
+    z-index: 2; /* Размещаем кнопки выше всех элементов */
+}
+.prev:hover, .next:hover{
+    background: rgba(0, 0, 0, 0.6);
+}
+
+.prev {
+    left: 10px;
+}
+
+/* Позиционируем кнопку «Вперёд» справа */
+.next {
+    right: 10px;
+}
+
+.slides {
+    display: flex; /* Размещаем слайды в одну линию */
+    transition: transform 0.3s ease; /* Анимация плавного смещения */
+    /* align-items: center;
+    justify-content: center; */
+}
+footer {
+    background: #374151;
+    color: white;
+    padding: 16px 24px;
+    border-radius: 8px;
+    text-align: center;
+    font-size: 0.875rem;
+}
+
+.brand {
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+.nav {
+    display: flex;
+    gap: 24px;
+    font-size: 0.875rem;
 }
 
 /* Typography */

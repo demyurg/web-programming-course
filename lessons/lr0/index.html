@@ -8,22 +8,72 @@
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Open+Sans:wght@300;400;600&display=swap" rel="stylesheet">
 </head>
 <body>
-    <!-- Header & Navigation -->
-
+    <div class="container">
+    <header>
+        <div class="brand" style="cursor: pointer;">Анна Светлова</div>
+        <div class="nav">
+            <span>Главная</span>
+            <span>Обо мне</span>
+            <span>Галерея</span>
+            <span>Контакты</span>
+        </div>
+    </header>
     <main>
-        <!-- Hero Section -->
+         <!-- Hero -->
+        <div class="layout-hero">
+            <h2>Захватываю моменты, создаю воспоминания</h2>
+            <p>Профессиональная фотосъемка портретов и свадеб</p>
+            <button class="btn-primary-demo">Посмотреть работы</button>
+        </div>
 
-        <!-- About Section -->
+        <!-- Sections -->
+        <div class="layout-sections">
+            <div class="layout-section">
+                <h4>Обо мне</h4>
+                <p>Привет! Меня зовут Анна, и я увлечена фотографией уже более 5 лет. Специализируюсь на портретной и свадебной съемке.</p>
+            </div>
+            <div class="layout-section">
+                <h4>Статистика</h4>
+                <p>200+ свадеб, 500+ портретов, 5 лет опыта</p>
+            </div>
+        </div>
 
-        <!-- Gallery Section -->
+        <!-- Gallery -->
+        <div style="margin-bottom: 16px;">
+            <h4 style="text-align: center; margin-bottom: 16px; color: #374151;">Галерея работ</h4>
+            <div style="position: relative; max-width: 500px;justify-self: center;display: flex; align-items: center;">
+            <button class="prev">&#10094;</button> <!-- Кнопка «Назад» -->
+            <div class="layout-gallery">
+                <div class="slides">
+                <div class="slide"><img src="images/portrait_1.jpg" class="gallery-img"></div>
+                <div class="slide"><img src="images/portrait_2.jpg" class="gallery-img"></div>
+                <div class="slide"><img src="images/wedding_2.jpg" class="gallery-img"></div>
+                </div>
+            </div>
+            <button class="next">&#10095;</button> <!-- Кнопка «Вперёд» -->
+            </div>
+        </div>
 
-        <!-- Contact Section -->
+        <!-- Contact -->
+        <div class="layout-sections">
+            <div class="layout-section">
+                <h4>Контакты</h4>
+                <p>Телефон, email, социальные сети</p>
+            </div>
+            <div class="layout-section">
+                <h4>Форма связи</h4>
+                <p>Имя, email, услуга, сообщение</p>
+            </div>
+        </div>
     </main>
 
-    <!-- Footer -->
+    <footer>
+        © 2024 Анна Светлова. Все права защищены.
+    </footer>
 
     <!-- Modal for enlarged images -->
 
     <script src="js/script.js"></script>
+    </div>
 </body>
 </html>

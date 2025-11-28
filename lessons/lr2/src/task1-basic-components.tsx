@@ -19,15 +19,23 @@ import React from 'react';
 // - age: number (опциональное)
 // - avatar: string (опциональное)
 // - isOnline: boolean
-
+interface UserCardProps{
+  name: string,
+  email: string,
+  age: number, 
+  avatar: string,
+  isOnline: boolean
+}
 // TODO: Типизируйте компонент UserCard
-function UserCard(/* TODO: добавьте типизацию props */) {
+function UserCard({name, email, age, avatar, isOnline}: UserCardProps) {
   return (
     <div className="user-card">
-      {/* TODO: добавьте отображение avatar если он есть */}
-      <h2>{/* TODO: отобразите name */}</h2>
-      <p>{/* TODO: отобразите email */}</p>
-      {/* TODO: отобразите age если он есть */}
+      {avatar && (
+        <img src={avatar}></img>
+      )}
+      <h2>{name}</h2>
+      <p>{email}</p>
+      {age}
       <span className={`status ${/* TODO: добавьте класс на основе isOnline */}`}>
         {/* TODO: отобразите статус онлайн/офлайн */}
       </span>
