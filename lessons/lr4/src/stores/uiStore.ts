@@ -12,10 +12,30 @@ interface UIStore {
   // Состояние
   theme: Theme;
   // TODO: Добавьте другие UI-состояния (soundEnabled)
+  soundEnabled: boolean;
 
+  // task4
+  sidebarOpen: boolean;
+
+  modals: {
+    settings: boolean;
+    statistics: boolean;
+    help: boolean;
+  };
+
+  openModal: (modalName: keyof UIStore['modals']) => void;
+  closeModal: (modalName: keyof UIStore['modals']) => void;
+  closeAllModals: () => void;
+  
   // Actions
   setTheme: (theme: Theme) => void;
   // TODO: Добавьте другие actions (toggleTheme, toggleSound)
+  toggleTheme: () => void;
+  toggleSound: () => void;
+
+  setSoundEnabled: (enabled: boolean) => void;
+  toggleSidebar: () => void;
+  setSidebarOpen: (open: boolean) => void;
 }
 
 // TODO: Создайте store с помощью create<UIStore>()
@@ -25,15 +45,48 @@ export const useUIStore = create<UIStore>()(
     (set) => ({
       // Начальное состояние
       theme: 'light', // TODO: Добавьте другие поля (soundEnabled и т.д.)
+      soundEnabled: true,
+      sidebarOpen: false,
+      modals: {
+        settings: false,
+        statistics: false,
+        help: false,
+      },
 
       // Actions
-      setTheme: (theme: Theme) => set({ theme }),
+      setTheme: (theme: Theme) => set({ theme }),      
 
       // TODO: Добавьте другие actions
       //   toggleTheme: () => set((state) => ...,
-      //
+      toggleTheme: () => set((state) => ({theme: state.theme === 'light' ? 'dark' : 'light'})),
+
       // Пример toggleSound:
       //   toggleSound: () => set((state) => ({ soundEnabled: !state.soundEnabled })),
+      toggleSound: () => set((state) => ({soundEnabled: !state.soundEnabled})),
+      
+      setSoundEnabled: (enabled: boolean) => set({ soundEnabled: enabled }),
+
+      toggleSidebar: () => set((state) => ({ 
+        sidebarOpen: !state.sidebarOpen 
+      })),
+
+      setSidebarOpen: (open: boolean) => set({ sidebarOpen: open }),
+
+      // task4
+      openModal: (modalName: keyof UIStore['modals']) => 
+        set((state) => ({ 
+          modals: { ...state.modals, [modalName]: true }
+        })),
+
+      closeModal: (modalName: keyof UIStore['modals']) => 
+        set((state) => ({ 
+          modals: { ...state.modals, [modalName]: false }
+        })),
+      
+      closeAllModals: () => 
+        set({ 
+          modals: { settings: false, statistics: false, help: false }
+        }),
     }),
     {
       name: 'ui-storage', // ключ в localStorage
