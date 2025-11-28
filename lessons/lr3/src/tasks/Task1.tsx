@@ -20,14 +20,26 @@ const products: Product[] = [
     id: 1,
     name: 'Наушники',
     price: 5990,
-    image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=300&fit=crop'
+    image: 'https://avatars.mds.yandex.net/get-mpic/14688430/2a000001992e8eba15eb7f7f6a6e106d270f/orig'
   },
   {
     id: 2,
     name: 'Смарт-часы',
     price: 12990,
-    image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&h=300&fit=crop'
-  }
+    image: 'https://avatars.mds.yandex.net/i?id=b637a804e34a4e866423e0b5a1a0ba18_l-5878855-images-thumbs&n=13'
+  },
+  {
+    id: 3,
+    name: 'Смартфон',
+    price: 59990,
+    image: 'https://avatars.mds.yandex.net/get-mpic/15433220/2a000001987e0f3fe54decbffc9d7ef11548/orig'
+  },
+  {
+    id: 4,
+    name: 'Клавиатура',
+    price: 4990,
+    image: 'https://avatars.mds.yandex.net/get-mpic/3614670/img_id1026953123708275295.jpeg/orig'
+  },
 ];
 
 function Task1() {
@@ -39,17 +51,17 @@ function Task1() {
         Откройте <code className="bg-blue-100 px-1 rounded">src/tasks/Task1.tsx</code> и добавьте классы
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         {products.map(product => (
           <div key={product.id}>
             {/* TODO: bg-white shadow-md rounded-lg p-4 hover:shadow-xl transition-shadow */}
-            <div>
+            <div className="bg-white shadow-md rounded-lg p-4 hover:shadow-xl transition-shadow">
               {/* TODO: rounded w-full h-40 object-cover */}
-              <img src={product.image} alt={product.name} />
+              <img className="rounded w-auto h-40 object-fit" src={product.image} alt={product.name} />
               {/* TODO: text-lg font-bold mt-3 */}
-              <h3>{product.name}</h3>
+              <h3 className="text-lg font-bold mt-3">{product.name}</h3>
               {/* TODO: text-xl font-bold text-blue-600 mt-2 */}
-              <p>{product.price.toLocaleString('ru-RU')} ₽</p>
+              <p className="text-xl font-bold text-blue-600 mt-2">{product.price.toLocaleString('ru-RU')} ₽</p>
             </div>
           </div>
         ))}
