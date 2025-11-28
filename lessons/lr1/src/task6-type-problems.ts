@@ -11,22 +11,22 @@
 // Проблемные функции, которые нужно исправить
 
 // ПРОБЛЕМА 1: Функция с any типом
-function processData(data) {
+function processData(data: unknown): string[] {
     if (Array.isArray(data)) {
         return data.map(item => item.toString());
     }
     
     if (typeof data === 'object' && data !== null) {
-        return Object.keys(data).map(key => `${key}: ${data[key]}`);
+        return Object.keys(data).map(([key, value]) => `${key}: ${String(value)}`);
     }
     
-    return [data.toString()];
+    return [String(data)];
 }
 
 // ПРОБЛЕМА 2: Функция с неопределенными возвращаемыми типами
-function getValue(obj, path) {
+function getValue<T extends object, P extends string>(obj: T, path: P):unknown {
     const keys = path.split('.');
-    let current = obj;
+    let current: any = obj;
     
     for (const key of keys) {
         if (current && typeof current === 'object' && key in current) {
@@ -39,18 +39,35 @@ function getValue(obj, path) {
     return current;
 }
 
+interface User {
+    firstName: string;
+    lastName: string;
+    email: string;
+    age?: number;
+    avatar?: string | null;
+}
+
 // ПРОБЛЕМА 3: Функция с проблемами null/undefined
-function formatUser(user) {
+function formatUser(user: Partial<User>):{
+    fullName: string;
+    email: string;
+    age: number | string;
+    avatar: string;
+} {
     return {
         fullName: user.firstName + ' ' + user.lastName,
-        email: user.email.toLowerCase(),
+        email: user.email?.toLowerCase() ?? "EMAIL ERROR",
         age: user.age || 'Не указан',
         avatar: user.avatar ? user.avatar : '/default-avatar.png'
     };
 }
 
+type ApiResponse<T> =
+    | {success: true; data: T}
+    | {success: false; error: string};
+
 // ПРОБЛЕМА 4: Функция с union типами без type guards
-function handleResponse(response) {
+function handleResponse<T>(response: ApiResponse<T>): T {
     if (response.success) {
         console.log('Данные:', response.data);
         return response.data;
@@ -61,41 +78,45 @@ function handleResponse(response) {
 }
 
 // ПРОБЛЕМА 5: Функция с проблемами мутации
-function updateArray(arr, index, newValue) {
-    if (index >= 0 && index < arr.length) {
-        arr[index] = newValue;
+function updateArray<T>(arr: readonly T[], index: number, newValue: T): T[] {
+    // if (index >= 0 && index < arr.length) {
+    //     arr[index] = newValue;
+    // }
+    // return arr;
+    if (index < 0 || index >= arr.length) {
+        console.warn("INDEX ERROR: ", index);
+        return [...arr];
     }
-    return arr;
+
+    return arr.map((item, i) => (i === index ? newValue : item))
 }
 
 // ПРОБЛЕМА 6: Класс с неправильной типизацией событий
-class EventEmitter {
-    constructor() {
-        this.listeners = {};
-    }
-    
-    on(event, callback) {
+type EventCallback<T extends any[] = any[]> = (...args: T) => void;
+
+class EventEmitter<Events extends Record<string, any[]>> {
+    private listeners: { [K in keyof Events]?: EventCallback<Events[K]>[] } = {};
+
+    on<K extends keyof Events>(event: K, callback: EventCallback<Events[K]>): void {
         if (!this.listeners[event]) {
             this.listeners[event] = [];
         }
-        this.listeners[event].push(callback);
+        this.listeners[event]!.push(callback);
     }
-    
-    emit(event, ...args) {
-        if (this.listeners[event]) {
-            this.listeners[event].forEach(callback => callback(...args));
-        }
+
+    emit<K extends keyof Events>(event: K, ...args: Events[K]): void {
+        this.listeners[event]?.forEach(cb => cb(...args));
     }
-    
-    off(event, callback) {
+
+    off<K extends keyof Events>(event: K, callback: EventCallback<Events[K]>): void {
         if (this.listeners[event]) {
-            this.listeners[event] = this.listeners[event].filter(cb => cb !== callback);
+            this.listeners[event] = this.listeners[event]!.filter(cb => cb !== callback);
         }
     }
 }
 
 // ПРОБЛЕМА 7: Функция с проблемами асинхронности
-async function fetchWithRetry(url, maxRetries) {
+async function fetchWithRetry<T>(url: string, maxRetries: number): Promise<T> {
     let lastError;
     
     for (let i = 0; i < maxRetries; i++) {
@@ -117,37 +138,47 @@ async function fetchWithRetry(url, maxRetries) {
 }
 
 // ПРОБЛЕМА 8: Функция валидации с проблемами типов
-function validateForm(formData, rules) {
-    const errors = {};
-    
+interface ValidationRule {
+    required?: boolean;
+    minLength?: number;
+    pattern?: RegExp;
+    message?: string;
+}
+
+function validateForm<T extends Record<string, string>>(
+    formData: T,
+    rules: Record<keyof T, ValidationRule>
+): { isValid: boolean; errors: Partial<Record<keyof T, string>> } {
+    const errors: Partial<Record<keyof T, string>> = {};
+
     for (const field in rules) {
         const value = formData[field];
         const rule = rules[field];
-        
+
         if (rule.required && (!value || value.trim() === '')) {
             errors[field] = 'Поле обязательно для заполнения';
             continue;
         }
-        
+
         if (value && rule.minLength && value.length < rule.minLength) {
             errors[field] = `Минимальная длина: ${rule.minLength} символов`;
             continue;
         }
-        
+
         if (value && rule.pattern && !rule.pattern.test(value)) {
             errors[field] = rule.message || 'Неверный формат';
         }
     }
-    
+
     return {
         isValid: Object.keys(errors).length === 0,
-        errors
+        errors,
     };
 }
 
 // ПРОБЛЕМА 9: Утилитарная функция с проблемами типов
-function pick(obj, keys) {
-    const result = {};
+function pick<T extends object, K extends keyof T>(obj: T, keys: K[]): Pick<T, K> {
+    const result = {} as Pick<T, K>;
     keys.forEach(key => {
         if (key in obj) {
             result[key] = obj[key];
@@ -157,22 +188,20 @@ function pick(obj, keys) {
 }
 
 // ПРОБЛЕМА 10: Функция сравнения с проблемами типов
-function isEqual(a, b) {
+function isEqual(a: unknown, b: unknown): boolean {
     if (a === b) return true;
-    
     if (a == null || b == null) return a === b;
-    
     if (typeof a !== typeof b) return false;
-    
-    if (typeof a === 'object') {
-        const keysA = Object.keys(a);
-        const keysB = Object.keys(b);
-        
+
+    if (typeof a === 'object' && typeof b === 'object') {
+        const objA = a as Record<string, unknown>;
+        const objB = b as Record<string, unknown>;
+        const keysA = Object.keys(objA);
+        const keysB = Object.keys(objB);
         if (keysA.length !== keysB.length) return false;
-        
-        return keysA.every(key => isEqual(a[key], b[key]));
+        return keysA.every(key => isEqual(objA[key], objB[key]));
     }
-    
+
     return false;
 }
 

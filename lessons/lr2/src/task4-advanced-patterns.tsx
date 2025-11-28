@@ -43,12 +43,10 @@ function UserProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
 
   const login = useCallback((userData: User) => {
-    // TODO: реализуйте логику входа
     setUser(userData);
   }, []);
 
   const logout = useCallback(() => {
-    // TODO: реализуйте логику выхода
     setUser(null);
   }, []);
 
@@ -137,15 +135,15 @@ function useCounter(initialValue = 0) {
   const [count, setCount] = useState(initialValue);
 
   const increment = useCallback(() => {
-    // TODO: реализуйте увеличение
+    setCount(prev => prev + 1);
   }, []);
 
   const decrement = useCallback(() => {
-    // TODO: реализуйте уменьшение
+    setCount(prev => prev - 1);
   }, []);
 
   const reset = useCallback(() => {
-    // TODO: реализуйте сброс
+    setCount(initialValue);
   }, [initialValue]);
 
   return { count, increment, decrement, reset };
@@ -156,12 +154,11 @@ function useToggle(initialValue = false) {
   const [value, setValue] = useState(initialValue);
 
   const toggle = useCallback(() => {
-    // TODO: реализуйте переключение
+    setValue(prev => !prev);
   }, []);
 
   return [value, toggle] as const;
 }
-
 
 // ===== ЗАДАЧА 4.4: Пример демо приложения =====
 
@@ -180,7 +177,7 @@ const Demo = () => {
         <h2>Пользователь</h2>
         {isLoggedIn ? (
           <div>
-            <p>Привет, {/* TODO: отобразите имя */}!</p>
+            <p>Привет, {user?.name}!</p>
             <button onClick={logout}>Выйти</button>
           </div>
         ) : (
