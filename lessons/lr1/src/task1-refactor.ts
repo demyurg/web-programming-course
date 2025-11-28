@@ -8,8 +8,8 @@
  * 4. Убедитесь что код компилируется без ошибок
  */
 
-// Калькулятор с проблемами типизации
-function calculate(operation, a, b) {
+// Калькулятор с проблемами типизации +
+function calculate(operation: 'add' | 'subtract' | 'multiply' | 'divide', a: number, b: number) {
     switch (operation) {
         case 'add':
             return a + b;
@@ -27,8 +27,8 @@ function calculate(operation, a, b) {
     }
 }
 
-// Функция для работы с пользователем
-function createUser(name, age, email, isAdmin) {
+// Функция для работы с пользователем +
+function createUser(name: string, age: number, email: string, isAdmin?: boolean) {
     return {
         name,
         age,
@@ -41,8 +41,17 @@ function createUser(name, age, email, isAdmin) {
     };
 }
 
-// Обработка списка пользователей
-function processUsers(users) {
+// Обработка списка пользователей +
+
+// type User = {
+//     name: string;
+//     age: number;
+//     [key: string]: any; // Для гибкости при доступе к произвольным ключам
+// };
+
+type User = ReturnType<typeof createUser>
+
+function processUsers(users: User[]) {
     return users.map(user => {
         return {
             ...user,
@@ -52,20 +61,25 @@ function processUsers(users) {
     });
 }
 
-// Функция поиска пользователя
-function findUser(users, criteria) {
-    if (typeof criteria === 'string') {
-        return users.find(user => user.name === criteria);
-    }
-    if (typeof criteria === 'number') {
-        return users.find(user => user.age === criteria);
-    }
-    if (typeof criteria === 'object') {
-        return users.find(user => {
-            return Object.keys(criteria).every(key => user[key] === criteria[key]);
-        });
-    }
-    return null;
+// Функция поиска пользователя +
+function findUser(
+  users: User[],
+  criteria: string | number | Partial<User>
+): User | undefined | null {
+  if (typeof criteria === 'string') {
+    return users.find(user => user.name === criteria) || null;
+  }
+  if (typeof criteria === 'number') {
+    return users.find(user => user.age === criteria) || null;
+  }
+  if (typeof criteria === 'object') {
+    return users.find(user => {
+      return Object.keys(criteria).every(key => {
+        let keynew = key as keyof User;
+        return user[keynew] === criteria[keynew]});
+    }) || null;
+  }
+  return null;
 }
 
 // Примеры использования (должны работать после типизации)

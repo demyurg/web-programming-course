@@ -10,8 +10,8 @@
 
 // Проблемные функции, которые нужно исправить
 
-// ПРОБЛЕМА 1: Функция с any типом
-function processData(data) {
+// ПРОБЛЕМА 1: Функция с any типом +
+function processData(data: Array<number> | Record<string, number> | string) {
     if (Array.isArray(data)) {
         return data.map(item => item.toString());
     }
@@ -23,8 +23,8 @@ function processData(data) {
     return [data.toString()];
 }
 
-// ПРОБЛЕМА 2: Функция с неопределенными возвращаемыми типами
-function getValue(obj, path) {
+// ПРОБЛЕМА 2: Функция с неопределенными возвращаемыми типами +
+function getValue(obj: any, path: string): string | undefined {
     const keys = path.split('.');
     let current = obj;
     
@@ -39,8 +39,15 @@ function getValue(obj, path) {
     return current;
 }
 
-// ПРОБЛЕМА 3: Функция с проблемами null/undefined
-function formatUser(user) {
+interface User {
+    firstName: string;
+    lastName: string;
+    email: string;
+    age?: number;
+    avatar?: string;
+}
+// ПРОБЛЕМА 3: Функция с проблемами null/undefined +
+function formatUser(user: User) {
     return {
         fullName: user.firstName + ' ' + user.lastName,
         email: user.email.toLowerCase(),
@@ -49,8 +56,13 @@ function formatUser(user) {
     };
 }
 
-// ПРОБЛЕМА 4: Функция с union типами без type guards
-function handleResponse(response) {
+interface Response {
+    success: boolean;
+    data: string;
+    error: string;
+}
+// ПРОБЛЕМА 4: Функция с union типами без type guards +
+function handleResponse(response: Response) {
     if (response.success) {
         console.log('Данные:', response.data);
         return response.data;
@@ -60,8 +72,8 @@ function handleResponse(response) {
     }
 }
 
-// ПРОБЛЕМА 5: Функция с проблемами мутации
-function updateArray(arr, index, newValue) {
+// ПРОБЛЕМА 5: Функция с проблемами мутации +
+function updateArray(arr: number[], index: number, newValue: number) {
     if (index >= 0 && index < arr.length) {
         arr[index] = newValue;
     }
@@ -69,7 +81,7 @@ function updateArray(arr, index, newValue) {
 }
 
 // ПРОБЛЕМА 6: Класс с неправильной типизацией событий
-class EventEmitter {
+class EventEmittery {
     constructor() {
         this.listeners = {};
     }
@@ -117,8 +129,25 @@ async function fetchWithRetry(url, maxRetries) {
 }
 
 // ПРОБЛЕМА 8: Функция валидации с проблемами типов
-function validateForm(formData, rules) {
-    const errors = {};
+
+type Form_Data = Record<string, string | undefined>;
+
+interface Rule {
+    required?: boolean;
+    minLength?: number;
+    pattern?: RegExp;
+    message?: string;
+}
+
+type Rules = Record<string, Rule>;
+
+interface ValidationResult {
+    isValid: boolean;
+    errors: Record<string, string>;
+}
+
+function validateForm(formData: Form_Data, rules: Rules): ValidationResult {
+    const errors: Record<string, string> = {};
     
     for (const field in rules) {
         const value = formData[field];
@@ -146,23 +175,31 @@ function validateForm(formData, rules) {
 }
 
 // ПРОБЛЕМА 9: Утилитарная функция с проблемами типов
-function pick(obj, keys) {
-    const result = {};
+function pick<T extends Record<string, unknown>, K extends keyof T>(obj: T, keys: K[]): Pick<T, K> {
+    const result: Partial<Pick<T, K>> = {};
     keys.forEach(key => {
         if (key in obj) {
             result[key] = obj[key];
         }
     });
-    return result;
+    return result as Pick<T, K>;
 }
 
 // ПРОБЛЕМА 10: Функция сравнения с проблемами типов
-function isEqual(a, b) {
+
+type JsonValue = string | number | boolean | null | JsonValue[] | { [key: string]: JsonValue };
+
+function isEqual(a: JsonValue, b: JsonValue): boolean {
     if (a === b) return true;
     
     if (a == null || b == null) return a === b;
     
     if (typeof a !== typeof b) return false;
+
+    if (Array.isArray(a) && Array.isArray(b)) {
+        if (a.length !== b.length) return false;
+        return a.every((item, index) => isEqual(item, b[index]));
+    }
     
     if (typeof a === 'object') {
         const keysA = Object.keys(a);
@@ -170,7 +207,7 @@ function isEqual(a, b) {
         
         if (keysA.length !== keysB.length) return false;
         
-        return keysA.every(key => isEqual(a[key], b[key]));
+        return keysA.every(key => isEqual((a as any)[key], (b as any)[key]));
     }
     
     return false;

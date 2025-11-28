@@ -17,12 +17,55 @@
 // - Order: id, userId, items[], totalAmount, status, createdAt
 // - OrderItem: productId, quantity, price
 
+interface ApiResponse<T> {
+    data?: T;
+    success: boolean;
+    message?: string;
+    error?: unknown;
+}
+
+interface User {
+    id: number;
+    name: string;
+    email: string;
+    role: Role;
+    avatar?: string;
+}
+
+interface Product {
+    id: number;
+    name: string;
+    price: number;
+    description: string;
+    category: string;
+    images: string[];
+    rating?: number;
+}
+
+interface Order {
+    id?: number;
+    userId: number;
+    items: OrderItem[];
+    totalAmount: number;
+    status?: OrderStatus;
+    createAt?: Date;
+}
+
+interface OrderItem {
+    productId: number;
+    quantity: number;
+    price: number;
+}
+
 // TODO: Создать union типы:
 // - UserRole: 'admin' | 'customer' | 'manager'
 // - OrderStatus: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled'
 
+type Role = 'admin' | 'customer' | 'manager';
+type OrderStatus = 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
+
 // Базовая функция для API запросов
-async function makeApiRequest(url, options) {
+async function makeApiRequest(url: string, options: RequestInit) {
     try {
         const response = await fetch(url, options);
         const data = await response.json();
@@ -50,14 +93,20 @@ async function makeApiRequest(url, options) {
 }
 
 // Получение пользователя по ID
-async function getUser(userId) {
+async function getUser(userId: number) {
     return makeApiRequest(`/api/users/${userId}`, {
         method: 'GET'
     });
 }
 
+interface Filter {
+    category?: string;
+    minPrice?: number;
+    maxPrice?: number;
+    search?: string;
+}
 // Получение списка товаров с фильтрами
-async function getProducts(filters) {
+async function getProducts(filters: Filter) {
     const queryParams = new URLSearchParams();
     
     if (filters.category) queryParams.set('category', filters.category);
@@ -71,7 +120,7 @@ async function getProducts(filters) {
 }
 
 // Создание заказа
-async function createOrder(orderData) {
+async function createOrder(orderData: Order) {
     return makeApiRequest('/api/orders', {
         method: 'POST',
         headers: {
@@ -82,7 +131,7 @@ async function createOrder(orderData) {
 }
 
 // Обновление статуса заказа
-async function updateOrderStatus(orderId, newStatus) {
+async function updateOrderStatus(orderId: number, newStatus: OrderStatus) {
     return makeApiRequest(`/api/orders/${orderId}/status`, {
         method: 'PATCH',
         headers: {
@@ -93,7 +142,7 @@ async function updateOrderStatus(orderId, newStatus) {
 }
 
 // Функция для обработки результатов API
-function handleApiResponse(response, onSuccess, onError) {
+function handleApiResponse(response: ApiResponse<Order>, onSuccess, onError) {
     if (response.success && response.data) {
         onSuccess(response.data);
     } else {
@@ -103,26 +152,29 @@ function handleApiResponse(response, onSuccess, onError) {
 
 // Класс для управления состоянием загрузки
 class ApiState {
+    isLoading: boolean;
+    error: any | null;
+    data: Date | null;
     constructor() {
         this.isLoading = false;
         this.error = null;
         this.data = null;
     }
     
-    setLoading(loading) {
+    setLoading(loading: boolean) {
         this.isLoading = loading;
         if (loading) {
             this.error = null;
         }
     }
     
-    setData(data) {
+    setData(data: Date) {
         this.data = data;
         this.isLoading = false;
         this.error = null;
     }
     
-    setError(error) {
+    setError(error: unknown) {
         this.error = error;
         this.isLoading = false;
         this.data = null;
@@ -138,7 +190,7 @@ class ApiState {
 }
 
 // Композитная функция для загрузки данных с состоянием
-async function loadDataWithState(apiCall, state) {
+async function loadDataWithState(apiCall, state: ApiState) {
     state.setLoading(true);
     
     try {
@@ -189,8 +241,8 @@ async function exampleUsage() {
     
     handleApiResponse(
         orderResponse,
-        (order) => console.log('Заказ создан:', order),
-        (error) => console.error('Ошибка создания заказа:', error)
+        (order: Order) => console.log('Заказ создан:', order),
+        (error: unknown) => console.error('Ошибка создания заказа:', error)
     );
 }
 
