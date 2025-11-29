@@ -1,4 +1,4 @@
-import { defineConfig } from 'orval';
+import { defineConfig } from 'orval'
 
 export default defineConfig({
   quiz: {
@@ -21,21 +21,17 @@ export default defineConfig({
           signal: true,
         },
         operations: {
-          // Явно указываем какие операции должны быть мутациями
           getApiAuthGithubCallback: {
             query: {
               useQuery: true,
               useMutation: true,
-            }
-            // : true, // Принудительно делаем мутацией
+            },
+            // : true,
           },
         },
       },
       prettier: true,
       clean: true,
     },
-    hooks: {
-      afterAllFilesWrite: 'prettier --write',
-    },
   },
-});
+})
