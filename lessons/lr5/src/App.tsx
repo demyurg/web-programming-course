@@ -1,6 +1,6 @@
 import Task4 from './tasks/Task4';
 
-import { Auth } from './components/Auth';
+import { Auth } from '@course/auth-component';
 
 function App() {
   return (
@@ -12,4 +12,4 @@ function App() {
   )
 }
 
-export default App;
+export default App; 

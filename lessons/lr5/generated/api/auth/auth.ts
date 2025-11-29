@@ -34,8 +34,13 @@ import type {
 import type {
   AuthResponse,
   BadRequestResponse,
+  Error,
   GetApiAuthGithubCallbackParams,
+  NotFoundResponse,
+  PostApiAuthGithubCallbackBody,
   PostApiAuthLogout200,
+  PutApiAuthProfile200,
+  PutApiAuthProfileBody,
   UnauthorizedResponse,
   User
 } from '../quizBattleAPI.schemas';
@@ -58,7 +63,7 @@ export const getApiAuthGithub = (
       
       
       return customFetch<unknown>(
-      {url: `http://localhost:3000/api/auth/github`, method: 'GET', ...(signal ? { signal }: {})
+      {url: `/api/auth/github`, method: 'GET', signal
     },
       options);
     }
@@ -68,7 +73,7 @@ export const getApiAuthGithub = (
 
 export const getGetApiAuthGithubQueryKey = () => {
     return [
-    `http://localhost:3000/api/auth/github`
+    `/api/auth/github`
     ] as const;
     }
 
@@ -141,18 +146,84 @@ export function useGetApiAuthGithub<TData = Awaited<ReturnType<typeof getApiAuth
 
 
 /**
- * Обрабатывает callback от GitHub и создает сессию пользователя
- * @summary Callback после авторизации GitHub
+ * Обрабатывает OAuth callback от GitHub, обменивает code на access_token и создает сессию пользователя
+ * @summary Callback после авторизации GitHub (основной метод)
  */
-export const getApiAuthGithubCallback = (
-    params: GetApiAuthGithubCallbackParams,
+export const postApiAuthGithubCallback = (
+    postApiAuthGithubCallbackBody: PostApiAuthGithubCallbackBody,
  options?: SecondParameter<typeof customFetch>,signal?: AbortSignal
 ) => {
       
       
       return customFetch<AuthResponse>(
-      {url: `http://localhost:3000/api/auth/github/callback`, method: 'GET',
-        params, ...(signal ? { signal }: {})
+      {url: `/api/auth/github/callback`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: postApiAuthGithubCallbackBody, signal
+    },
+      options);
+    }
+  
+
+
+export const getPostApiAuthGithubCallbackMutationOptions = <TError = BadRequestResponse | Error,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiAuthGithubCallback>>, TError,{data: PostApiAuthGithubCallbackBody}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof postApiAuthGithubCallback>>, TError,{data: PostApiAuthGithubCallbackBody}, TContext> => {
+
+const mutationKey = ['postApiAuthGithubCallback'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postApiAuthGithubCallback>>, {data: PostApiAuthGithubCallbackBody}> = (props) => {
+          const {data} = props ?? {};
+
+          return  postApiAuthGithubCallback(data,requestOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PostApiAuthGithubCallbackMutationResult = NonNullable<Awaited<ReturnType<typeof postApiAuthGithubCallback>>>
+    export type PostApiAuthGithubCallbackMutationBody = PostApiAuthGithubCallbackBody
+    export type PostApiAuthGithubCallbackMutationError = BadRequestResponse | Error
+
+    /**
+ * @summary Callback после авторизации GitHub (основной метод)
+ */
+export const usePostApiAuthGithubCallback = <TError = BadRequestResponse | Error,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiAuthGithubCallback>>, TError,{data: PostApiAuthGithubCallbackBody}, TContext>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof postApiAuthGithubCallback>>,
+        TError,
+        {data: PostApiAuthGithubCallbackBody},
+        TContext
+      > => {
+
+      const mutationOptions = getPostApiAuthGithubCallbackMutationOptions(options);
+
+      return useMutation(mutationOptions, queryClient);
+    }
+    /**
+ * Устаревший метод для обратной совместимости. Возвращает mock-данные первого студента.
+ * @deprecated
+ * @summary Callback после авторизации GitHub (legacy)
+ */
+export const getApiAuthGithubCallback = (
+    params?: GetApiAuthGithubCallbackParams,
+ options?: SecondParameter<typeof customFetch>,signal?: AbortSignal
+) => {
+      
+      
+      return customFetch<AuthResponse>(
+      {url: `/api/auth/github/callback`, method: 'GET',
+        params, signal
     },
       options);
     }
@@ -162,12 +233,12 @@ export const getApiAuthGithubCallback = (
 
 export const getGetApiAuthGithubCallbackQueryKey = (params?: GetApiAuthGithubCallbackParams,) => {
     return [
-    `http://localhost:3000/api/auth/github/callback`, ...(params ? [params]: [])
+    `/api/auth/github/callback`, ...(params ? [params]: [])
     ] as const;
     }
 
     
-export const getGetApiAuthGithubCallbackQueryOptions = <TData = Awaited<ReturnType<typeof getApiAuthGithubCallback>>, TError = BadRequestResponse | UnauthorizedResponse>(params: GetApiAuthGithubCallbackParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiAuthGithubCallback>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+export const getGetApiAuthGithubCallbackQueryOptions = <TData = Awaited<ReturnType<typeof getApiAuthGithubCallback>>, TError = NotFoundResponse>(params?: GetApiAuthGithubCallbackParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiAuthGithubCallback>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -186,11 +257,11 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type GetApiAuthGithubCallbackQueryResult = NonNullable<Awaited<ReturnType<typeof getApiAuthGithubCallback>>>
-export type GetApiAuthGithubCallbackQueryError = BadRequestResponse | UnauthorizedResponse
+export type GetApiAuthGithubCallbackQueryError = NotFoundResponse
 
 
-export function useGetApiAuthGithubCallback<TData = Awaited<ReturnType<typeof getApiAuthGithubCallback>>, TError = BadRequestResponse | UnauthorizedResponse>(
- params: GetApiAuthGithubCallbackParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiAuthGithubCallback>>, TError, TData>> & Pick<
+export function useGetApiAuthGithubCallback<TData = Awaited<ReturnType<typeof getApiAuthGithubCallback>>, TError = NotFoundResponse>(
+ params: undefined |  GetApiAuthGithubCallbackParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiAuthGithubCallback>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof getApiAuthGithubCallback>>,
           TError,
@@ -199,8 +270,8 @@ export function useGetApiAuthGithubCallback<TData = Awaited<ReturnType<typeof ge
       >, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
-export function useGetApiAuthGithubCallback<TData = Awaited<ReturnType<typeof getApiAuthGithubCallback>>, TError = BadRequestResponse | UnauthorizedResponse>(
- params: GetApiAuthGithubCallbackParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiAuthGithubCallback>>, TError, TData>> & Pick<
+export function useGetApiAuthGithubCallback<TData = Awaited<ReturnType<typeof getApiAuthGithubCallback>>, TError = NotFoundResponse>(
+ params?: GetApiAuthGithubCallbackParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiAuthGithubCallback>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof getApiAuthGithubCallback>>,
           TError,
@@ -209,16 +280,17 @@ export function useGetApiAuthGithubCallback<TData = Awaited<ReturnType<typeof ge
       >, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
-export function useGetApiAuthGithubCallback<TData = Awaited<ReturnType<typeof getApiAuthGithubCallback>>, TError = BadRequestResponse | UnauthorizedResponse>(
- params: GetApiAuthGithubCallbackParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiAuthGithubCallback>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+export function useGetApiAuthGithubCallback<TData = Awaited<ReturnType<typeof getApiAuthGithubCallback>>, TError = NotFoundResponse>(
+ params?: GetApiAuthGithubCallbackParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiAuthGithubCallback>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
 /**
- * @summary Callback после авторизации GitHub
+ * @deprecated
+ * @summary Callback после авторизации GitHub (legacy)
  */
 
-export function useGetApiAuthGithubCallback<TData = Awaited<ReturnType<typeof getApiAuthGithubCallback>>, TError = BadRequestResponse | UnauthorizedResponse>(
- params: GetApiAuthGithubCallbackParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiAuthGithubCallback>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+export function useGetApiAuthGithubCallback<TData = Awaited<ReturnType<typeof getApiAuthGithubCallback>>, TError = NotFoundResponse>(
+ params?: GetApiAuthGithubCallbackParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiAuthGithubCallback>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient 
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> } {
 
@@ -244,7 +316,7 @@ export const getApiAuthMe = (
       
       
       return customFetch<User>(
-      {url: `http://localhost:3000/api/auth/me`, method: 'GET', ...(signal ? { signal }: {})
+      {url: `/api/auth/me`, method: 'GET', signal
     },
       options);
     }
@@ -254,7 +326,7 @@ export const getApiAuthMe = (
 
 export const getGetApiAuthMeQueryKey = () => {
     return [
-    `http://localhost:3000/api/auth/me`
+    `/api/auth/me`
     ] as const;
     }
 
@@ -327,6 +399,70 @@ export function useGetApiAuthMe<TData = Awaited<ReturnType<typeof getApiAuthMe>>
 
 
 /**
+ * Обновление профиля (имя, фамилия) после авторизации через GitHub
+ * @summary Обновить профиль пользователя
+ */
+export const putApiAuthProfile = (
+    putApiAuthProfileBody: PutApiAuthProfileBody,
+ options?: SecondParameter<typeof customFetch>,) => {
+      
+      
+      return customFetch<PutApiAuthProfile200>(
+      {url: `/api/auth/profile`, method: 'PUT',
+      headers: {'Content-Type': 'application/json', },
+      data: putApiAuthProfileBody
+    },
+      options);
+    }
+  
+
+
+export const getPutApiAuthProfileMutationOptions = <TError = UnauthorizedResponse | Error,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putApiAuthProfile>>, TError,{data: PutApiAuthProfileBody}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof putApiAuthProfile>>, TError,{data: PutApiAuthProfileBody}, TContext> => {
+
+const mutationKey = ['putApiAuthProfile'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof putApiAuthProfile>>, {data: PutApiAuthProfileBody}> = (props) => {
+          const {data} = props ?? {};
+
+          return  putApiAuthProfile(data,requestOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PutApiAuthProfileMutationResult = NonNullable<Awaited<ReturnType<typeof putApiAuthProfile>>>
+    export type PutApiAuthProfileMutationBody = PutApiAuthProfileBody
+    export type PutApiAuthProfileMutationError = UnauthorizedResponse | Error
+
+    /**
+ * @summary Обновить профиль пользователя
+ */
+export const usePutApiAuthProfile = <TError = UnauthorizedResponse | Error,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putApiAuthProfile>>, TError,{data: PutApiAuthProfileBody}, TContext>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof putApiAuthProfile>>,
+        TError,
+        {data: PutApiAuthProfileBody},
+        TContext
+      > => {
+
+      const mutationOptions = getPutApiAuthProfileMutationOptions(options);
+
+      return useMutation(mutationOptions, queryClient);
+    }
+    /**
  * @summary Выход из системы
  */
 export const postApiAuthLogout = (
@@ -336,7 +472,7 @@ export const postApiAuthLogout = (
       
       
       return customFetch<PostApiAuthLogout200>(
-      {url: `http://localhost:3000/api/auth/logout`, method: 'POST', ...(signal ? { signal }: {})
+      {url: `/api/auth/logout`, method: 'POST', signal
     },
       options);
     }
