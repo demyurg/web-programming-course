@@ -1,7 +1,7 @@
 import axios, { AxiosRequestConfig } from 'axios';
 
 const apiClient = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3000',
+  baseURL: (import.meta as unknown as {env: Record<string, any>} ).env?.VITE_API_URL || 'http://localhost:3000',
 });
 
 // Добавляем JWT токен к каждому запросу
