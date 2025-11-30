@@ -1,10 +1,11 @@
 import { observer } from 'mobx-react-lite';
-import { useState } from 'react';
 import { gameStore } from '../stores/gameStore';
 import { useUIStore } from '../stores/uiStore';
 import { usePostApiSessions } from '../../generated/api/sessions/sessions';
 import { usePostApiSessionsSessionIdAnswers } from '../../generated/api/sessions/sessions';
 import { usePostApiSessionsSessionIdSubmit } from '../../generated/api/sessions/sessions';
+import * as React from 'react'
+
 
 /**
  * Task 4: Комбинированное использование MobX + Zustand
@@ -26,32 +27,28 @@ import { usePostApiSessionsSessionIdSubmit } from '../../generated/api/sessions/
 
 const Task4 = observer(() => {
   // MobX - бизнес-логика
-  const { gameStatus, currentQuestion, selectedAnswers, score, progress } = gameStore;
+  const { 
+    gameStatus, 
+    currentQuestion,
+    selectedAnswers, 
+    score, 
+    progress,
+    questions,
+    correctAnswersCount,
+    currentQuestionIndex,
+    isLastQuestion,
+  } = gameStore;
 
   // Zustand - UI состояние
   const theme = useUIStore((state) => state.theme);
   const soundEnabled = useUIStore((state) => state.soundEnabled);
   const toggleTheme = useUIStore((state) => state.toggleTheme);
 
-  // API хуки
-  const [sessionId, setSessionId] = useState<string | null>(null);
+  const [sessionId, setSessionId] = React.useState<string | null>(null);
   const createSession = usePostApiSessions();
   const submitAnswer = usePostApiSessionsSessionIdAnswers();
   const submitSession = usePostApiSessionsSessionIdSubmit();
 
-  // Цвета в зависимости от темы
-  const bgGradient = theme === 'light'
-    ? 'from-purple-500 to-indigo-600'
-    : 'from-gray-900 to-black';
-
-  const cardBg = theme === 'light' ? 'bg-white' : 'bg-gray-800';
-  const textColor = theme === 'light' ? 'text-gray-800' : 'text-white';
-  const mutedText = theme === 'light' ? 'text-gray-600' : 'text-gray-400';
-  const primaryColor = theme === 'light' ? 'bg-purple-600' : 'bg-purple-700';
-  const primaryHover = theme === 'light' ? 'hover:bg-purple-700' : 'hover:bg-purple-800';
-  const disabledColor = theme === 'light' ? 'bg-gray-400' : 'bg-gray-600';
-
-  // Обработчики для API
   const handleStartGame = () => {
     createSession.mutate(
       {
@@ -64,15 +61,10 @@ const Task4 = observer(() => {
         onSuccess: (response) => {
           setSessionId(response.sessionId);
           // Загружаем вопросы в gameStore
-          if (response.questions) {
-            gameStore.setQuestionsFromAPI(response.questions);
-          }
-          gameStore.startGame();
+          gameStore.startGame(response.questions);
         },
         onError: (error) => {
           console.error('Failed to create session:', error);
-          // Fallback: используем моковые вопросы
-          gameStore.startGame();
         },
       }
     );
@@ -81,26 +73,28 @@ const Task4 = observer(() => {
   const handleNextQuestion = () => {
     if (sessionId && currentQuestion && selectedAnswers.length > 0) {
       // Сохраняем ответ в истории
-      gameStore.saveCurrentAnswer();
-
+      // gameStore.saveCurrentAnswer();
+  
       // Отправляем ответ на сервер
       submitAnswer.mutate(
         {
           sessionId,
           data: {
-            questionId: currentQuestion.id,
-            selectedAnswers: selectedAnswers
+            questionId: currentQuestion.id as never as string,
+            selectedOptions: selectedAnswers
           }
         },
         {
           onSuccess: (response) => {
             // Обновляем счет на основе ответа сервера
             if ('pointsEarned' in response) {
-              const isCorrect = response.status === 'correct';
-              gameStore.updateAnswerResult(currentQuestion.id, isCorrect, response.pointsEarned);
+              // const isCorrect = response.status === 'correct';
+              // ... обновляем результат ...
             }
             // Переходим к следующему вопросу
-            gameStore.nextQuestion();
+            if (!gameStore.nextQuestion()) {
+              handleFinishGame();
+            };
           },
           onError: (error) => {
             console.error('Failed to submit answer:', error);
@@ -108,9 +102,6 @@ const Task4 = observer(() => {
           },
         }
       );
-    } else {
-      // Локальная логика без API
-      gameStore.nextQuestion();
     }
   };
 
@@ -132,6 +123,29 @@ const Task4 = observer(() => {
     } else {
       gameStore.finishGame();
     }
+  };
+
+  // Цвета в зависимости от темы
+  const bgGradient = theme === 'light'
+    ? 'from-purple-500 to-indigo-600'
+    : 'from-gray-900 to-black';
+
+  const cardBg = theme === 'light' ? 'bg-white' : 'bg-gray-800';
+  const textColor = theme === 'light' ? 'text-gray-800' : 'text-white';
+  const mutedText = theme === 'light' ? 'text-gray-600' : 'text-gray-400';
+  const primaryColor = theme === 'light' ? 'bg-purple-600' : 'bg-purple-700';
+  const primaryHover = theme === 'light' ? 'hover:bg-purple-700' : 'hover:bg-purple-800';
+
+  // Расчет процентов для экрана результатов
+  const percentage = questions.length > 0 
+    ? Math.round((correctAnswersCount / questions.length) * 100)
+    : 0;
+
+  const getEmoji = () => {
+    if (percentage >= 80) return '🏆';
+    if (percentage >= 60) return '😊';
+    if (percentage >= 40) return '🤔';
+    return '😢';
   };
 
   // Стартовый экран
@@ -158,22 +172,20 @@ const Task4 = observer(() => {
           </p>
 
           <button
-            onClick={handleStartGame}
-            disabled={createSession.isPending}
-            className={`w-full ${createSession.isPending ? disabledColor : primaryColor} ${createSession.isPending ? '' : primaryHover} text-white py-4 px-6 rounded-xl font-semibold transition-all transform ${createSession.isPending ? '' : 'hover:scale-105'}`}
+            onClick={() => handleStartGame()}
+            className={`w-full ${primaryColor} ${primaryHover} text-white py-4 px-6 rounded-xl font-semibold transition-all transform hover:scale-105`}
           >
-            {createSession.isPending ? 'Создание сессии...' : 'Начать игру'}
+            Начать игру
           </button>
 
           {/* Информация о разделении ответственности */}
           <div className={`mt-6 rounded-lg p-4 ${theme === 'light' ? 'bg-purple-50' : 'bg-gray-700'}`}>
             <p className={`text-sm ${theme === 'light' ? 'text-purple-900' : 'text-gray-300'} mb-2`}>
-              <strong>Task 4:</strong> Комбинация MobX + Zustand + API
+              <strong>Task 4:</strong> Комбинация MobX + Zustand
             </p>
             <ul className={`text-xs ${theme === 'light' ? 'text-purple-800' : 'text-gray-400'} space-y-1`}>
               <li>• <strong>MobX:</strong> Игровая логика (вопросы, счёт)</li>
               <li>• <strong>Zustand:</strong> UI настройки (тема, звук)</li>
-              <li>• <strong>API:</strong> Создание сессий и отправка ответов</li>
             </ul>
           </div>
         </div>
@@ -183,14 +195,6 @@ const Task4 = observer(() => {
 
   // Экран результатов
   if (gameStatus === 'finished') {
-    const percentage = Math.round((gameStore.correctAnswersCount / gameStore.questions.length) * 100);
-    const getEmoji = () => {
-      if (percentage >= 80) return '🏆';
-      if (percentage >= 60) return '😊';
-      if (percentage >= 40) return '🤔';
-      return '😢';
-    };
-
     return (
       <div className={`min-h-screen bg-gradient-to-br ${bgGradient} flex items-center justify-center p-4 transition-colors duration-300`}>
         <div className={`${cardBg} rounded-2xl shadow-2xl p-8 max-w-md w-full text-center transition-colors duration-300`}>
@@ -209,7 +213,7 @@ const Task4 = observer(() => {
 
           <div className={`${theme === 'light' ? 'bg-gray-100' : 'bg-gray-700'} rounded-lg p-4 mb-6`}>
             <p className={`text-lg ${textColor}`}>
-              Правильных ответов: <span className="font-bold">{gameStore.correctAnswersCount} из {gameStore.questions.length}</span>
+              Правильных ответов: <span className="font-bold">{correctAnswersCount} из {questions.length}</span>
             </p>
             <p className={`text-2xl font-bold mt-2 ${theme === 'light' ? 'text-purple-600' : 'text-purple-400'}`}>
               {percentage}%
@@ -237,7 +241,7 @@ const Task4 = observer(() => {
         <div className={`${cardBg} rounded-lg shadow-md p-4 mb-4 transition-colors duration-300`}>
           <div className="flex justify-between items-center mb-2">
             <span className={`text-sm ${mutedText}`}>
-              Вопрос {gameStore.currentQuestionIndex + 1} из {gameStore.questions.length}
+              Вопрос {currentQuestionIndex + 1} из {questions.length}
             </span>
             <div className="flex items-center gap-3">
               <span className={`text-xl font-bold ${theme === 'light' ? 'text-purple-600' : 'text-purple-400'}`}>
@@ -283,14 +287,14 @@ const Task4 = observer(() => {
           <div className="space-y-3">
             {currentQuestion.options.map((option, index) => {
               const isSelected = selectedAnswers.includes(index);
-              const isCorrect = index === currentQuestion.correctAnswer;
-              const showResult = selectedAnswers.length > 0;
+              const isCorrect = false // index === currentQuestion.correctAnswer;
+              const showResult = selectedAnswers !== null;
 
               return (
                 <button
                   key={index}
-                  onClick={() => gameStore.toggleAnswer(index)}
-                  disabled={showResult}
+                  onClick={() => gameStore.selectAnswer(index)}
+                  // disabled={selectedAnswers !== null}
                   className={`
                     w-full p-4 text-left rounded-lg border-2 transition-all
                     ${!showResult && theme === 'light' && 'hover:border-purple-400 hover:bg-purple-50'}
@@ -308,7 +312,6 @@ const Task4 = observer(() => {
                       ${!showResult && (theme === 'light' ? 'bg-gray-200' : 'bg-gray-600 text-white')}
                       ${showResult && isCorrect && 'bg-green-500 text-white'}
                       ${showResult && isSelected && !isCorrect && 'bg-red-500 text-white'}
-                      ${isSelected && !showResult && (theme === 'light' ? 'bg-purple-500 text-white' : 'bg-purple-500 text-white')}
                     `}>
                       {isSelected ? '✓' : String.fromCharCode(65 + index)}
                     </span>
@@ -320,18 +323,12 @@ const Task4 = observer(() => {
           </div>
 
           {/* Кнопка "Далее" */}
-          {selectedAnswers.length > 0 && (
+          {selectedAnswers !== null && (
             <button
-              onClick={gameStore.isLastQuestion ? handleFinishGame : handleNextQuestion}
-              disabled={submitAnswer.isPending || submitSession.isPending}
-              className={`mt-6 w-full ${submitAnswer.isPending || submitSession.isPending ? disabledColor : primaryColor} ${submitAnswer.isPending || submitSession.isPending ? '' : primaryHover} text-white py-3 px-6 rounded-lg font-semibold transition-colors`}
+              onClick={() => handleNextQuestion()}
+              className={`mt-6 w-full ${primaryColor} ${primaryHover} text-white py-3 px-6 rounded-lg font-semibold transition-colors`}
             >
-              {submitAnswer.isPending || submitSession.isPending 
-                ? 'Отправка...' 
-                : gameStore.isLastQuestion 
-                  ? 'Завершить' 
-                  : 'Следующий вопрос'
-              }
+              {isLastQuestion ? 'Завершить' : 'Следующий вопрос'}
             </button>
           )}
         </div>
@@ -339,8 +336,8 @@ const Task4 = observer(() => {
         {/* Подсказка */}
         <div className={`mt-4 backdrop-blur-sm rounded-lg p-4 ${theme === 'light' ? 'bg-white/20' : 'bg-black/20'}`}>
           <p className={`text-sm ${theme === 'light' ? 'text-white' : 'text-gray-300'}`}>
-            <strong>MobX + Zustand + API:</strong> GameStore управляет игровой логикой, 
-            UIStore управляет темой, API обрабатывает сессии и ответы. Все работает вместе!
+            <strong>MobX + Zustand:</strong> GameStore управляет игровой логикой (observer автообновление),
+            UIStore управляет темой (селекторы). Оба работают независимо!
           </p>
         </div>
       </div>
