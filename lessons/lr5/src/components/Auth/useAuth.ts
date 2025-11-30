@@ -1,11 +1,8 @@
 import { useCallback } from 'react';
 import { useLocalStorageWithSubscription } from './useLocalStorageWithSubscription';
-import { getApiAuthGithubCallback } from '../generated/api/auth/auth';
-// const getApiAuthGithubCallback = async (param: any) => {
-//   return { token: 'mock-token' };
-// };
+import { getApiAuthGithubCallback } from '../../../generated/api/auth/auth';
 
-export const userAuth = () => {
+export const useAuth = () => {
   const { isLoading, data: token, setValue } = useLocalStorageWithSubscription('auth_token');
 
   const login = useCallback(async () => {

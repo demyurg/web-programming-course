@@ -33,7 +33,10 @@
       "userId": "usr_student1",
       "difficulty": "medium",
       "questionCount": 15,
-      "categoryIds": ["cat_react", "cat_typescript"],
+      "categoryIds": [
+        "cat_react",
+        "cat_typescript"
+      ],
       "updatedAt": "2025-01-14T09:00:00Z",
       "updatedBy": "usr_admin"
     }
@@ -67,36 +70,31 @@
   ],
   "questions": [
     {
-      "id": "q_001",
-      "type": "multiple-select",
-      "question": "Какие хуки используются для side effects в React?",
-      "difficulty": "medium",
+      "id": "q_003",
+      "type": "essay",
+      "question": "Объясните разницу между useMemo и useCallback. Приведите примеры использования.",
+      "difficulty": "hard",
       "categoryId": "cat_react",
-      "maxPoints": 4,
-      "options": [
+      "maxPoints": 5,
+      "minLength": 100,
+      "maxLength": 1000,
+      "rubric": [
         {
-          "text": "useState",
-          "points": 0,
-          "isCorrect": false
+          "criterion": "Понимание useMemo",
+          "maxPoints": 2,
+          "description": "Объясняет, что useMemo мемоизирует вычисленные значения"
         },
         {
-          "text": "useEffect",
-          "points": 2,
-          "isCorrect": true
+          "criterion": "Понимание useCallback",
+          "maxPoints": 2,
+          "description": "Объясняет, что useCallback мемоизирует функции"
         },
         {
-          "text": "useLayoutEffect",
-          "points": 2,
-          "isCorrect": true
-        },
-        {
-          "text": "useMemo",
-          "points": 0,
-          "isCorrect": false
+          "criterion": "Примеры использования",
+          "maxPoints": 1,
+          "description": "Приводит корректные примеры кода"
         }
       ],
-      "penaltyPerWrong": -1,
-      "minScore": 0,
       "createdAt": "2025-01-10T10:00:00Z",
       "updatedAt": "2025-01-10T10:00:00Z"
     },
@@ -145,31 +143,65 @@
       "updatedAt": "2025-01-10T10:00:00Z"
     },
     {
-      "id": "q_003",
+      "id": "q_006",
       "type": "essay",
-      "question": "Объясните разницу между useMemo и useCallback. Приведите примеры использования.",
+      "question": "Опишите жизненный цикл компонента в React. Какие методы вызываются на каждом этапе?",
       "difficulty": "hard",
       "categoryId": "cat_react",
-      "maxPoints": 5,
-      "minLength": 100,
-      "maxLength": 1000,
+      "maxPoints": 8,
+      "minLength": 200,
+      "maxLength": 1500,
       "rubric": [
         {
-          "criterion": "Понимание useMemo",
-          "maxPoints": 2,
-          "description": "Объясняет, что useMemo мемоизирует вычисленные значения"
+          "criterion": "Понимание mounting фазы",
+          "maxPoints": 3,
+          "description": "Объясняет constructor, render, componentDidMount"
         },
         {
-          "criterion": "Понимание useCallback",
-          "maxPoints": 2,
-          "description": "Объясняет, что useCallback мемоизирует функции"
+          "criterion": "Понимание updating фазы",
+          "maxPoints": 3,
+          "description": "Объясняет shouldComponentUpdate, render, componentDidUpdate"
         },
         {
-          "criterion": "Примеры использования",
-          "maxPoints": 1,
-          "description": "Приводит корректные примеры кода"
+          "criterion": "Понимание unmounting фазы",
+          "maxPoints": 2,
+          "description": "Объясняет componentWillUnmount и cleanup"
         }
       ],
+      "createdAt": "2025-01-10T10:00:00Z",
+      "updatedAt": "2025-01-10T10:00:00Z"
+    },
+    {
+      "id": "q_001",
+      "type": "multiple-select",
+      "question": "Какие хуки используются для side effects в React?",
+      "difficulty": "medium",
+      "categoryId": "cat_react",
+      "maxPoints": 4,
+      "options": [
+        {
+          "text": "useState",
+          "points": 0,
+          "isCorrect": false
+        },
+        {
+          "text": "useEffect",
+          "points": 2,
+          "isCorrect": true
+        },
+        {
+          "text": "useLayoutEffect",
+          "points": 2,
+          "isCorrect": true
+        },
+        {
+          "text": "useMemo",
+          "points": 0,
+          "isCorrect": false
+        }
+      ],
+      "penaltyPerWrong": -1,
+      "minScore": 0,
       "createdAt": "2025-01-10T10:00:00Z",
       "updatedAt": "2025-01-10T10:00:00Z"
     },
@@ -260,35 +292,6 @@
       "minScore": 0,
       "createdAt": "2025-01-10T10:00:00Z",
       "updatedAt": "2025-01-10T10:00:00Z"
-    },
-    {
-      "id": "q_006",
-      "type": "essay",
-      "question": "Опишите жизненный цикл компонента в React. Какие методы вызываются на каждом этапе?",
-      "difficulty": "hard",
-      "categoryId": "cat_react",
-      "maxPoints": 8,
-      "minLength": 200,
-      "maxLength": 1500,
-      "rubric": [
-        {
-          "criterion": "Понимание mounting фазы",
-          "maxPoints": 3,
-          "description": "Объясняет constructor, render, componentDidMount"
-        },
-        {
-          "criterion": "Понимание updating фазы",
-          "maxPoints": 3,
-          "description": "Объясняет shouldComponentUpdate, render, componentDidUpdate"
-        },
-        {
-          "criterion": "Понимание unmounting фазы",
-          "maxPoints": 2,
-          "description": "Объясняет componentWillUnmount и cleanup"
-        }
-      ],
-      "createdAt": "2025-01-10T10:00:00Z",
-      "updatedAt": "2025-01-10T10:00:00Z"
     }
   ],
   "sessions": [
@@ -297,13 +300,38 @@
       "userId": "usr_student1",
       "status": "completed",
       "mode": "game",
-      "questionIds": ["q_001", "q_002", "q_004"],
+      "questionIds": [
+        "q_001",
+        "q_002",
+        "q_004"
+      ],
       "totalQuestions": 3,
       "answeredCount": 3,
       "maxScore": 15,
       "currentScore": 12,
       "createdAt": "2025-01-15T10:00:00Z",
       "completedAt": "2025-01-15T10:45:00Z",
+      "expiresAt": null
+    },
+    {
+      "sessionId": "sess_1764521121843",
+      "userId": "usr_student1",
+      "status": "completed",
+      "mode": "game",
+      "questionIds": [
+        "q_003",
+        "q_002",
+        "q_006",
+        "q_001",
+        "q_004",
+        "q_005"
+      ],
+      "totalQuestions": 6,
+      "answeredCount": 6,
+      "maxScore": 33,
+      "currentScore": 12,
+      "createdAt": "2025-11-30T16:45:21.843Z",
+      "completedAt": "2025-11-30T16:46:03.541Z",
       "expiresAt": null
     }
   ],
@@ -313,7 +341,10 @@
       "sessionId": "sess_001",
       "questionId": "q_001",
       "userId": "usr_student1",
-      "selectedOptions": [1, 2],
+      "selectedOptions": [
+        1,
+        2
+      ],
       "status": "correct",
       "pointsEarned": 4,
       "maxPoints": 4,
@@ -325,7 +356,12 @@
       "sessionId": "sess_001",
       "questionId": "q_002",
       "userId": "usr_student1",
-      "selectedOptions": [0, 2, 4, 5],
+      "selectedOptions": [
+        0,
+        2,
+        4,
+        5
+      ],
       "status": "correct",
       "pointsEarned": 5,
       "maxPoints": 5,
@@ -337,12 +373,109 @@
       "sessionId": "sess_001",
       "questionId": "q_004",
       "userId": "usr_student1",
-      "selectedOptions": [0, 2, 3, 4, 5],
+      "selectedOptions": [
+        0,
+        2,
+        3,
+        4,
+        5
+      ],
       "status": "partial",
       "pointsEarned": 3,
       "maxPoints": 6,
       "feedback": "Частично правильно. Вы выбрали неправильный вариант 'array' и пропустили 'unknown'.",
       "createdAt": "2025-01-15T10:30:00Z"
+    },
+    {
+      "answerId": "ans_1764521127342",
+      "sessionId": "sess_1764521121843",
+      "questionId": "q_003",
+      "userId": "usr_student1",
+      "text": "1",
+      "status": "pending",
+      "pointsEarned": 0,
+      "maxPoints": 5,
+      "rubricScores": null,
+      "feedback": null,
+      "createdAt": "2025-11-30T16:45:27.342Z"
+    },
+    {
+      "answerId": "ans_1764521140024",
+      "sessionId": "sess_1764521121843",
+      "questionId": "q_002",
+      "userId": "usr_student1",
+      "selectedOptions": [
+        0,
+        1,
+        4,
+        2,
+        5
+      ],
+      "status": "partial",
+      "pointsEarned": 4,
+      "maxPoints": 5,
+      "feedback": "Вы набрали 4 из 5 баллов.",
+      "createdAt": "2025-11-30T16:45:40.025Z"
+    },
+    {
+      "answerId": "ans_1764521142648",
+      "sessionId": "sess_1764521121843",
+      "questionId": "q_006",
+      "userId": "usr_student1",
+      "text": "1",
+      "status": "pending",
+      "pointsEarned": 0,
+      "maxPoints": 8,
+      "rubricScores": null,
+      "feedback": null,
+      "createdAt": "2025-11-30T16:45:42.648Z"
+    },
+    {
+      "answerId": "ans_1764521148966",
+      "sessionId": "sess_1764521121843",
+      "questionId": "q_001",
+      "userId": "usr_student1",
+      "selectedOptions": [
+        1,
+        2
+      ],
+      "status": "correct",
+      "pointsEarned": 4,
+      "maxPoints": 4,
+      "feedback": "Вы набрали 4 из 4 баллов.",
+      "createdAt": "2025-11-30T16:45:48.966Z"
+    },
+    {
+      "answerId": "ans_1764521158655",
+      "sessionId": "sess_1764521121843",
+      "questionId": "q_004",
+      "userId": "usr_student1",
+      "selectedOptions": [
+        0,
+        2,
+        4,
+        5,
+        6
+      ],
+      "status": "partial",
+      "pointsEarned": 4,
+      "maxPoints": 6,
+      "feedback": "Вы набрали 4 из 6 баллов.",
+      "createdAt": "2025-11-30T16:45:58.655Z"
+    },
+    {
+      "answerId": "ans_1764521163520",
+      "sessionId": "sess_1764521121843",
+      "questionId": "q_005",
+      "userId": "usr_student1",
+      "selectedOptions": [
+        1
+      ],
+      "status": "incorrect",
+      "pointsEarned": 0,
+      "maxPoints": 5,
+      "feedback": "Вы набрали 0 из 5 баллов.",
+      "createdAt": "2025-11-30T16:46:03.520Z"
     }
   ]
 }
