@@ -13,7 +13,7 @@ class GameStore {
   answeredQuestions: Answer[] = [];
 
   constructor() {
-    makeAutoObservable(this);
+    makeAutoObservable(this, {}, { autoBind: true });
   }
 
   toggleAnswer(index: number) {
@@ -32,12 +32,13 @@ class GameStore {
       questionId: q.id,
       selectedAnswers: [...this.selectedAnswers],
       isCorrect: false,
+      points: 0
     });
   }
-  resetSelectedAnswers() {
-  this.selectedAnswers = [];
-}
 
+  resetSelectedAnswers() {
+    this.selectedAnswers = [];
+  }
 
   setQuestionsFromAPI(questions: QuestionPreview[]) {
     this.questions = questions;
@@ -49,8 +50,12 @@ class GameStore {
 
   updateAnswerResult(isCorrect: boolean, points: number = 0) {
     const last = this.answeredQuestions[this.answeredQuestions.length - 1];
-    if (last) last.isCorrect = isCorrect;
-    if (isCorrect) this.score += points;
+    if (!last) return;
+
+    last.isCorrect = isCorrect;
+    last.points = points;
+
+    this.score += points;
   }
 
   startGame() {
@@ -79,17 +84,17 @@ class GameStore {
     this.questions = [];
   }
 
-
   get currentQuestion(): Question | null {
     const q = this.questions[this.currentQuestionIndex];
     if (!q) return null;
 
     return {
       id: q.id,
+      type: (q as any).type ?? "choice",
       question: (q as any).question ?? (q as any).text ?? "",
       options: q.options ?? [],
-      correctAnswer: -1,                
-      difficulty: (q as any).difficulty ?? "easy",
+      correctAnswer: -1,
+      difficulty: (q as any).difficulty ?? "easy"
     };
   }
 

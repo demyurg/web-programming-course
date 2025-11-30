@@ -9,12 +9,14 @@ import { usePostApiSessionsSessionIdSubmit } from '../../generated/api/sessions/
 
 const Task4 = observer(() => {
   const [sessionId, setSessionId] = useState<string | null>(null);
+  const [essayText, setEssayText] = useState("");
+  const [serverFinalResult, setServerFinalResult] = useState<any | null>(null);
 
   const createSession = usePostApiSessions();
   const submitAnswer = usePostApiSessionsSessionIdAnswers();
   const submitSession = usePostApiSessionsSessionIdSubmit();
 
-  const { gameStatus, currentQuestion, selectedAnswers, score, progress } = gameStore;
+  const { gameStatus, currentQuestion, selectedAnswers, progress } = gameStore;
 
   const theme = useUIStore((state) => state.theme);
   const toggleTheme = useUIStore((state) => state.toggleTheme);
@@ -29,13 +31,13 @@ const Task4 = observer(() => {
   const primaryColor = theme === 'light' ? 'bg-purple-600' : 'bg-purple-700';
   const primaryHover = theme === 'light' ? 'hover:bg-purple-700' : 'hover:bg-purple-800';
 
-
   const handleStartGame = () => {
     createSession.mutate(
       { data: { questionCount: 5, difficulty: "medium" } },
       {
         onSuccess: (data) => {
           setSessionId(data.sessionId);
+          setServerFinalResult(null);
           gameStore.setQuestionsFromAPI(data.questions);
           gameStore.startGame();
         }
@@ -52,26 +54,39 @@ const Task4 = observer(() => {
     submitSession.mutate(
       { sessionId },
       {
-        onSuccess: () => gameStore.finishGame(),
+        onSuccess: (resp) => {
+          console.log("SESSION_FINAL:", resp);
+          setServerFinalResult(resp);
+          gameStore.finishGame();
+        },
         onError: () => gameStore.finishGame()
       }
     );
   };
 
   const handleClickNext = () => {
-    if (!sessionId || !currentQuestion || selectedAnswers.length === 0) return;
+    if (!sessionId || !currentQuestion) return;
+
+    if (currentQuestion.type === "essay" && essayText.trim().length === 0) return;
+    if (currentQuestion.type !== "essay" && selectedAnswers.length === 0) return;
 
     const payload = {
       questionId: currentQuestion.id.toString(),
-      selectedOptions: selectedAnswers,
+      selectedOptions: currentQuestion.type === "essay" ? [] : selectedAnswers,
+      text: currentQuestion.type === "essay" ? essayText : null
     };
 
     submitAnswer.mutate(
       { sessionId, data: payload },
       {
-        onSuccess: (resp: any) => {
-          const isCorrect = resp.status === "correct";
-          const points = resp.pointsEarned ?? 0;
+        onSuccess: (resp) => {
+          console.log("ANSWER_RESPONSE:", resp);
+
+          const answers = resp.answers ?? [];
+          const last = answers[answers.length - 1];
+
+          const isCorrect = last?.status === "correct";
+          const points = last?.pointsEarned ?? 0;
 
           gameStore.saveCurrentAnswer();
           gameStore.updateAnswerResult(isCorrect, points);
@@ -79,26 +94,24 @@ const Task4 = observer(() => {
           const wasLast = gameStore.isLastQuestion;
 
           gameStore.nextQuestion();
+          setEssayText("");
 
-          if (wasLast) {
-            finishSessionOnServer();
-          }
+          if (wasLast) finishSessionOnServer();
         },
         onError: () => {
           const wasLast = gameStore.isLastQuestion;
 
           gameStore.saveCurrentAnswer();
           gameStore.updateAnswerResult(false, 0);
-          gameStore.nextQuestion();
 
-          if (wasLast) {
-            finishSessionOnServer();
-          }
+          gameStore.nextQuestion();
+          setEssayText("");
+
+          if (wasLast) finishSessionOnServer();
         }
       }
     );
   };
-
 
   if (gameStatus === 'idle') {
     return (
@@ -130,9 +143,8 @@ const Task4 = observer(() => {
   }
 
   if (gameStatus === 'finished') {
-    const percentage = Math.round(
-      (gameStore.correctAnswersCount / gameStore.questions.length) * 100
-    );
+    const earned = serverFinalResult?.score?.earned ?? 0;
+    const percentage = serverFinalResult?.score?.percentage ?? 0;
 
     const getEmoji = () => {
       if (percentage >= 80) return '🏆';
@@ -151,11 +163,16 @@ const Task4 = observer(() => {
           <p className={`text-5xl font-bold ${
             theme === 'light' ? 'text-purple-600' : 'text-purple-400'
           } mb-2`}>
-            {score}
+            {earned}
           </p>
 
+          <p className={`${mutedText} mb-4`}>({percentage}%)</p>
+
           <button
-            onClick={() => gameStore.resetGame()}
+            onClick={() => {
+              gameStore.resetGame();
+              setServerFinalResult(null);
+            }}
             className={`w-full ${primaryColor} ${primaryHover} text-white py-3 rounded-xl font-semibold`}
           >
             Играть снова
@@ -171,16 +188,10 @@ const Task4 = observer(() => {
     <div className={`min-h-screen bg-gradient-to-br ${bgGradient} p-4`}>
       <div className="max-w-2xl mx-auto">
 
-        {}
         <div className={`${cardBg} rounded-lg shadow-md p-4 mb-4`}>
           <div className="flex justify-between items-center mb-2">
             <span className={`${mutedText}`}>
               Вопрос {gameStore.currentQuestionIndex + 1} из {gameStore.questions.length}
-            </span>
-            <span className={`text-xl font-bold ${
-              theme === 'light' ? 'text-purple-600' : 'text-purple-400'
-            }`}>
-              Счёт: {score}
             </span>
           </div>
 
@@ -192,12 +203,38 @@ const Task4 = observer(() => {
           </div>
         </div>
 
-        {}
         <div className={`${cardBg} rounded-2xl shadow-2xl p-6`}>
           <h2 className={`text-2xl font-bold mb-6 ${textColor}`}>
             {currentQuestion.question}
           </h2>
 
+          {currentQuestion.type === "essay" ? (
+            <div className="space-y-4">
+              <textarea
+                value={essayText}
+                onChange={(e) => setEssayText(e.target.value)}
+                placeholder="Введите развернутый ответ..."
+                className={`
+                  w-full p-4 rounded-lg border-2 min-h-[150px]
+                  ${theme === 'light'
+                    ? 'border-gray-300 bg-white text-gray-800'
+                    : 'border-gray-600 bg-gray-700 text-white'}
+                `}
+              />
+
+              <button
+                onClick={handleClickNext}
+                disabled={essayText.trim().length === 0}
+                className={`
+                  w-full ${primaryColor} ${primaryHover} text-white py-3 rounded-xl font-semibold
+                  ${essayText.trim().length === 0 ? 'opacity-50 cursor-not-allowed' : ''}
+                `}
+              >
+                {gameStore.isLastQuestion ? 'Завершить' : 'Отправить ответ'}
+              </button>
+            </div>
+          ) : (
+            <>
           <div className="space-y-3">
             {currentQuestion.options.map((option, index) => {
               const isSelected = selectedAnswers.includes(index);
@@ -237,14 +274,15 @@ const Task4 = observer(() => {
             })}
           </div>
 
-          {}
           {selectedAnswers.length > 0 && (
             <button
               onClick={handleClickNext}
               className={`mt-6 w-full ${primaryColor} ${primaryHover} text-white py-3 rounded-xl font-semibold`}
-            >
+           >
               {gameStore.isLastQuestion ? 'Завершить' : 'Следующий вопрос'}
             </button>
+          )}
+            </>
           )}
         </div>
       </div>
