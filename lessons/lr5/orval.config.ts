@@ -1,4 +1,4 @@
-import { defineConfig } from 'orval';
+import { defineConfig } from 'orval'
 
 export default defineConfig({
   quiz: {
@@ -9,7 +9,6 @@ export default defineConfig({
       mode: 'tags-split',
       target: './generated/api',
       client: 'react-query',
-      baseUrl: 'http://localhost:3000',
       override: {
         mutator: {
           path: './src/api/client.ts',
@@ -26,7 +25,7 @@ export default defineConfig({
             query: {
               useQuery: true,
               useMutation: true,
-            }
+            },
             // : true, // Принудительно делаем мутацией
           },
         },
@@ -38,4 +37,4 @@ export default defineConfig({
       afterAllFilesWrite: 'prettier --write',
     },
   },
-});
+})
