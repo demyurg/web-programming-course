@@ -16,11 +16,18 @@ class GameStore {
   score = 0;
   selectedAnswers: number[] = [];
   answeredQuestions: Answer[] = [];
+  
 
   constructor() {
     makeAutoObservable(this);
   }
-
+ 
+  essayAnswer: string = '';
+  
+  // Метод для установки текстового ответа
+  setEssayAnswer = (answer: string) => {
+    this.essayAnswer = answer;
+  };
   // Actions - методы для изменения состояния
 
   startGame(questions: QuestionPreview[]) {
@@ -74,6 +81,7 @@ class GameStore {
 
     this.currentQuestionIndex++;
     this.selectedAnswers = [];
+    this.essayAnswer = '';
     return true;
   }
 
@@ -88,6 +96,7 @@ class GameStore {
     this.score = 0;
     this.selectedAnswers = [];
     this.answeredQuestions = [];
+    this.essayAnswer = '';
   }
 
   // Вспомогательный метод для получения очков за сложность
