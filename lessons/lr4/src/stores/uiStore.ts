@@ -2,41 +2,88 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { Theme } from '../types/quiz';
 
-/**
- * UIStore - Zustand Store для управления UI состоянием
- *
- * Используется в Task3 и Task4
- */
-
 interface UIStore {
-  // Состояние
   theme: Theme;
-  // TODO: Добавьте другие UI-состояния (soundEnabled)
+  soundEnabled: boolean;
+  notificationsEnabled: boolean;
+  fontSize: number;
+  
+  // Модальные окна
+  showStatsModal: boolean;
+  showSettingsModal: boolean;
+  showHelpModal: boolean;
 
-  // Actions
+  // Actions для темы и звука
   setTheme: (theme: Theme) => void;
-  // TODO: Добавьте другие actions (toggleTheme, toggleSound)
+  toggleTheme: () => void;
+  toggleSound: () => void;
+  toggleNotifications: () => void;
+  increaseFontSize: () => void;
+  decreaseFontSize: () => void;
+  resetFontSize: () => void;
+  
+  // Actions для модальных окон
+  openStatsModal: () => void;
+  closeStatsModal: () => void;
+  openSettingsModal: () => void;
+  closeSettingsModal: () => void;
+  openHelpModal: () => void;
+  closeHelpModal: () => void;
+  closeAllModals: () => void;
 }
 
-// TODO: Создайте store с помощью create<UIStore>()
-// Оберните в persist middleware для автосохранения в localStorage
 export const useUIStore = create<UIStore>()(
   persist(
-    (set) => ({
-      // Начальное состояние
-      theme: 'light', // TODO: Добавьте другие поля (soundEnabled и т.д.)
+    (set, get) => ({
+      theme: 'light',
+      soundEnabled: true,
+      notificationsEnabled: true,
+      fontSize: 16,
+      
+      // Модальные окна - начальное состояние
+      showStatsModal: false,
+      showSettingsModal: false,
+      showHelpModal: false,
 
-      // Actions
+      // Actions для темы и звука
       setTheme: (theme: Theme) => set({ theme }),
-
-      // TODO: Добавьте другие actions
-      //   toggleTheme: () => set((state) => ...,
-      //
-      // Пример toggleSound:
-      //   toggleSound: () => set((state) => ({ soundEnabled: !state.soundEnabled })),
+      toggleTheme: () =>
+        set((state) => ({
+          theme: state.theme === 'light' ? 'dark' : 'light',
+        })),
+      toggleSound: () =>
+        set((state) => ({
+          soundEnabled: !state.soundEnabled,
+        })),
+      toggleNotifications: () =>
+        set((state) => ({
+          notificationsEnabled: !state.notificationsEnabled,
+        })),
+      increaseFontSize: () =>
+        set((state) => ({
+          fontSize: Math.min(state.fontSize + 2, 24),
+        })),
+      decreaseFontSize: () =>
+        set((state) => ({
+          fontSize: Math.max(state.fontSize - 2, 12),
+        })),
+      resetFontSize: () => set({ fontSize: 16 }),
+      
+      // Actions для модальных окон
+      openStatsModal: () => set({ showStatsModal: true }),
+      closeStatsModal: () => set({ showStatsModal: false }),
+      openSettingsModal: () => set({ showSettingsModal: true }),
+      closeSettingsModal: () => set({ showSettingsModal: false }),
+      openHelpModal: () => set({ showHelpModal: true }),
+      closeHelpModal: () => set({ showHelpModal: false }),
+      closeAllModals: () => set({ 
+        showStatsModal: false,
+        showSettingsModal: false,
+        showHelpModal: false 
+      }),
     }),
     {
-      name: 'ui-storage', // ключ в localStorage
+      name: 'ui-storage',
     }
   )
 );

@@ -1,66 +1,157 @@
 import { makeAutoObservable } from 'mobx';
-import { Question, Answer } from '../types/quiz';
+import { Question, Answer, GameStats } from '../types/quiz';
 import { mockQuestions } from '../data/questions';
 
-/**
- * GameStore - MobX Store для управления игровой логикой
- *
- * Используется в Task2 и Task4
- */
 class GameStore {
-  // Observable состояние
-  gameStatus: 'idle' | 'playing' | 'finished' = 'idle';
-
-  // TODO: Добавьте другие поля состояния:
-  // questions: Question[] = [];
-  // currentQuestionIndex = 0;
-  // score = 0;
-  // selectedAnswer: number | null = null;
-  // answeredQuestions: Answer[] = [];
+  gameStatus: 'idle' | 'playing' | 'paused' | 'finished' = 'idle';
+  questions: Question[] = mockQuestions;
+  currentQuestionIndex = 0;
+  score = 0;
+  selectedAnswer: number | null = null;
+  answeredQuestions: Answer[] = [];
+  timer = 0;
+  timerInterval: NodeJS.Timeout | null = null;
+  startTime: Date | null = null;
+  endTime: Date | null = null;
 
   constructor() {
     makeAutoObservable(this);
   }
 
-  // Actions - методы для изменения состояния
-
   startGame() {
     this.gameStatus = 'playing';
-    // TODO: Добавьте остальную логику:
-    // - Загрузите вопросы из mockQuestions
-    // - Сбросьте счётчики и индексы
+    this.currentQuestionIndex = 0;
+    this.score = 0;
+    this.selectedAnswer = null;
+    this.answeredQuestions = [];
+    this.timer = 0;
+    this.startTime = new Date();
+    this.endTime = null;
+    this.startTimer();
   }
 
   selectAnswer(answerIndex: number) {
-    console.log('Selected answer:', answerIndex);
-    // TODO: Реализуйте логику выбора ответа:
-    // 1. Проверьте, что ответ еще не был выбран
-    // 2. Сохраните выбранный ответ
-    // 3. Проверьте правильность (сравните с correctAnswer)
-    // 4. Увеличьте счёт если правильно
-    // 5. Сохраните в историю ответов
+    if (this.selectedAnswer !== null || this.gameStatus !== 'playing') return;
+
+    this.selectedAnswer = answerIndex;
+    const isCorrect = answerIndex === this.currentQuestion?.correctAnswer;
+    
+    const answer: Answer = {
+      questionId: this.currentQuestion?.id || 0,
+      question: this.currentQuestion?.question || '',
+      selectedAnswer: answerIndex,
+      correctAnswer: this.currentQuestion?.correctAnswer || 0,
+      isCorrect,
+      timestamp: new Date(),
+      timeSpent: this.timer
+    };
+    
+    this.answeredQuestions.push(answer);
+    
+    if (isCorrect) {
+      this.score += 10;
+    }
   }
 
-  // TODO: Добавьте другие методы:
-  // nextQuestion() - переход к следующему вопросу
-  // finishGame() - завершение игры
-  // resetGame() - сброс к начальным значениям
+  nextQuestion() {
+    if (this.selectedAnswer === null || this.gameStatus !== 'playing') return;
 
-  // Computed values - вычисляемые значения
+    if (this.currentQuestionIndex >= this.questions.length - 1) {
+      this.finishGame();
+    } else {
+      this.currentQuestionIndex += 1;
+      this.selectedAnswer = null;
+      this.timer = 0;
+    }
+  }
 
+  pauseGame() {
+    this.gameStatus = 'paused';
+    this.stopTimer();
+  }
+
+  resumeGame() {
+    this.gameStatus = 'playing';
+    this.startTimer();
+  }
+
+  finishGame() {
+    this.gameStatus = 'finished';
+    this.endTime = new Date();
+    this.stopTimer();
+  }
+
+  resetGame() {
+    this.gameStatus = 'idle';
+    this.currentQuestionIndex = 0;
+    this.score = 0;
+    this.selectedAnswer = null;
+    this.answeredQuestions = [];
+    this.timer = 0;
+    this.startTime = null;
+    this.endTime = null;
+    this.stopTimer();
+  }
+
+  // Таймер
+  startTimer() {
+    if (this.timerInterval) return;
+    
+    this.timerInterval = setInterval(() => {
+      this.timer += 1;
+    }, 1000);
+  }
+
+  stopTimer() {
+    if (this.timerInterval) {
+      clearInterval(this.timerInterval);
+      this.timerInterval = null;
+    }
+  }
+
+  // Computed values
   get currentQuestion(): Question | null {
-    // TODO: Верните текущий вопрос из массива questions
-    return null;
+    return this.questions[this.currentQuestionIndex] || null;
   }
 
   get progress(): number {
-    // TODO: Вычислите прогресс в процентах (0-100)
-    return 0;
+    return ((this.currentQuestionIndex + 1) / this.questions.length) * 100;
   }
 
-  // TODO: Добавьте другие computed values:
-  // get isLastQuestion(): boolean
-  // get correctAnswersCount(): number
+  get isLastQuestion(): boolean {
+    return this.currentQuestionIndex === this.questions.length - 1;
+  }
+
+  get correctAnswersCount(): number {
+    return this.answeredQuestions.filter(answer => answer.isCorrect).length;
+  }
+
+  get totalTimeSpent(): number {
+    if (!this.startTime || !this.endTime) return this.timer;
+    return Math.floor((this.endTime.getTime() - this.startTime.getTime()) / 1000);
+  }
+
+  get averageTimePerQuestion(): number {
+    if (this.answeredQuestions.length === 0) return 0;
+    const totalTime = this.answeredQuestions.reduce((sum, answer) => sum + answer.timeSpent, 0);
+    return Math.floor(totalTime / this.answeredQuestions.length);
+  }
+
+  get accuracy(): number {
+    if (this.answeredQuestions.length === 0) return 0;
+    return Math.round((this.correctAnswersCount / this.answeredQuestions.length) * 100);
+  }
+
+  get gameStats(): GameStats {
+    return {
+      score: this.score,
+      totalQuestions: this.questions.length,
+      correctAnswers: this.correctAnswersCount,
+      accuracy: this.accuracy,
+      totalTimeSpent: this.totalTimeSpent,
+      averageTimePerQuestion: this.averageTimePerQuestion
+    };
+  }
 }
 
 export const gameStore = new GameStore();
