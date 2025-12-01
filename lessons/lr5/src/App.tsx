@@ -1,6 +1,5 @@
 import Task4 from './tasks5/Task4';
-import * as React from 'react'
-import { Auth } from './components/Auth';
+import { Auth } from '@course/auth-component';
 
 function App() {
   return (
