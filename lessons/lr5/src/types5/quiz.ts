@@ -1,14 +1,15 @@
 export interface Question {
-  id: number;
+  id: string;
   question: string;
   options: string[];
   correctAnswer: number;
   difficulty: 'easy' | 'medium' | 'hard';
+  type?: 'essay';
 }
 
 export interface Answer {
   questionId: number;
-  selectedAnswer: number;
+  selectedAnswers: Number[];
   isCorrect: boolean;
 }
 

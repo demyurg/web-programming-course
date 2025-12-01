@@ -14,16 +14,12 @@ import { useUIStore } from '../stores/uiStore';
  */
 
 const Task3 = () => {
-  // TODO: Используйте селекторы для получения состояния
-  // Пример: const theme = useUIStore((state) => state.theme);
+  // Используем селекторы для получения состояния
   const theme = useUIStore((state) => state.theme);
-  // TODO: убрать комментарий после реализации стора
-  // const soundEnabled = useUIStore((state) => state.soundEnabled);
-  // const toggleTheme = useUIStore((state) => state.toggleTheme);
-  // const toggleSound = useUIStore((state) => state.toggleSound);
-  const soundEnabled = true; // TODO: заменить на селектор
-  const toggleTheme = () => {}; // TODO: заменить на селектор
-  const toggleSound = () => {}; // TODO: заменить на селектор
+  const soundEnabled = useUIStore((state) => state.soundEnabled);
+  const toggleTheme = useUIStore((state) => state.toggleTheme);
+  const toggleSound = useUIStore((state) => state.toggleSound);
+  const setTheme = useUIStore((state) => state.setTheme);
 
   // Цвета для светлой и тёмной темы
   const bgGradient = theme === 'light'
@@ -50,7 +46,7 @@ const Task3 = () => {
             </label>
             <div className="flex gap-4">
               <button
-                onClick={() => useUIStore.getState().setTheme('light')}
+                onClick={() => setTheme('light')}
                 className={`
                   flex-1 py-3 px-4 rounded-lg font-semibold transition-all
                   ${theme === 'light'
@@ -62,7 +58,7 @@ const Task3 = () => {
                 ☀️ Светлая
               </button>
               <button
-                onClick={() => useUIStore.getState().setTheme('dark')}
+                onClick={() => setTheme('dark')}
                 className={`
                   flex-1 py-3 px-4 rounded-lg font-semibold transition-all
                   ${theme === 'dark'

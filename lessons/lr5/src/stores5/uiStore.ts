@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { Theme } from '../types/quiz';
+import { Theme } from '../types5/quiz';
 
 /**
  * UIStore - Zustand Store для управления UI состоянием
