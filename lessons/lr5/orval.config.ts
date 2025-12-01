@@ -8,6 +8,7 @@ export default defineConfig({
     output: {
       mode: 'tags-split',
       target: './generated/api',
+      schemas: './generated/api/quizBattleAPI.schemas.ts',   // 📌 ДОБАВЛЕНО
       client: 'react-query',
       override: {
         mutator: {
@@ -20,13 +21,11 @@ export default defineConfig({
           signal: true,
         },
         operations: {
-          // Явно указываем какие операции должны быть мутациями
           getApiAuthGithubCallback: {
             query: {
               useQuery: true,
               useMutation: true,
             }
-            // : true, // Принудительно делаем мутацией
           },
         },
       },
