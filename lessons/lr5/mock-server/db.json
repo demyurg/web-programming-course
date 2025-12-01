@@ -33,7 +33,10 @@
       "userId": "usr_student1",
       "difficulty": "medium",
       "questionCount": 15,
-      "categoryIds": ["cat_react", "cat_typescript"],
+      "categoryIds": [
+        "cat_react",
+        "cat_typescript"
+      ],
       "updatedAt": "2025-01-14T09:00:00Z",
       "updatedBy": "usr_admin"
     }
@@ -66,84 +69,6 @@
     }
   ],
   "questions": [
-    {
-      "id": "q_001",
-      "type": "multiple-select",
-      "question": "Какие хуки используются для side effects в React?",
-      "difficulty": "medium",
-      "categoryId": "cat_react",
-      "maxPoints": 4,
-      "options": [
-        {
-          "text": "useState",
-          "points": 0,
-          "isCorrect": false
-        },
-        {
-          "text": "useEffect",
-          "points": 2,
-          "isCorrect": true
-        },
-        {
-          "text": "useLayoutEffect",
-          "points": 2,
-          "isCorrect": true
-        },
-        {
-          "text": "useMemo",
-          "points": 0,
-          "isCorrect": false
-        }
-      ],
-      "penaltyPerWrong": -1,
-      "minScore": 0,
-      "createdAt": "2025-01-10T10:00:00Z",
-      "updatedAt": "2025-01-10T10:00:00Z"
-    },
-    {
-      "id": "q_002",
-      "type": "multiple-select",
-      "question": "Какие из перечисленных методов являются HTTP-методами?",
-      "difficulty": "easy",
-      "categoryId": "cat_api",
-      "maxPoints": 5,
-      "options": [
-        {
-          "text": "GET",
-          "points": 1,
-          "isCorrect": true
-        },
-        {
-          "text": "PUSH",
-          "points": 0,
-          "isCorrect": false
-        },
-        {
-          "text": "POST",
-          "points": 1,
-          "isCorrect": true
-        },
-        {
-          "text": "FETCH",
-          "points": 0,
-          "isCorrect": false
-        },
-        {
-          "text": "DELETE",
-          "points": 2,
-          "isCorrect": true
-        },
-        {
-          "text": "PATCH",
-          "points": 1,
-          "isCorrect": true
-        }
-      ],
-      "penaltyPerWrong": -1,
-      "minScore": 0,
-      "createdAt": "2025-01-10T10:00:00Z",
-      "updatedAt": "2025-01-10T10:00:00Z"
-    },
     {
       "id": "q_003",
       "type": "essay",
@@ -223,35 +148,74 @@
       "updatedAt": "2025-01-10T10:00:00Z"
     },
     {
-      "id": "q_005",
+      "id": "q_002",
       "type": "multiple-select",
-      "question": "Что делает React Query автоматически?",
-      "difficulty": "medium",
+      "question": "Какие из перечисленных методов являются HTTP-методами?",
+      "difficulty": "easy",
       "categoryId": "cat_api",
       "maxPoints": 5,
       "options": [
         {
-          "text": "Кэширование данных",
-          "points": 2,
-          "isCorrect": true
-        },
-        {
-          "text": "Валидация форм",
-          "points": 0,
-          "isCorrect": false
-        },
-        {
-          "text": "Фоновое обновление данных",
-          "points": 2,
-          "isCorrect": true
-        },
-        {
-          "text": "Дедупликация запросов",
+          "text": "GET",
           "points": 1,
           "isCorrect": true
         },
         {
-          "text": "Рендеринг компонентов",
+          "text": "PUSH",
+          "points": 0,
+          "isCorrect": false
+        },
+        {
+          "text": "POST",
+          "points": 1,
+          "isCorrect": true
+        },
+        {
+          "text": "FETCH",
+          "points": 0,
+          "isCorrect": false
+        },
+        {
+          "text": "DELETE",
+          "points": 2,
+          "isCorrect": true
+        },
+        {
+          "text": "PATCH",
+          "points": 1,
+          "isCorrect": true
+        }
+      ],
+      "penaltyPerWrong": -1,
+      "minScore": 0,
+      "createdAt": "2025-01-10T10:00:00Z",
+      "updatedAt": "2025-01-10T10:00:00Z"
+    },
+    {
+      "id": "q_001",
+      "type": "multiple-select",
+      "question": "Какие хуки используются для side effects в React?",
+      "difficulty": "medium",
+      "categoryId": "cat_react",
+      "maxPoints": 4,
+      "options": [
+        {
+          "text": "useState",
+          "points": 0,
+          "isCorrect": false
+        },
+        {
+          "text": "useEffect",
+          "points": 2,
+          "isCorrect": true
+        },
+        {
+          "text": "useLayoutEffect",
+          "points": 2,
+          "isCorrect": true
+        },
+        {
+          "text": "useMemo",
           "points": 0,
           "isCorrect": false
         }
@@ -289,6 +253,45 @@
       ],
       "createdAt": "2025-01-10T10:00:00Z",
       "updatedAt": "2025-01-10T10:00:00Z"
+    },
+    {
+      "id": "q_005",
+      "type": "multiple-select",
+      "question": "Что делает React Query автоматически?",
+      "difficulty": "medium",
+      "categoryId": "cat_api",
+      "maxPoints": 5,
+      "options": [
+        {
+          "text": "Кэширование данных",
+          "points": 2,
+          "isCorrect": true
+        },
+        {
+          "text": "Валидация форм",
+          "points": 0,
+          "isCorrect": false
+        },
+        {
+          "text": "Фоновое обновление данных",
+          "points": 2,
+          "isCorrect": true
+        },
+        {
+          "text": "Дедупликация запросов",
+          "points": 1,
+          "isCorrect": true
+        },
+        {
+          "text": "Рендеринг компонентов",
+          "points": 0,
+          "isCorrect": false
+        }
+      ],
+      "penaltyPerWrong": -1,
+      "minScore": 0,
+      "createdAt": "2025-01-10T10:00:00Z",
+      "updatedAt": "2025-01-10T10:00:00Z"
     }
   ],
   "sessions": [
@@ -297,13 +300,824 @@
       "userId": "usr_student1",
       "status": "completed",
       "mode": "game",
-      "questionIds": ["q_001", "q_002", "q_004"],
+      "questionIds": [
+        "q_001",
+        "q_002",
+        "q_004"
+      ],
       "totalQuestions": 3,
       "answeredCount": 3,
       "maxScore": 15,
       "currentScore": 12,
       "createdAt": "2025-01-15T10:00:00Z",
       "completedAt": "2025-01-15T10:45:00Z",
+      "expiresAt": null
+    },
+    {
+      "sessionId": "sess_1764244460367",
+      "userId": "usr_student1",
+      "status": "active",
+      "mode": "game",
+      "questionIds": [
+        "q_005",
+        "q_001"
+      ],
+      "totalQuestions": 2,
+      "answeredCount": 0,
+      "maxScore": 9,
+      "currentScore": 0,
+      "createdAt": "2025-11-27T11:54:20.367Z",
+      "completedAt": null,
+      "expiresAt": null
+    },
+    {
+      "sessionId": "sess_1764244461500",
+      "userId": "usr_student1",
+      "status": "active",
+      "mode": "game",
+      "questionIds": [
+        "q_001",
+        "q_005"
+      ],
+      "totalQuestions": 2,
+      "answeredCount": 0,
+      "maxScore": 9,
+      "currentScore": 0,
+      "createdAt": "2025-11-27T11:54:21.500Z",
+      "completedAt": null,
+      "expiresAt": null
+    },
+    {
+      "sessionId": "sess_1764244462247",
+      "userId": "usr_student1",
+      "status": "active",
+      "mode": "game",
+      "questionIds": [
+        "q_005",
+        "q_001"
+      ],
+      "totalQuestions": 2,
+      "answeredCount": 0,
+      "maxScore": 9,
+      "currentScore": 0,
+      "createdAt": "2025-11-27T11:54:22.247Z",
+      "completedAt": null,
+      "expiresAt": null
+    },
+    {
+      "sessionId": "sess_1764244462403",
+      "userId": "usr_student1",
+      "status": "active",
+      "mode": "game",
+      "questionIds": [
+        "q_005",
+        "q_001"
+      ],
+      "totalQuestions": 2,
+      "answeredCount": 0,
+      "maxScore": 9,
+      "currentScore": 0,
+      "createdAt": "2025-11-27T11:54:22.403Z",
+      "completedAt": null,
+      "expiresAt": null
+    },
+    {
+      "sessionId": "sess_1764244469957",
+      "userId": "usr_student1",
+      "status": "active",
+      "mode": "game",
+      "questionIds": [
+        "q_001",
+        "q_005"
+      ],
+      "totalQuestions": 2,
+      "answeredCount": 0,
+      "maxScore": 9,
+      "currentScore": 0,
+      "createdAt": "2025-11-27T11:54:29.957Z",
+      "completedAt": null,
+      "expiresAt": null
+    },
+    {
+      "sessionId": "sess_1764244471572",
+      "userId": "usr_student1",
+      "status": "active",
+      "mode": "game",
+      "questionIds": [
+        "q_001",
+        "q_005"
+      ],
+      "totalQuestions": 2,
+      "answeredCount": 0,
+      "maxScore": 9,
+      "currentScore": 0,
+      "createdAt": "2025-11-27T11:54:31.572Z",
+      "completedAt": null,
+      "expiresAt": null
+    },
+    {
+      "sessionId": "sess_1764244472492",
+      "userId": "usr_student1",
+      "status": "active",
+      "mode": "game",
+      "questionIds": [
+        "q_005",
+        "q_001"
+      ],
+      "totalQuestions": 2,
+      "answeredCount": 0,
+      "maxScore": 9,
+      "currentScore": 0,
+      "createdAt": "2025-11-27T11:54:32.492Z",
+      "completedAt": null,
+      "expiresAt": null
+    },
+    {
+      "sessionId": "sess_1764244493647",
+      "userId": "usr_student1",
+      "status": "active",
+      "mode": "game",
+      "questionIds": [
+        "q_005",
+        "q_001"
+      ],
+      "totalQuestions": 2,
+      "answeredCount": 0,
+      "maxScore": 9,
+      "currentScore": 0,
+      "createdAt": "2025-11-27T11:54:53.647Z",
+      "completedAt": null,
+      "expiresAt": null
+    },
+    {
+      "sessionId": "sess_1764244494598",
+      "userId": "usr_student1",
+      "status": "active",
+      "mode": "game",
+      "questionIds": [
+        "q_001",
+        "q_005"
+      ],
+      "totalQuestions": 2,
+      "answeredCount": 0,
+      "maxScore": 9,
+      "currentScore": 0,
+      "createdAt": "2025-11-27T11:54:54.598Z",
+      "completedAt": null,
+      "expiresAt": null
+    },
+    {
+      "sessionId": "sess_1764244495161",
+      "userId": "usr_student1",
+      "status": "active",
+      "mode": "game",
+      "questionIds": [
+        "q_005",
+        "q_001"
+      ],
+      "totalQuestions": 2,
+      "answeredCount": 0,
+      "maxScore": 9,
+      "currentScore": 0,
+      "createdAt": "2025-11-27T11:54:55.161Z",
+      "completedAt": null,
+      "expiresAt": null
+    },
+    {
+      "sessionId": "sess_1764244508318",
+      "userId": "usr_student1",
+      "status": "active",
+      "mode": "game",
+      "questionIds": [
+        "q_001",
+        "q_005"
+      ],
+      "totalQuestions": 2,
+      "answeredCount": 0,
+      "maxScore": 9,
+      "currentScore": 0,
+      "createdAt": "2025-11-27T11:55:08.318Z",
+      "completedAt": null,
+      "expiresAt": null
+    },
+    {
+      "sessionId": "sess_1764244534777",
+      "userId": "usr_student1",
+      "status": "active",
+      "mode": "game",
+      "questionIds": [
+        "q_005",
+        "q_001"
+      ],
+      "totalQuestions": 2,
+      "answeredCount": 0,
+      "maxScore": 9,
+      "currentScore": 0,
+      "createdAt": "2025-11-27T11:55:34.777Z",
+      "completedAt": null,
+      "expiresAt": null
+    },
+    {
+      "sessionId": "sess_1764244545851",
+      "userId": "usr_student1",
+      "status": "active",
+      "mode": "game",
+      "questionIds": [
+        "q_001",
+        "q_005"
+      ],
+      "totalQuestions": 2,
+      "answeredCount": 0,
+      "maxScore": 9,
+      "currentScore": 0,
+      "createdAt": "2025-11-27T11:55:45.851Z",
+      "completedAt": null,
+      "expiresAt": null
+    },
+    {
+      "sessionId": "sess_1764244547719",
+      "userId": "usr_student1",
+      "status": "active",
+      "mode": "game",
+      "questionIds": [
+        "q_001",
+        "q_005"
+      ],
+      "totalQuestions": 2,
+      "answeredCount": 0,
+      "maxScore": 9,
+      "currentScore": 0,
+      "createdAt": "2025-11-27T11:55:47.719Z",
+      "completedAt": null,
+      "expiresAt": null
+    },
+    {
+      "sessionId": "sess_1764244547923",
+      "userId": "usr_student1",
+      "status": "active",
+      "mode": "game",
+      "questionIds": [
+        "q_001",
+        "q_005"
+      ],
+      "totalQuestions": 2,
+      "answeredCount": 0,
+      "maxScore": 9,
+      "currentScore": 0,
+      "createdAt": "2025-11-27T11:55:47.923Z",
+      "completedAt": null,
+      "expiresAt": null
+    },
+    {
+      "sessionId": "sess_1764244548095",
+      "userId": "usr_student1",
+      "status": "active",
+      "mode": "game",
+      "questionIds": [
+        "q_001",
+        "q_005"
+      ],
+      "totalQuestions": 2,
+      "answeredCount": 0,
+      "maxScore": 9,
+      "currentScore": 0,
+      "createdAt": "2025-11-27T11:55:48.095Z",
+      "completedAt": null,
+      "expiresAt": null
+    },
+    {
+      "sessionId": "sess_1764244548244",
+      "userId": "usr_student1",
+      "status": "active",
+      "mode": "game",
+      "questionIds": [
+        "q_005",
+        "q_001"
+      ],
+      "totalQuestions": 2,
+      "answeredCount": 0,
+      "maxScore": 9,
+      "currentScore": 0,
+      "createdAt": "2025-11-27T11:55:48.244Z",
+      "completedAt": null,
+      "expiresAt": null
+    },
+    {
+      "sessionId": "sess_1764244548406",
+      "userId": "usr_student1",
+      "status": "active",
+      "mode": "game",
+      "questionIds": [
+        "q_005",
+        "q_001"
+      ],
+      "totalQuestions": 2,
+      "answeredCount": 0,
+      "maxScore": 9,
+      "currentScore": 0,
+      "createdAt": "2025-11-27T11:55:48.406Z",
+      "completedAt": null,
+      "expiresAt": null
+    },
+    {
+      "sessionId": "sess_1764244548550",
+      "userId": "usr_student1",
+      "status": "active",
+      "mode": "game",
+      "questionIds": [
+        "q_005",
+        "q_001"
+      ],
+      "totalQuestions": 2,
+      "answeredCount": 0,
+      "maxScore": 9,
+      "currentScore": 0,
+      "createdAt": "2025-11-27T11:55:48.550Z",
+      "completedAt": null,
+      "expiresAt": null
+    },
+    {
+      "sessionId": "sess_1764244548699",
+      "userId": "usr_student1",
+      "status": "active",
+      "mode": "game",
+      "questionIds": [
+        "q_005",
+        "q_001"
+      ],
+      "totalQuestions": 2,
+      "answeredCount": 0,
+      "maxScore": 9,
+      "currentScore": 0,
+      "createdAt": "2025-11-27T11:55:48.699Z",
+      "completedAt": null,
+      "expiresAt": null
+    },
+    {
+      "sessionId": "sess_1764244549057",
+      "userId": "usr_student1",
+      "status": "active",
+      "mode": "game",
+      "questionIds": [
+        "q_005",
+        "q_001"
+      ],
+      "totalQuestions": 2,
+      "answeredCount": 0,
+      "maxScore": 9,
+      "currentScore": 0,
+      "createdAt": "2025-11-27T11:55:49.057Z",
+      "completedAt": null,
+      "expiresAt": null
+    },
+    {
+      "sessionId": "sess_1764244549207",
+      "userId": "usr_student1",
+      "status": "active",
+      "mode": "game",
+      "questionIds": [
+        "q_001",
+        "q_005"
+      ],
+      "totalQuestions": 2,
+      "answeredCount": 0,
+      "maxScore": 9,
+      "currentScore": 0,
+      "createdAt": "2025-11-27T11:55:49.207Z",
+      "completedAt": null,
+      "expiresAt": null
+    },
+    {
+      "sessionId": "sess_1764244549391",
+      "userId": "usr_student1",
+      "status": "active",
+      "mode": "game",
+      "questionIds": [
+        "q_001",
+        "q_005"
+      ],
+      "totalQuestions": 2,
+      "answeredCount": 0,
+      "maxScore": 9,
+      "currentScore": 0,
+      "createdAt": "2025-11-27T11:55:49.391Z",
+      "completedAt": null,
+      "expiresAt": null
+    },
+    {
+      "sessionId": "sess_1764244549564",
+      "userId": "usr_student1",
+      "status": "active",
+      "mode": "game",
+      "questionIds": [
+        "q_001",
+        "q_005"
+      ],
+      "totalQuestions": 2,
+      "answeredCount": 0,
+      "maxScore": 9,
+      "currentScore": 0,
+      "createdAt": "2025-11-27T11:55:49.564Z",
+      "completedAt": null,
+      "expiresAt": null
+    },
+    {
+      "sessionId": "sess_1764244549732",
+      "userId": "usr_student1",
+      "status": "active",
+      "mode": "game",
+      "questionIds": [
+        "q_001",
+        "q_005"
+      ],
+      "totalQuestions": 2,
+      "answeredCount": 0,
+      "maxScore": 9,
+      "currentScore": 0,
+      "createdAt": "2025-11-27T11:55:49.732Z",
+      "completedAt": null,
+      "expiresAt": null
+    },
+    {
+      "sessionId": "sess_1764244549924",
+      "userId": "usr_student1",
+      "status": "active",
+      "mode": "game",
+      "questionIds": [
+        "q_001",
+        "q_005"
+      ],
+      "totalQuestions": 2,
+      "answeredCount": 0,
+      "maxScore": 9,
+      "currentScore": 0,
+      "createdAt": "2025-11-27T11:55:49.924Z",
+      "completedAt": null,
+      "expiresAt": null
+    },
+    {
+      "sessionId": "sess_1764244550107",
+      "userId": "usr_student1",
+      "status": "active",
+      "mode": "game",
+      "questionIds": [
+        "q_001",
+        "q_005"
+      ],
+      "totalQuestions": 2,
+      "answeredCount": 0,
+      "maxScore": 9,
+      "currentScore": 0,
+      "createdAt": "2025-11-27T11:55:50.107Z",
+      "completedAt": null,
+      "expiresAt": null
+    },
+    {
+      "sessionId": "sess_1764244550302",
+      "userId": "usr_student1",
+      "status": "active",
+      "mode": "game",
+      "questionIds": [
+        "q_001",
+        "q_005"
+      ],
+      "totalQuestions": 2,
+      "answeredCount": 0,
+      "maxScore": 9,
+      "currentScore": 0,
+      "createdAt": "2025-11-27T11:55:50.302Z",
+      "completedAt": null,
+      "expiresAt": null
+    },
+    {
+      "sessionId": "sess_1764244551428",
+      "userId": "usr_student1",
+      "status": "active",
+      "mode": "game",
+      "questionIds": [
+        "q_005",
+        "q_001"
+      ],
+      "totalQuestions": 2,
+      "answeredCount": 0,
+      "maxScore": 9,
+      "currentScore": 0,
+      "createdAt": "2025-11-27T11:55:51.428Z",
+      "completedAt": null,
+      "expiresAt": null
+    },
+    {
+      "sessionId": "sess_1764244551686",
+      "userId": "usr_student1",
+      "status": "active",
+      "mode": "game",
+      "questionIds": [
+        "q_001",
+        "q_005"
+      ],
+      "totalQuestions": 2,
+      "answeredCount": 0,
+      "maxScore": 9,
+      "currentScore": 0,
+      "createdAt": "2025-11-27T11:55:51.686Z",
+      "completedAt": null,
+      "expiresAt": null
+    },
+    {
+      "sessionId": "sess_1764244554311",
+      "userId": "usr_student1",
+      "status": "active",
+      "mode": "game",
+      "questionIds": [
+        "q_001",
+        "q_005"
+      ],
+      "totalQuestions": 2,
+      "answeredCount": 0,
+      "maxScore": 9,
+      "currentScore": 0,
+      "createdAt": "2025-11-27T11:55:54.311Z",
+      "completedAt": null,
+      "expiresAt": null
+    },
+    {
+      "sessionId": "sess_1764244583846",
+      "userId": "usr_student1",
+      "status": "active",
+      "mode": "game",
+      "questionIds": [
+        "q_005",
+        "q_001"
+      ],
+      "totalQuestions": 2,
+      "answeredCount": 0,
+      "maxScore": 9,
+      "currentScore": 0,
+      "createdAt": "2025-11-27T11:56:23.846Z",
+      "completedAt": null,
+      "expiresAt": null
+    },
+    {
+      "sessionId": "sess_1764244591280",
+      "userId": "usr_student1",
+      "status": "active",
+      "mode": "game",
+      "questionIds": [
+        "q_001",
+        "q_005"
+      ],
+      "totalQuestions": 2,
+      "answeredCount": 0,
+      "maxScore": 9,
+      "currentScore": 0,
+      "createdAt": "2025-11-27T11:56:31.280Z",
+      "completedAt": null,
+      "expiresAt": null
+    },
+    {
+      "sessionId": "sess_1764244594300",
+      "userId": "usr_student1",
+      "status": "active",
+      "mode": "game",
+      "questionIds": [
+        "q_005",
+        "q_001"
+      ],
+      "totalQuestions": 2,
+      "answeredCount": 0,
+      "maxScore": 9,
+      "currentScore": 0,
+      "createdAt": "2025-11-27T11:56:34.300Z",
+      "completedAt": null,
+      "expiresAt": null
+    },
+    {
+      "sessionId": "sess_1764244969532",
+      "userId": "usr_student1",
+      "status": "active",
+      "mode": "game",
+      "questionIds": [
+        "q_001",
+        "q_005"
+      ],
+      "totalQuestions": 2,
+      "answeredCount": 0,
+      "maxScore": 9,
+      "currentScore": 0,
+      "createdAt": "2025-11-27T12:02:49.532Z",
+      "completedAt": null,
+      "expiresAt": null
+    },
+    {
+      "sessionId": "sess_1764244972822",
+      "userId": "usr_student1",
+      "status": "active",
+      "mode": "game",
+      "questionIds": [
+        "q_005",
+        "q_001"
+      ],
+      "totalQuestions": 2,
+      "answeredCount": 0,
+      "maxScore": 9,
+      "currentScore": 0,
+      "createdAt": "2025-11-27T12:02:52.822Z",
+      "completedAt": null,
+      "expiresAt": null
+    },
+    {
+      "sessionId": "sess_1764245805830",
+      "userId": "usr_student1",
+      "status": "completed",
+      "mode": "game",
+      "questionIds": [
+        "q_005",
+        "q_001"
+      ],
+      "totalQuestions": 2,
+      "answeredCount": 2,
+      "maxScore": 9,
+      "currentScore": 5,
+      "createdAt": "2025-11-27T12:16:45.830Z",
+      "completedAt": "2025-11-27T12:16:59.377Z",
+      "expiresAt": null
+    },
+    {
+      "sessionId": "sess_1764245821840",
+      "userId": "usr_student1",
+      "status": "active",
+      "mode": "game",
+      "questionIds": [
+        "q_001",
+        "q_005"
+      ],
+      "totalQuestions": 2,
+      "answeredCount": 0,
+      "maxScore": 9,
+      "currentScore": 0,
+      "createdAt": "2025-11-27T12:17:01.840Z",
+      "completedAt": null,
+      "expiresAt": null
+    },
+    {
+      "sessionId": "sess_1764246061913",
+      "userId": "usr_student1",
+      "status": "completed",
+      "mode": "game",
+      "questionIds": [
+        "q_005",
+        "q_001"
+      ],
+      "totalQuestions": 2,
+      "answeredCount": 1,
+      "maxScore": 9,
+      "currentScore": 3,
+      "createdAt": "2025-11-27T12:21:01.913Z",
+      "completedAt": "2025-11-27T12:21:06.549Z",
+      "expiresAt": null
+    },
+    {
+      "sessionId": "sess_1764246067636",
+      "userId": "usr_student1",
+      "status": "completed",
+      "mode": "game",
+      "questionIds": [
+        "q_005",
+        "q_001"
+      ],
+      "totalQuestions": 2,
+      "answeredCount": 1,
+      "maxScore": 9,
+      "currentScore": 0,
+      "createdAt": "2025-11-27T12:21:07.636Z",
+      "completedAt": "2025-11-27T12:21:14.049Z",
+      "expiresAt": null
+    },
+    {
+      "sessionId": "sess_1764246075704",
+      "userId": "usr_student1",
+      "status": "completed",
+      "mode": "game",
+      "questionIds": [
+        "q_001",
+        "q_005"
+      ],
+      "totalQuestions": 2,
+      "answeredCount": 1,
+      "maxScore": 9,
+      "currentScore": 2,
+      "createdAt": "2025-11-27T12:21:15.704Z",
+      "completedAt": "2025-11-27T12:21:17.590Z",
+      "expiresAt": null
+    },
+    {
+      "sessionId": "sess_1764246079313",
+      "userId": "usr_student1",
+      "status": "completed",
+      "mode": "game",
+      "questionIds": [
+        "q_005",
+        "q_001"
+      ],
+      "totalQuestions": 2,
+      "answeredCount": 1,
+      "maxScore": 9,
+      "currentScore": 2,
+      "createdAt": "2025-11-27T12:21:19.313Z",
+      "completedAt": "2025-11-27T12:21:24.981Z",
+      "expiresAt": null
+    },
+    {
+      "sessionId": "sess_1764246099327",
+      "userId": "usr_student1",
+      "status": "completed",
+      "mode": "game",
+      "questionIds": [
+        "q_001",
+        "q_005"
+      ],
+      "totalQuestions": 2,
+      "answeredCount": 1,
+      "maxScore": 9,
+      "currentScore": 4,
+      "createdAt": "2025-11-27T12:21:39.327Z",
+      "completedAt": "2025-11-27T12:22:13.959Z",
+      "expiresAt": null
+    },
+    {
+      "sessionId": "sess_1764246143953",
+      "userId": "usr_student1",
+      "status": "completed",
+      "mode": "game",
+      "questionIds": [
+        "q_005",
+        "q_001"
+      ],
+      "totalQuestions": 2,
+      "answeredCount": 1,
+      "maxScore": 9,
+      "currentScore": 5,
+      "createdAt": "2025-11-27T12:22:23.953Z",
+      "completedAt": "2025-11-27T12:22:35.045Z",
+      "expiresAt": null
+    },
+    {
+      "sessionId": "sess_1764246160191",
+      "userId": "usr_student1",
+      "status": "completed",
+      "mode": "game",
+      "questionIds": [
+        "q_001",
+        "q_005"
+      ],
+      "totalQuestions": 2,
+      "answeredCount": 1,
+      "maxScore": 9,
+      "currentScore": 4,
+      "createdAt": "2025-11-27T12:22:40.191Z",
+      "completedAt": "2025-11-27T12:22:44.541Z",
+      "expiresAt": null
+    },
+    {
+      "sessionId": "sess_1764611448877",
+      "userId": "usr_student1",
+      "status": "completed",
+      "mode": "game",
+      "questionIds": [
+        "q_003",
+        "q_002",
+        "q_006",
+        "q_005",
+        "q_004",
+        "q_001"
+      ],
+      "totalQuestions": 6,
+      "answeredCount": 6,
+      "maxScore": 33,
+      "currentScore": 7,
+      "createdAt": "2025-12-01T17:50:48.877Z",
+      "completedAt": "2025-12-01T17:51:35.015Z",
+      "expiresAt": null
+    },
+    {
+      "sessionId": "sess_1764611506223",
+      "userId": "usr_student1",
+      "status": "completed",
+      "mode": "game",
+      "questionIds": [
+        "q_003",
+        "q_004",
+        "q_002",
+        "q_001",
+        "q_006",
+        "q_005"
+      ],
+      "totalQuestions": 6,
+      "answeredCount": 6,
+      "maxScore": 33,
+      "currentScore": 20,
+      "createdAt": "2025-12-01T17:51:46.223Z",
+      "completedAt": "2025-12-01T17:53:26.036Z",
       "expiresAt": null
     }
   ],
@@ -313,7 +1127,10 @@
       "sessionId": "sess_001",
       "questionId": "q_001",
       "userId": "usr_student1",
-      "selectedOptions": [1, 2],
+      "selectedOptions": [
+        1,
+        2
+      ],
       "status": "correct",
       "pointsEarned": 4,
       "maxPoints": 4,
@@ -325,7 +1142,12 @@
       "sessionId": "sess_001",
       "questionId": "q_002",
       "userId": "usr_student1",
-      "selectedOptions": [0, 2, 4, 5],
+      "selectedOptions": [
+        0,
+        2,
+        4,
+        5
+      ],
       "status": "correct",
       "pointsEarned": 5,
       "maxPoints": 5,
@@ -337,12 +1159,339 @@
       "sessionId": "sess_001",
       "questionId": "q_004",
       "userId": "usr_student1",
-      "selectedOptions": [0, 2, 3, 4, 5],
+      "selectedOptions": [
+        0,
+        2,
+        3,
+        4,
+        5
+      ],
       "status": "partial",
       "pointsEarned": 3,
       "maxPoints": 6,
       "feedback": "Частично правильно. Вы выбрали неправильный вариант 'array' и пропустили 'unknown'.",
       "createdAt": "2025-01-15T10:30:00Z"
+    },
+    {
+      "answerId": "ans_1764245816761",
+      "sessionId": "sess_1764245805830",
+      "questionId": "q_005",
+      "userId": "usr_student1",
+      "selectedOptions": [
+        3,
+        4,
+        0,
+        1,
+        2
+      ],
+      "status": "partial",
+      "pointsEarned": 3,
+      "maxPoints": 5,
+      "feedback": "Вы набрали 3 из 5 баллов.",
+      "createdAt": "2025-11-27T12:16:56.761Z"
+    },
+    {
+      "answerId": "ans_1764245819373",
+      "sessionId": "sess_1764245805830",
+      "questionId": "q_001",
+      "userId": "usr_student1",
+      "selectedOptions": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "status": "partial",
+      "pointsEarned": 2,
+      "maxPoints": 4,
+      "feedback": "Вы набрали 2 из 4 баллов.",
+      "createdAt": "2025-11-27T12:16:59.373Z"
+    },
+    {
+      "answerId": "ans_1764246064671",
+      "sessionId": "sess_1764246061913",
+      "questionId": "q_005",
+      "userId": "usr_student1",
+      "selectedOptions": [
+        0,
+        1,
+        2
+      ],
+      "status": "partial",
+      "pointsEarned": 3,
+      "maxPoints": 5,
+      "feedback": "Вы набрали 3 из 5 баллов.",
+      "createdAt": "2025-11-27T12:21:04.671Z"
+    },
+    {
+      "answerId": "ans_1764246070910",
+      "sessionId": "sess_1764246067636",
+      "questionId": "q_005",
+      "userId": "usr_student1",
+      "selectedOptions": [
+        1,
+        3
+      ],
+      "status": "partial",
+      "pointsEarned": 0,
+      "maxPoints": 5,
+      "feedback": "Вы набрали 0 из 5 баллов.",
+      "createdAt": "2025-11-27T12:21:10.911Z"
+    },
+    {
+      "answerId": "ans_1764246076596",
+      "sessionId": "sess_1764246075704",
+      "questionId": "q_001",
+      "userId": "usr_student1",
+      "selectedOptions": [
+        2
+      ],
+      "status": "partial",
+      "pointsEarned": 2,
+      "maxPoints": 4,
+      "feedback": "Вы набрали 2 из 4 баллов.",
+      "createdAt": "2025-11-27T12:21:16.596Z"
+    },
+    {
+      "answerId": "ans_1764246083251",
+      "sessionId": "sess_1764246079313",
+      "questionId": "q_005",
+      "userId": "usr_student1",
+      "selectedOptions": [
+        0
+      ],
+      "status": "partial",
+      "pointsEarned": 2,
+      "maxPoints": 5,
+      "feedback": "Вы набрали 2 из 5 баллов.",
+      "createdAt": "2025-11-27T12:21:23.251Z"
+    },
+    {
+      "answerId": "ans_1764246116569",
+      "sessionId": "sess_1764246099327",
+      "questionId": "q_001",
+      "userId": "usr_student1",
+      "selectedOptions": [
+        1,
+        2
+      ],
+      "status": "correct",
+      "pointsEarned": 4,
+      "maxPoints": 4,
+      "feedback": "Вы набрали 4 из 4 баллов.",
+      "createdAt": "2025-11-27T12:21:56.569Z"
+    },
+    {
+      "answerId": "ans_1764246151193",
+      "sessionId": "sess_1764246143953",
+      "questionId": "q_005",
+      "userId": "usr_student1",
+      "selectedOptions": [
+        0,
+        2,
+        3
+      ],
+      "status": "correct",
+      "pointsEarned": 5,
+      "maxPoints": 5,
+      "feedback": "Вы набрали 5 из 5 баллов.",
+      "createdAt": "2025-11-27T12:22:31.193Z"
+    },
+    {
+      "answerId": "ans_1764246162599",
+      "sessionId": "sess_1764246160191",
+      "questionId": "q_001",
+      "userId": "usr_student1",
+      "selectedOptions": [
+        1,
+        2
+      ],
+      "status": "correct",
+      "pointsEarned": 4,
+      "maxPoints": 4,
+      "feedback": "Вы набрали 4 из 4 баллов.",
+      "createdAt": "2025-11-27T12:22:42.599Z"
+    },
+    {
+      "answerId": "ans_1764611462137",
+      "sessionId": "sess_1764611448877",
+      "questionId": "q_003",
+      "userId": "usr_student1",
+      "text": "f[f[",
+      "status": "pending",
+      "pointsEarned": 0,
+      "maxPoints": 5,
+      "rubricScores": null,
+      "feedback": null,
+      "createdAt": "2025-12-01T17:51:02.137Z"
+    },
+    {
+      "answerId": "ans_1764611469574",
+      "sessionId": "sess_1764611448877",
+      "questionId": "q_002",
+      "userId": "usr_student1",
+      "selectedOptions": [
+        0,
+        2,
+        4
+      ],
+      "status": "partial",
+      "pointsEarned": 4,
+      "maxPoints": 5,
+      "feedback": "Вы набрали 4 из 5 баллов.",
+      "createdAt": "2025-12-01T17:51:09.574Z"
+    },
+    {
+      "answerId": "ans_1764611473348",
+      "sessionId": "sess_1764611448877",
+      "questionId": "q_006",
+      "userId": "usr_student1",
+      "text": "а",
+      "status": "pending",
+      "pointsEarned": 0,
+      "maxPoints": 8,
+      "rubricScores": null,
+      "feedback": null,
+      "createdAt": "2025-12-01T17:51:13.348Z"
+    },
+    {
+      "answerId": "ans_1764611478414",
+      "sessionId": "sess_1764611448877",
+      "questionId": "q_005",
+      "userId": "usr_student1",
+      "selectedOptions": [
+        2
+      ],
+      "status": "partial",
+      "pointsEarned": 2,
+      "maxPoints": 5,
+      "feedback": "Вы набрали 2 из 5 баллов.",
+      "createdAt": "2025-12-01T17:51:18.414Z"
+    },
+    {
+      "answerId": "ans_1764611488869",
+      "sessionId": "sess_1764611448877",
+      "questionId": "q_004",
+      "userId": "usr_student1",
+      "selectedOptions": [
+        2,
+        1,
+        0,
+        5,
+        3
+      ],
+      "status": "partial",
+      "pointsEarned": 1,
+      "maxPoints": 6,
+      "feedback": "Вы набрали 1 из 6 баллов.",
+      "createdAt": "2025-12-01T17:51:28.869Z"
+    },
+    {
+      "answerId": "ans_1764611495010",
+      "sessionId": "sess_1764611448877",
+      "questionId": "q_001",
+      "userId": "usr_student1",
+      "selectedOptions": [
+        0,
+        3
+      ],
+      "status": "incorrect",
+      "pointsEarned": 0,
+      "maxPoints": 4,
+      "feedback": "Вы набрали 0 из 4 баллов.",
+      "createdAt": "2025-12-01T17:51:35.010Z"
+    },
+    {
+      "answerId": "ans_1764611511602",
+      "sessionId": "sess_1764611506223",
+      "questionId": "q_003",
+      "userId": "usr_student1",
+      "text": "а",
+      "status": "pending",
+      "pointsEarned": 0,
+      "maxPoints": 5,
+      "rubricScores": null,
+      "feedback": null,
+      "createdAt": "2025-12-01T17:51:51.602Z"
+    },
+    {
+      "answerId": "ans_1764611548969",
+      "sessionId": "sess_1764611506223",
+      "questionId": "q_004",
+      "userId": "usr_student1",
+      "selectedOptions": [
+        0,
+        2,
+        3,
+        4,
+        6
+      ],
+      "status": "correct",
+      "pointsEarned": 6,
+      "maxPoints": 6,
+      "feedback": "Вы набрали 6 из 6 баллов.",
+      "createdAt": "2025-12-01T17:52:28.969Z"
+    },
+    {
+      "answerId": "ans_1764611568847",
+      "sessionId": "sess_1764611506223",
+      "questionId": "q_002",
+      "userId": "usr_student1",
+      "selectedOptions": [
+        0,
+        2,
+        4,
+        5
+      ],
+      "status": "correct",
+      "pointsEarned": 5,
+      "maxPoints": 5,
+      "feedback": "Вы набрали 5 из 5 баллов.",
+      "createdAt": "2025-12-01T17:52:48.847Z"
+    },
+    {
+      "answerId": "ans_1764611587481",
+      "sessionId": "sess_1764611506223",
+      "questionId": "q_001",
+      "userId": "usr_student1",
+      "selectedOptions": [
+        1,
+        2
+      ],
+      "status": "correct",
+      "pointsEarned": 4,
+      "maxPoints": 4,
+      "feedback": "Вы набрали 4 из 4 баллов.",
+      "createdAt": "2025-12-01T17:53:07.481Z"
+    },
+    {
+      "answerId": "ans_1764611590090",
+      "sessionId": "sess_1764611506223",
+      "questionId": "q_006",
+      "userId": "usr_student1",
+      "text": "м",
+      "status": "pending",
+      "pointsEarned": 0,
+      "maxPoints": 8,
+      "rubricScores": null,
+      "feedback": null,
+      "createdAt": "2025-12-01T17:53:10.090Z"
+    },
+    {
+      "answerId": "ans_1764611606032",
+      "sessionId": "sess_1764611506223",
+      "questionId": "q_005",
+      "userId": "usr_student1",
+      "selectedOptions": [
+        0,
+        2,
+        3
+      ],
+      "status": "correct",
+      "pointsEarned": 5,
+      "maxPoints": 5,
+      "feedback": "Вы набрали 5 из 5 баллов.",
+      "createdAt": "2025-12-01T17:53:26.032Z"
     }
   ]
 }
