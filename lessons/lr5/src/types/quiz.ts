@@ -4,6 +4,7 @@ export interface Question {
   options: string[];
   correctAnswer: number;
   difficulty: 'easy' | 'medium' | 'hard';
+  type: string;
 }
 
 export interface Answer {

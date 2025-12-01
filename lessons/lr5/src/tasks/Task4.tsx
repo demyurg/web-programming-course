@@ -6,37 +6,23 @@ import { usePostApiSessionsSessionIdAnswers } from '../../generated/api/sessions
 import { usePostApiSessionsSessionIdSubmit } from '../../generated/api/sessions/sessions';
 import * as React from 'react'
 
-
 /**
  * Task 4: Комбинированное использование MobX + Zustand
- *
- * Цель: Объединить MobX (бизнес-логика) и Zustand (UI) в одном приложении
- *
- * Задание:
- * 1. Возьмите готовый GameStore (MobX) из Task2
- * 2. Возьмите готовый UIStore (Zustand) из Task3
- * 3. Доработайте GameStore: добавьте таймер, сохранение статистики
- * 4. Доработайте UIStore: добавьте управление модальными окнами
- * 5. Создайте компонент, который использует ОБА store одновременно
- * 6. Примените тему из UIStore к игровому интерфейсу
- *
- * Разделение ответственности:
- * - MobX (GameStore): вопросы, счёт, прогресс, таймер, статистика
- * - Zustand (UIStore): тема, звук, модальные окна, настройки UI
  */
-
 const Task4 = observer(() => {
   // MobX - бизнес-логика
   const { 
     gameStatus, 
     currentQuestion,
     selectedAnswers, 
+    essayAnswer,
     score, 
     progress,
     questions,
     correctAnswersCount,
     currentQuestionIndex,
     isLastQuestion,
+    setEssayAnswer, // Добавляем метод для установки текстового ответа
   } = gameStore;
 
   // Zustand - UI состояние
@@ -71,18 +57,29 @@ const Task4 = observer(() => {
   };
 
   const handleNextQuestion = () => {
-    if (sessionId && currentQuestion && selectedAnswers.length > 0) {
-      // Сохраняем ответ в истории
-      // gameStore.saveCurrentAnswer();
+    if (sessionId && currentQuestion) {
+      // Определяем тип вопроса и формируем данные для отправки
+      let answerData;
+      
+      if (currentQuestion.type === 'essay') {
+        // Для эссе отправляем текстовый ответ
+        answerData = {
+          questionId: currentQuestion.id as never as string,
+          essayText: essayAnswer || '' // Добавляем проверку на null/undefined
+        };
+      } else {
+        // Для вопросов с выбором отправляем выбранные варианты
+        answerData = {
+          questionId: currentQuestion.id as never as string,
+          selectedOptions: selectedAnswers
+        };
+      }
   
       // Отправляем ответ на сервер
       submitAnswer.mutate(
         {
           sessionId,
-          data: {
-            questionId: currentQuestion.id as never as string,
-            selectedOptions: selectedAnswers
-          }
+          data: answerData
         },
         {
           onSuccess: (response) => {
@@ -125,6 +122,19 @@ const Task4 = observer(() => {
     }
   };
 
+  // Проверяем, можно ли перейти к следующему вопросу
+  const canProceed = () => {
+    if (!currentQuestion) return false;
+    
+    if (currentQuestion.type === 'essay') {
+      // Для эссе проверяем, что введен текст
+      return essayAnswer && essayAnswer.trim().length > 0;
+    } else {
+      // Для вопросов с выбором проверяем, что выбран хотя бы один вариант
+      return selectedAnswers.length > 0;
+    }
+  };
+
   // Цвета в зависимости от темы
   const bgGradient = theme === 'light'
     ? 'from-purple-500 to-indigo-600'
@@ -151,7 +161,7 @@ const Task4 = observer(() => {
   // Стартовый экран
   if (gameStatus === 'idle') {
     return (
-      <div className={`min-h-screen bg-gradient-to-br ${bgGradient} flex items-center justify-center p-4 transition-colors duration-300`}>
+      <div className={`min-h-screen w-full bg-gradient-to-br ${bgGradient} flex items-center justify-center p-4 transition-colors duration-300`}>
         <div className={`${cardBg} rounded-2xl shadow-2xl p-8 max-w-md w-full transition-colors duration-300`}>
           {/* Переключатель темы */}
           <div className="flex justify-end mb-4">
@@ -196,7 +206,7 @@ const Task4 = observer(() => {
   // Экран результатов
   if (gameStatus === 'finished') {
     return (
-      <div className={`min-h-screen bg-gradient-to-br ${bgGradient} flex items-center justify-center p-4 transition-colors duration-300`}>
+      <div className={`min-h-screen w-full bg-gradient-to-br ${bgGradient} flex items-center justify-center p-4 transition-colors duration-300`}>
         <div className={`${cardBg} rounded-2xl shadow-2xl p-8 max-w-md w-full text-center transition-colors duration-300`}>
           <div className="text-6xl mb-4">{getEmoji()}</div>
 
@@ -235,7 +245,7 @@ const Task4 = observer(() => {
   if (!currentQuestion) return null;
 
   return (
-    <div className={`min-h-screen bg-gradient-to-br ${bgGradient} p-4 transition-colors duration-300`}>
+    <div className={`min-h-screen w-full bg-gradient-to-br ${bgGradient} p-4 transition-colors duration-300`}>
       <div className="max-w-2xl mx-auto">
         {/* Заголовок с темой */}
         <div className={`${cardBg} rounded-lg shadow-md p-4 mb-4 transition-colors duration-300`}>
@@ -283,47 +293,66 @@ const Task4 = observer(() => {
             {currentQuestion.question}
           </h2>
 
-          {/* Варианты ответов */}
-          <div className="space-y-3">
-            {currentQuestion.options.map((option, index) => {
-              const isSelected = selectedAnswers.includes(index);
-              const isCorrect = false // index === currentQuestion.correctAnswer;
-              const showResult = selectedAnswers !== null;
+          {/* Рендерим в зависимости от типа вопроса */}
+          {currentQuestion.type === 'essay' ? (
+            // Поле для текстового ответа (эссе)
+            <div className="space-y-3">
+              <textarea
+                value={essayAnswer || ''}
+                onChange={(e) => setEssayAnswer(e.target.value)}
+                className={`
+                  w-full p-4 text-left rounded-lg border-2 transition-all
+                  ${theme === 'light' ? 'border-gray-200 bg-white' : 'border-gray-600 bg-gray-700'}
+                  ${theme === 'light' ? 'text-gray-800' : 'text-white'}
+                  focus:outline-none focus:border-purple-500
+                  min-h-[200px]
+                `}
+                placeholder="Введите ваш ответ здесь..."
+              />
+            </div>
+          ) : (
+            // Варианты ответов для вопросов с выбором
+            <div className="space-y-3">
+              {currentQuestion.options.map((option, index) => {
+                const isSelected = selectedAnswers.includes(index);
+                const isCorrect = false // index === currentQuestion.correctAnswer;
+                const showResult = selectedAnswers !== null;
 
-              return (
-                <button
-                  key={index}
-                  onClick={() => gameStore.selectAnswer(index)}
-                  // disabled={selectedAnswers !== null}
-                  className={`
-                    w-full p-4 text-left rounded-lg border-2 transition-all
-                    ${!showResult && theme === 'light' && 'hover:border-purple-400 hover:bg-purple-50'}
-                    ${!showResult && theme === 'dark' && 'hover:border-purple-500 hover:bg-gray-700'}
-                    ${!showResult && !isSelected && (theme === 'light' ? 'border-gray-200 bg-white' : 'border-gray-600 bg-gray-700')}
-                    ${!showResult && isSelected && (theme === 'light' ? 'border-purple-500 bg-purple-50' : 'border-purple-500 bg-gray-600')}
-                    ${showResult && isCorrect && 'border-green-500 bg-green-50'}
-                    ${showResult && isSelected && !isCorrect && 'border-red-500 bg-red-50'}
-                    ${showResult && !isCorrect && !isSelected && 'opacity-60'}
-                  `}
-                >
-                  <div className="flex items-center">
-                    <span className={`
-                      w-8 h-8 rounded-full flex items-center justify-center mr-3 font-semibold
-                      ${!showResult && (theme === 'light' ? 'bg-gray-200' : 'bg-gray-600 text-white')}
-                      ${showResult && isCorrect && 'bg-green-500 text-white'}
-                      ${showResult && isSelected && !isCorrect && 'bg-red-500 text-white'}
-                    `}>
-                      {isSelected ? '✓' : String.fromCharCode(65 + index)}
-                    </span>
-                    <span className={`flex-1 ${textColor}`}>{option}</span>
-                  </div>
-                </button>
-              );
-            })}
-          </div>
+                return (
+                  <button
+                    key={index}
+                    onClick={() => gameStore.selectAnswer(index)}
+                    // disabled={selectedAnswers !== null}
+                    className={`
+                      w-full p-4 text-left rounded-lg border-2 transition-all
+                      ${!showResult && theme === 'light' && 'hover:border-purple-400 hover:bg-purple-50'}
+                      ${!showResult && theme === 'dark' && 'hover:border-purple-500 hover:bg-gray-700'}
+                      ${!showResult && !isSelected && (theme === 'light' ? 'border-gray-200 bg-white' : 'border-gray-600 bg-gray-700')}
+                      ${!showResult && isSelected && (theme === 'light' ? 'border-purple-500 bg-purple-50' : 'border-purple-500 bg-gray-600')}
+                      ${showResult && isCorrect && 'border-green-500 bg-green-50'}
+                      ${showResult && isSelected && !isCorrect && 'border-red-500 bg-red-50'}
+                      ${showResult && !isCorrect && !isSelected && 'opacity-60'}
+                    `}
+                  >
+                    <div className="flex items-center">
+                      <span className={`
+                        w-8 h-8 rounded-full flex items-center justify-center mr-3 font-semibold
+                        ${!showResult && (theme === 'light' ? 'bg-gray-200' : 'bg-gray-600 text-white')}
+                        ${showResult && isCorrect && 'bg-green-500 text-white'}
+                        ${showResult && isSelected && !isCorrect && 'bg-red-500 text-white'}
+                      `}>
+                        {isSelected ? '✓' : String.fromCharCode(65 + index)}
+                      </span>
+                      <span className={`flex-1 ${textColor}`}>{option}</span>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          )}
 
           {/* Кнопка "Далее" */}
-          {selectedAnswers !== null && (
+          {canProceed() && (
             <button
               onClick={() => handleNextQuestion()}
               className={`mt-6 w-full ${primaryColor} ${primaryHover} text-white py-3 px-6 rounded-lg font-semibold transition-colors`}
