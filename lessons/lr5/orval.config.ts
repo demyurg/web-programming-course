@@ -10,7 +10,6 @@ export default defineConfig({
       target: './generated/api',
       schemas: './generated/api/quizBattleAPI.schemas.ts',   // 📌 ДОБАВЛЕНО
       client: 'react-query',
-      baseUrl: 'http://localhost:3000',
       override: {
         mutator: {
           path: './src/api/client.ts',

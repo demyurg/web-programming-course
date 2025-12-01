@@ -1,22 +1,18 @@
-import Task4 from './tasks/Task4'
-
-import { Auth } from './components/Auth'
+import Task4 from './tasks/Task4';
 
 function App() {
-	return (
-		<Auth>
-			<div className='flex justify-center items-center h-screen'>
-				<h1 className='text-2xl font-bold text-center'>
-					QUIZ GAME
-					<br />
-					from
-					<br />
-					lr4/src/Task4.tsx
-				</h1>{' '}
-				{<Task4 />}
-			</div>
-		</Auth>
-	)
+  return (
+    <div className="flex justify-center items-center h-screen">
+      <h1 className="text-2xl font-bold text-center">
+        QUIZ GAME
+        <br />
+        from
+        <br />
+        lr4/src/Task4.tsx
+      </h1>
+      {<Task4 />}
+    </div>
+  );
 }
 
-export default App
+export default App;
