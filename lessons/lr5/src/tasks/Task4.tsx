@@ -65,7 +65,7 @@ const Task4 = observer(() => {
         // Для эссе отправляем текстовый ответ
         answerData = {
           questionId: currentQuestion.id as never as string,
-          essayText: essayAnswer || '' // Добавляем проверку на null/undefined
+          text: essayAnswer || '' // Добавляем проверку на null/undefined
         };
       } else {
         // Для вопросов с выбором отправляем выбранные варианты
