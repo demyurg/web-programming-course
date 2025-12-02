@@ -1,33 +1,27 @@
-/**
- * ЗАДАНИЕ 1-2: Основы React + TypeScript
- *
- * Упрощенное задание, объединяющее базовые компоненты и хуки
- *
- * Что будем изучать:
- * - Типизация компонентов и props
- * - Работа с useState
- * - Обработка событий
- */
-
 import React, { useState } from 'react';
 
 // ============================================
-// ЧАСТЬ 1: Простые компоненты
+// ЧАСТЬ 1: Базовые компоненты
 // ============================================
 
 // TODO 1.1: Создайте интерфейс ButtonProps с полями:
 // - children: React.ReactNode
 // - onClick: () => void
 // - variant?: 'primary' | 'secondary'
+interface ButtonProps {
+  children: React.ReactNode;
+  onClick: () => void;
+  variant?: 'primary' | 'secondary';
+}
 
 // TODO 1.2: Типизируйте компонент Button
-function Button(/* TODO: добавьте типизацию */) {
+function Button({ children, onClick, variant = 'primary' }: ButtonProps) {
   return (
     <button
-      className={`btn btn--${/* TODO */}`}
-      onClick={/* TODO */}
+      className={`btn btn--${variant}`}
+      onClick={onClick}
     >
-      {/* TODO */}
+      {children}
     </button>
   );
 }
@@ -36,15 +30,20 @@ function Button(/* TODO: добавьте типизацию */) {
 // - name: string
 // - email: string
 // - isOnline: boolean
+interface UserCardProps {
+  name: string;
+  email: string;
+  isOnline: boolean;
+}
 
 // TODO 1.4: Типизируйте компонент UserCard
-function UserCard(/* TODO: добавьте типизацию */) {
+function UserCard({ name, email, isOnline }: UserCardProps) {
   return (
     <div className="user-card">
-      <h3>{/* TODO: name */}</h3>
-      <p>{/* TODO: email */}</p>
-      <span className={/* TODO: добавьте класс на основе isOnline */}>
-        {/* TODO: отобразите статус */}
+      <h3>{name}</h3>
+      <p>{email}</p>
+      <span className={isOnline ? 'status-online' : 'status-offline'}>
+        {isOnline ? 'Online' : 'Offline'}
       </span>
     </div>
   );
@@ -58,11 +57,16 @@ function UserCard(/* TODO: добавьте типизацию */) {
 // - id: number
 // - text: string
 // - completed: boolean
+interface Todo {
+  id: number;
+  text: string;
+  completed: boolean;
+}
 
 // TODO 3.2: Типизируйте компонент TodoApp
 function TodoApp() {
   // TODO 3.3: Создайте состояние todos с типом Todo[]
-  const [todos, setTodos] = useState(/* TODO */);
+  const [todos, setTodos] = useState<Todo[]>([]);
   const [inputValue, setInputValue] = useState('');
 
   // TODO 3.4: Реализуйте addTodo
@@ -70,6 +74,12 @@ function TodoApp() {
     if (inputValue.trim()) {
       // TODO: создайте новый todo и добавьте в массив
       // Подсказка: id можно сделать как Date.now()
+      const newTodo: Todo = {
+        id: Date.now(),
+        text: inputValue.trim(),
+        completed: false
+      };
+      setTodos([...todos, newTodo]);
       setInputValue('');
     }
   };
@@ -77,11 +87,15 @@ function TodoApp() {
   // TODO 3.5: Реализуйте toggleTodo
   const toggleTodo = (id: number) => {
     // TODO: измените completed для todo с данным id
+    setTodos(todos.map(todo => 
+      todo.id === id ? { ...todo, completed: !todo.completed } : todo
+    ));
   };
 
   // TODO 3.6: Реализуйте deleteTodo
   const deleteTodo = (id: number) => {
     // TODO: удалите todo с данным id
+    setTodos(todos.filter(todo => todo.id !== id));
   };
 
   return (
@@ -136,6 +150,16 @@ function App() {
   return (
     <div className="app">
       <h1>Todo приложение на React + TypeScript</h1>
+      
+      {/* Пример использования UserCard */}
+      <div style={{ marginBottom: '20px' }}>
+        <UserCard 
+          name="Иван Иванов" 
+          email="ivan@example.com" 
+          isOnline={true} 
+        />
+      </div>
+      
       <TodoApp />
     </div>
   );
