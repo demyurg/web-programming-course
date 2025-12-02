@@ -28,6 +28,7 @@ npm install mobx mobx-react-lite
 import { makeObservable, observable, action } from 'mobx'
 
 class TodoStore {
+  
   todos: Todo[] = []
 
   constructor() {
@@ -37,7 +38,7 @@ class TodoStore {
     })
   }
 
-  addTodo(text: string) {
+ddTodo(text: string) {
     this.todos.push({ id: Date.now(), text, done: false })
   }
 }
