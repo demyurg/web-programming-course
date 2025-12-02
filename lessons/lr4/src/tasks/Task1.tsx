@@ -1,6 +1,6 @@
-import { useState } from 'react';
-import { mockQuestions } from '../data/questions';
-import { Question } from '../types/quiz';
+import { useState } from "react";
+import { mockQuestions } from "../data/questions";
+import { Question } from "../types/quiz";
 
 /**
  * Task 1: Управление состоянием с помощью useState
@@ -22,45 +22,56 @@ const Task1 = () => {
   // TODO: Создайте состояние selectedAnswer для хранения выбранного ответа
   // Подсказка: используйте useState, тип number | null, начальное значение null
   // Формат: const [selectedAnswer, setSelectedAnswer] = useState<тип>(начальное_значение);
+  const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
 
   // TODO: Создайте состояние score для подсчёта правильных ответов
   // Подсказка: используйте useState, тип number, начальное значение 0
+  const [score, setScore] = useState<number>(0);
 
   // TODO: Создайте состояние isFinished для отслеживания завершения игры
   // Подсказка: используйте useState, тип boolean, начальное значение false
+  const [isFinished, setIsFinished] = useState<boolean>(false);
 
   const currentQuestion: Question = mockQuestions[currentQuestionIndex];
-
-  // Временные значения (удалите эти строки после создания состояний выше)
-  const selectedAnswer = null;
-  const score = 0;
-  const isFinished = false;
 
   const handleAnswerClick = (answerIndex: number) => {
     // TODO: Реализуйте логику выбора ответа
     // 1. Проверьте, что ответ еще не был выбран (selectedAnswer === null)
+    if (selectedAnswer !== null) return;
+
     // 2. Сохраните выбранный ответ: setSelectedAnswer(answerIndex)
+    setSelectedAnswer(answerIndex);
+
     // 3. Проверьте правильность: answerIndex === currentQuestion.correctAnswer
     // 4. Если ответ правильный - увеличьте счёт: setScore(score + 1)
+    if (answerIndex === currentQuestion.correctAnswer) {
+      setScore(score + 1);
+    }
   };
 
   const handleNextQuestion = () => {
     // TODO: Реализуйте переход к следующему вопросу
     // 1. Проверьте, последний ли это вопрос:
     //    currentQuestionIndex === mockQuestions.length - 1
-    // 2. Если последний - завершите игру: setIsFinished(true)
-    // 3. Если не последний:
-    //    - Увеличьте индекс: setCurrentQuestionIndex(currentQuestionIndex + 1)
-    //    - Сбросьте выбранный ответ: setSelectedAnswer(null)
+    if (currentQuestionIndex === mockQuestions.length - 1) {
+      // 2. Если последний - завершите игру: setIsFinished(true)
+      setIsFinished(true);
+    } else {
+      // 3. Если не последний:
+      //    - Увеличьте индекс: setCurrentQuestionIndex(currentQuestionIndex + 1)
+      setCurrentQuestionIndex(currentQuestionIndex + 1);
+      //    - Сбросьте выбранный ответ: setSelectedAnswer(null)
+      setSelectedAnswer(null);
+    }
   };
 
   const handleRestart = () => {
     // TODO: Реализуйте перезапуск игры
     // Сбросьте все состояния к начальным значениям:
-    // setCurrentQuestionIndex(0);
-    // setSelectedAnswer(null);
-    // setScore(0);
-    // setIsFinished(false);
+    setCurrentQuestionIndex(0);
+    setSelectedAnswer(null);
+    setScore(0);
+    setIsFinished(false);
   };
 
   // Экран результатов
@@ -71,7 +82,9 @@ const Task1 = () => {
           <h2 className="text-3xl font-bold mb-4">Игра завершена!</h2>
           <div className="mb-6">
             <p className="text-5xl font-bold text-blue-600 mb-2">{score}</p>
-            <p className="text-gray-600">из {mockQuestions.length} правильных</p>
+            <p className="text-gray-600">
+              из {mockQuestions.length} правильных
+            </p>
           </div>
           <button
             onClick={handleRestart}
@@ -103,7 +116,7 @@ const Task1 = () => {
             <div
               className="bg-blue-600 h-2 rounded-full transition-all duration-300"
               style={{
-                width: `${((currentQuestionIndex + 1) / mockQuestions.length) * 100}%`
+                width: `${((currentQuestionIndex + 1) / mockQuestions.length) * 100}%`,
               }}
             />
           </div>
@@ -129,21 +142,23 @@ const Task1 = () => {
                   disabled={selectedAnswer !== null}
                   className={`
                     w-full p-4 text-left rounded-lg border-2 transition-all
-                    ${!showResult && 'hover:border-blue-400 hover:bg-blue-50'}
-                    ${!showResult && !isSelected && 'border-gray-200 bg-white'}
-                    ${!showResult && isSelected && 'border-blue-500 bg-blue-50'}
-                    ${showResult && isCorrect && 'border-green-500 bg-green-50'}
-                    ${showResult && isSelected && !isCorrect && 'border-red-500 bg-red-50'}
-                    ${showResult && !isCorrect && !isSelected && 'opacity-60'}
+                    ${!showResult && "hover:border-blue-400 hover:bg-blue-50"}
+                    ${!showResult && !isSelected && "border-gray-200 bg-white"}
+                    ${!showResult && isSelected && "border-blue-500 bg-blue-50"}
+                    ${showResult && isCorrect && "border-green-500 bg-green-50"}
+                    ${showResult && isSelected && !isCorrect && "border-red-500 bg-red-50"}
+                    ${showResult && !isCorrect && !isSelected && "opacity-60"}
                   `}
                 >
                   <div className="flex items-center">
-                    <span className={`
+                    <span
+                      className={`
                       w-8 h-8 rounded-full flex items-center justify-center mr-3 font-semibold
-                      ${!showResult && 'bg-gray-200'}
-                      ${showResult && isCorrect && 'bg-green-500 text-white'}
-                      ${showResult && isSelected && !isCorrect && 'bg-red-500 text-white'}
-                    `}>
+                      ${!showResult && "bg-gray-200"}
+                      ${showResult && isCorrect && "bg-green-500 text-white"}
+                      ${showResult && isSelected && !isCorrect && "bg-red-500 text-white"}
+                    `}
+                    >
                       {String.fromCharCode(65 + index)}
                     </span>
                     <span className="flex-1">{option}</span>
@@ -160,8 +175,8 @@ const Task1 = () => {
               className="mt-6 w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
             >
               {currentQuestionIndex === mockQuestions.length - 1
-                ? 'Завершить'
-                : 'Следующий вопрос'}
+                ? "Завершить"
+                : "Следующий вопрос"}
             </button>
           )}
         </div>
