@@ -99,79 +99,6 @@
       "updatedAt": "2025-01-10T10:00:00Z"
     },
     {
-      "id": "q_001",
-      "type": "multiple-select",
-      "question": "Какие хуки используются для side effects в React?",
-      "difficulty": "medium",
-      "categoryId": "cat_react",
-      "maxPoints": 4,
-      "options": [
-        {
-          "text": "useState",
-          "points": 0,
-          "isCorrect": false
-        },
-        {
-          "text": "useEffect",
-          "points": 2,
-          "isCorrect": true
-        },
-        {
-          "text": "useLayoutEffect",
-          "points": 2,
-          "isCorrect": true
-        },
-        {
-          "text": "useMemo",
-          "points": 0,
-          "isCorrect": false
-        }
-      ],
-      "penaltyPerWrong": -1,
-      "minScore": 0,
-      "createdAt": "2025-01-10T10:00:00Z",
-      "updatedAt": "2025-01-10T10:00:00Z"
-    },
-    {
-      "id": "q_005",
-      "type": "multiple-select",
-      "question": "Что делает React Query автоматически?",
-      "difficulty": "medium",
-      "categoryId": "cat_api",
-      "maxPoints": 5,
-      "options": [
-        {
-          "text": "Кэширование данных",
-          "points": 2,
-          "isCorrect": true
-        },
-        {
-          "text": "Валидация форм",
-          "points": 0,
-          "isCorrect": false
-        },
-        {
-          "text": "Фоновое обновление данных",
-          "points": 2,
-          "isCorrect": true
-        },
-        {
-          "text": "Дедупликация запросов",
-          "points": 1,
-          "isCorrect": true
-        },
-        {
-          "text": "Рендеринг компонентов",
-          "points": 0,
-          "isCorrect": false
-        }
-      ],
-      "penaltyPerWrong": -1,
-      "minScore": 0,
-      "createdAt": "2025-01-10T10:00:00Z",
-      "updatedAt": "2025-01-10T10:00:00Z"
-    },
-    {
       "id": "q_002",
       "type": "multiple-select",
       "question": "Какие из перечисленных методов являются HTTP-методами?",
@@ -216,31 +143,36 @@
       "updatedAt": "2025-01-10T10:00:00Z"
     },
     {
-      "id": "q_003",
-      "type": "essay",
-      "question": "Объясните разницу между useMemo и useCallback. Приведите примеры использования.",
-      "difficulty": "hard",
+      "id": "q_001",
+      "type": "multiple-select",
+      "question": "Какие хуки используются для side effects в React?",
+      "difficulty": "medium",
       "categoryId": "cat_react",
-      "maxPoints": 5,
-      "minLength": 100,
-      "maxLength": 1000,
-      "rubric": [
+      "maxPoints": 4,
+      "options": [
         {
-          "criterion": "Понимание useMemo",
-          "maxPoints": 2,
-          "description": "Объясняет, что useMemo мемоизирует вычисленные значения"
+          "text": "useState",
+          "points": 0,
+          "isCorrect": false
         },
         {
-          "criterion": "Понимание useCallback",
-          "maxPoints": 2,
-          "description": "Объясняет, что useCallback мемоизирует функции"
+          "text": "useEffect",
+          "points": 2,
+          "isCorrect": true
         },
         {
-          "criterion": "Примеры использования",
-          "maxPoints": 1,
-          "description": "Приводит корректные примеры кода"
+          "text": "useLayoutEffect",
+          "points": 2,
+          "isCorrect": true
+        },
+        {
+          "text": "useMemo",
+          "points": 0,
+          "isCorrect": false
         }
       ],
+      "penaltyPerWrong": -1,
+      "minScore": 0,
       "createdAt": "2025-01-10T10:00:00Z",
       "updatedAt": "2025-01-10T10:00:00Z"
     },
@@ -286,6 +218,74 @@
           "text": "unknown",
           "points": 2,
           "isCorrect": true
+        }
+      ],
+      "penaltyPerWrong": -1,
+      "minScore": 0,
+      "createdAt": "2025-01-10T10:00:00Z",
+      "updatedAt": "2025-01-10T10:00:00Z"
+    },
+    {
+      "id": "q_003",
+      "type": "essay",
+      "question": "Объясните разницу между useMemo и useCallback. Приведите примеры использования.",
+      "difficulty": "hard",
+      "categoryId": "cat_react",
+      "maxPoints": 5,
+      "minLength": 100,
+      "maxLength": 1000,
+      "rubric": [
+        {
+          "criterion": "Понимание useMemo",
+          "maxPoints": 2,
+          "description": "Объясняет, что useMemo мемоизирует вычисленные значения"
+        },
+        {
+          "criterion": "Понимание useCallback",
+          "maxPoints": 2,
+          "description": "Объясняет, что useCallback мемоизирует функции"
+        },
+        {
+          "criterion": "Примеры использования",
+          "maxPoints": 1,
+          "description": "Приводит корректные примеры кода"
+        }
+      ],
+      "createdAt": "2025-01-10T10:00:00Z",
+      "updatedAt": "2025-01-10T10:00:00Z"
+    },
+    {
+      "id": "q_005",
+      "type": "multiple-select",
+      "question": "Что делает React Query автоматически?",
+      "difficulty": "medium",
+      "categoryId": "cat_api",
+      "maxPoints": 5,
+      "options": [
+        {
+          "text": "Кэширование данных",
+          "points": 2,
+          "isCorrect": true
+        },
+        {
+          "text": "Валидация форм",
+          "points": 0,
+          "isCorrect": false
+        },
+        {
+          "text": "Фоновое обновление данных",
+          "points": 2,
+          "isCorrect": true
+        },
+        {
+          "text": "Дедупликация запросов",
+          "points": 1,
+          "isCorrect": true
+        },
+        {
+          "text": "Рендеринг компонентов",
+          "points": 0,
+          "isCorrect": false
         }
       ],
       "penaltyPerWrong": -1,
@@ -774,6 +774,27 @@
       "currentScore": 12,
       "createdAt": "2025-12-01T15:01:36.428Z",
       "completedAt": "2025-12-01T15:09:13.669Z",
+      "expiresAt": null
+    },
+    {
+      "sessionId": "sess_1764647685897",
+      "userId": "usr_student1",
+      "status": "active",
+      "mode": "game",
+      "questionIds": [
+        "q_006",
+        "q_002",
+        "q_001",
+        "q_004",
+        "q_003",
+        "q_005"
+      ],
+      "totalQuestions": 6,
+      "answeredCount": 0,
+      "maxScore": 33,
+      "currentScore": 0,
+      "createdAt": "2025-12-02T03:54:45.897Z",
+      "completedAt": null,
       "expiresAt": null
     }
   ],
