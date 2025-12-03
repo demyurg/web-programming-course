@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import Task4 from './tasks/Task4';
-import { Auth } from './components/Auth/Auth';
+import { Auth } from '@course/auth-component';
 
 function App() {
   // АВТОЛОГИН — 100% рабочий вариант
