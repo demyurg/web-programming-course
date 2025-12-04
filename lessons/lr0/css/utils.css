@@ -1,0 +1,5 @@
+.container {
+    width: 100%;
+    max-width: calc(var(--desktop) + var(--space-8) * 2);
+    margin-inline: auto;
+}
