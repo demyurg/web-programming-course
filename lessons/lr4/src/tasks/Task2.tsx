@@ -15,13 +15,17 @@ import { gameStore } from '../stores/gameStore';
  */
 
 const Task2 = observer(() => {
-  const { gameStatus, currentQuestion,
+  const { 
+    gameStatus, 
+    currentQuestion,
+    questions,
+    correctAnswersCount
     // TODO: убрать комментарий после реализации стора
     // selectedAnswer, score, progress
   } = gameStore;
-  const selectedAnswer = null; // TODO: заменить на gameStore.selectedAnswer
-  const score = 0; // TODO: заменить на gameStore.score
-  const progress = 0; // TODO: заменить на gameStore.progress
+  const selectedAnswer = gameStore.selectedAnswer; // TODO: заменить на gameStore.selectedAnswer
+  const score = gameStore.score; // TODO: заменить на gameStore.score
+  const progress = gameStore.progress; // TODO: заменить на gameStore.progress
 
   // Стартовый экран
   if (gameStatus === 'idle') {
@@ -54,19 +58,17 @@ const Task2 = observer(() => {
         <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full text-center">
           <h2 className="text-3xl font-bold mb-4">Игра завершена!</h2>
           <div className="mb-6">
-            <p className="text-5xl font-bold text-green-600 mb-2">{score}</p>
-            {/* TODO: убрать комментарий после реализации стора */}
-            {/* <p className="text-gray-600">
-              Правильных ответов: {gameStore.correctAnswersCount} из {gameStore.questions.length}
-            </p> */}
-          </div>
-          {/* TODO: убрать комментарий после реализации стора */}
-          {/* <button
-            onClick={() => gameStore.resetGame()}
-            className="w-full bg-green-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-green-700 transition-colors"
-          >
-            Начать заново
-          </button> */}
+    <p className="text-5xl font-bold text-green-600 mb-2">{score}</p>
+    <p className="text-gray-600">
+      Правильных ответов: {correctAnswersCount} из {questions.length}
+    </p>
+  </div>
+  <button
+    onClick={() => gameStore.resetGame()}
+    className="w-full bg-green-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-green-700 transition-colors"
+  >
+    Начать заново
+  </button> 
         </div>
       </div>
     );
@@ -82,9 +84,9 @@ const Task2 = observer(() => {
         <div className="bg-white rounded-lg shadow-md p-4 mb-4">
           <div className="flex justify-between items-center mb-2">
             {/* TODO: убрать комментарий после реализации стора */}
-            {/* <span className="text-sm text-gray-600">
+            <span className="text-sm text-gray-600">
               Вопрос {gameStore.currentQuestionIndex + 1} из {gameStore.questions.length}
-            </span> */}
+            </span>
             <span className="text-xl font-bold text-green-600">
               Счёт: {score}
             </span>
@@ -157,14 +159,14 @@ const Task2 = observer(() => {
 
           {/* Кнопка "Далее" */}
           {/* TODO: убрать комментарий после реализации стора */}
-          {/* {selectedAnswer !== null && (
+          {selectedAnswer !== null && (
             <button
               onClick={() => gameStore.nextQuestion()}
               className="mt-6 w-full bg-green-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-green-700 transition-colors"
             >
               {gameStore.isLastQuestion ? 'Завершить' : 'Следующий вопрос'}
             </button>
-          )} */}
+          )} 
         </div>
 
         {/* Подсказка */}
