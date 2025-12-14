@@ -9,56 +9,73 @@
  * 3. Работайте с контролируемыми формами
  */
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, ChangeEvent, FormEvent, FC } from 'react';
 
 // ===== ЗАДАЧА 3.1: Простая форма пользователя =====
 
-// TODO: Определите интерфейс UserFormData
+// Определите интерфейс UserFormData
 interface UserFormData {
-  // TODO: добавьте поля:
-  // name: string
-  // email: string
-  // age: number
-  // message: string
+  name: string;
+  email: string;
+  age: number;
+  message: string;
 }
 
-// TODO: Определите интерфейс FormErrors
+// Определите интерфейс FormErrors
 interface FormErrors {
-  // TODO: добавьте поля для ошибок (все опциональные строки)
-  // name?: string
-  // email?: string
-  // age?: string
-  // message?: string
+  name?: string;
+  email?: string;
+  age?: string;
+  message?: string;
 }
 
-// TODO: Типизируйте компонент UserForm
-function UserForm() {
-  // TODO: Типизируйте состояние формы
-  const [formData, setFormData] = useState<UserFormData>(/* TODO: начальные значения */);
+// Типизируйте компонент UserForm
+const UserForm: FC = () => {
+  // Типизируйте состояние формы
+  const [formData, setFormData] = useState<UserFormData>({
+    name: '',
+    email: '',
+    age: 0,
+    message: ''
+  });
   const [errors, setErrors] = useState<FormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
 
-  // TODO: Создайте простую валидацию
+  // Создайте простую валидацию
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
 
-    // TODO: Проверьте поля:
-    // name: не пустое
-    // email: не пустое и содержит @
-    // age: больше 0
-    // message: не пустое
+    // Проверьте поля:
+    if (!formData.name.trim()) {
+      newErrors.name = 'Имя обязательно';
+    }
+
+    if (!formData.email.trim() || !formData.email.includes('@')) {
+      newErrors.email = 'Введите корректный email';
+    }
+
+    if (formData.age <= 0) {
+      newErrors.age = 'Возраст должен быть больше 0';
+    }
+
+    if (!formData.message.trim()) {
+      newErrors.message = 'Сообщение обязательно';
+    }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  // TODO: Типизируйте обработчик изменения инпутов
-  const handleInputChange = (e: /* TODO: добавьте тип события */) => {
+  // Типизируйте обработчик изменения инпутов
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
     const { name, value } = e.target;
 
-    // TODO: Обновите formData
-    // Подсказка: для age преобразуйте в число
+    // Обновите formData
+    setFormData(prev => ({
+      ...prev,
+      [name]: name === 'age' ? parseInt(value) || 0 : value
+    }));
 
     // Очистить ошибку для поля
     if (errors[name as keyof FormErrors]) {
@@ -66,8 +83,8 @@ function UserForm() {
     }
   };
 
-  // TODO: Типизируйте обработчик отправки формы
-  const handleSubmit = async (e: /* TODO: добавьте тип события */) => {
+  // Типизируйте обработчик отправки формы
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
 
     if (!validateForm()) {
@@ -81,14 +98,22 @@ function UserForm() {
       // Симуляция API запроса
       await new Promise(resolve => setTimeout(resolve, 2000));
 
-      // TODO: Обработайте успешную отправку
+      // Обработайте успешную отправку
       console.log('Form submitted:', formData);
       setSubmitStatus('success');
 
-      // TODO: Сбросьте форму
+      // Сбросьте форму
+      setFormData({
+        name: '',
+        email: '',
+        age: 0,
+        message: ''
+      });
+      setErrors({});
     } catch (error) {
-      // TODO: Обработайте ошибку
+      // Обработайте ошибку
       setSubmitStatus('error');
+      console.error('Submit error:', error);
     } finally {
       setIsSubmitting(false);
     }
@@ -99,14 +124,14 @@ function UserForm() {
       <h2>Форма пользователя</h2>
 
       <form onSubmit={handleSubmit}>
-        {/* TODO: Имя */}
+        {/* Имя */}
         <div className="form-group">
           <label htmlFor="name">Имя *</label>
           <input
             type="text"
             id="name"
             name="name"
-            value={/* TODO: добавьте значение */}
+            value={formData.name}
             onChange={handleInputChange}
             disabled={isSubmitting}
             className={errors.name ? 'error' : ''}
@@ -114,50 +139,50 @@ function UserForm() {
           {errors.name && <span className="error-message">{errors.name}</span>}
         </div>
 
-        {/* TODO: Email */}
+        {/* Email */}
         <div className="form-group">
           <label htmlFor="email">Email *</label>
           <input
             type="email"
             id="email"
             name="email"
-            value={/* TODO */}
+            value={formData.email}
             onChange={handleInputChange}
             disabled={isSubmitting}
             className={errors.email ? 'error' : ''}
           />
-          {/* TODO: ошибка email */}
+          {errors.email && <span className="error-message">{errors.email}</span>}
         </div>
 
-        {/* TODO: Возраст */}
+        {/* Возраст */}
         <div className="form-group">
           <label htmlFor="age">Возраст *</label>
           <input
             type="number"
             id="age"
             name="age"
-            value={/* TODO */}
+            value={formData.age}
             onChange={handleInputChange}
             disabled={isSubmitting}
             min="1"
             className={errors.age ? 'error' : ''}
           />
-          {/* TODO: ошибка age */}
+          {errors.age && <span className="error-message">{errors.age}</span>}
         </div>
 
-        {/* TODO: Сообщение */}
+        {/* Сообщение */}
         <div className="form-group">
           <label htmlFor="message">Сообщение *</label>
           <textarea
             id="message"
             name="message"
-            value={/* TODO */}
+            value={formData.message}
             onChange={handleInputChange}
             disabled={isSubmitting}
             rows={4}
             className={errors.message ? 'error' : ''}
           />
-          {/* TODO: ошибка message */}
+          {errors.message && <span className="error-message">{errors.message}</span>}
         </div>
 
         {/* Кнопка отправки */}
@@ -175,31 +200,36 @@ function UserForm() {
       </form>
     </div>
   );
-}
+};
 
 // ===== ЗАДАЧА 3.2: Простая форма поиска =====
 
-// TODO: Определите интерфейс SearchData
+// Определите интерфейс SearchData
 interface SearchData {
-  // TODO: добавьте поля:
-  // query: string
-  // category: 'all' | 'tech' | 'design'
+  query: string;
+  category: 'all' | 'tech' | 'design';
 }
 
-// TODO: Типизируйте компонент SearchForm
-function SearchForm() {
-  const [searchData, setSearchData] = useState<SearchData>(/* TODO: начальные значения */);
+// Типизируйте компонент SearchForm
+const SearchForm: FC = () => {
+  const [searchData, setSearchData] = useState<SearchData>({
+    query: '',
+    category: 'all'
+  });
 
-  // TODO: Типизируйте обработчик изменения поискового запроса
-  const handleInputChange = (e: /* TODO: добавьте тип */) => {
+  // Типизируйте обработчик изменения поискового запроса
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>): void => {
     const { name, value } = e.target;
-    // TODO: обновите searchData
+    setSearchData(prev => ({
+      ...prev,
+      [name]: value
+    }));
   };
 
-  // TODO: Типизируйте обработчик отправки поиска
-  const handleSearch = (e: /* TODO: добавьте тип */) => {
+  // Типизируйте обработчик отправки поиска
+  const handleSearch = (e: FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
-    // TODO: выполните поиск
+    // Выполните поиск
     console.log('Поиск:', searchData);
   };
 
@@ -208,26 +238,26 @@ function SearchForm() {
       <h2>Поиск</h2>
 
       <form onSubmit={handleSearch}>
-        {/* TODO: Поисковый запрос */}
+        {/* Поисковый запрос */}
         <div className="form-group">
           <label htmlFor="query">Поиск</label>
           <input
             type="text"
             id="query"
             name="query"
-            value={/* TODO: добавьте значение */}
+            value={searchData.query}
             onChange={handleInputChange}
             placeholder="Введите запрос..."
           />
         </div>
 
-        {/* TODO: Категория */}
+        {/* Категория */}
         <div className="form-group">
           <label htmlFor="category">Категория</label>
           <select
             id="category"
             name="category"
-            value={/* TODO */}
+            value={searchData.category}
             onChange={handleInputChange}
           >
             <option value="all">Все</option>
@@ -242,19 +272,18 @@ function SearchForm() {
         </button>
       </form>
 
-      {/* TODO: Отобразите результаты поиска */}
+      {/* Отобразите результаты поиска */}
       <div className="search-results">
         <pre>{JSON.stringify(searchData, null, 2)}</pre>
       </div>
     </div>
   );
-}
-
+};
 
 // ===== ГЛАВНЫЙ КОМПОНЕНТ =====
 
-// TODO: Типизируйте компонент App
-function App() {
+// Типизируйте компонент App
+const App: FC = () => {
   const [activeForm, setActiveForm] = useState<'user' | 'search'>('user');
 
   return (
@@ -280,12 +309,6 @@ function App() {
       </div>
     </div>
   );
-}
+};
 
 export default App;
-
-// ===== БОНУСНЫЕ ЗАДАЧИ =====
-
-// TODO BONUS 1: Создайте real-time валидацию с debouncing
-// TODO BONUS 2: Добавьте комплексные фильтры в поиск
-// TODO BONUS 3: Создайте универсальный хук useForm
