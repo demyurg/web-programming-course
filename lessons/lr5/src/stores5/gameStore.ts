@@ -1,6 +1,7 @@
 import { makeAutoObservable } from 'mobx';
 import { Question, Answer } from '../types5/quiz';
 import { mockQuestions } from '../data5/questions';
+import { QuestionPreview } from '../../generated/api/quizBattleAPI.schemas';
 
 /**
  * GameStore - MobX Store для управления игровой логикой
@@ -19,12 +20,18 @@ class GameStore {
   constructor() {
     makeAutoObservable(this);
   }
-
+ 
+  essayAnswer: string = '';
+  
+  // Метод для установки текстового ответа
+  setEssayAnswer = (answer: string) => {
+    this.essayAnswer = answer;
+  };
   // Actions - методы для изменения состояния
 
-  startGame(questions) {
+  startGame(questions: QuestionPreview[]) {
     this.gameStatus = 'playing';
-    this.questions = questions.map(item => ({...item, correctAnswer: -1}));
+    this.questions = questions.map(item => ({...item, correctAnswer: -1, options: item.options ?? []}));
     this.currentQuestionIndex = 0;
     this.score = 0;
     this.selectedAnswers = [];
@@ -73,6 +80,7 @@ class GameStore {
 
     this.currentQuestionIndex++;
     this.selectedAnswers = [];
+    this.essayAnswer = '';
     return true;
   }
 
@@ -87,6 +95,7 @@ class GameStore {
     this.score = 0;
     this.selectedAnswers = [];
     this.answeredQuestions = [];
+    this.essayAnswer = '';
   }
 
   // Вспомогательный метод для получения очков за сложность
