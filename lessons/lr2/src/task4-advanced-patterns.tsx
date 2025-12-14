@@ -242,9 +242,3 @@ const App = () => {
 };
 
 export default App;
-
-// ===== БОНУСНЫЕ ЗАДАЧИ =====
-
-// TODO BONUS 1: Добавьте Theme Context с переключением светлой/темной темы
-// TODO BONUS 2: Создайте useLocalStorage hook для сохранения данных
-// TODO BONUS 3: Реализуйте более сложные Compound Components (например, Tabs)
