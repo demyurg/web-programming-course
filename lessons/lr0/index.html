@@ -6,24 +6,181 @@
     <title>Анна Светлова - Фотограф</title>
     <link rel="stylesheet" href="css/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Open+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
     <!-- Header & Navigation -->
+    <header>
+        <div class="container">
+            <nav>
+                <a href="#" class="logo">Анна Светлова</a>
+                <div class="menu-toggle">
+                    <i class="fas fa-bars"></i>
+                </div>
+                <ul class="nav-links">
+                    <li><a href="#home">Главная</a></li>
+                    <li><a href="#about">Обо мне</a></li>
+                    <li><a href="#gallery">Галерея</a></li>
+                    <li><a href="#contact">Контакты</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
 
     <main>
         <!-- Hero Section -->
+        <section id="home" class="hero">
+            <div class="container">
+                <div class="hero-content">
+                    <h1>Анна Светлова</h1>
+                    <p>Профессиональный фотограф, специализирующийся на портретной и свадебной съемке. Создаю неповторимые образы, которые останутся с вами на всю жизнь.</p>
+                    <a href="#gallery" class="btn">Смотреть работы</a>
+                </div>
+            </div>
+        </section>
 
         <!-- About Section -->
+        <section id="about" class="about">
+            <div class="container">
+                <h2>Обо мне</h2>
+                <div class="about-content">
+                    <div class="about-text">
+                        <p>Меня зовут Анна Светлова, и я профессиональный фотограф с более чем 5-летним опытом работы. Моя специализация — портретная и свадебная фотография.</p>
+                        <p>Я стремлюсь запечатлеть не просто моменты, а эмоции и чувства, которые делают каждый кадр уникальным. В своей работе я использую естественное освещение и уделяю особое внимание деталям.</p>
+                        <p>Каждая фотосессия — это совместное творчество, где я помогаю раскрыться вашей индивидуальности и создать образы, которые будут радовать вас долгие годы.</p>
+                    </div>
+                    <div class="about-image">
+                        <img src="images/about.jpeg" alt="Анна Светлова">
+                    </div>
+                </div>
+            </div>
+        </section>
 
         <!-- Gallery Section -->
+        <section id="gallery" class="gallery">
+            <div class="container">
+                <h2>Мои работы</h2>
+                <div class="gallery-grid">
+                    <div class="gallery-item">
+                        <img src="images/nature_1.jpg" alt="Портретная фотосессия">
+                        <div class="gallery-item-overlay">
+                            <i class="fas fa-search-plus"></i>
+                        </div>
+                    </div>
+                    <div class="gallery-item">
+                        <img src="images/portrait_1.jpg" alt="Свадебная фотография">
+                        <div class="gallery-item-overlay">
+                            <i class="fas fa-search-plus"></i>
+                        </div>
+                    </div>
+                    <div class="gallery-item">
+                        <img src="images/wedding_1.jpg" alt="Портрет">
+                        <div class="gallery-item-overlay">
+                            <i class="fas fa-search-plus"></i>
+                        </div>
+                    </div>
+                    <div class="gallery-item">
+                        <img src="images/nature_2.jpg" alt="Портретная фотосессия">
+                        <div class="gallery-item-overlay">
+                            <i class="fas fa-search-plus"></i>
+                        </div>
+                    </div>
+                    <div class="gallery-item">
+                        <img src="images/portrait_2.jpg" alt="Свадьба">
+                        <div class="gallery-item-overlay">
+                            <i class="fas fa-search-plus"></i>
+                        </div>
+                    </div>
+                    <div class="gallery-item">
+                        <img src="images/wedding_2.jpg" alt="Портрет">
+                        <div class="gallery-item-overlay">
+                            <i class="fas fa-search-plus"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
 
         <!-- Contact Section -->
+        <section id="contact" class="contact">
+            <div class="container">
+                <h2>Свяжитесь со мной</h2>
+                <div class="contact-content">
+                    <div class="contact-info">
+                        <p>Готовы создать незабываемые фотографии? Свяжитесь со мной, чтобы обсудить детали вашей фотосессии.</p>
+                        <ul>
+                            <li><i class="fas fa-phone"></i> +7 (999) 123-45-67</li>
+                            <li><i class="fas fa-envelope"></i> anna@svetlova-photo.ru</li>
+                            <li><i class="fas fa-map-marker-alt"></i> Москва, ул. Фотографов, 15</li>
+                        </ul>
+                        <div class="social-icons">
+                            <a href="#"><i class="fab fa-instagram"></i></a>
+                            <a href="#"><i class="fab fa-vk"></i></a>
+                            <a href="#"><i class="fab fa-telegram"></i></a>
+                            <a href="#"><i class="fab fa-whatsapp"></i></a>
+                        </div>
+                    </div>
+                    <div class="contact-form">
+                        <form id="contactForm">
+                            <div class="form-group">
+                                <label for="name">Ваше имя</label>
+                                <input type="text" id="name" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="email">Email</label>
+                                <input type="email" id="email" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="message">Сообщение</label>
+                                <textarea id="message" class="form-control" required></textarea>
+                            </div>
+                            <button type="submit" class="btn">Отправить</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
     </main>
 
     <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-about">
+                    <div class="footer-logo">Анна Светлова</div>
+                    <p>Профессиональный фотограф, специализирующийся на портретной и свадебной съемке.</p>
+                </div>
+                <div class="footer-links">
+                    <h3>Быстрые ссылки</h3>
+                    <ul>
+                        <li><a href="#home">Главная</a></li>
+                        <li><a href="#about">Обо мне</a></li>
+                        <li><a href="#gallery">Галерея</a></li>
+                        <li><a href="#contact">Контакты</a></li>
+                    </ul>
+                </div>
+                <div class="footer-social">
+                    <h3>Социальные сети</h3>
+                    <div class="social-icons">
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-vk"></i></a>
+                        <a href="#"><i class="fab fa-telegram"></i></a>
+                        <a href="#"><i class="fab fa-whatsapp"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2023 Анна Светлова. Все права защищены.</p>
+            </div>
+        </div>
+    </footer>
 
     <!-- Modal for enlarged images -->
+    <div class="modal" id="imageModal">
+        <span class="close-modal">&times;</span>
+        <img class="modal-content" id="modalImage">
+    </div>
 
-    <script src="js/script.js"></script>
+	<script src="js/script.js"></script>
 </body>
 </html>
