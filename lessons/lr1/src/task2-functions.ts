@@ -16,20 +16,66 @@
 // TODO: Создать union тип для категорий
 // electronics | clothing | books | food | other
 
-function createProduct(id, name, price, category, inStock, tags) {
+// Union тип для категорий
+type Category = 'electronics' | 'clothing' | 'books' | 'food' | 'other';
+
+// Интерфейс для товара
+interface Product {
+    id: number;
+    name: string;
+    price: number;
+    category: Category;
+    inStock: boolean;
+    tags: string[];
+    createdAt: Date;
+}
+
+// Интерфейс для фильтров
+interface ProductFilters {
+    category?: Category;
+    inStock?: boolean;
+    minPrice?: number;
+    maxPrice?: number;
+    tag?: string;
+}
+
+// Union тип для типов скидок
+type DiscountType = 'percentage' | 'fixed' | 'buy_one_get_one';
+
+// Интерфейс для результата расчета скидки
+interface DiscountResult {
+    originalPrice: number;
+    finalPrice: number;
+    discount: number;
+    discountType: DiscountType;
+}
+
+// Типы для сортировки
+type SortBy = 'name' | 'price' | 'createdAt';
+type SortOrder = 'asc' | 'desc';
+
+// Функция создания товара
+function createProduct(
+    id: number, 
+    name: string, 
+    price: number, 
+    category: Category, 
+    inStock: boolean = true, 
+    tags: string[] = []
+): Product {
     return {
         id,
         name,
         price,
         category,
-        inStock: inStock ?? true,
-        tags: tags || [],
+        inStock,
+        tags,
         createdAt: new Date()
     };
 }
 
-// TODO: Типизировать функцию фильтрации товаров
-function filterProducts(products, filters) {
+// Функция фильтрации товаров
+function filterProducts(products: Product[], filters: ProductFilters): Product[] {
     return products.filter(product => {
         if (filters.category && product.category !== filters.category) {
             return false;
@@ -50,8 +96,12 @@ function filterProducts(products, filters) {
     });
 }
 
-// TODO: Типизировать функцию расчета скидки
-function calculateDiscount(product, discountType, value) {
+// Функция расчета скидки
+function calculateDiscount(
+    product: Product, 
+    discountType: DiscountType, 
+    value: number = 0
+): DiscountResult {
     let finalPrice = product.price;
     
     switch (discountType) {
@@ -64,8 +114,6 @@ function calculateDiscount(product, discountType, value) {
         case 'buy_one_get_one':
             finalPrice = product.price * 0.5;
             break;
-        default:
-            break;
     }
     
     return {
@@ -76,8 +124,12 @@ function calculateDiscount(product, discountType, value) {
     };
 }
 
-// TODO: Типизировать функцию сортировки
-function sortProducts(products, sortBy, order) {
+// Функция сортировки товаров
+function sortProducts(
+    products: Product[], 
+    sortBy: SortBy, 
+    order: SortOrder = 'asc'
+): Product[] {
     return [...products].sort((a, b) => {
         let comparison = 0;
         
@@ -97,14 +149,15 @@ function sortProducts(products, sortBy, order) {
     });
 }
 
-// Примеры использования
-const products = [
+// Создаем товары ДО их использования
+const products: Product[] = [
     createProduct(1, 'iPhone 15', 80000, 'electronics', true, ['smartphone', 'apple']),
     createProduct(2, 'Джинсы Levis', 5000, 'clothing', false, ['jeans', 'denim']),
     createProduct(3, 'JavaScript книга', 1500, 'books', true, ['programming', 'js']),
     createProduct(4, 'Хлеб', 50, 'food', true, ['bakery', 'daily'])
 ];
 
+// Примеры использования
 console.log('Все товары:', products);
 
 const electronicsProducts = filterProducts(products, { 
@@ -113,8 +166,13 @@ const electronicsProducts = filterProducts(products, {
 });
 console.log('Электроника в наличии:', electronicsProducts);
 
-const discountedPhone = calculateDiscount(products[0], 'percentage', 10);
-console.log('Скидка на телефон:', discountedPhone);
+// Убедимся, что products[0] существует перед использованием
+if (products.length > 0) {
+    const discountedPhone = calculateDiscount(products[0], 'percentage', 10); //не пойму что не нравится products
+    console.log('Скидка на телефон:', discountedPhone);
+} else {
+    console.log('Массив товаров пуст');
+}
 
 const sortedByPrice = sortProducts(products, 'price', 'asc');
 console.log('Товары по цене (возрастание):', sortedByPrice);

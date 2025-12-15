@@ -16,8 +16,49 @@
 // - Grade: studentId, courseId, score, date
 // - CourseStats: courseId, averageGrade, totalStudents, completionRate
 
+interface Grade {
+    score: number;
+    date: Date;
+}
+
+interface Student {
+    id: number;
+    name: string;
+    email: string;
+    enrolledCourses: number[];
+    grades: {
+        [courseId: number]: Grade[];
+    };
+}
+
+interface Course {
+    id: number;
+    title: string;
+    instructor: string;
+    duration: number;
+    maxStudents: number;
+    enrolledStudents: number[];
+}
+
+interface CourseStats {
+    courseId: number;
+    averageGrade: number;
+    totalStudents: number;
+    completionRate: number;
+}
+
+interface OperationResult {
+    success: boolean;
+    message: string;
+}
+
+// Generic тип для ответов с данными
+interface DataResult<T> extends OperationResult {
+    data?: T;
+}
+
 // Создание студента
-function createStudent(id, name, email) {
+function createStudent(id: number, name: string, email: string): Student {
     return {
         id,
         name,
@@ -28,7 +69,13 @@ function createStudent(id, name, email) {
 }
 
 // Создание курса
-function createCourse(id, title, instructor, duration, maxStudents) {
+function createCourse(
+    id: number, 
+    title: string, 
+    instructor: string, 
+    duration: number, 
+    maxStudents: number
+): Course {
     return {
         id,
         title,
@@ -40,7 +87,7 @@ function createCourse(id, title, instructor, duration, maxStudents) {
 }
 
 // Запись студента на курс
-function enrollStudent(student, course) {
+function enrollStudent(student: Student, course: Course): OperationResult {
     if (course.enrolledStudents.length >= course.maxStudents) {
         return {
             success: false,
@@ -65,7 +112,11 @@ function enrollStudent(student, course) {
 }
 
 // Выставление оценки
-function assignGrade(student, courseId, score) {
+function assignGrade(
+    student: Student, 
+    courseId: number, 
+    score: number
+): OperationResult {
     if (!student.enrolledCourses.includes(courseId)) {
         return {
             success: false,
@@ -96,7 +147,7 @@ function assignGrade(student, courseId, score) {
 }
 
 // Расчет средней оценки студента
-function calculateStudentAverage(student, courseId) {
+function calculateStudentAverage(student: Student, courseId: number): number | null {
     const grades = student.grades[courseId];
     if (!grades || grades.length === 0) {
         return null;
@@ -107,7 +158,7 @@ function calculateStudentAverage(student, courseId) {
 }
 
 // Получение статистики по курсу
-function getCourseStats(course, students) {
+function getCourseStats(course: Course, students: Student[]): CourseStats {
     const enrolledStudents = students.filter(student => 
         student.enrolledCourses.includes(course.id)
     );
@@ -137,26 +188,45 @@ function getCourseStats(course, students) {
     };
 }
 
-// Поиск лучших студентов
-function getTopStudents(students, courseId, limit) {
-    return students
-        .map(student => ({
-            ...student,
-            average: calculateStudentAverage(student, courseId)
-        }))
-        .filter(student => student.average !== null)
-        .sort((a, b) => b.average - a.average)
+// Generic функция для фильтрации и сортировки
+function filterAndSort<T>(
+    items: T[], 
+    filterFn: (item: T) => boolean, 
+    sortFn: (a: T, b: T) => number, 
+    limit?: number
+): T[] {
+    return items
+        .filter(filterFn)
+        .sort(sortFn)
         .slice(0, limit);
 }
 
+// Поиск лучших студентов
+function getTopStudents(
+    students: Student[], 
+    courseId: number, 
+    limit: number
+): Array<Student & { average: number | null }> {
+    return filterAndSort(
+        students.map(student => ({
+            ...student,
+            average: calculateStudentAverage(student, courseId)
+        })),
+        (student): student is Student & { average: number } => 
+            student.average !== null,
+        (a, b) => b.average - a.average,
+        limit
+    );
+}
+
 // Примеры использования
-const students = [
+const students: Student[] = [
     createStudent(1, 'Анна Иванова', 'anna@example.com'),
     createStudent(2, 'Петр Петров', 'peter@example.com'),
     createStudent(3, 'Мария Сидорова', 'maria@example.com')
 ];
 
-const courses = [
+const courses: Course[] = [
     createCourse(101, 'JavaScript Основы', 'Иван Учителев', 40, 20),
     createCourse(102, 'React Advanced', 'Мария Преподователь', 60, 15)
 ];
