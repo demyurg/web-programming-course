@@ -14,11 +14,11 @@ interface GameStatistics {
 export class GameStore {
   gameStatus: GameStatus = 'idle';
   currentQuestionIndex = 0;
-  selectedAnswer: number | null = null;
+  selectedAnswers: number[] = [];
   score = 0;
   questions: Question[] = mockQuestions;
   timer = 0;
-  timerInterval: number | null = null; // Изменено на number
+  timerInterval: number | null = null;
   statistics: GameStatistics = {
     totalGames: 0,
     bestScore: 0,
@@ -58,28 +58,40 @@ export class GameStore {
   startGame = () => {
     this.gameStatus = 'playing';
     this.currentQuestionIndex = 0;
-    this.selectedAnswer = null;
+    this.selectedAnswers = [];
     this.score = 0;
     this.timer = 0;
     this.startTimer();
   };
 
-  selectAnswer = (answerIndex: number) => {
-    if (this.selectedAnswer !== null || this.gameStatus !== 'playing') return;
-    
-    this.selectedAnswer = answerIndex;
-    
-    if (answerIndex === this.currentQuestion?.correctAnswer) {
-      this.score += 1;
+  // Переключает выбор варианта (для множественного выбора)
+  toggleAnswer = (answerIndex: number) => {
+    if (this.gameStatus !== 'playing') return;
+
+    const idx = this.selectedAnswers.indexOf(answerIndex);
+    if (idx === -1) {
+      this.selectedAnswers = [...this.selectedAnswers, answerIndex];
+    } else {
+      const copy = [...this.selectedAnswers];
+      copy.splice(idx, 1);
+      this.selectedAnswers = copy;
     }
   };
 
   nextQuestion = () => {
+    // Оцениваем текущий ответ перед переходом
+    if (this.currentQuestion && this.selectedAnswers.length > 0) {
+      const correct = this.currentQuestion.correctAnswer;
+      if (this.selectedAnswers.includes(correct)) {
+        this.score += 1;
+      }
+    }
+
     if (this.isLastQuestion) {
       this.finishGame();
     } else {
       this.currentQuestionIndex += 1;
-      this.selectedAnswer = null;
+      this.selectedAnswers = [];
     }
   };
 
@@ -92,7 +104,7 @@ export class GameStore {
   resetGame = () => {
     this.gameStatus = 'idle';
     this.currentQuestionIndex = 0;
-    this.selectedAnswer = null;
+    this.selectedAnswers = [];
     this.score = 0;
     this.timer = 0;
     this.stopTimer();

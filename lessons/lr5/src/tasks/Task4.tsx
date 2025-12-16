@@ -1,13 +1,14 @@
 import { observer } from 'mobx-react-lite';
 import { gameStore } from '../stores/gameStore';
-import { useUIStore } from '../stores/uiStore';
+import { useUIStore } from '../stores/uiStore.ts';
+import type { UIState } from '../stores/uiStore.ts';
 
 const Task4 = observer(() => {
   // MobX - бизнес-логика
   const { 
     gameStatus, 
     currentQuestion,
-    selectedAnswer, 
+    selectedAnswers, 
     score, 
     progress,
     currentQuestionIndex,
@@ -19,13 +20,13 @@ const Task4 = observer(() => {
   } = gameStore;
 
   // Zustand - UI состояние
-  const theme = useUIStore((state) => state.theme);
-  const soundEnabled = useUIStore((state) => state.soundEnabled);
-  const toggleTheme = useUIStore((state) => state.toggleTheme);
-  const settingsModalOpen = useUIStore((state) => state.settingsModalOpen);
-  const toggleSettingsModal = useUIStore((state) => state.toggleSettingsModal);
-  const statsModalOpen = useUIStore((state) => state.statsModalOpen);
-  const toggleStatsModal = useUIStore((state) => state.toggleStatsModal);
+  const theme = useUIStore((state: UIState) => state.theme);
+  const soundEnabled = useUIStore((state: UIState) => state.soundEnabled);
+  const toggleTheme = useUIStore((state: UIState) => state.toggleTheme);
+  const settingsModalOpen = useUIStore((state: UIState) => state.settingsModalOpen);
+  const toggleSettingsModal = useUIStore((state: UIState) => state.toggleSettingsModal);
+  const statsModalOpen = useUIStore((state: UIState) => state.statsModalOpen);
+  const toggleStatsModal = useUIStore((state: UIState) => state.toggleStatsModal);
 
   // Цвета в зависимости от темы
   const bgGradient = theme === 'light'
@@ -236,16 +237,16 @@ const Task4 = observer(() => {
 
           {/* Варианты ответов */}
           <div className="space-y-3">
-            {currentQuestion.options.map((option, index) => {
-              const isSelected = selectedAnswer === index;
+            {currentQuestion.options.map((option: string, index: number) => {
+              const isSelected = selectedAnswers.includes(index);
               const isCorrect = index === currentQuestion.correctAnswer;
-              const showResult = selectedAnswer !== null;
+              const showResult = selectedAnswers.length > 0;
 
               return (
                 <button
                   key={index}
-                  onClick={() => gameStore.selectAnswer(index)}
-                  disabled={selectedAnswer !== null}
+                  onClick={() => gameStore.toggleAnswer(index)}
+                  disabled={gameStatus !== 'playing'}
                   className={`
                     w-full p-4 text-left rounded-lg border-2 transition-all
                     ${!showResult && theme === 'light' && 'hover:border-purple-400 hover:bg-purple-50'}
@@ -264,7 +265,7 @@ const Task4 = observer(() => {
                       ${showResult && isCorrect && 'bg-green-500 text-white'}
                       ${showResult && isSelected && !isCorrect && 'bg-red-500 text-white'}
                     `}>
-                      {String.fromCharCode(65 + index)}
+                      {isSelected ? '✓' : String.fromCharCode(65 + index)}
                     </span>
                     <span className={`flex-1 ${textColor}`}>{option}</span>
                   </div>
@@ -274,7 +275,7 @@ const Task4 = observer(() => {
           </div>
 
           {/* Кнопка "Далее" */}
-          {selectedAnswer !== null && (
+          {selectedAnswers.length > 0 && (
             <button
               onClick={() => gameStore.nextQuestion()}
               className={`mt-6 w-full ${primaryColor} ${primaryHover} text-white py-3 px-6 rounded-lg font-semibold transition-colors`}

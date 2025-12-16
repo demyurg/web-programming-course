@@ -1,9 +1,9 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-type Theme = 'light' | 'dark';
+export type Theme = 'light' | 'dark';
 
-interface UIState {
+export interface UIState {
   theme: Theme;
   soundEnabled: boolean;
   settingsModalOpen: boolean;
@@ -73,3 +73,4 @@ export const useUIStore = create<UIState>()(
     }
   )
 );
+
