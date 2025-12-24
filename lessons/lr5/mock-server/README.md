@@ -26,7 +26,7 @@ npm run dev
 ### 1. Получите токен авторизации
 
 ```bash
-curl http://localhost:3000/api/auth/github/callback?code=mock_code
+curl http://localhost:5173/api/auth/github/callback?code=mock_code
 ```
 
 Ответ:
