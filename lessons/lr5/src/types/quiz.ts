@@ -11,26 +11,33 @@ interface BaseQuestion {
   difficulty: 'easy' | 'medium' | 'hard';
 }
 
-// ===== Multiple-select вопрос =====
+// ===== Multiple-select =====
 export interface MultipleSelectQuestion extends BaseQuestion {
   type: 'multiple-select';
   options: string[];
 }
 
-// ===== Essay вопрос =====
+// ===== Essay =====
 export interface EssayQuestion extends BaseQuestion {
   type: 'essay';
   minLength: number;
   maxLength: number;
 }
 
-// ===== Универсальный тип вопроса =====
+// ===== Универсальный =====
 export type Question = MultipleSelectQuestion | EssayQuestion;
 
-// ===== Ответ пользователя =====
+// ===== Ответ от сервера =====
+export interface ServerAnswerResult {
+  questionId: string | number;
+  pointsEarned: number;
+  isCorrect: boolean;
+}
+
+// ===== Ответ пользователя (локальный лог) =====
 export interface Answer {
   questionId: string | number;
-  selectedAnswer?: number[];    // для multiple-select
-  essayAnswer?: string;         // для essay
-  isCorrect?: boolean;
+  selectedAnswer?: number[];
+  essayAnswer?: string;
+  isCorrect: boolean;
 }

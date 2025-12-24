@@ -1,14 +1,13 @@
 import { observer } from 'mobx-react-lite';
 import { gameStore } from '../stores/gameStore';
 import { useUIStore } from '../stores/uiStore';
-import { useState } from 'react';
 
 const Task4 = observer(() => {
   const {
     gameStatus,
     currentQuestion,
     selectedAnswers,
-    selectedEssayAnswer,
+    essayAnswer,            
     score,
     progress,
     correctAnswersCount,
@@ -33,33 +32,19 @@ const Task4 = observer(() => {
   const mutedText = theme === 'light' ? 'text-gray-600' : 'text-gray-400';
   const bgGradient = theme === 'light' ? 'from-purple-500 to-indigo-600' : 'from-gray-900 to-black';
 
-  // ===== Старт игры =====
   const handleStartGame = async () => {
     await gameStore.createSession(5, 'medium');
     gameStore.startGame();
   };
 
-  // ===== Следующий вопрос =====
   const handleNextQuestion = async () => {
-    if (!currentQuestion) return;
-    // Для multiple-select проверяем, что выбран хотя бы один вариант
-    if (currentQuestion.type === 'multiple-select' && selectedAnswers.length === 0) return;
-    // Для essay проверяем, что текст не пустой
-    if (currentQuestion.type === 'essay' && !selectedEssayAnswer.trim()) return;
-
     await gameStore.nextQuestion();
   };
 
-  // ===== Завершение игры =====
-const handleFinishGame = async () => {
-  if (!currentQuestion) return;
-  
-  // Сначала отправляем ответ на текущий (последний) вопрос
-  await gameStore.submitCurrentAnswer();
-  
-  // Потом завершаем
-  await gameStore.finishGame();
-};
+  const handleFinishGame = async () => {
+    await gameStore.nextQuestion(); 
+  };
+
   // ===== UI логика =====
   let mainContent;
 
@@ -128,6 +113,12 @@ const handleFinishGame = async () => {
   } else if (!currentQuestion) {
     mainContent = null;
   } else {
+    // Проверяем, можно ли показать кнопку "Следующий / Завершить"
+    const canSubmit =
+      currentQuestion.type === 'multiple-select'
+        ? selectedAnswers.length > 0
+        : essayAnswer.trim().length > 0;
+
     mainContent = (
       <div className={`min-h-screen bg-gradient-to-br ${bgGradient} p-4`}>
         <div className="max-w-2xl mx-auto">
@@ -172,7 +163,7 @@ const handleFinishGame = async () => {
               {/* Essay */}
               {currentQuestion.type === 'essay' && (
                 <textarea
-                  value={selectedEssayAnswer}
+                  value={essayAnswer}                           
                   onChange={(e) => gameStore.setEssayAnswer(e.target.value)}
                   placeholder="Введите свой ответ..."
                   className={`w-full p-4 border-2 rounded-lg ${theme === 'light' ? 'border-gray-300' : 'border-gray-600'} ${textColor}`}
@@ -182,12 +173,17 @@ const handleFinishGame = async () => {
             </div>
 
             <div style={{ minHeight: '3rem', marginTop: '1rem' }}>
-              {(currentQuestion.type === 'multiple-select' ? selectedAnswers.length > 0 : selectedEssayAnswer.trim().length > 0) && (
+              {canSubmit && (
                 <button
-                  onClick={isLastQuestion ? handleFinishGame : handleNextQuestion}
+                  onClick={gameStore.isLastQuestion ? handleFinishGame : handleNextQuestion}
                   className={`mt-6 w-full ${primaryColor} ${primaryHover} text-white py-3 px-6 rounded-lg`}
+                  disabled={
+                    currentQuestion.type === 'multiple-select'
+                      ? selectedAnswers.length === 0
+                      : !essayAnswer.trim()
+                  }
                 >
-                  {isLastQuestion ? 'Завершить' : 'Следующий вопрос'}
+                  {gameStore.isLastQuestion ? 'Завершить' : 'Следующий вопрос'}
                 </button>
               )}
             </div>

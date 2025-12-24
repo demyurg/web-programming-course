@@ -1,43 +1,33 @@
-// src/stores/gameStore.ts
 import { makeAutoObservable, runInAction, action } from 'mobx';
-import { Question, MultipleSelectQuestion, EssayQuestion, Answer } from '../types/quiz';
+import type { Question, Answer } from '../types/quiz';  
 
 class GameStore {
-  // ===== Состояние игры =====
+  // ================== СОСТОЯНИЕ ==================
   gameStatus: 'idle' | 'playing' | 'finished' = 'idle';
   questions: Question[] = [];
   currentQuestionIndex = 0;
   score = 0;
-  selectedAnswers: number[] = [];           // для multiple-select
-  selectedEssayAnswer: string = '';         // для essay
-  answeredQuestions: Answer[] = [];
   correctAnswersCount = 0;
-  timeLeft = 30000;
-  timerInterval: NodeJS.Timeout | null = null;
+  selectedAnswers: number[] = [];
+  essayAnswer: string = '';
+  answeredQuestions: Answer[] = [];
+  timeLeft = 3000;
+  timer: NodeJS.Timeout | null = null;
   sessionId: string | null = null;
-  pastScores: number[] = [];
 
   constructor() {
-    makeAutoObservable(this);
-    const saved = localStorage.getItem('quizPastScores');
-    if (saved) this.pastScores = JSON.parse(saved);
+    makeAutoObservable(this, {}, { autoBind: true }); 
   }
 
-  // ===== Эссе =====
-  setEssayAnswer(text: string) {
-    this.selectedEssayAnswer = text;
-  }
-
-  resetEssayAnswer() {
-    this.selectedEssayAnswer = '';
-  }
-
-  // ===== Создание сессии =====
+  // ================== СОЗДАНИЕ СЕССИИ ==================
   async createSession(questionCount = 5, difficulty = 'medium') {
-    try {
-      const token = localStorage.getItem('auth_token');
-      if (!token) throw new Error('Нет токена авторизации');
+    const token = localStorage.getItem('auth_token');
+    if (!token) {
+      console.error('Нет токена авторизации');
+      return;
+    }
 
+    try {
       const res = await fetch(`${import.meta.env.VITE_API_URL}/api/sessions`, {
         method: 'POST',
         headers: {
@@ -47,13 +37,15 @@ class GameStore {
         body: JSON.stringify({ questionCount, difficulty }),
       });
 
-      if (!res.ok) throw new Error('Не удалось создать сессию');
+      if (!res.ok) {
+        throw new Error(`Создание сессии не удалось: ${res.status}`);
+      }
 
       const data = await res.json();
 
       runInAction(() => {
+        this.questions = data.questions || [];
         this.sessionId = data.sessionId;
-        this.questions = data.questions;
         this.currentQuestionIndex = 0;
       });
     } catch (err) {
@@ -61,53 +53,50 @@ class GameStore {
     }
   }
 
-  // ===== Старт игры =====
+  // ================== СТАРТ ИГРЫ ==================
   startGame() {
-    if (!this.questions.length) {
-      console.warn('Нет загруженных вопросов');
-      return;
-    }
+    if (!this.questions.length) return;
 
     runInAction(() => {
       this.gameStatus = 'playing';
       this.score = 0;
-      this.selectedAnswers = [];
-      this.selectedEssayAnswer = '';
-      this.answeredQuestions = [];
       this.correctAnswersCount = 0;
-      this.timeLeft = 30000;
+      this.currentQuestionIndex = 0;
+      this.selectedAnswers = [];
+      this.essayAnswer = '';
+      this.answeredQuestions = [];
       this.startTimer();
     });
   }
 
-  // ===== Таймер =====
-  startTimer = () => {
+  // ================== ТАЙМЕР ==================
+  startTimer() {
     this.stopTimer();
-    if (this.gameStatus !== 'playing') return;
+    runInAction(() => { this.timeLeft = 3000; });
 
-    this.timerInterval = setInterval(
+    this.timer = setInterval(
       action(() => {
-        if (this.timeLeft > 0) {
+        runInAction(() => {
           this.timeLeft--;
-        } else {
-          this.submitCurrentAnswerAndNext();
-        }
+          if (this.timeLeft <= 0) {
+            this.stopTimer();
+            this.nextQuestion();
+          }
+        });
       }),
       1000
     );
-  };
+  }
 
-  stopTimer = () => {
-    if (this.timerInterval) {
-      clearInterval(this.timerInterval);
-      this.timerInterval = null;
+  stopTimer() {
+    if (this.timer) {
+      clearInterval(this.timer);
+      this.timer = null;
     }
-  };
+  }
 
-  // ===== Выбор варианта (multiple-select) =====
+  // ================== ВЫБОР ОТВЕТОВ ==================
   toggleAnswer(index: number) {
-    if (!this.currentQuestion || this.currentQuestion.type !== 'multiple-select') return;
-
     if (this.selectedAnswers.includes(index)) {
       this.selectedAnswers = this.selectedAnswers.filter(i => i !== index);
     } else {
@@ -115,132 +104,191 @@ class GameStore {
     }
   }
 
-  // ===== Отправка ответа — ГЛАВНОЕ ИСПРАВЛЕНИЕ ДЛЯ LR6 =====
+  setEssayAnswer(text: string) {
+    this.essayAnswer = text;
+  }
+
+  // ================== ОТПРАВКА ОТВЕТА ==================
   async submitCurrentAnswer() {
-    const question = this.currentQuestion;
-    if (!question || !this.sessionId) return;
+  if (!this.currentQuestion || !this.sessionId) return;
 
-    const token = localStorage.getItem('auth_token');
-    if (!token) return;
+  const token = localStorage.getItem('auth_token');
+  if (!token) return;
 
-    const payload: any = {
-      questionId: question.id,
-    };
-
-    if (question.type === 'multiple-select') {
-      payload.selectedOptions = this.selectedAnswers;
-    } else if (question.type === 'essay') {
-      payload.textAnswer = this.selectedEssayAnswer.trim();
-    }
-
-    try {
-      const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/sessions/${this.sessionId}/answers`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(payload),
-        }
-      );
-
-      if (!res.ok) {
-        const errText = await res.text();
-        console.error('Сервер отклонил ответ:', res.status, errText);
-        return; // не бросаем — иначе игра зависнет
-      }
-
-      const result = await res.json();
-
-      runInAction(() => {
-        const points = result.pointsEarned ?? 0;
-        const isCorrect = result.isCorrect ?? false;
-
-        this.answeredQuestions.push({
-          questionId: question.id,
-          selectedAnswer: question.type === 'multiple-select' ? [...this.selectedAnswers] : [],
-          isCorrect,
-        });
-
-        this.score += points;
-        if (isCorrect) this.correctAnswersCount++;
-
-        // Сбрасываем локальные ответы
-        this.selectedAnswers = [];
-        this.selectedEssayAnswer = '';
-      });
-    } catch (err) {
-      console.error('Ошибка отправки ответа:', err);
-    }
-  }
-
-  // ===== Переход к следующему вопросу =====
-  async nextQuestion() {
-    await this.submitCurrentAnswer();
-
-    if (this.isLastQuestion) {
-      await this.finishGame();
-      return;
-    }
-
-    runInAction(() => {
-      this.currentQuestionIndex++;
-      this.timeLeft = 30000;
-      this.startTimer();
-    });
-  }
-
-  submitCurrentAnswerAndNext = () => {
-    this.nextQuestion();
+  const payload = {
+    questionId: this.currentQuestion.id,
+    ...(this.currentQuestion.type === 'multiple-select' ? { selectedOptions: this.selectedAnswers } : {}),
+    ...(this.currentQuestion.type === 'essay' ? { text: this.essayAnswer.trim() } : {}),
   };
 
-  // ===== Завершение сессии на сервере — ОБЯЗАТЕЛЬНО! =====
- // ===== Завершение игры (без запроса — сервер закроет сессию сам) =====
-async finishGame() {
-  // Больше не шлём запрос — избегаем 404
-  // Если нужно в будущем, добавим правильный эндпоинт
+  console.group(`[Ответ на вопрос ${this.currentQuestion.id}]`);
+console.log('URL:', `${import.meta.env.VITE_API_URL}/api/sessions/${this.sessionId}/submit`);
+
+
+if (this.currentQuestion.type === 'multiple-select') {
+  const letters = this.selectedAnswers
+    .map(i => String.fromCharCode(65 + i))  
+    .sort()
+    .join(', ') || 'ничего не выбрано';
+
+  console.log(
+    '%cОтправляем (multiple-select): %cВарианты: ' + letters,
+    'color: #888; font-weight: normal;',
+    'color: #4CAF50; font-weight: bold;'
+  );
+
+  
+  console.log(`Индексы: ${this.selectedAnswers.join(', ') || 'пусто'}`);
+} 
+else if (this.currentQuestion.type === 'essay') {
+  const preview = this.essayAnswer.trim().length > 50 
+    ? this.essayAnswer.trim().slice(0, 47) + '...' 
+    : this.essayAnswer.trim() || 'пустой текст';
+
+  console.log(
+    '%cОтправляем (essay): %c"' + preview + '"',
+    'color: #888; font-weight: normal;',
+    'color: #2196F3; font-style: italic;'
+  );
+} 
+else {
+  console.log('Отправляем:', payload);
+}
+
+console.log('Полный payload:', payload);
+
+  try {
+    const res = await fetch(
+      `${import.meta.env.VITE_API_URL}/api/sessions/${this.sessionId}/submit`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(payload),
+      }
+    );
+
+    console.log('Статус ответа:', res.status);
+
+    const text = await res.text();  
+    console.log('Сырой Response:', text);
+
+    let result;
+    try {
+      result = JSON.parse(text);
+      console.log('Parsed JSON:', result);
+      console.log('Начислено баллов:', result.pointsEarned ?? 'не пришло');
+      console.log('Правильно?', result.isCorrect ?? 'не пришло');
+    } catch {
+      console.log('Ответ не JSON:', text);
+    }
+
+  
+  } catch (err) {
+    console.error('Ошибка fetch:', err);
+  } finally {
+    console.groupEnd();
+  }
+}
+
+  // ================== ПЕРЕХОД К СЛЕДУЮЩЕМУ ВОПРОСУ ==================
+async nextQuestion() {
+  await this.submitCurrentAnswer();
 
   runInAction(() => {
-    this.gameStatus = 'finished';
-    this.pastScores.push(this.score);
-    localStorage.setItem('quizPastScores', JSON.stringify(this.pastScores));
-    this.stopTimer();
-    this.sessionId = null;  // Это очистит сессию локально
+    this.selectedAnswers = [];     
+    this.essayAnswer = '';          
+  });
+
+  if (this.isLastQuestion) {
+    await this.finishGame();
+    return;
+  }
+
+  runInAction(() => {
+    this.currentQuestionIndex++;
+    this.startTimer();
   });
 }
 
-  // ===== Сброс игры =====
+  // ================== ЗАВЕРШЕНИЕ ИГРЫ ==================
+async finishGame() {
+  if (!this.sessionId) return;
+
+  const token = localStorage.getItem('auth_token');
+  if (!token) return;
+
+  try {
+    console.log('Завершаем сессию финальным /submit');
+
+    const res = await fetch(
+      `${import.meta.env.VITE_API_URL}/api/sessions/${this.sessionId}/submit`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({}),  // пустой body — безопасно
+      }
+    );
+
+    console.log('Статус финального submit:', res.status);
+
+    if (!res.ok) {
+      const errorText = await res.text();
+      console.error('Ошибка финального submit:', errorText);
+      return;
+    }
+
+    const result = await res.json();  // ← читаем ТОЛЬКО ОДИН раз
+    console.log('Финализация OK, сервер вернул:', result);
+
+    runInAction(() => {
+      // Если сервер вернул финальные баллы — обновляем
+      this.score = result.score?.earned ?? this.score;
+    });
+  } catch (err) {
+    console.error('Ошибка сети при финальном submit:', err);
+  }
+
+  runInAction(() => {
+    this.gameStatus = 'finished';
+    this.stopTimer();
+    this.sessionId = null;
+  });
+}
+
+  // ================== СБРОС ==================
   resetGame() {
+    this.stopTimer();
     runInAction(() => {
       this.gameStatus = 'idle';
       this.questions = [];
       this.currentQuestionIndex = 0;
       this.score = 0;
-      this.selectedAnswers = [];
-      this.selectedEssayAnswer = '';
-      this.answeredQuestions = [];
       this.correctAnswersCount = 0;
-      this.timeLeft = 30000;
-      this.stopTimer();
+      this.selectedAnswers = [];
+      this.essayAnswer = '';
+      this.answeredQuestions = [];
       this.sessionId = null;
+      this.timeLeft = 30;
     });
   }
 
-  // ===== Геттеры =====
+  // ================== ГЕТТЕРЫ ==================
   get currentQuestion(): Question | null {
     return this.questions[this.currentQuestionIndex] ?? null;
   }
 
   get progress(): number {
-    return this.questions.length > 0
-      ? ((this.currentQuestionIndex + 1) / this.questions.length) * 100
-      : 0;
+    return this.questions.length ? ((this.currentQuestionIndex + 1) / this.questions.length) * 100 : 0;
   }
 
   get isLastQuestion(): boolean {
-    return this.currentQuestionIndex >= this.questions.length - 1;
+    return this.currentQuestionIndex === this.questions.length - 1;
   }
 }
 
