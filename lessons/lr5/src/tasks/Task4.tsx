@@ -1,6 +1,12 @@
 import { observer } from 'mobx-react-lite';
 import { gameStore } from '../stores/gameStore';
 import { useUIStore } from '../stores/uiStore';
+import { usePostApiSessions } from '../../generated/api/sessions/sessions';
+import { usePostApiSessionsSessionIdAnswers } from '../../generated/api/sessions/sessions';
+import { usePostApiSessionsSessionIdSubmit } from '../../generated/api/sessions/sessions';
+import { useState } from 'react';
+
+
 
 /**
  * Task 4: Комбинированное использование MobX + Zustand
@@ -23,9 +29,88 @@ import { useUIStore } from '../stores/uiStore';
 const Task4 = observer(() => {
   // MobX - бизнес-логика
   const { gameStatus, currentQuestion} = gameStore;
-  const selectedAnswer = gameStore.selectedAnswer;
+  const selectedAnswer = gameStore.selectedAnswers;
   const score = gameStore.score;
   const progress = gameStore.progress;
+  const [sessionId, setSessionId] = useState<string | null>(null);
+
+  const createSession = usePostApiSessions();
+
+  const handleStartGame = () => {
+  
+  createSession.mutate(
+    {
+      data: {
+        questionCount: 5,
+        difficulty: 'medium'
+      }
+    },
+    {
+      onSuccess: (response) => {
+        setSessionId(response.sessionId);
+        gameStore.setQuestionsFromAPI(response.questions);
+        gameStore.startGame();
+      },
+      onError: (error) => {
+        console.error('Failed to create session:', error);
+      },
+    }
+  );
+};
+
+const handleNextQuestion = () => {
+  // use the selectedAnswer (singular) and ensure it's set before submitting
+  if (sessionId && currentQuestion && selectedAnswer !== null) {
+    // Отправляем ответ на сервер (payload goes under `data` as required by the generated hook)
+    submitAnswer.mutate(
+      {
+        sessionId,
+        data: {
+          questionId: currentQuestion.id,
+          answers: [selectedAnswer],
+        },
+      },
+      {
+        onSuccess: (response) => {
+          console.log('Answer submitted:', response);
+
+          gameStore.nextQuestion();
+        },
+        onError: (error: unknown) => {
+          console.error('Failed to submit answer:', error);
+
+          gameStore.nextQuestion();
+        },
+      }
+    );
+  } else {
+    // Если нет сессии или не выбран ответ — просто переход к следующему вопросу
+    gameStore.nextQuestion();
+  }
+};
+
+const handleFinishGame = () => {
+  if (sessionId) {
+    submitSession.mutate(
+      { sessionId },
+      {
+        onSuccess: (response) => {
+          console.log('Session completed:', response);
+          gameStore.finishGame();
+        },
+        onError: (error) => {
+          console.error('Failed to submit session:', error);
+          gameStore.finishGame();
+        },
+      }
+    );
+  } else {
+    gameStore.finishGame();
+  }
+};
+  const submitAnswer = usePostApiSessionsSessionIdAnswers();
+  const submitSession = usePostApiSessionsSessionIdSubmit();
+  
 
   // Zustand - UI состояние
   const theme = useUIStore((state) => state.theme);
@@ -68,7 +153,7 @@ const Task4 = observer(() => {
           </p>
 
           <button
-            onClick={() => gameStore.startGame()}
+            onClick={() => handleStartGame()}
             className={`w-full ${primaryColor} ${primaryHover} text-white py-4 px-6 rounded-xl font-semibold transition-all transform hover:scale-105`}
           >
             Начать игру
@@ -201,7 +286,7 @@ const Task4 = observer(() => {
               return (
                 <button
                   key={index}
-                  onClick={() => gameStore.selectAnswer(index)}
+                  onClick={() => gameStore.toggleAnswer(index)}
                   disabled={selectedAnswer !== null}
                   className={`
                     w-full p-4 text-left rounded-lg border-2 transition-all
@@ -221,7 +306,8 @@ const Task4 = observer(() => {
                       ${showResult && isCorrect && 'bg-green-500 text-white'}
                       ${showResult && isSelected && !isCorrect && 'bg-red-500 text-white'}
                     `}>
-                      {String.fromCharCode(65 + index)}
+                      {/*{String.fromCharCode(65 + index)}*/}
+                      {isSelected ? '✓' : String.fromCharCode(65 + index)}
                     </span>
                     <span className={`flex-1 ${textColor}`}>{option}</span>
                   </div>
@@ -232,10 +318,10 @@ const Task4 = observer(() => {
 
           {/* Кнопка "Далее" */}
           {/* TODO: убрать комментарий после реализации gameStore */}
-          {selectedAnswer !== null && (
-            <button
-              onClick={() => gameStore.nextQuestion()}
-              className={`mt-6 w-full ${primaryColor} ${primaryHover} text-white py-3 px-6 rounded-lg font-semibold transition-colors`}
+          {gameStore.selectedAnswers.length > 0 && (
+          <button
+              onClick={gameStore.isLastQuestion ? handleFinishGame : handleNextQuestion}
+              disabled={submitAnswer.isPending || submitSession.isPending}
             >
               {gameStore.isLastQuestion ? 'Завершить' : 'Следующий вопрос'}
             </button>
