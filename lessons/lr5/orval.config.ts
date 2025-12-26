@@ -23,10 +23,9 @@ export default defineConfig({
           // Явно указываем какие операции должны быть мутациями
           getApiAuthGithubCallback: {
             query: {
-              useQuery: true,
+              useQuery: false,
               useMutation: true,
             }
-            // : true, // Принудительно делаем мутацией
           },
         },
       },
