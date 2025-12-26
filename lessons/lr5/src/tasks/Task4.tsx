@@ -22,7 +22,7 @@ import { useUIStore } from '../stores/uiStore';
 
 const Task4 = observer(() => {
   // MobX - бизнес-логика
- const { gameStatus, currentQuestion, selectedAnswer, score, progress } = gameStore;
+ const { gameStatus, currentQuestion, score, progress } = gameStore;
 
   // Zustand - UI состояние
   const theme = useUIStore((state) => state.theme);
@@ -177,43 +177,94 @@ const Task4 = observer(() => {
               {currentQuestion.difficulty === 'medium' && 'Средний'}
               {currentQuestion.difficulty === 'hard' && 'Сложный'}
             </span>
+            {currentQuestion.maxPoints && (
+              <span className="ml-2 text-xs px-2 py-1 rounded-full bg-blue-100 text-blue-700">
+                {currentQuestion.maxPoints} баллов
+              </span>
+            )}
           </div>
 
           <h2 className={`text-2xl font-bold mb-6 ${textColor}`}>
             {currentQuestion.question}
           </h2>
 
-          {/* Варианты ответов */}
-          <div className="space-y-3">
-            {currentQuestion.options.map((option, index) => {
-              const isSelected = selectedAnswer === index;
-              const isCorrect = index === currentQuestion.correctAnswer;
-              const showResult = selectedAnswer !== null;
+          {/* Отображение в зависимости от типа вопроса */}
+          {currentQuestion.type === 'essay' ? (
+            // Компонент для essay вопросов
+            <div className="space-y-4">
+              <textarea
+                value={gameStore.essayAnswer}
+                onChange={(e) => gameStore.updateEssayAnswer(e.target.value)}
+                placeholder="Введите ваш развернутый ответ здесь..."
+                className={`
+                  w-full p-4 rounded-lg border-2
+                  ${theme === 'light' ? 'border-gray-200 bg-white text-gray-800' : 'border-gray-600 bg-gray-700 text-white'}
+                  focus:outline-none focus:ring-2 focus:ring-purple-500
+                  min-h-[150px]
+                `}
+                disabled={gameStore.gameStatus !== 'playing'}
+              />
+              {/* Индикатор длины текста */}
+              <div className="flex justify-between text-sm">
+                <span className={mutedText}>
+                  {currentQuestion.minLength ? `Минимум: ${currentQuestion.minLength} символов` : ''}
+                </span>
+                <span className={mutedText}>
+                  {gameStore.essayAnswer.length} символов
+                </span>
+              </div>
+            </div>
+          ) : (
+            // Компонент для multiple-select вопросов
+            <div className="space-y-3">
+              {currentQuestion.options && currentQuestion.options.map((option, index) => {
+              const isSelected = gameStore.selectedAnswers.includes(index);
+              
+              // Проверяем, был ли уже отправлен ответ на этот вопрос
+              const questionAnswered = gameStore.answeredQuestions.some(answer => answer.questionId === currentQuestion.id);
+              
+              // Получаем информацию об ответе на этот вопрос, если он был
+              const answerInfo = gameStore.answeredQuestions.find(answer => answer.questionId === currentQuestion.id);
+              
+              // Проверяем, был ли выбран пользователем этот вариант
+              const wasSelected = answerInfo ?
+                (Array.isArray(answerInfo.selectedAnswer) && answerInfo.selectedAnswer.includes(index)) :
+                isSelected;
+
+              // Для отображения результатов используем информацию из ответа сервера
+              // Правильные варианты должны быть доступны в ответе сервера
+              // В реальной ситуации мы получим правильные варианты из серверного ответа
+              // Но пока используем информацию из оригинального вопроса
+              const correctOptions = Array.isArray(currentQuestion.correctAnswer)
+                ? currentQuestion.correctAnswer
+                : currentQuestion.correctAnswer !== undefined ? [currentQuestion.correctAnswer] : [];
+              const isCorrect = correctOptions.includes(index);
 
               return (
                 <button
                   key={index}
-                  onClick={() => gameStore.selectAnswer(index)}
-                  disabled={selectedAnswer !== null}
+                  onClick={() => !questionAnswered && gameStore.selectAnswer(index)}
+                  disabled={questionAnswered}
                   className={`
                     w-full p-4 text-left rounded-lg border-2 transition-all
-                    ${!showResult && theme === 'light' && 'hover:border-purple-400 hover:bg-purple-50'}
-                    ${!showResult && theme === 'dark' && 'hover:border-purple-500 hover:bg-gray-700'}
-                    ${!showResult && !isSelected && (theme === 'light' ? 'border-gray-200 bg-white' : 'border-gray-600 bg-gray-700')}
-                    ${!showResult && isSelected && (theme === 'light' ? 'border-purple-500 bg-purple-50' : 'border-purple-500 bg-gray-600')}
-                    ${showResult && isCorrect && 'border-green-500 bg-green-50'}
-                    ${showResult && isSelected && !isCorrect && 'border-red-500 bg-red-50'}
-                    ${showResult && !isCorrect && !isSelected && 'opacity-60'}
+                    ${!questionAnswered && theme === 'light' && 'hover:border-purple-40 hover:bg-purple-50'}
+                    ${!questionAnswered && theme === 'dark' && 'hover:border-purple-500 hover:bg-gray-700'}
+                    ${!questionAnswered && !isSelected && (theme === 'light' ? 'border-gray-200 bg-white' : 'border-gray-600 bg-gray-700')}
+                    ${!questionAnswered && isSelected && (theme === 'light' ? 'border-purple-500 bg-purple-50' : 'border-purple-50 bg-gray-600')}
+                    ${questionAnswered && isCorrect && 'border-green-500 bg-green-50'}
+                    ${questionAnswered && wasSelected && !isCorrect && 'border-red-50 bg-red-50'}
+                    ${questionAnswered && !isCorrect && !wasSelected && 'opacity-60'}
                   `}
                 >
                   <div className="flex items-center">
                     <span className={`
                       w-8 h-8 rounded-full flex items-center justify-center mr-3 font-semibold
-                      ${!showResult && (theme === 'light' ? 'bg-gray-200' : 'bg-gray-600 text-white')}
-                      ${showResult && isCorrect && 'bg-green-500 text-white'}
-                      ${showResult && isSelected && !isCorrect && 'bg-red-500 text-white'}
+                      ${!questionAnswered && (theme === 'light' ? 'bg-gray-200' : 'bg-gray-600 text-white')}
+                      ${!questionAnswered && isSelected && (theme === 'light' ? 'bg-purple-500 text-white' : 'bg-purple-50 text-white')}
+                      ${questionAnswered && isCorrect && 'bg-green-500 text-white'}
+                      ${questionAnswered && wasSelected && !isCorrect && 'bg-red-500 text-white'}
                     `}>
-                      {String.fromCharCode(65 + index)}
+                      {wasSelected ? '✓' : String.fromCharCode(65 + index)}
                     </span>
                     <span className={`flex-1 ${textColor}`}>{option}</span>
                   </div>
@@ -222,14 +273,30 @@ const Task4 = observer(() => {
             })}
           </div>
 
-          {/* Кнопка "Далее" */}
-          {selectedAnswer !== null && (
+          {/* Кнопка "Далее" - с учетом типа вопроса */}
+          {currentQuestion.type === 'essay' ? (
             <button
               onClick={() => gameStore.nextQuestion()}
-              className={`mt-6 w-full ${primaryColor} ${primaryHover} text-white py-3 px-6 rounded-lg font-semibold transition-colors`}
+              disabled={!gameStore.essayAnswer.trim() ||
+                        (currentQuestion.minLength && gameStore.essayAnswer.length < currentQuestion.minLength) ? true : false}
+              className={`
+                mt-6 w-full ${primaryColor} ${primaryHover} text-white py-3 px-6 rounded-lg font-semibold transition-colors
+                ${(gameStore.essayAnswer.trim() &&
+                  (!currentQuestion.minLength || gameStore.essayAnswer.length >= currentQuestion.minLength))
+                  ? '' : 'opacity-50 cursor-not-allowed'}
+              `}
             >
               {gameStore.isLastQuestion ? 'Завершить' : 'Следующий вопрос'}
             </button>
+          ) : (
+            gameStore.selectedAnswers.length > 0 && (
+              <button
+                onClick={() => gameStore.nextQuestion()}
+                className={`mt-6 w-full ${primaryColor} ${primaryHover} text-white py-3 px-6 rounded-lg font-semibold transition-colors`}
+              >
+                {gameStore.isLastQuestion ? 'Завершить' : 'Следующий вопрос'}
+              </button>
+            )
           )}
         </div>
 
