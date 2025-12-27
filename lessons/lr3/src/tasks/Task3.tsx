@@ -7,12 +7,12 @@
  */
 
 const products = [
-  { id: 1, name: 'Ноутбук', price: 89990, rating: 4.8, image: 'https://images.unsplash.com/photo-1603302576837-37561b2e2302?w=300' },
-  { id: 2, name: 'Смартфон', price: 69990, rating: 4.7, image: 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=300' },
-  { id: 3, name: 'Планшет', price: 45990, rating: 4.6, image: 'https://images.unsplash.com/photo-1561154464-82e9adf32764?w=300' },
-  { id: 4, name: 'Наушники', price: 25990, rating: 4.9, image: 'https://images.unsplash.com/photo-1546435770-a3e426bf472b?w=300' },
-  { id: 5, name: 'Часы', price: 18990, rating: 4.5, image: 'https://images.unsplash.com/photo-1579586337278-3befd40fd17a?w=300' },
-  { id: 6, name: 'Камера', price: 125990, rating: 4.9, image: 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=300' },
+  { id: 1, name: 'Ноутбук', price: 89990, rating: 4.8, image: 'https://s.yimg.com/uu/api/res/1.2/zybv3_wubzJ8t5cYyDjrLw--~B/Zmk9c3RyaW07aD03MjA7dz0xMjgwO2FwcGlkPXl0YWNoeW9u/https://s.yimg.com/os/creatr-uploaded-images/2023-06/daa6b7a0-1747-11ee-bafe-957b370d275b' },
+  { id: 2, name: 'Смартфон', price: 69990, rating: 4.7, image: 'https://avatars.mds.yandex.net/i?id=68a17fa29baa6e177004c8d98fbb5907_l-5661150-images-thumbs&n=13' },
+  { id: 3, name: 'Планшет', price: 45990, rating: 4.6, image: 'https://avatars.mds.yandex.net/i?id=bc4ad25181dd5daf8e9ac3eb8348dce9aacc1b45-10414886-images-thumbs&n=13' },
+  { id: 4, name: 'Наушники', price: 25990, rating: 4.9, image: 'https://avatars.mds.yandex.net/i?id=4cd37f8ae30fe687237fac000a6fc6bb_l-4012804-images-thumbs&n=13' },
+  { id: 5, name: 'Часы', price: 18990, rating: 4.5, image: 'https://avatars.mds.yandex.net/get-mpic/7689172/img_id3999768467811250354.png/orig' },
+  { id: 6, name: 'Камера', price: 125990, rating: 4.9, image: 'https://avatars.mds.yandex.net/get-mpic/14635071/2a0000019835191d493a7f674e1dd78d7579/orig' },
 ];
 
 function Task3() {
@@ -24,17 +24,21 @@ function Task3() {
         Откройте <code className="bg-blue-100 px-1 rounded">src/tasks/Task3.tsx</code> и добавьте responsive классы
       </div>
 
-      {/* TODO: grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 */}
-      <div>
+      {/* Сетка с адаптацией */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {products.map(p => (
           <div key={p.id} className="bg-white rounded-lg shadow-md p-4">
             <img src={p.image} alt={p.name} className="w-full h-40 object-cover rounded" />
             <h3 className="text-lg font-bold mt-3">{p.name}</h3>
-            {/* TODO: hidden md:flex */}
-            <div className="mt-2 items-center gap-2">
+
+            {/*Скрываем рейтинг на мобильных */}
+            <div className="hidden md:flex mt-2 items-center gap-2">
               <span>⭐ {p.rating}</span>
             </div>
-            <p className="text-xl font-bold text-blue-600 mt-2">{p.price.toLocaleString()} ₽</p>
+
+            <p className="text-xl font-bold text-blue-600 mt-2">
+              {p.price.toLocaleString()} ₽
+            </p>
           </div>
         ))}
       </div>
