@@ -66,8 +66,8 @@ const handleNextQuestion = () => {
       {
         sessionId,
         data: {
-          questionId: currentQuestion.id,
-          answers: [selectedAnswer],
+          questionId: String(currentQuestion.id),
+          selectedOptions: selectedAnswer,
         },
       },
       {
@@ -279,7 +279,7 @@ const handleFinishGame = () => {
           {/* Варианты ответов */}
           <div className="space-y-3">
             {currentQuestion.options.map((option, index) => {
-              const isSelected = selectedAnswer === index;
+              const isSelected = selectedAnswer.includes(index);
               const isCorrect = index === currentQuestion.correctAnswer;
               const showResult = selectedAnswer !== null;
 

@@ -34,6 +34,14 @@ class GameStore {
     this.answeredQuestions = [];
   }
 
+  toggleAnswer(answerIndex: number) {
+    if (this.selectedAnswers.includes(answerIndex)) {
+      this.selectedAnswers = this.selectedAnswers.filter(a => a !== answerIndex);
+    } else {
+      this.selectedAnswers.push(answerIndex);
+    }
+  }
+
   selectAnswer(answerIndex: number) {
   console.log('Selected answer:', answerIndex);
 
@@ -41,7 +49,10 @@ class GameStore {
     this.selectedAnswers = [];
   }
 
+  
   // toggle
+
+
   if (this.selectedAnswers.includes(answerIndex)) {
     this.selectedAnswers = this.selectedAnswers.filter(a => a !== answerIndex);
     return;
@@ -60,7 +71,7 @@ class GameStore {
 
   this.answeredQuestions.push({
     questionId: question.id,
-    selectedAnswers: [...this.selectedAnswers],
+    selectedAnswer: this.selectedAnswers[0],
     isCorrect,
   });
 }
@@ -88,24 +99,16 @@ class GameStore {
     this.answeredQuestions = [];
   }
 
-toggleAnswer(answerIndex: number) {
-  if (!this.selectedAnswers) {
-    this.selectedAnswers = [];
-  }
-  if (this.selectedAnswers.includes(answerIndex)) {
-    this.selectedAnswers = this.selectedAnswers.filter(a => a !== answerIndex);
-    return;
-  }
-
-  this.selectedAnswers.push(answerIndex);
-}
-
 setQuestionsFromAPI(questions: QuestionPreview[]) {
   this.questions = questions as unknown as Question[];
 }
 
   updateAnswerResult(questionId: number, isCorrect: boolean) {
     const answer = this.answeredQuestions.find(a => a.questionId === questionId);
+    if (answer) {
+      answer.isCorrect = isCorrect;
+    }
+
   }
 
   get currentQuestion(): Question | null {

@@ -5,6 +5,7 @@ export interface Question {
   correctAnswer: number;
   difficulty: 'easy' | 'medium' | 'hard';
 }
+
 export interface Answer {
   questionId: string | number; // Было: questionId: number
   selectedAnswer: number;
