@@ -5,6 +5,8 @@ import { usePostApiSessions } from '../../generated/api/sessions/sessions';
 import { usePostApiSessionsSessionIdAnswers } from '../../generated/api/sessions/sessions';
 import { usePostApiSessionsSessionIdSubmit } from '../../generated/api/sessions/sessions';
 import * as React from 'react'
+import { StartComponent } from '../components/Test/start';
+import { FinishComponent } from '../components/Test/FinishScreen';
 
 /**
  * Task 4: Комбинированное использование MobX + Zustand
@@ -161,86 +163,42 @@ const Task4 = observer(() => {
   // Стартовый экран
   if (gameStatus === 'idle') {
     return (
-      <div className={`min-h-screen w-full bg-gradient-to-br ${bgGradient} flex items-center justify-center p-4 transition-colors duration-300`}>
-        <div className={`${cardBg} rounded-2xl shadow-2xl p-8 max-w-md w-full transition-colors duration-300`}>
-          {/* Переключатель темы */}
-          <div className="flex justify-end mb-4">
-            <button
-              onClick={toggleTheme}
-              className={`p-2 rounded-lg ${theme === 'light' ? 'bg-gray-100 hover:bg-gray-200' : 'bg-gray-700 hover:bg-gray-600'} transition-colors`}
-            >
-              {theme === 'light' ? '🌙' : '☀️'}
-            </button>
-          </div>
-
-          <h1 className={`text-4xl font-bold mb-2 text-center ${textColor}`}>
-            Quiz Game
-          </h1>
-          <p className={`${mutedText} mb-2 text-center`}>MobX + Zustand Edition</p>
-          <p className={`text-sm ${mutedText} mb-8 text-center`}>
-            Звук: {soundEnabled ? '🔊' : '🔇'}
-          </p>
-
-          <button
-            onClick={() => handleStartGame()}
-            className={`w-full ${primaryColor} ${primaryHover} text-white py-4 px-6 rounded-xl font-semibold transition-all transform hover:scale-105`}
-          >
-            Начать игру
-          </button>
-
-          {/* Информация о разделении ответственности */}
-          <div className={`mt-6 rounded-lg p-4 ${theme === 'light' ? 'bg-purple-50' : 'bg-gray-700'}`}>
-            <p className={`text-sm ${theme === 'light' ? 'text-purple-900' : 'text-gray-300'} mb-2`}>
-              <strong>Task 4:</strong> Комбинация MobX + Zustand
-            </p>
-            <ul className={`text-xs ${theme === 'light' ? 'text-purple-800' : 'text-gray-400'} space-y-1`}>
-              <li>• <strong>MobX:</strong> Игровая логика (вопросы, счёт)</li>
-              <li>• <strong>Zustand:</strong> UI настройки (тема, звук)</li>
-            </ul>
-          </div>
-        </div>
-      </div>
+      <StartComponent
+        gameStatus={gameStatus}
+        bgGradient={theme === 'light' ? 'from-purple-500 to-indigo-600' : 'from-gray-900 to-black'}
+        cardBg={theme === 'light' ? 'bg-white' : 'bg-gray-800'}
+        theme={theme}
+        toggleTheme={toggleTheme}
+        textColor={theme === 'light' ? 'text-gray-800' : 'text-white'}
+        mutedText={theme === 'light' ? 'text-gray-600' : 'text-gray-400'}
+        soundEnabled={soundEnabled}
+        primaryColor={theme === 'light' ? 'bg-purple-600' : 'bg-purple-700'}
+        primaryHover={theme === 'light' ? 'hover:bg-purple-700' : 'hover:bg-purple-800'}
+        handleStartGame={handleStartGame}
+      />
     );
   }
 
   // Экран результатов
-  if (gameStatus === 'finished') {
-    return (
-      <div className={`min-h-screen w-full bg-gradient-to-br ${bgGradient} flex items-center justify-center p-4 transition-colors duration-300`}>
-        <div className={`${cardBg} rounded-2xl shadow-2xl p-8 max-w-md w-full text-center transition-colors duration-300`}>
-          <div className="text-6xl mb-4">{getEmoji()}</div>
-
-          <h2 className={`text-3xl font-bold mb-4 ${textColor}`}>
-            Игра завершена!
-          </h2>
-
-          <div className="mb-6">
-            <p className={`text-5xl font-bold ${theme === 'light' ? 'text-purple-600' : 'text-purple-400'} mb-2`}>
-              {score}
-            </p>
-            <p className={mutedText}>очков заработано</p>
-          </div>
-
-          <div className={`${theme === 'light' ? 'bg-gray-100' : 'bg-gray-700'} rounded-lg p-4 mb-6`}>
-            <p className={`text-lg ${textColor}`}>
-              Правильных ответов: <span className="font-bold">{correctAnswersCount} из {questions.length}</span>
-            </p>
-            <p className={`text-2xl font-bold mt-2 ${theme === 'light' ? 'text-purple-600' : 'text-purple-400'}`}>
-              {percentage}%
-            </p>
-          </div>
-
-          <button
-            onClick={() => gameStore.resetGame()}
-            className={`w-full ${primaryColor} ${primaryHover} text-white py-3 px-6 rounded-xl font-semibold transition-all transform hover:scale-105`}
-          >
-            Играть снова
-          </button>
-        </div>
-      </div>
-    );
-  }
-
+if (gameStatus === 'finished') {
+  return (
+    <FinishComponent
+      bgGradient={theme === 'light' ? 'from-purple-500 to-indigo-600' : 'from-gray-900 to-black'}
+      cardBg={theme === 'light' ? 'bg-white' : 'bg-gray-800'}
+      theme={theme}
+      textColor={theme === 'light' ? 'text-gray-800' : 'text-white'}
+      mutedText={theme === 'light' ? 'text-gray-600' : 'text-gray-400'}
+      primaryColor={theme === 'light' ? 'bg-purple-600' : 'bg-purple-700'}
+      primaryHover={theme === 'light' ? 'hover:bg-purple-700' : 'hover:bg-purple-800'}
+      score={score}
+      correctAnswersCount={correctAnswersCount}
+      questions={questions}
+      percentage={percentage}
+      getEmoji={getEmoji}
+      resetGame={() => gameStore.resetGame()} // Передаем только метод
+    />
+  );
+}
   // Игровой экран
   if (!currentQuestion) return null;
 
