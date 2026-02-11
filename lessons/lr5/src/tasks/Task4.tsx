@@ -148,19 +148,7 @@ const Task4 = observer(() => {
   const primaryColor = theme === 'light' ? 'bg-purple-600' : 'bg-purple-700';
   const primaryHover = theme === 'light' ? 'hover:bg-purple-700' : 'hover:bg-purple-800';
 
-  // Расчет процентов для экрана результатов
-  const percentage = questions.length > 0 
-    ? Math.round((correctAnswersCount / questions.length) * 100)
-    : 0;
-
-  const getEmoji = () => {
-    if (percentage >= 80) return '🏆';
-    if (percentage >= 60) return '😊';
-    if (percentage >= 40) return '🤔';
-    return '😢';
-  };
-
-  // Стартовый экран
+    // Стартовый экран
   if (gameStatus === 'idle') {
     return (
       <StartComponent
@@ -176,19 +164,11 @@ const Task4 = observer(() => {
 if (gameStatus === 'finished') {
   return (
     <FinishComponent
-      bgGradient={theme === 'light' ? 'from-purple-500 to-indigo-600' : 'from-gray-900 to-black'}
-      cardBg={theme === 'light' ? 'bg-white' : 'bg-gray-800'}
       theme={theme}
-      textColor={theme === 'light' ? 'text-gray-800' : 'text-white'}
-      mutedText={theme === 'light' ? 'text-gray-600' : 'text-gray-400'}
-      primaryColor={theme === 'light' ? 'bg-purple-600' : 'bg-purple-700'}
-      primaryHover={theme === 'light' ? 'hover:bg-purple-700' : 'hover:bg-purple-800'}
       score={score}
       correctAnswersCount={correctAnswersCount}
       questions={questions}
-      percentage={percentage}
-      getEmoji={getEmoji}
-      resetGame={() => gameStore.resetGame()} // Передаем только метод
+      resetGame={() => gameStore.resetGame()}
     />
   );
 }
