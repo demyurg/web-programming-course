@@ -12,7 +12,7 @@ export function StartComponent ( {theme,
                                 toggleTheme,
                                 handleStartGame }: StartComponentProps ) 
     {
-      const bgGradient = theme === 'light'
+    const bgGradient = theme === 'light'
     ? 'from-purple-500 to-indigo-600'
     : 'from-gray-900 to-black';
 
