@@ -164,17 +164,10 @@ const Task4 = observer(() => {
   if (gameStatus === 'idle') {
     return (
       <StartComponent
-        gameStatus={gameStatus}
-        bgGradient={theme === 'light' ? 'from-purple-500 to-indigo-600' : 'from-gray-900 to-black'}
-        cardBg={theme === 'light' ? 'bg-white' : 'bg-gray-800'}
         theme={theme}
         toggleTheme={toggleTheme}
-        textColor={theme === 'light' ? 'text-gray-800' : 'text-white'}
-        mutedText={theme === 'light' ? 'text-gray-600' : 'text-gray-400'}
-        soundEnabled={soundEnabled}
-        primaryColor={theme === 'light' ? 'bg-purple-600' : 'bg-purple-700'}
-        primaryHover={theme === 'light' ? 'hover:bg-purple-700' : 'hover:bg-purple-800'}
         handleStartGame={handleStartGame}
+        soundEnabled = {soundEnabled}
       />
     );
   }
