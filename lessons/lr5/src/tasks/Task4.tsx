@@ -1,35 +1,23 @@
 import { observer } from 'mobx-react-lite';
-import { gameStore } from '../stores/gameStore';
-import { useUIStore } from '../stores/uiStore';
-import { useState } from "react";
 
-import { usePostApiSessions } from '../../generated/api/sessions/sessions';
-import { usePostApiSessionsSessionIdAnswers } from '../../generated/api/sessions/sessions';
-import { usePostApiSessionsSessionIdSubmit } from '../../generated/api/sessions/sessions';
+import gameStore from '../stores/gameStore';
+
+import { useState } from 'react';
+
+import { QuizButton } from '../components/quiz/QuizButton';
+import { QuizProgress } from '../components/quiz/QuizProgress';
+import { MultipleSelectQuestion } from '../components/quiz/MultipleSelectQuestion';
+import { EssayQuestion } from '../components/quiz/EssayQuestion';
+import { usePostApiSessions, usePostApiSessionsSessionIdAnswers, usePostApiSessionsSessionIdSubmit } from '../../generated/api/sessions/sessions';
 
 const Task4 = observer(() => {
   const [sessionId, setSessionId] = useState<string | null>(null);
-  const [essayText, setEssayText] = useState("");
   const [serverFinalResult, setServerFinalResult] = useState<any | null>(null);
+  const currentQuestion = gameStore.currentQuestion;
 
   const createSession = usePostApiSessions();
   const submitAnswer = usePostApiSessionsSessionIdAnswers();
   const submitSession = usePostApiSessionsSessionIdSubmit();
-
-  const { gameStatus, currentQuestion, selectedAnswers, progress } = gameStore;
-
-  const theme = useUIStore((state) => state.theme);
-  const toggleTheme = useUIStore((state) => state.toggleTheme);
-
-  const bgGradient = theme === 'light'
-    ? 'from-purple-500 to-indigo-600'
-    : 'from-gray-900 to-black';
-
-  const cardBg = theme === 'light' ? 'bg-white' : 'bg-gray-800';
-  const textColor = theme === 'light' ? 'text-gray-800' : 'text-white';
-  const mutedText = theme === 'light' ? 'text-gray-600' : 'text-gray-400';
-  const primaryColor = theme === 'light' ? 'bg-purple-600' : 'bg-purple-700';
-  const primaryHover = theme === 'light' ? 'hover:bg-purple-700' : 'hover:bg-purple-800';
 
   const handleStartGame = () => {
     createSession.mutate(
@@ -64,17 +52,21 @@ const Task4 = observer(() => {
     );
   };
 
-  const handleClickNext = () => {
+  const handleNextQuestion = () => {
     if (!sessionId || !currentQuestion) return;
 
-    if (currentQuestion.type === "essay" && essayText.trim().length === 0) return;
-    if (currentQuestion.type !== "essay" && selectedAnswers.length === 0) return;
+    if (currentQuestion.type === "essay" && gameStore.textAnswer.trim().length === 0) return;
+    if (currentQuestion.type !== "essay" && gameStore.selectedAnswers.length === 0) return;
 
-    const payload = {
+    const payload: any = {
       questionId: currentQuestion.id.toString(),
-      selectedOptions: currentQuestion.type === "essay" ? [] : selectedAnswers,
-      text: currentQuestion.type === "essay" ? essayText : null
     };
+    
+    if (currentQuestion.type === "essay") {
+      payload.text = gameStore.textAnswer;
+    } else {
+      payload.selectedOptions = gameStore.selectedAnswers;
+    }
 
     submitAnswer.mutate(
       { sessionId, data: payload },
@@ -82,11 +74,13 @@ const Task4 = observer(() => {
         onSuccess: (resp) => {
           console.log("ANSWER_RESPONSE:", resp);
 
-          const answers = resp.answers ?? [];
-          const last = answers[answers.length - 1];
+          let isCorrect = false;
+          let points = 0;
 
-          const isCorrect = last?.status === "correct";
-          const points = last?.pointsEarned ?? 0;
+          if ('status' in resp && resp.status !== 'pending') {
+            isCorrect = resp.status === "correct";
+            points = resp.pointsEarned ?? 0;
+          }
 
           gameStore.saveCurrentAnswer();
           gameStore.updateAnswerResult(isCorrect, points);
@@ -94,7 +88,6 @@ const Task4 = observer(() => {
           const wasLast = gameStore.isLastQuestion;
 
           gameStore.nextQuestion();
-          setEssayText("");
 
           if (wasLast) finishSessionOnServer();
         },
@@ -105,7 +98,6 @@ const Task4 = observer(() => {
           gameStore.updateAnswerResult(false, 0);
 
           gameStore.nextQuestion();
-          setEssayText("");
 
           if (wasLast) finishSessionOnServer();
         }
@@ -113,36 +105,21 @@ const Task4 = observer(() => {
     );
   };
 
-  if (gameStatus === 'idle') {
+  const canProceed = currentQuestion?.type === 'multiple-select'
+    ? gameStore.selectedAnswers.length > 0
+    : gameStore.textAnswer.trim().length >= (currentQuestion?.minLength || 0);
+
+  if (!gameStore.isPlaying && gameStore.questions.length === 0) {
     return (
-      <div className={`min-h-screen bg-gradient-to-br ${bgGradient} flex items-center justify-center p-4`}>
-        <div className={`${cardBg} rounded-2xl shadow-2xl p-8 max-w-md w-full`}>
-
-          <div className="flex justify-end mb-4">
-            <button
-              onClick={toggleTheme}
-              className={`p-2 rounded-lg ${
-                theme === 'light' ? 'bg-gray-100 hover:bg-gray-200' : 'bg-gray-700 hover:bg-gray-600'
-              }`}
-            >
-              {theme === 'light' ? '🌙' : '☀️'}
-            </button>
-          </div>
-
-          <h1 className={`text-4xl font-bold mb-2 text-center ${textColor}`}>Quiz Game</h1>
-
-          <button
-            onClick={handleStartGame}
-            className={`w-full ${primaryColor} ${primaryHover} text-white py-4 px-6 rounded-xl font-semibold`}
-          >
-            Начать игру
-          </button>
-        </div>
+      <div className="flex items-center justify-center min-h-screen">
+        <QuizButton onClick={handleStartGame}>
+          Начать игру
+        </QuizButton>
       </div>
     );
   }
 
-  if (gameStatus === 'finished') {
+  if (!gameStore.isPlaying && gameStore.questions.length > 0) {
     const earned = serverFinalResult?.score?.earned ?? 0;
     const percentage = serverFinalResult?.score?.percentage ?? 0;
 
@@ -154,29 +131,20 @@ const Task4 = observer(() => {
     };
 
     return (
-      <div className={`min-h-screen bg-gradient-to-br ${bgGradient} flex items-center justify-center p-4`}>
-        <div className={`${cardBg} p-8 rounded-2xl shadow-2xl text-center`}>
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
           <div className="text-6xl mb-4">{getEmoji()}</div>
-
-          <h2 className={`text-3xl font-bold mb-4 ${textColor}`}>Игра завершена!</h2>
-
-          <p className={`text-5xl font-bold ${
-            theme === 'light' ? 'text-purple-600' : 'text-purple-400'
-          } mb-2`}>
-            {earned}
-          </p>
-
-          <p className={`${mutedText} mb-4`}>({percentage}%)</p>
-
-          <button
+          <h2 className="text-3xl font-bold mb-4">Игра завершена!</h2>
+          <p className="text-5xl font-bold mb-2">{earned}</p>
+          <p className="text-gray-600 mb-4">({percentage}%)</p>
+          <QuizButton
             onClick={() => {
               gameStore.resetGame();
               setServerFinalResult(null);
             }}
-            className={`w-full ${primaryColor} ${primaryHover} text-white py-3 rounded-xl font-semibold`}
           >
             Играть снова
-          </button>
+          </QuizButton>
         </div>
       </div>
     );
@@ -185,106 +153,54 @@ const Task4 = observer(() => {
   if (!currentQuestion) return null;
 
   return (
-    <div className={`min-h-screen bg-gradient-to-br ${bgGradient} p-4`}>
-      <div className="max-w-2xl mx-auto">
+    <div className="max-w-2xl mx-auto p-6">
+      <QuizProgress
+        current={gameStore.currentQuestionIndex}
+        total={gameStore.questions.length}
+      />
 
-        <div className={`${cardBg} rounded-lg shadow-md p-4 mb-4`}>
-          <div className="flex justify-between items-center mb-2">
-            <span className={`${mutedText}`}>
-              Вопрос {gameStore.currentQuestionIndex + 1} из {gameStore.questions.length}
-            </span>
-          </div>
+      <div className="bg-white rounded-lg shadow-lg p-6">
+        <h2 className="text-2xl font-bold mb-4">{currentQuestion.question}</h2>
 
-          <div className={`w-full ${theme === 'light' ? 'bg-gray-200' : 'bg-gray-700'} rounded-full h-2`}>
-            <div
-              className={`${theme === 'light' ? 'bg-purple-600' : 'bg-purple-500'} h-2 rounded-full`}
-              style={{ width: `${progress}%` }}
-            />
-          </div>
+        <div className="flex gap-4 mb-6 text-sm">
+          <span className="px-3 py-1 bg-gray-100 rounded">
+            Тип: {currentQuestion.type}
+          </span>
+          <span className="px-3 py-1 bg-yellow-100 rounded">
+            Сложность: {currentQuestion.difficulty}
+          </span>
+          <span className="px-3 py-1 bg-green-100 rounded">
+            Баллов: {currentQuestion.maxPoints}
+          </span>
         </div>
 
-        <div className={`${cardBg} rounded-2xl shadow-2xl p-6`}>
-          <h2 className={`text-2xl font-bold mb-6 ${textColor}`}>
-            {currentQuestion.question}
-          </h2>
+        {currentQuestion.type === 'multiple-select' && (
+          <MultipleSelectQuestion
+            question={currentQuestion}
+            selectedAnswers={gameStore.selectedAnswers}
+            onToggleAnswer={(index) => gameStore.toggleAnswer(index)}
+          />
+        )}
 
-          {currentQuestion.type === "essay" ? (
-            <div className="space-y-4">
-              <textarea
-                value={essayText}
-                onChange={(e) => setEssayText(e.target.value)}
-                placeholder="Введите развернутый ответ..."
-                className={`
-                  w-full p-4 rounded-lg border-2 min-h-[150px]
-                  ${theme === 'light'
-                    ? 'border-gray-300 bg-white text-gray-800'
-                    : 'border-gray-600 bg-gray-700 text-white'}
-                `}
-              />
+        {currentQuestion.type === 'essay' && (
+          <EssayQuestion
+            question={currentQuestion}
+            textAnswer={gameStore.textAnswer}
+            onTextChange={(text) => gameStore.setTextAnswer(text)}
+          />
+        )}
 
-              <button
-                onClick={handleClickNext}
-                disabled={essayText.trim().length === 0}
-                className={`
-                  w-full ${primaryColor} ${primaryHover} text-white py-3 rounded-xl font-semibold
-                  ${essayText.trim().length === 0 ? 'opacity-50 cursor-not-allowed' : ''}
-                `}
-              >
-                {gameStore.isLastQuestion ? 'Завершить' : 'Отправить ответ'}
-              </button>
-            </div>
-          ) : (
-            <>
-          <div className="space-y-3">
-            {currentQuestion.options.map((option, index) => {
-              const isSelected = selectedAnswers.includes(index);
-
-              return (
-                <button
-                  key={index}
-                  onClick={() => gameStore.toggleAnswer(index)}
-                  className={`
-                    w-full p-4 text-left rounded-lg border-2 transition-all
-                    ${!isSelected && (theme === 'light'
-                      ? 'border-gray-200 bg-white'
-                      : 'border-gray-600 bg-gray-700')}
-                    ${isSelected && (theme === 'light'
-                      ? 'border-purple-500 bg-purple-50'
-                      : 'border-purple-500 bg-gray-600')}
-                  `}
-                >
-                  <div className="flex items-center">
-                    <span
-                      className={`
-                        w-8 h-8 rounded-full flex items-center justify-center mr-3 font-semibold
-                        ${isSelected
-                          ? 'bg-purple-600 text-white'
-                          : theme === 'light'
-                            ? 'bg-gray-200'
-                            : 'bg-gray-600 text-white'}
-                      `}
-                    >
-                      {String.fromCharCode(65 + index)}
-                    </span>
-
-                    <span className={`flex-1 ${textColor}`}>{option}</span>
-                  </div>
-                </button>
-              );
-            })}
-          </div>
-
-          {selectedAnswers.length > 0 && (
-            <button
-              onClick={handleClickNext}
-              className={`mt-6 w-full ${primaryColor} ${primaryHover} text-white py-3 rounded-xl font-semibold`}
-           >
+        {canProceed && (
+          <div className="mt-6">
+            <QuizButton
+            
+              onClick={gameStore.isLastQuestion ? finishSessionOnServer : handleNextQuestion}
+              disabled={submitAnswer.isPending || submitSession.isPending}
+            >
               {gameStore.isLastQuestion ? 'Завершить' : 'Следующий вопрос'}
-            </button>
-          )}
-            </>
-          )}
-        </div>
+            </QuizButton>
+          </div>
+        )}
       </div>
     </div>
   );

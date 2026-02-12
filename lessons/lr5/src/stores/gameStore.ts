@@ -2,33 +2,32 @@ import { makeAutoObservable } from 'mobx';
 import type { Question, Answer } from '../types/quiz';
 import type { QuestionPreview } from "../../generated/api/quizBattleAPI.schemas";
 
-class GameStore {
-  gameStatus: 'idle' | 'playing' | 'finished' = 'idle';
+export class GameStore {
+  isPlaying: boolean = false;
 
   questions: QuestionPreview[] = [];
   currentQuestionIndex = 0;
   score = 0;
 
   selectedAnswers: number[] = [];
-  answeredQuestions: Answer[] = [];
+  textAnswer: string = '';
+  answers: Answer[] = [];
 
   constructor() {
     makeAutoObservable(this, {}, { autoBind: true });
   }
 
   toggleAnswer(index: number) {
-    if (this.gameStatus !== "playing") return;
-
     this.selectedAnswers = this.selectedAnswers.includes(index)
       ? this.selectedAnswers.filter((i) => i !== index)
-      : [...this.selectedAnswers, index].sort((a, b) => a - b);
+      : [...this.selectedAnswers, index];
   }
 
   saveCurrentAnswer() {
     const q = this.currentQuestion;
     if (!q) return;
 
-    this.answeredQuestions.push({
+    this.answers.push({
       questionId: q.id,
       selectedAnswers: [...this.selectedAnswers],
       isCorrect: false,
@@ -40,16 +39,21 @@ class GameStore {
     this.selectedAnswers = [];
   }
 
+  setTextAnswer(text: string) {
+    this.textAnswer = text;
+  }
+
   setQuestionsFromAPI(questions: QuestionPreview[]) {
     this.questions = questions;
     this.currentQuestionIndex = 0;
     this.selectedAnswers = [];
-    this.answeredQuestions = [];
+    this.textAnswer = '';
+    this.answers = [];
     this.score = 0;
   }
 
   updateAnswerResult(isCorrect: boolean, points: number = 0) {
-    const last = this.answeredQuestions[this.answeredQuestions.length - 1];
+    const last = this.answers[this.answers.length - 1];
     if (!last) return;
 
     last.isCorrect = isCorrect;
@@ -59,34 +63,36 @@ class GameStore {
   }
 
   startGame() {
-    this.gameStatus = 'playing';
+    this.isPlaying = true;
   }
 
   nextQuestion() {
-    if (this.currentQuestionIndex < this.questions.length - 1) {
-      this.currentQuestionIndex++;
-      this.selectedAnswers = [];
-    } else {
+    this.currentQuestionIndex++;
+    this.selectedAnswers = [];
+    this.textAnswer = '';
+
+    if (this.currentQuestionIndex >= this.questions.length) {
       this.finishGame();
     }
   }
 
   finishGame() {
-    this.gameStatus = 'finished';
+    this.isPlaying = false;
   }
 
   resetGame() {
-    this.gameStatus = 'idle';
+    this.isPlaying = false;
     this.currentQuestionIndex = 0;
     this.score = 0;
     this.selectedAnswers = [];
-    this.answeredQuestions = [];
+    this.textAnswer = '';
+    this.answers = [];
     this.questions = [];
   }
 
-  get currentQuestion(): Question | null {
+  get currentQuestion(): Question | undefined {
     const q = this.questions[this.currentQuestionIndex];
-    if (!q) return null;
+    if (!q) return undefined;
 
     return {
       id: q.id,
@@ -94,7 +100,9 @@ class GameStore {
       question: (q as any).question ?? (q as any).text ?? "",
       options: q.options ?? [],
       correctAnswer: -1,
-      difficulty: (q as any).difficulty ?? "easy"
+      difficulty: (q as any).difficulty ?? "easy",
+      maxPoints: q.maxPoints ?? 0,
+      minLength: q.minLength ?? 0
     };
   }
 
@@ -110,8 +118,9 @@ class GameStore {
   }
 
   get correctAnswersCount(): number {
-    return this.answeredQuestions.filter(a => a.isCorrect).length;
+    return this.answers.filter(a => a.isCorrect).length;
   }
 }
 
 export const gameStore = new GameStore();
+export default gameStore;

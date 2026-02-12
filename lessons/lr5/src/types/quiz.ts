@@ -7,11 +7,14 @@ export interface Question {
   correctAnswer: number;
   difficulty: 'easy' | 'medium' | 'hard';
   type: QuestionType
+  maxPoints?: number;
+  minLength?: number;
 }
 export interface Answer {
   questionId: string | number;
   selectedAnswers: number[];
   isCorrect: boolean;
+  points?: number;
 }
 
 export type GameStatus = 'idle' | 'playing' | 'paused' | 'finished';
