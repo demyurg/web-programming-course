@@ -1,4 +1,4 @@
-import { Question } from '../types5/quiz';
+import { Question } from '../types/quiz';
 
 export const mockQuestions: Question[] = [
   {

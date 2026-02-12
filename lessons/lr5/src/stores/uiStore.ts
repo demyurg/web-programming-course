@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { Theme } from '../types5/quiz';
+import { Theme } from '../types/quiz';
 
 /**
  * UIStore - Zustand Store для управления UI состоянием
@@ -29,11 +29,11 @@ export const useUIStore = create<UIStore>()(
 
       // Actions
       setTheme: (theme: Theme) => set({ theme }),
-      
+
       toggleTheme: () => set((state) => ({ 
         theme: state.theme === 'light' ? 'dark' : 'light' 
       })),
-      
+
       toggleSound: () => set((state) => ({ 
         soundEnabled: !state.soundEnabled 
       })),

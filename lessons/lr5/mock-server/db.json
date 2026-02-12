@@ -314,92 +314,7 @@
       "expiresAt": null
     },
     {
-      "sessionId": "sess_1763363038671",
-      "userId": "usr_student1",
-      "status": "active",
-      "mode": "game",
-      "questionIds": [
-        "q_001",
-        "q_005"
-      ],
-      "totalQuestions": 2,
-      "answeredCount": 0,
-      "maxScore": 9,
-      "currentScore": 0,
-      "createdAt": "2025-11-17T07:03:58.671Z",
-      "completedAt": null,
-      "expiresAt": null
-    },
-    {
-      "sessionId": "sess_1763363393002",
-      "userId": "usr_student1",
-      "status": "active",
-      "mode": "game",
-      "questionIds": [
-        "q_001",
-        "q_005"
-      ],
-      "totalQuestions": 2,
-      "answeredCount": 0,
-      "maxScore": 9,
-      "currentScore": 0,
-      "createdAt": "2025-11-17T07:09:53.002Z",
-      "completedAt": null,
-      "expiresAt": null
-    },
-    {
-      "sessionId": "sess_1763364192119",
-      "userId": "usr_student1",
-      "status": "active",
-      "mode": "game",
-      "questionIds": [
-        "q_005",
-        "q_001"
-      ],
-      "totalQuestions": 2,
-      "answeredCount": 2,
-      "maxScore": 9,
-      "currentScore": 6,
-      "createdAt": "2025-11-17T07:23:12.119Z",
-      "completedAt": null,
-      "expiresAt": null
-    },
-    {
-      "sessionId": "sess_1763364611763",
-      "userId": "usr_student1",
-      "status": "completed",
-      "mode": "game",
-      "questionIds": [
-        "q_001",
-        "q_005"
-      ],
-      "totalQuestions": 2,
-      "answeredCount": 2,
-      "maxScore": 9,
-      "currentScore": 3,
-      "createdAt": "2025-11-17T07:30:11.763Z",
-      "completedAt": "2025-11-17T07:30:17.031Z",
-      "expiresAt": null
-    },
-    {
-      "sessionId": "sess_1763364695258",
-      "userId": "usr_student1",
-      "status": "active",
-      "mode": "game",
-      "questionIds": [
-        "q_005",
-        "q_001"
-      ],
-      "totalQuestions": 2,
-      "answeredCount": 1,
-      "maxScore": 9,
-      "currentScore": 3,
-      "createdAt": "2025-11-17T07:31:35.258Z",
-      "completedAt": null,
-      "expiresAt": null
-    },
-    {
-      "sessionId": "sess_1763364849694",
+      "sessionId": "sess_1763366006139",
       "userId": "usr_student1",
       "status": "completed",
       "mode": "game",
@@ -410,111 +325,9 @@
       "totalQuestions": 2,
       "answeredCount": 2,
       "maxScore": 9,
-      "currentScore": 2,
-      "createdAt": "2025-11-17T07:34:09.694Z",
-      "completedAt": "2025-11-17T07:34:34.830Z",
-      "expiresAt": null
-    },
-    {
-      "sessionId": "sess_1764414503651",
-      "userId": "usr_student1",
-      "status": "completed",
-      "mode": "game",
-      "questionIds": [
-        "q_001",
-        "q_005"
-      ],
-      "totalQuestions": 2,
-      "answeredCount": 2,
-      "maxScore": 9,
-      "currentScore": 9,
-      "createdAt": "2025-11-29T11:08:23.651Z",
-      "completedAt": "2025-11-29T11:10:12.702Z",
-      "expiresAt": null
-    },
-    {
-      "sessionId": "sess_1764414617176",
-      "userId": "usr_student1",
-      "status": "active",
-      "mode": "game",
-      "questionIds": [
-        "q_005",
-        "q_001"
-      ],
-      "totalQuestions": 2,
-      "answeredCount": 0,
-      "maxScore": 9,
-      "currentScore": 0,
-      "createdAt": "2025-11-29T11:10:17.176Z",
-      "completedAt": null,
-      "expiresAt": null
-    },
-    {
-      "sessionId": "sess_1764566496949",
-      "userId": "usr_student1",
-      "status": "active",
-      "mode": "game",
-      "questionIds": [
-        "q_001",
-        "q_005"
-      ],
-      "totalQuestions": 2,
-      "answeredCount": 0,
-      "maxScore": 9,
-      "currentScore": 0,
-      "createdAt": "2025-12-01T05:21:36.949Z",
-      "completedAt": null,
-      "expiresAt": null
-    },
-    {
-      "sessionId": "sess_1764566683248",
-      "userId": "usr_student1",
-      "status": "completed",
-      "mode": "game",
-      "questionIds": [
-        "q_005",
-        "q_001"
-      ],
-      "totalQuestions": 2,
-      "answeredCount": 2,
-      "maxScore": 9,
-      "currentScore": 9,
-      "createdAt": "2025-12-01T05:24:43.248Z",
-      "completedAt": "2025-12-01T05:25:04.324Z",
-      "expiresAt": null
-    },
-    {
-      "sessionId": "sess_1764567038170",
-      "userId": "usr_student1",
-      "status": "completed",
-      "mode": "game",
-      "questionIds": [
-        "q_005",
-        "q_001"
-      ],
-      "totalQuestions": 2,
-      "answeredCount": 2,
-      "maxScore": 9,
-      "currentScore": 9,
-      "createdAt": "2025-12-01T05:30:38.170Z",
-      "completedAt": "2025-12-01T05:31:02.909Z",
-      "expiresAt": null
-    },
-    {
-      "sessionId": "sess_1764567175053",
-      "userId": "usr_student1",
-      "status": "active",
-      "mode": "game",
-      "questionIds": [
-        "q_001",
-        "q_005"
-      ],
-      "totalQuestions": 2,
-      "answeredCount": 0,
-      "maxScore": 9,
-      "currentScore": 0,
-      "createdAt": "2025-12-01T05:32:55.053Z",
-      "completedAt": null,
+      "currentScore": 5,
+      "createdAt": "2025-11-17T07:53:26.139Z",
+      "completedAt": "2025-11-17T07:53:34.428Z",
       "expiresAt": null
     }
   ],
@@ -570,113 +383,23 @@
       "createdAt": "2025-01-15T10:30:00Z"
     },
     {
-      "answerId": "ans_1763364198251",
-      "sessionId": "sess_1763364192119",
+      "answerId": "ans_1763366010518",
+      "sessionId": "sess_1763366006139",
       "questionId": "q_005",
       "userId": "usr_student1",
       "selectedOptions": [
-        1,
-        2,
-        3
-      ],
-      "status": "partial",
-      "pointsEarned": 2,
-      "maxPoints": 5,
-      "feedback": "Вы набрали 2 из 5 баллов.",
-      "createdAt": "2025-11-17T07:23:18.251Z"
-    },
-    {
-      "answerId": "ans_1763364276446",
-      "sessionId": "sess_1763364192119",
-      "questionId": "q_001",
-      "userId": "usr_student1",
-      "selectedOptions": [
-        2,
+        0,
         1
-      ],
-      "status": "correct",
-      "pointsEarned": 4,
-      "maxPoints": 4,
-      "feedback": "Вы набрали 4 из 4 баллов.",
-      "createdAt": "2025-11-17T07:24:36.446Z"
-    },
-    {
-      "answerId": "ans_1763364614307",
-      "sessionId": "sess_1763364611763",
-      "questionId": "q_001",
-      "userId": "usr_student1",
-      "selectedOptions": [
-        2
-      ],
-      "status": "partial",
-      "pointsEarned": 2,
-      "maxPoints": 4,
-      "feedback": "Вы набрали 2 из 4 баллов.",
-      "createdAt": "2025-11-17T07:30:14.307Z"
-    },
-    {
-      "answerId": "ans_1763364617013",
-      "sessionId": "sess_1763364611763",
-      "questionId": "q_005",
-      "userId": "usr_student1",
-      "selectedOptions": [
-        3
       ],
       "status": "partial",
       "pointsEarned": 1,
       "maxPoints": 5,
       "feedback": "Вы набрали 1 из 5 баллов.",
-      "createdAt": "2025-11-17T07:30:17.013Z"
+      "createdAt": "2025-11-17T07:53:30.519Z"
     },
     {
-      "answerId": "ans_1763364713981",
-      "sessionId": "sess_1763364695258",
-      "questionId": "q_005",
-      "userId": "usr_student1",
-      "selectedOptions": [
-        2,
-        3,
-        4,
-        1,
-        0
-      ],
-      "status": "partial",
-      "pointsEarned": 3,
-      "maxPoints": 5,
-      "feedback": "Вы набрали 3 из 5 баллов.",
-      "createdAt": "2025-11-17T07:31:53.981Z"
-    },
-    {
-      "answerId": "ans_1763364867859",
-      "sessionId": "sess_1763364849694",
-      "questionId": "q_005",
-      "userId": "usr_student1",
-      "selectedOptions": [
-        2
-      ],
-      "status": "partial",
-      "pointsEarned": 2,
-      "maxPoints": 5,
-      "feedback": "Вы набрали 2 из 5 баллов.",
-      "createdAt": "2025-11-17T07:34:27.859Z"
-    },
-    {
-      "answerId": "ans_1763364874813",
-      "sessionId": "sess_1763364849694",
-      "questionId": "q_001",
-      "userId": "usr_student1",
-      "selectedOptions": [
-        3
-      ],
-      "status": "incorrect",
-      "pointsEarned": 0,
-      "maxPoints": 4,
-      "feedback": "Вы набрали 0 из 4 баллов.",
-      "createdAt": "2025-11-17T07:34:34.813Z"
-    },
-    {
-      "answerId": "ans_1764414572941",
-      "sessionId": "sess_1764414503651",
+      "answerId": "ans_1763366014363",
+      "sessionId": "sess_1763366006139",
       "questionId": "q_001",
       "userId": "usr_student1",
       "selectedOptions": [
@@ -687,85 +410,7 @@
       "pointsEarned": 4,
       "maxPoints": 4,
       "feedback": "Вы набрали 4 из 4 баллов.",
-      "createdAt": "2025-11-29T11:09:32.941Z"
-    },
-    {
-      "answerId": "ans_1764414612693",
-      "sessionId": "sess_1764414503651",
-      "questionId": "q_005",
-      "userId": "usr_student1",
-      "selectedOptions": [
-        0,
-        2,
-        3
-      ],
-      "status": "correct",
-      "pointsEarned": 5,
-      "maxPoints": 5,
-      "feedback": "Вы набрали 5 из 5 баллов.",
-      "createdAt": "2025-11-29T11:10:12.693Z"
-    },
-    {
-      "answerId": "ans_1764566696345",
-      "sessionId": "sess_1764566683248",
-      "questionId": "q_005",
-      "userId": "usr_student1",
-      "selectedOptions": [
-        0,
-        2,
-        3
-      ],
-      "status": "correct",
-      "pointsEarned": 5,
-      "maxPoints": 5,
-      "feedback": "Вы набрали 5 из 5 баллов.",
-      "createdAt": "2025-12-01T05:24:56.346Z"
-    },
-    {
-      "answerId": "ans_1764566704295",
-      "sessionId": "sess_1764566683248",
-      "questionId": "q_001",
-      "userId": "usr_student1",
-      "selectedOptions": [
-        1,
-        2
-      ],
-      "status": "correct",
-      "pointsEarned": 4,
-      "maxPoints": 4,
-      "feedback": "Вы набрали 4 из 4 баллов.",
-      "createdAt": "2025-12-01T05:25:04.295Z"
-    },
-    {
-      "answerId": "ans_1764567057763",
-      "sessionId": "sess_1764567038170",
-      "questionId": "q_005",
-      "userId": "usr_student1",
-      "selectedOptions": [
-        0,
-        2,
-        3
-      ],
-      "status": "correct",
-      "pointsEarned": 5,
-      "maxPoints": 5,
-      "feedback": "Вы набрали 5 из 5 баллов.",
-      "createdAt": "2025-12-01T05:30:57.763Z"
-    },
-    {
-      "answerId": "ans_1764567062878",
-      "sessionId": "sess_1764567038170",
-      "questionId": "q_001",
-      "userId": "usr_student1",
-      "selectedOptions": [
-        1,
-        2
-      ],
-      "status": "correct",
-      "pointsEarned": 4,
-      "maxPoints": 4,
-      "feedback": "Вы набрали 4 из 4 баллов.",
-      "createdAt": "2025-12-01T05:31:02.878Z"
+      "createdAt": "2025-11-17T07:53:34.363Z"
     }
   ]
 }
