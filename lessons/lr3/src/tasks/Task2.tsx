@@ -1,13 +1,3 @@
-/**
- * Задание 2: Кнопки с вариантами
- *
- * Задачи:
- * 1. baseClasses: rounded font-medium transition-colors
- * 2. primary: bg-blue-500 text-white hover:bg-blue-600
- * 3. secondary: bg-gray-500 text-white hover:bg-gray-600
- * 4. small: px-3 py-1 text-sm | medium: px-4 py-2
- */
-
 import { ButtonHTMLAttributes, ReactNode } from 'react';
 
 type ButtonVariant = 'primary' | 'secondary';
@@ -26,18 +16,18 @@ function Button({
   children,
   ...props
 }: ButtonProps) {
-  // TODO: заполните классы
+  // Классы по заданию
+  const baseClasses = 'rounded font-medium transition-colors';
+
   const variantClasses: Record<ButtonVariant, string> = {
-    primary: '',
-    secondary: '',
+    primary: 'bg-blue-500 text-white hover:bg-blue-600',
+    secondary: 'bg-gray-500 text-white hover:bg-gray-600',
   };
 
   const sizeClasses: Record<ButtonSize, string> = {
-    small: '',
-    medium: '',
+    small: 'px-3 py-1 text-sm',
+    medium: 'px-4 py-2',
   };
-
-  const baseClasses = '';
 
   const buttonClasses = `${baseClasses} ${variantClasses[variant]} ${sizeClasses[size]} ${className}`;
 
