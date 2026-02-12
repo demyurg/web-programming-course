@@ -35,7 +35,7 @@ export function Finish (props) {
           </div>
 
           <button
-            onClick={() => props.gameStore.resetGame()}
+            onClick={() => props.resetGame()}
             className={`w-full ${primaryColor} ${primaryHover} text-white py-3 px-6 rounded-xl font-semibold transition-all transform hover:scale-105`}
           >
             Играть снова
