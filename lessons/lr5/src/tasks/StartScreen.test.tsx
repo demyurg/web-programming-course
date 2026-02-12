@@ -1,15 +1,15 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
-import { Start } from './Start';
+import { StartScreen } from './StartScreen';
 
 describe('StartScreen', () => {
   it('renders title and start button', () => {
     render(
-      <Start
+      <StartScreen
         theme="light"
         soundEnabled={true}
         toggleTheme={vi.fn()}
-        handleStartGame={vi.fn()}
+        onStart={vi.fn()}
       />
     );
 
@@ -21,11 +21,11 @@ describe('StartScreen', () => {
     const mockStart = vi.fn();
 
     render(
-      <Start
+      <StartScreen
         theme="light"
         soundEnabled={true}
         toggleTheme={vi.fn()}
-        handleStartGame={mockStart}
+        onStart={mockStart}
       />
     );
 
@@ -38,11 +38,11 @@ describe('StartScreen', () => {
     const mockToggle = vi.fn();
 
     render(
-      <Start
+      <StartScreen
         theme="light"
         soundEnabled={true}
         toggleTheme={mockToggle}
-        handleStartGame={vi.fn()}
+        onStart={vi.fn()}
       />
     );
 

@@ -1,6 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { Game } from './Game';
+import { GameScreen } from './Game';
 
 // Мокаем MobX store полностью
 vi.mock('../stores/gameStore', () => ({
@@ -37,19 +37,19 @@ describe('GameScreen', () => {
   });
 
   it('renders question text', () => {
-    render(<Game theme="light" toggleTheme={vi.fn()} handleNextQuestion={mockNext} />);
+    render(<GameScreen theme="light" toggleTheme={vi.fn()} onNext={mockNext} />);
     expect(screen.getByText('Test question?')).toBeInTheDocument();
   });
 
   it('renders answer options', () => {
-    render(<Game theme="light" toggleTheme={vi.fn()} handleNextQuestion={mockNext} />);
+    render(<GameScreen theme="light" toggleTheme={vi.fn()} onNext={mockNext} />);
     expect(screen.getByText('A')).toBeInTheDocument();
     expect(screen.getByText('B')).toBeInTheDocument();
     expect(screen.getByText('C')).toBeInTheDocument();
   });
 
   it('calls selectAnswer when option clicked', () => {
-    render(<Game theme="light" toggleTheme={vi.fn()} handleNextQuestion={mockNext} />);
+    render(<GameScreen theme="light" toggleTheme={vi.fn()} onNext={mockNext} />);
     fireEvent.click(screen.getByText('A'));
     expect(gameStore.selectAnswer).toHaveBeenCalledWith(0);
   });
