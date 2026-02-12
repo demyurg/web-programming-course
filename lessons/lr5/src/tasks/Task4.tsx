@@ -20,12 +20,12 @@ const Task4 = observer(() => {
     selectedAnswers, 
     essayAnswer,
     score, 
-    progress,
+    //progress,
     questions,
     correctAnswersCount,
-    currentQuestionIndex,
-    isLastQuestion,
-    setEssayAnswer, // Добавляем метод для установки текстового ответа
+    //currentQuestionIndex,
+    //isLastQuestion,
+    //setEssayAnswer,
   } = gameStore;
 
   // Zustand - UI состояние
@@ -138,18 +138,19 @@ const Task4 = observer(() => {
     }
   };
 
-  // Цвета в зависимости от темы
-  //const bgGradient = theme === 'light'
-  //  ? 'from-purple-500 to-indigo-600'
-  //  : 'from-gray-900 to-black';
+  /* 
+  //Цвета в зависимости от темы
+  const bgGradient = theme === 'light'
+    ? 'from-purple-500 to-indigo-600'
+    : 'from-gray-900 to-black';
 
-  //const cardBg = theme === 'light' ? 'bg-white' : 'bg-gray-800';
-  //const textColor = theme === 'light' ? 'text-gray-800' : 'text-white';
-  //const mutedText = theme === 'light' ? 'text-gray-600' : 'text-gray-400';
-  //const primaryColor = theme === 'light' ? 'bg-purple-600' : 'bg-purple-700';
-  //const primaryHover = theme === 'light' ? 'hover:bg-purple-700' : 'hover:bg-purple-800';
+  const cardBg = theme === 'light' ? 'bg-white' : 'bg-gray-800';
+  const textColor = theme === 'light' ? 'text-gray-800' : 'text-white';
+  const mutedText = theme === 'light' ? 'text-gray-600' : 'text-gray-400';
+  const primaryColor = theme === 'light' ? 'bg-purple-600' : 'bg-purple-700';
+  const primaryHover = theme === 'light' ? 'hover:bg-purple-700' : 'hover:bg-purple-800';
 
-  // Расчет процентов для экрана результатов
+   Расчет процентов для экрана результатов
   const percentage = questions.length > 0 
     ? Math.round((correctAnswersCount / questions.length) * 100)
     : 0;
@@ -160,12 +161,12 @@ const Task4 = observer(() => {
     if (percentage >= 40) return '🤔';
     return '😢';
   };
+  */
 
   // Стартовый экран
   if (gameStatus === 'idle') {
     return (
       <Start
-        gameStatus={gameStatus}
         theme={theme}
         toggleTheme={toggleTheme}
         soundEnabled={soundEnabled}
@@ -181,10 +182,8 @@ const Task4 = observer(() => {
       theme={theme}
       score={score}
       correctAnswersCount={correctAnswersCount}
-      questions={questions}
-      percentage={percentage}
-      getEmoji={getEmoji}
-      resetGame={() => gameStore.resetGame()} // Передаем только метод
+      totalQuestions={questions.length}
+      resetGame={() => gameStore.resetGame()}
     />
     );
   }
@@ -195,19 +194,8 @@ const Task4 = observer(() => {
   return (
     <Game
       theme={theme}
-      currentQuestionIndex={currentQuestionIndex}
-      questions={questions}
       toggleTheme={toggleTheme}
-      score={score}
-      progress={progress}
-      currentQuestion={currentQuestion}
-      essayAnswer={essayAnswer}
-      selectedAnswers={selectedAnswers}
-      gameStore={gameStore}
-      setEssayAnswer={setEssayAnswer}
-      canProceed={canProceed}
       handleNextQuestion={handleNextQuestion}
-      isLastQuestion={isLastQuestion}
     />
   );
 });
