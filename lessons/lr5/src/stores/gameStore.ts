@@ -18,7 +18,7 @@ export interface LocalAnswer {
   pointsEarned: number;
 }
 
-class GameStore {
+export class GameStore {
   gameStatus: "idle" | "playing" | "finished" = "idle";
   questions: LocalQuestion[] = [];
   currentQuestionIndex = 0;
@@ -195,5 +195,6 @@ class GameStore {
     return this.selectedAnswers.length > 0;
   }
 }
+
 
 export const gameStore = new GameStore();
