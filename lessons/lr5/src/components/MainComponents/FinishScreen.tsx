@@ -5,7 +5,7 @@ interface FinishComponentProps {
   theme: Theme;
   score: number;
   correctAnswersCount: number;
-  questions: Question[]; // или ваш тип
+  questions: Question[];
   resetGame: () => void;
 }
 
