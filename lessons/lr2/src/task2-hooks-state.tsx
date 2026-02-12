@@ -1,66 +1,78 @@
-/**
- * Задание 2: Типизация хуков и состояния
- *
- * Цель: Освоить типизацию useState, useEffect и простых кастомных хуков
- *
- * Инструкции:
- * 1. Добавьте правильную типизацию ко всем хукам
- * 2. Создайте простые типизированные кастомные хуки
- * 3. Обработайте основные состояния приложения
- */
+import React, { useState, useEffect, useCallback } from 'react';
 
-import { useState, useEffect, useCallback } from 'react';
+/* =========================
+   ЗАДАЧА 2.1: Счетчик
+   ========================= */
 
-// ===== ЗАДАЧА 2.1: Счетчик с расширенным состоянием =====
+interface CounterState {
+  count: number;
+  step: number;
+  isRunning: boolean;
+  history: number[];
+}
 
-// TODO: Определите интерфейс CounterState со следующими свойствами:
-// - count: number
-// - step: number
-// - isRunning: boolean
-// - history: number[]
+const defaultCounterState: CounterState = {
+  count: 0,
+  step: 1,
+  isRunning: false,
+  history: [],
+};
 
-// TODO: Типизируйте компонент Counter
-function Counter() {
-  // TODO: Добавьте типизацию к useState
-  const [state, setState] = useState(/* TODO: добавьте типизацию и начальное значение */);
+const Counter: React.FC = () => {
+  const [state, setState] = useState<CounterState>(defaultCounterState);
 
-  // TODO: Добавьте типизацию к функциям
-  const increment = () => {
-    // TODO: реализуйте increment с обновлением истории
-  };
+  const increment = useCallback(() => {
+    setState(prev => {
+      const next = { ...prev, count: prev.count + prev.step, history: [...prev.history, prev.count + prev.step] };
+      return next;
+    });
+  }, []);
 
-  const decrement = () => {
-    // TODO: реализуйте decrement с обновлением истории
-  };
+  const decrement = useCallback(() => {
+    setState(prev => {
+      const nextCount = prev.count - prev.step;
+      const next = { ...prev, count: nextCount, history: [...prev.history, nextCount] };
+      return next;
+    });
+  }, []);
 
-  const setStep = (newStep: /* TODO: добавьте тип */) => {
-    // TODO: реализуйте изменение шага
+  const setStep = (newStep: number) => {
+    // обеспечить разумный минимум шага
+    const step = Number.isNaN(newStep) ? 1 : Math.max(1, Math.trunc(newStep));
+    setState(prev => ({ ...prev, step }));
   };
 
   const toggleRunning = () => {
-    // TODO: реализуйте переключение автоинкремента
+    setState(prev => ({ ...prev, isRunning: !prev.isRunning }));
   };
 
   const reset = () => {
-    // TODO: реализуйте сброс состояния
+    setState(defaultCounterState);
   };
 
-  // TODO: Добавьте useEffect с типизацией для автоинкремента
+  // Автоинкремент: когда isRunning === true, увеличиваем каждую секунду
   useEffect(() => {
-    // TODO: реализуйте автоинкремент когда isRunning === true
-  }, [/* TODO: зависимости */]);
+    if (!state.isRunning) return;
+
+    const id = setInterval(() => {
+      setState(prev => {
+        const nextCount = prev.count + prev.step;
+        return { ...prev, count: nextCount, history: [...prev.history, nextCount] };
+      });
+    }, 1000);
+
+    return () => clearInterval(id);
+  }, [state.isRunning, state.step]); // пересоздать интервал при смене шага или состояния
 
   return (
     <div className="counter">
-      <h2>Счетчик: {/* TODO: отобразите count */}</h2>
-      <p>Шаг: {/* TODO: отобразите step */}</p>
+      <h2>Счетчик: {state.count}</h2>
+      <p>Шаг: {state.step}</p>
 
       <div className="controls">
         <button onClick={increment}>+</button>
         <button onClick={decrement}>-</button>
-        <button onClick={toggleRunning}>
-          {/* TODO: отобразите текст на основе isRunning */}
-        </button>
+        <button onClick={toggleRunning}>{state.isRunning ? 'Остановить' : 'Запустить'}</button>
         <button onClick={reset}>Сброс</button>
       </div>
 
@@ -69,9 +81,9 @@ function Counter() {
           Шаг:
           <input
             type="number"
-            value={/* TODO: используйте step */}
-            onChange={(e) => setStep(/* TODO: преобразуйте в число */)}
-            min="1"
+            value={state.step}
+            onChange={(e) => setStep(Number(e.target.value))}
+            min={1}
           />
         </label>
       </div>
@@ -79,14 +91,16 @@ function Counter() {
       <div className="history">
         <h3>История:</h3>
         <ul>
-          {/* TODO: отрендерите историю значений */}
+          {state.history.length === 0 ? <li>Пусто</li> : state.history.map((v, i) => <li key={i}>{v}</li>)}
         </ul>
       </div>
     </div>
   );
-}
+};
 
-// ===== ЗАДАЧА 2.2: Простое todo приложение =====
+/* =========================
+   ЗАДАЧА 2.2: TodoApp
+   ========================= */
 
 interface Todo {
   id: string;
@@ -94,36 +108,37 @@ interface Todo {
   completed: boolean;
 }
 
-// TODO: Типизируйте компонент TodoApp
-function TodoApp() {
-  const [todos, setTodos] = useState</* TODO: добавьте тип */>(/* TODO: начальное значение */);
+const TodoApp: React.FC = () => {
+  const [todos, setTodos] = useState<Todo[]>([]);
   const [newTodoText, setNewTodoText] = useState<string>('');
 
-  const addTodo = (e: /* TODO: добавьте тип события */) => {
+  const addTodo = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (newTodoText.trim()) {
-      // TODO: создайте новую todo и добавьте в массив
-      // Подсказка: используйте Date.now().toString() для id
-      setNewTodoText('');
-    }
+    const text = newTodoText.trim();
+    if (!text) return;
+    const newTodo: Todo = {
+      id: Date.now().toString(),
+      text,
+      completed: false,
+    };
+    setTodos(prev => [newTodo, ...prev]);
+    setNewTodoText('');
   };
 
   const toggleTodo = (id: string) => {
-    // TODO: измените completed статус для todo с данным id
+    setTodos(prev => prev.map(t => (t.id === id ? { ...t, completed: !t.completed } : t)));
   };
 
   const deleteTodo = (id: string) => {
-    // TODO: удалите todo с данным id
+    setTodos(prev => prev.filter(t => t.id !== id));
   };
 
-  // TODO: Посчитайте количество завершенных todos
-  const completedCount = 0;
+  const completedCount = todos.filter(t => t.completed).length;
 
   return (
     <div className="todo-app">
       <h2>Todo приложение</h2>
 
-      {/* TODO: Форма добавления */}
       <form onSubmit={addTodo}>
         <input
           type="text"
@@ -131,13 +146,11 @@ function TodoApp() {
           onChange={(e) => setNewTodoText(e.target.value)}
           placeholder="Добавить новую задачу..."
         />
-        <button type="submit">
-          Добавить
-        </button>
+        <button type="submit">Добавить</button>
       </form>
 
-      {/* TODO: Список todos */}
       <ul className="todo-list">
+        {todos.length === 0 && <li>Список пуст</li>}
         {todos.map(todo => (
           <li key={todo.id} className={todo.completed ? 'completed' : ''}>
             <input
@@ -145,94 +158,110 @@ function TodoApp() {
               checked={todo.completed}
               onChange={() => toggleTodo(todo.id)}
             />
-            <span>{todo.text}</span>
-            <button onClick={() => deleteTodo(todo.id)}>Удалить</button>
+            <span style={{ marginLeft: 8 }}>{todo.text}</span>
+            <button style={{ marginLeft: 12 }} onClick={() => deleteTodo(todo.id)}>Удалить</button>
           </li>
         ))}
       </ul>
 
-      {/* TODO: Отобразите статистику */}
       <div className="stats">
-        <p>Всего: {/* TODO */}</p>
-        <p>Завершено: {/* TODO */}</p>
+        <p>Всего: {todos.length}</p>
+        <p>Завершено: {completedCount}</p>
       </div>
     </div>
   );
+};
+
+/* =========================
+   ЗАДАЧА 2.3: Кастомные хуки
+   ========================= */
+
+// useToggle: возвращает [value, toggle]
+function useToggle(initialValue: boolean = false): [boolean, () => void] {
+  const [value, setValue] = useState<boolean>(initialValue);
+  const toggle = useCallback(() => setValue(v => !v), []);
+  return [value, toggle];
 }
 
-// ===== ЗАДАЧА 2.3: Кастомные хуки =====
+// useCounter: простой счётчик
+function useCounter(initialValue: number = 0) {
+  const [count, setCount] = useState<number>(initialValue);
 
-// TODO: Создайте типизированный хук useToggle
-// Параметры: initialValue?: boolean
-// Возвращает: [boolean, () => void] (value, toggle)
-function useToggle(/* TODO: добавьте параметры и типизацию */) {
-  // TODO: реализуйте логику с useState
+  const increment = useCallback(() => setCount(c => c + 1), []);
+  const decrement = useCallback(() => setCount(c => c - 1), []);
+  const reset = useCallback(() => setCount(initialValue), [initialValue]);
+
+  return { count, increment, decrement, reset };
 }
 
-// TODO: Создайте типизированный хук useCounter
-// Параметры: initialValue?: number
-// Возвращает: { count: number, increment: () => void, decrement: () => void, reset: () => void }
-function useCounter(/* TODO: добавьте параметры и типизацию */) {
-  // TODO: реализуйте логику с useState
-}
+/* =========================
+   ЗАДАЧА 2.4: HooksDemo
+   ========================= */
 
-// ===== ЗАДАЧА 2.4: Демо компонент для кастомных хуков =====
-
-// TODO: Типизируйте компонент HooksDemo
-function HooksDemo() {
-  // TODO: Используйте созданные кастомные хуки
+const HooksDemo: React.FC = () => {
+  const counter = useCounter(5);
+  const [on, toggleOn] = useToggle(false);
 
   return (
     <div className="hooks-demo">
       <h2>Демо кастомных хуков</h2>
 
-      {/* TODO: Демо useCounter */}
       <div className="demo-section">
         <h3>useCounter</h3>
-        {/* TODO: используйте useCounter и добавьте кнопки */}
+        <p>Count: {counter.count}</p>
+        <button onClick={counter.increment}>+</button>
+        <button onClick={counter.decrement}>-</button>
+        <button onClick={counter.reset}>Reset</button>
       </div>
 
-      {/* TODO: Демо useToggle */}
-      <div className="demo-section">
+      <div className="demo-section" style={{ marginTop: 16 }}>
         <h3>useToggle</h3>
-        {/* TODO: используйте useToggle и добавьте кнопку */}
+        <p>State: {on ? 'Вкл' : 'Выкл'}</p>
+        <button onClick={toggleOn}>{on ? 'Выключить' : 'Включить'}</button>
       </div>
     </div>
   );
-}
-
-// ===== ГЛАВНЫЙ КОМПОНЕНТ =====
-const TABS = {
-  'counter': {
-    'text': 'Счетчик',
-    'component': () => <Counter />,
-  },
-  'todos': {
-    'text': 'Todo',
-    'component': () => <TodoApp />,
-  },
-  'hooks':{
-    'text': 'Хуки',
-    'component': () => <HooksDemo />,
-  },
 };
 
-// TODO: Типизируйте компонент App
-function App() {
-  const [activeTab, setActiveTab] = useState<>('counter');
+/* =========================
+   ГЛАВНЫЙ КОМПОНЕНТ
+   ========================= */
+
+const TABS = {
+  counter: {
+    text: 'Счетчик',
+    component: () => <Counter />,
+  },
+  todos: {
+    text: 'Todo',
+    component: () => <TodoApp />,
+  },
+  hooks: {
+    text: 'Хуки',
+    component: () => <HooksDemo />,
+  },
+} as const;
+
+type TabKey = keyof typeof TABS;
+
+const App: React.FC = () => {
+  const [activeTab, setActiveTab] = useState<TabKey>('counter');
 
   return (
     <div className="app">
       <nav className="tabs">
-        {Object.entries(TABS).map(([key, tab]) => (
-          <button
-            key={key}
-            className={activeTab === key ? 'active' : ''}
-            onClick={() => setActiveTab(key as keyof typeof TABS)}
-          >
-            {tab.text}
-          </button>
-        ))}
+        {Object.entries(TABS).map(([key, tab]) => {
+          const k = key as TabKey;
+          return (
+            <button
+              key={key}
+              className={activeTab === k ? 'active' : ''}
+              onClick={() => setActiveTab(k)}
+            >
+              {tab.text}
+            </button>
+          );
+        })}
       </nav>
 
       <div className="tab-content">
@@ -240,14 +269,6 @@ function App() {
       </div>
     </div>
   );
-}
+};
 
 export default App;
-
-// ===== БОНУСНЫЕ ЗАДАЧИ =====
-
-// TODO BONUS 1: Создайте хук useLocalStorage
-// Параметры: key: string, initialValue: T
-// Возвращает: [T, (value: T | ((val: T) => T)) => void]
-// TODO BONUS 2: Создайте хук usePrevious для отслеживания предыдущего значения
-// TODO BONUS 3: Реализуйте TodoApp с useReducer вместо useState
