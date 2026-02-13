@@ -1,76 +1,49 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { Theme } from '../types/quiz';
 
-export type Theme = 'light' | 'dark';
+/**
+ * UIStore - Zustand Store для управления UI состоянием
+ *
+ * Используется в Task3 и Task4
+ */
 
-export interface UIState {
+interface UIStore {
+  // Состояние
   theme: Theme;
   soundEnabled: boolean;
-  settingsModalOpen: boolean;
-  statsModalOpen: boolean;
+  // Actions
+  setTheme: (theme: Theme) => void;
   toggleTheme: () => void;
   toggleSound: () => void;
-  setTheme: (theme: Theme) => void;
-  openSettingsModal: () => void;
-  closeSettingsModal: () => void;
-  toggleSettingsModal: () => void;
-  openStatsModal: () => void;
-  closeStatsModal: () => void;
-  toggleStatsModal: () => void;
 }
 
-export const useUIStore = create<UIState>()(
+// Создаем store с помощью create<UIStore>()
+// Обернули в persist middleware для автосохранения в localStorage
+export const useUIStore = create<UIStore>()(
   persist(
-    (set, get) => ({
+    (set) => ({
+      // Начальное состояние
       theme: 'light',
       soundEnabled: true,
-      settingsModalOpen: false,
-      statsModalOpen: false,
-      
-      toggleTheme: () => {
-        set((state) => ({
-          theme: state.theme === 'light' ? 'dark' : 'light'
-        }));
-      },
-      
-      toggleSound: () => {
-        set((state) => ({
-          soundEnabled: !state.soundEnabled
-        }));
-      },
-      
-      setTheme: (theme: Theme) => {
-        set({ theme });
-      },
 
-      openSettingsModal: () => {
-        set({ settingsModalOpen: true });
-      },
+      // Actions
+      setTheme: (theme: Theme) => set({ theme }),
 
-      closeSettingsModal: () => {
-        set({ settingsModalOpen: false });
-      },
+      toggleTheme: () => set((state) => ({ 
+        theme: state.theme === 'light' ? 'dark' : 'light' 
+      })),
 
-      toggleSettingsModal: () => {
-        set((state) => ({ settingsModalOpen: !state.settingsModalOpen }));
-      },
-
-      openStatsModal: () => {
-        set({ statsModalOpen: true });
-      },
-
-      closeStatsModal: () => {
-        set({ statsModalOpen: false });
-      },
-
-      toggleStatsModal: () => {
-        set((state) => ({ statsModalOpen: !state.statsModalOpen }));
-      }
+      toggleSound: () => set((state) => ({ 
+        soundEnabled: !state.soundEnabled 
+      })),
     }),
     {
-      name: 'ui-storage',
-      version: 1,
+      name: 'ui-storage', // ключ в localStorage
     }
   )
 );
+
+
+
 

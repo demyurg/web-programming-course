@@ -5,8 +5,9 @@ import { Auth } from '@course/auth-component';
 function App() {
   return (
     <Auth>
-      {/* Render Task4 (MobX + Zustand quiz) */}
-      <Task4 />
+      <div className="flex justify-center items-center h-screen">
+        <Task4 />
+      </div>
     </Auth>
   )
 }
