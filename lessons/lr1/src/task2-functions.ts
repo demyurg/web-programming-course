@@ -15,8 +15,31 @@
 
 // TODO: Создать union тип для категорий
 // electronics | clothing | books | food | other
+type Product= {
+    id:number;
+    name:string;
+    price:number;
+    category: Category;
+    inStock: boolean;
+    tags: string[];
+    createdAt: Date
+}
+type Category= 
+    'electronics'| 'clothing' | 'books' | 'food' | 'other';
 
-function createProduct(id, name, price, category, inStock, tags) {
+
+
+
+type Filter= {
+    id:number;
+    minPrice:number;
+    maxPrice:number;
+    category:Category;
+    inStock: boolean;
+    tag: string;
+}
+
+function createProduct(id:number, name:string, price:number, category:Category, inStock:boolean, tags:string[]):Product {
     return {
         id,
         name,
@@ -29,7 +52,7 @@ function createProduct(id, name, price, category, inStock, tags) {
 }
 
 // TODO: Типизировать функцию фильтрации товаров
-function filterProducts(products, filters) {
+function filterProducts(products:Product[], filters: Filter) {
     return products.filter(product => {
         if (filters.category && product.category !== filters.category) {
             return false;
@@ -51,7 +74,7 @@ function filterProducts(products, filters) {
 }
 
 // TODO: Типизировать функцию расчета скидки
-function calculateDiscount(product, discountType, value) {
+function calculateDiscount(product: Product, discountType: 'percentage'|'fixed'|'buy_one_get_one', value:number) {
     let finalPrice = product.price;
     
     switch (discountType) {
@@ -77,8 +100,8 @@ function calculateDiscount(product, discountType, value) {
 }
 
 // TODO: Типизировать функцию сортировки
-function sortProducts(products, sortBy, order) {
-    return [...products].sort((a, b) => {
+function sortProducts(products:Product[], sortBy:'name'|'price'|'createdAt', order:string) {
+    return products.sort((a, b) => {
         let comparison = 0;
         
         switch (sortBy) {
@@ -108,13 +131,19 @@ const products = [
 console.log('Все товары:', products);
 
 const electronicsProducts = filterProducts(products, { 
-    category: 'electronics', 
-    inStock: true 
+    id:1,
+    minPrice:1500,
+    maxPrice:5000,
+    inStock: true,
+    tag: 'house',
+    category: 'electronics'
 });
 console.log('Электроника в наличии:', electronicsProducts);
 
-const discountedPhone = calculateDiscount(products[0], 'percentage', 10);
-console.log('Скидка на телефон:', discountedPhone);
+if (products[0]) {
+    const discountedPhone = calculateDiscount(products[0], 'percentage', 10);
+    console.log('Скидка на телефон:', discountedPhone);
+}
 
 const sortedByPrice = sortProducts(products, 'price', 'asc');
 console.log('Товары по цене (возрастание):', sortedByPrice);
