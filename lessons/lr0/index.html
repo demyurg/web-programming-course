@@ -1,29 +1,119 @@
 <!DOCTYPE html>
 <html lang="ru">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Анна Светлова - Фотограф</title>
     <link rel="stylesheet" href="css/style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Open+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
 </head>
+
 <body>
     <!-- Header & Navigation -->
+    <header>
+        <nav class="navbar">
+            <h1 class="logo">Анна Светлова</h1>
+            <ul class="nav-links">
+                <li><a href="#hero">Главная</a></li>
+                <li><a href="#about">Обо мне</a></li>
+                <li><a href="#gallery">Галерея</a></li>
+                <li><a href="#contact">Контакты</a></li>
+            </ul>
+        </nav>
+    </header>
 
     <main>
         <!-- Hero Section -->
+        <section id="hero" class="hero">
+            <h1>Профессиональные фотосъемки</h1>
+            <p>«Выставить свет, включить камеру и превратить мимолётные эмоции в вечные истории...»</p>
+            <a href="#contact" class="btn">Заказать фотосессию</a>
+        </section>
 
         <!-- About Section -->
+        <section id="about" class="about">
+            <h2>Обо мне</h2>
+            <div class="about-container">
+                <img src="images/anna.jpg" alt="Фотограф Анна Светлова" class="about-photo">
+
+                <div class="about-text">
+                    <p>Меня зовут Анна Светлова и я профессиональный фотограф.</p>
+                    <p>Своё мастерство я развивала на курсах известных российских и международных фотографов,
+                        а также проходила обучение по ретуши и современным техникам обработки снимков.</p>
+                    <p>Я провожу портретные и свадебные фотосессии любой сложности. </p>
+                    <p>Стоимость рассчитывается после обсуждения задумки. </p>
+                    <p>Я с радостью подберу для вас реквизит, образы и студию, а также помогу с поиском мастеров макияжа
+                        и причесок. </p>
+                </div>
+
+                <div class="about-stats">
+                    <div class="stat">
+                        <h3>200+</h3>
+                        <p>Свадебных фотосессий</p>
+                    </div>
+                    <div class="stat">
+                        <h3>1000+</h3>
+                        <p>Портретов</p>
+                    </div>
+                    <div class="stat">
+                        <h3>10 лет</h3>
+                        <p>Опыта работы</p>
+                    </div>
+                </div>
+            </div>
+        </section>
 
         <!-- Gallery Section -->
+        <section id="gallery" class="gallery">
+            <h2>Галерея</h2>
+            <div class="gallery-grid">
+                <img src="images/portrait_1.jpg" alt="Портрет 1">
+                <img src="images/portrait_2.jpg" alt="Портрет 2">
+                <img src="images/wedding_1.jpg" alt="Свадьба 1">
+                <img src="images/wedding_2.jpg" alt="Свадьба 2">
+                <img src="images/nature_1.jpg" alt="Природа 1">
+                <img src="images/nature_2.jpg" alt="Природа 2">
+            </div>
+        </section>
 
         <!-- Contact Section -->
+        <section id="contact" class="contact">
+            <div class="contact-container">
+
+                <div class="contact-info">
+                    <h2>Контакты</h2>
+                    <p>Телефон: <a href="tel:+79998887766">+7 (999) 888-77-66</a></p>
+                    <p>Email: <a href="mailto:anna.svetlova@example.com">anna.svetlova@gmail.com</a></p>
+                    <p>Instagram: <a href="#">anasvet1999</a></p>
+                    <p>Telegram: <a href="#">Anna Svetlova Photo</a></p>
+                </div>
+
+                <form class="contact-form">
+                    <h2>Форма связи</h2>
+                    <div class="form-group">
+                        <input type="text" name="name" placeholder="Ваше имя" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="email" name="email" placeholder="Ваш Email" required>
+                    </div>
+                    <div class="form-group">
+                        <textarea name="message" placeholder="Ваше сообщение" rows="5" required></textarea>
+                    </div>
+                    <button type="submit" class="btn">Отправить</button>
+                </form>
+            </div>
+        </section>
     </main>
 
     <!-- Footer -->
+    <footer>
+        <p>© 2025 Анна Светлова. Все права защищены.</p>
+    </footer>
 
     <!-- Modal for enlarged images -->
 
     <script src="js/script.js"></script>
 </body>
+
 </html>
