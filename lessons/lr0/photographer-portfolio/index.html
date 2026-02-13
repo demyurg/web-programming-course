@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Анна Светлова - Фотограф</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Open+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Header & Navigation -->
+    <header>
+        <nav class="navbar">
+            <div class="container">
+                <h1 class="logo">Анна Светлова</h1>
+                <ul class="nav-links">
+                    <li><a href="#home">Главная</a></li>
+                    <li><a href="#about">Обо мне</a></li>
+                    <li><a href="#gallery">Галерея</a></li>
+                    <li><a href="#contact">Контакты</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <!-- Hero Section -->
+        <section id="home" class="hero">
+            <div class="hero-content">
+                <h1>Анна Светлова - Фотография</h1>
+                <p>Сохранение ваших моментов с элегантностью и эмоциями.</p>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section id="about" class="about">
+            <div class="container">
+                <h2>Обо мне</h2>
+                <p>
+                    Анна Светлова специализируется на портретной и свадебной фотографии, создавая вечные образы, которые запечатлевают вашу уникальную историю.
+                    От интимных сессий до грандиозных торжеств — каждый момент создается с заботой и креативностью.
+                </p>
+            </div>
+        </section>
+
+        <!-- Gallery Section -->
+        <section id="gallery" class="gallery">
+            <div class="container">
+                <h2>Галерея</h2>
+                <div id="gallery-container" class="gallery-grid">
+                    <!-- Images will be injected here by JavaScript -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="contact">
+            <div class="container">
+                <h2>Контакты</h2>
+                <p>Телефон: +1 (123) 456-7890</p>
+                <p>Email: anna.svetlova@photography.com</p>
+                <div class="social-links">
+                    <a href="https://instagram.com/annasvetlova">Instagram</a>
+                    <a href="https://facebook.com/annasvetlova">Facebook</a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 Анна Светлова. Все права защищены.</p>
+        </div>
+    </footer>
+
+    <!-- Modal for enlarged images -->
+    <div id="modal" class="modal">
+        <span id="modal-close" class="modal-close">&times;</span>
+        <img id="modal-image" class="modal-content" src="" alt="Enlarged image">
+    </div>
+
+    <script src="js/script.js"></script>
+</body>
+</html>
