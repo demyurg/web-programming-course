@@ -19,47 +19,76 @@ import { useState, useEffect, useCallback } from 'react';
 // - isRunning: boolean
 // - history: number[]
 
+interface CounterState {
+  count: number;
+  step: number;
+  isRunning: boolean;
+  history: number[];
+}
+
 // TODO: Типизируйте компонент Counter
 function Counter() {
   // TODO: Добавьте типизацию к useState
-  const [state, setState] = useState(/* TODO: добавьте типизацию и начальное значение */);
+  const [state, setState] = useState<CounterState>({
+    count: 0,
+    step: 1,
+    isRunning: false,
+    history: [],
+  });
 
   // TODO: Добавьте типизацию к функциям
   const increment = () => {
-    // TODO: реализуйте increment с обновлением истории
+    setState(prev => ({
+      ...prev,
+      count: prev.count + prev.step,
+      history: [...prev.history, prev.count + prev.step],
+    }));
   };
 
   const decrement = () => {
-    // TODO: реализуйте decrement с обновлением истории
+    setState(prev => ({
+      ...prev,
+      count: prev.count - prev.step,
+      history: [...prev.history, prev.count - prev.step],
+    }));
   };
 
-  const setStep = (newStep: /* TODO: добавьте тип */) => {
-    // TODO: реализуйте изменение шага
+  const setStep = (newStep: number) => {
+    setState(prev => ({ ...prev, step: newStep }));
   };
 
   const toggleRunning = () => {
-    // TODO: реализуйте переключение автоинкремента
+    setState(prev => ({ ...prev, isRunning: !prev.isRunning }));
   };
 
   const reset = () => {
-    // TODO: реализуйте сброс состояния
+    setState({ count: 0, step: 1, isRunning: false, history: [] });
   };
 
   // TODO: Добавьте useEffect с типизацией для автоинкремента
   useEffect(() => {
-    // TODO: реализуйте автоинкремент когда isRunning === true
-  }, [/* TODO: зависимости */]);
+    if (!state.isRunning) return;
+
+    const interval = setInterval(() => {
+      setState(prev => ({
+        ...prev,
+        count: prev.count + prev.step,
+        history: [...prev.history, prev.count + prev.step],
+      }));
+  }, 1000);
+  return () => clearInterval(interval);
+}, [state.isRunning, state.step]);
 
   return (
     <div className="counter">
-      <h2>Счетчик: {/* TODO: отобразите count */}</h2>
-      <p>Шаг: {/* TODO: отобразите step */}</p>
+      <h2>Счетчик: {state.count}</h2>
+      <p>Шаг: {state.step}</p>
 
       <div className="controls">
         <button onClick={increment}>+</button>
         <button onClick={decrement}>-</button>
         <button onClick={toggleRunning}>
-          {/* TODO: отобразите текст на основе isRunning */}
+          {state.isRunning ? 'Остановить' : 'Запустить'}
         </button>
         <button onClick={reset}>Сброс</button>
       </div>
@@ -69,8 +98,8 @@ function Counter() {
           Шаг:
           <input
             type="number"
-            value={/* TODO: используйте step */}
-            onChange={(e) => setStep(/* TODO: преобразуйте в число */)}
+            value={state.step}
+            onChange={(e) => setStep(Number(e.target.value))}
             min="1"
           />
         </label>
@@ -79,7 +108,9 @@ function Counter() {
       <div className="history">
         <h3>История:</h3>
         <ul>
-          {/* TODO: отрендерите историю значений */}
+          {state.history.map((value, index) => (
+            <li key={index}>{value}</li>
+          ))}
         </ul>
       </div>
     </div>
