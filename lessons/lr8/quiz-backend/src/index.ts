@@ -1,15 +1,19 @@
 import { serve } from '@hono/node-server'
 import { Hono } from 'hono'
+import { logger } from 'hono/logger'
+import { cors } from 'hono/cors'
+import auth from './routes/auth.js'
 
 const app = new Hono()
 
-app.get('/', (c) => {
-  return c.text('Hello Hono!')
-})
+app.use('*', logger())
+app.use('*', cors())
 
-app.get('/health', async (c) => {
-  return c.json({ status: 'ok' })
-});
+app.get('/health', (c) => c.json({ status: 'ok' }))
+
+app.route('/api/auth', auth)
+
+app.get('/', (c) => c.text('Quiz API Server'))
 
 serve({
   fetch: app.fetch,
