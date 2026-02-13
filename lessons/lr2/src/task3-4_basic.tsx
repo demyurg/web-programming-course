@@ -16,32 +16,30 @@ import React, { createContext, useContext, useState, ReactNode } from 'react';
 // ============================================
 
 // TODO 1.1: Создайте интерфейс FormData с полями:
-// - name: string
-// - email: string
-// - message: string
+interface FormData {
+  name: string
+  email: string
+  message: string
+}
 
 // TODO 1.2: Типизируйте компонент SimpleForm
 function SimpleForm() {
   // TODO 1.3: Создайте состояние formData с типом FormData
-  const [formData, setFormData] = useState(/* TODO */);
+  const [formData, setFormData] = useState<FormData>({name: '', email: '', message: ''});
   const [submitted, setSubmitted] = useState(false);
 
   // TODO 1.4: Типизируйте обработчик изменения
-  const handleChange = (e: /* TODO: тип события */) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    // TODO: обновите formData
+    setFormData(prev => ({ ...prev, [name]: value }));
   };
 
   // TODO 1.5: Типизируйте обработчик отправки
-  const handleSubmit = (e: /* TODO: тип события */) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
     console.log('Отправлено:', formData);
-
-    // TODO: установите submitted в true чтобы показать сообщение об успехе
-
-    // TODO: через 3 секунды верните submitted в false
-    // Подсказка: используйте setTimeout(() => setSubmitted(false), 3000)
+    setSubmitted(true);
+    setTimeout(() => setSubmitted(false), 3000);
   };
 
   return (
@@ -60,7 +58,7 @@ function SimpleForm() {
             type="text"
             id="name"
             name="name"
-            value={/* TODO */}
+            value={formData.name}
             onChange={handleChange}
             required
           />
@@ -73,7 +71,7 @@ function SimpleForm() {
             type="email"
             id="email"
             name="email"
-            value={/* TODO */}
+            value={formData.email}
             onChange={handleChange}
             required
           />
@@ -85,7 +83,7 @@ function SimpleForm() {
           <textarea
             id="message"
             name="message"
-            value={/* TODO */}
+            value={formData.message}
             onChange={handleChange}
             rows={4}
             required
@@ -103,28 +101,34 @@ function SimpleForm() {
 // ============================================
 
 // TODO 2.1: Создайте интерфейс User с полями:
-// - id: number
-// - name: string
-// - email: string
+interface User {
+  id: number
+  name: string
+  email: string
+}
 
 // TODO 2.2: Создайте интерфейс UserContextType с полями:
-// - user: User | null
-// - login: (user: User) => void
-// - logout: () => void
+interface UserContextType {
+  user: User | null
+  login: (user: User) => void
+  logout: () => void
+}
 
 // TODO 2.3: Создайте Context
-const UserContext = createContext</* TODO: тип */ | undefined>(undefined);
+const UserContext = createContext<UserContextType | undefined>(undefined);
 
 // TODO 2.4: Типизируйте UserProvider
 function UserProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
 
   const login = (userData: User) => {
-    // TODO: реализуйте вход
+    console.log('Авторизация пользователя:', userData);
+    setUser(userData);
   };
 
   const logout = () => {
-    // TODO: реализуйте выход
+    console.log('Выход из системы');
+    setUser(null);
   };
 
   return (
@@ -137,16 +141,19 @@ function UserProvider({ children }: { children: ReactNode }) {
 // TODO 2.5: Создайте custom hook useUser
 // Должен возвращать тип UserContextType
 // Должен проверять, что context не undefined и выбрасывать ошибку
-function useUser(): /* TODO: добавьте возвращаемый тип */ {
-  // TODO: получите context с помощью useContext
-  // TODO: если context undefined, выбросьте ошибку
-  // TODO: верните context
+function useUser(): UserContextType {
+  const context = useContext(UserContext);
+  if (!context) {
+    throw new Error('useUser должен использоваться внутри UserProvider');
+  }
+  return context;
 }
 
 // TODO 2.6: Создайте компонент UserStatus
 // Этот компонент показывает статус пользователя в header
 function UserStatus() {
   // TODO: получите user и logout из useUser()
+  const { user, logout } = useUser();
 
   if (!user) {
     return <span>Не авторизован</span>;
@@ -202,8 +209,7 @@ function AppContent() {
     <div className="app">
       <header className="app-header">
         <h1>Приложение с формами и авторизацией</h1>
-        {/* TODO 2.8: Добавьте компонент UserStatus здесь */}
-        {/* <UserStatus /> */}
+        <UserStatus />
       </header>
 
       <nav className="tabs">
