@@ -1,5 +1,5 @@
 import { Hono } from 'hono'
-import { sign } from 'hono/jwt'
+import { sign, verify } from 'hono/jwt'
 import { PrismaClient } from '@prisma/client' 
 import { githubCallbackSchema } from '../utils/validation.js'
 
@@ -107,6 +107,53 @@ auth.post('/github/callback', async (c) => {
       error: 'Internal server error',
       message: error instanceof Error ? error.message : 'Unknown error'
     }, 500)
+  }
+})
+
+auth.get('/me', async (c) => {
+  try {
+    const authHeader = c.req.header('Authorization')
+    
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return c.json({ 
+        success: false,
+        error: 'Unauthorized',
+        message: 'Missing or invalid Authorization header'
+      }, 401)
+    }
+
+    const token = authHeader.split(' ')[1]
+
+    const secret = process.env.JWT_SECRET || 'dev-secret-key'
+    const payload = await verify(token, secret, 'HS256')
+
+    const user = await prisma.user.findUnique({
+      where: { id: payload.sub as string }
+    })
+
+    if (!user) {
+      return c.json({ 
+        success: false,
+        error: 'User not found'
+      }, 404)
+    }
+
+    return c.json({
+      success: true,
+      user: {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        githubId: user.githubId
+      }
+    })
+
+  } catch (error) {
+    return c.json({ 
+      success: false,
+      error: 'Unauthorized',
+      message: 'Invalid token'
+    }, 401)
   }
 })
 
