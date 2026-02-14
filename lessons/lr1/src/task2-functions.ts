@@ -16,7 +16,17 @@
 // TODO: Создать union тип для категорий
 // electronics | clothing | books | food | other
 
-function createProduct(id, name, price, category, inStock, tags) {
+interface Product {
+    id: number;
+    name: string;
+    price: number;
+    category: string;
+    inStock: boolean;
+    tags: Array<string>;
+    createdAt: Date;
+}
+
+function createProduct(id: number, name: string, price: number, category: string, inStock: boolean, tags: Array<string>) {
     return {
         id,
         name,
@@ -27,9 +37,15 @@ function createProduct(id, name, price, category, inStock, tags) {
         createdAt: new Date()
     };
 }
-
+type Productfilter = {
+    category: string;
+    inStock?: boolean;
+    tag?: string;
+    minPrice?: number;
+    maxPrice?: number;
+}
 // TODO: Типизировать функцию фильтрации товаров
-function filterProducts(products, filters) {
+function filterProducts(products: Array<Product>, filters: Productfilter) {
     return products.filter(product => {
         if (filters.category && product.category !== filters.category) {
             return false;
@@ -51,7 +67,7 @@ function filterProducts(products, filters) {
 }
 
 // TODO: Типизировать функцию расчета скидки
-function calculateDiscount(product, discountType, value) {
+function calculateDiscount(product: Product, discountType: string, value: number) {
     let finalPrice = product.price;
     
     switch (discountType) {
@@ -77,7 +93,7 @@ function calculateDiscount(product, discountType, value) {
 }
 
 // TODO: Типизировать функцию сортировки
-function sortProducts(products, sortBy, order) {
+function sortProducts(products: Array<Product>, sortBy: string, order: string) {
     return [...products].sort((a, b) => {
         let comparison = 0;
         
@@ -113,7 +129,7 @@ const electronicsProducts = filterProducts(products, {
 });
 console.log('Электроника в наличии:', electronicsProducts);
 
-const discountedPhone = calculateDiscount(products[0], 'percentage', 10);
+const discountedPhone = calculateDiscount(products[0] as Product, 'percentage', 10);
 console.log('Скидка на телефон:', discountedPhone);
 
 const sortedByPrice = sortProducts(products, 'price', 'asc');
