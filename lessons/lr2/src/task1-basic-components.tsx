@@ -14,22 +14,26 @@ import React from 'react';
 // ===== ЗАДАЧА 1.1: Простая карточка пользователя =====
 
 // TODO: Создайте интерфейс UserCardProps со следующими свойствами:
-// - name: string
-// - email: string
-// - age: number (опциональное)
-// - avatar: string (опциональное)
-// - isOnline: boolean
+interface UserCardProps {
+  name: string;
+  email: string;
+  age?: number;
+  avatar?: string;
+  isOnline: boolean;
+}
 
 // TODO: Типизируйте компонент UserCard
-function UserCard(/* TODO: добавьте типизацию props */) {
+function UserCard({name, email, age, avatar, isOnline}:UserCardProps) {
   return (
     <div className="user-card">
-      {/* TODO: добавьте отображение avatar если он есть */}
-      <h2>{/* TODO: отобразите name */}</h2>
-      <p>{/* TODO: отобразите email */}</p>
-      {/* TODO: отобразите age если он есть */}
-      <span className={`status ${/* TODO: добавьте класс на основе isOnline */}`}>
-        {/* TODO: отобразите статус онлайн/офлайн */}
+       {avatar && (
+        <img src={avatar} alt={`${name}'s avatar`} className='avatar' />
+      )}
+      <h2>{name}</h2>
+      <p>{email}</p>
+      {age && <p>Возраст: {age}</p>}
+      <span className={`status ${isOnline ? 'online' : 'offline'}`}>
+        {isOnline ? 'онлайн' : 'офлайн'}
       </span>
     </div>
   );
@@ -38,21 +42,23 @@ function UserCard(/* TODO: добавьте типизацию props */) {
 // ===== ЗАДАЧА 1.2: Кнопка с вариантами =====
 
 // TODO: Создайте интерфейс ButtonProps со следующими свойствами:
-// - children: React.ReactNode
-// - variant: 'primary' | 'secondary' | 'danger'
-// - size: 'small' | 'medium' | 'large'
-// - disabled: boolean (опциональное, по умолчанию false)
-// - onClick: () => void
+interface ButtonProps {
+  children: React.ReactNode;
+  variant: 'primary' | 'secondary' | 'danger';
+  size: 'small' | 'medium' | 'large';
+  disabled?: boolean;
+  onClick: () => void;
+}
+
 
 // TODO: Типизируйте компонент Button
-function Button(/* TODO: добавьте типизацию props */) {
+function Button({children, onClick, variant}: ButtonProps) {
   return (
     <button
-      className={`btn btn--${/* TODO: используйте variant */} btn--${/* TODO: используйте size */}`}
-      disabled={/* TODO: используйте disabled */}
-      onClick={/* TODO: используйте onClick */}
+      className={`btn btn--${variant}`}
+      onClick={onClick}
     >
-      {/* TODO: отобразите children */}
+      {children}
     </button>
   );
 }
@@ -60,16 +66,23 @@ function Button(/* TODO: добавьте типизацию props */) {
 // ===== ЗАДАЧА 1.3: Простой список пользователей =====
 
 // TODO: Создайте интерфейс UserListProps со следующими свойствами:
-// - users: string[] (массив имен пользователей)
-// - emptyMessage: string (опциональное, по умолчанию "Нет пользователей")
+interface UserListProps {
+  users: string[];
+  emptyMessage: string;
+}
 
 // TODO: Типизируйте компонент UserList
-function UserList(/* TODO: добавьте типизацию props */) {
+function UserList({users, emptyMessage = "Нет пользователей"}: UserListProps) {
   // TODO: если users пустой, отобразите emptyMessage
+   if (users.length === 0) {
+    return <div>{emptyMessage}</div>;
+  }
 
   return (
     <ul className="user-list">
-      {/* TODO: отрендерите users как <li> элементы */}
+      {users.map((user, index) => (
+        <li key={index}>{user}</li>
+      ))}
     </ul>
   );
 }
@@ -77,22 +90,26 @@ function UserList(/* TODO: добавьте типизацию props */) {
 // ===== ЗАДАЧА 1.4: Карточка с children =====
 
 // TODO: Создайте интерфейс CardProps со следующими свойствами:
-// - title: string
-// - children: React.ReactNode
-// - footer: React.ReactNode (опциональное)
-// - className: string (опциональное)
+interface CardProps {
+title: string;
+children: React.ReactNode;
+footer?: React.ReactNode;
+className?: string;
+}
+
 
 // TODO: Типизируйте компонент Card
-function Card(/* TODO: добавьте типизацию props */) {
+// TODO: Типизируйте компонент Card
+function Card({ title, children, footer, className }: CardProps) {
   return (
-    <div className={`card ${/* TODO: добавьте className если есть */}`}>
+    <div className={`card ${className || ''}`}>
       <div className="card-header">
-        <h3>{/* TODO: отобразите title */}</h3>
+        <h3>{title}</h3>
       </div>
       <div className="card-content">
-        {/* TODO: отобразите children */}
+        {children}
       </div>
-      {/* TODO: отобразите footer если он есть */}
+      {footer && <div className="card-footer">{footer}</div>}
     </div>
   );
 }

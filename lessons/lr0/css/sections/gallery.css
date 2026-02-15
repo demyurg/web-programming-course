@@ -1,0 +1,26 @@
+.gallery__title {
+    text-align: center;
+    font-weight: 600;
+    padding-bottom: var(--space-2);
+}
+
+.gallery__photos {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-2);
+}
+
+.gallery__photo {
+    transition-duration: var(--transition-duration);
+    height: 100%;
+}
+
+.gallery__photo:hover {
+    scale: 1.25;
+}
+
+.gallery__wrapper {
+    overflow: hidden;
+    border-radius: var(--border-radius-l);
+}
+
