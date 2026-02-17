@@ -145,6 +145,17 @@ describe('GameStore', () => {
         });
     });
 
+    describe('currentQuestion', () => {
+        it('should return current question', () => {
+            store.currentQuestionIndex = 1;
+            expect(store.currentQuestion?.id).toBe('2');
+        });
+
+        it('should return null for invalid index', () => {
+            store.currentQuestionIndex = 99;
+            expect(store.currentQuestion).toBeNull();
+        });
+    });
     describe('nextQuestion', () => {
         beforeEach(() => {
             store.questions = [
