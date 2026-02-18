@@ -37,19 +37,19 @@ describe('GameScreen', () => {
   });
 
   it('renders question text', () => {
-    render(<GameScreen theme="light" toggleTheme={vi.fn()} onNext={mockNext} />);
+    render(<GameScreen theme="light" toggleTheme={vi.fn()} handleNextQuestion={mockNext} />);
     expect(screen.getByText('Test question?')).toBeInTheDocument();
   });
 
   it('renders answer options', () => {
-    render(<GameScreen theme="light" toggleTheme={vi.fn()} onNext={mockNext} />);
+    render(<GameScreen theme="light" toggleTheme={vi.fn()} handleNextQuestion={mockNext} />);
     expect(screen.getByText('A')).toBeInTheDocument();
     expect(screen.getByText('B')).toBeInTheDocument();
     expect(screen.getByText('C')).toBeInTheDocument();
   });
 
   it('calls selectAnswer when option clicked', () => {
-    render(<GameScreen theme="light" toggleTheme={vi.fn()} onNext={mockNext} />);
+    render(<GameScreen theme="light" toggleTheme={vi.fn()} handleNextQuestion={mockNext} />);
     fireEvent.click(screen.getByText('A'));
     expect(gameStore.selectAnswer).toHaveBeenCalledWith(0);
   });

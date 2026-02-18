@@ -16,6 +16,7 @@ class GameStore {
   score = 0;
   selectedAnswers: number[] = [];
   answeredQuestions: Answer[] = [];
+  
 
   constructor() {
     makeAutoObservable(this);

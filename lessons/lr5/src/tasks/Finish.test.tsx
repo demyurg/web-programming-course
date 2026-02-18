@@ -1,16 +1,17 @@
+
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import { FinishScreen } from './FinishScreen';
 
-describe('FinishScreen', () => {
+describe('Finish', () => {
   it('renders score and percentage', () => {
     render(
       <FinishScreen
         theme="light"
         score={80}
-        correctAnswers={4}
+        correctAnswersCount={4}
         totalQuestions={5}
-        onRestart={vi.fn()}
+        resetGame={vi.fn()}
       />
     );
 
@@ -20,16 +21,16 @@ describe('FinishScreen', () => {
     expect(screen.getByText('80%')).toBeInTheDocument();
   });
 
-  it('calls onRestart when restart button clicked', () => {
+  it('calls onRestart when restart button clicked', () => { 
     const mockRestart = vi.fn();
 
     render(
       <FinishScreen
         theme="light"
         score={50}
-        correctAnswers={2}
+        correctAnswersCount={2}
         totalQuestions={5}
-        onRestart={mockRestart}
+        resetGame={mockRestart}
       />
     );
 

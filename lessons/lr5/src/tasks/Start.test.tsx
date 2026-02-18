@@ -9,7 +9,7 @@ describe('StartScreen', () => {
         theme="light"
         soundEnabled={true}
         toggleTheme={vi.fn()}
-        onStart={vi.fn()}
+        handleStartGame={vi.fn()}
       />
     );
 
@@ -25,7 +25,7 @@ describe('StartScreen', () => {
         theme="light"
         soundEnabled={true}
         toggleTheme={vi.fn()}
-        onStart={mockStart}
+        handleStartGame={mockStart}
       />
     );
 
@@ -42,7 +42,7 @@ describe('StartScreen', () => {
         theme="light"
         soundEnabled={true}
         toggleTheme={mockToggle}
-        onStart={vi.fn()}
+        handleStartGame={vi.fn()}
       />
     );
 
