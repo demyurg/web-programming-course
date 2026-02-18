@@ -7,6 +7,10 @@ app.get('/', (c) => {
   return c.text('Hello Hono!')
 })
 
+app.get('/health', async (c) => {
+  return c.json({"status": "ok"})
+})
+
 serve({
   fetch: app.fetch,
   port: 3000
