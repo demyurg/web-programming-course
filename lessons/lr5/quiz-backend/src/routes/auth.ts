@@ -6,6 +6,7 @@ import { authCallbackSchema  } from '../utils/validation.js'
 const prisma = new PrismaClient() 
 const auth = new Hono()
 
+
 // Mock данные
 const MOCK_USERS: Record<string, { id: string; email: string; name: string }> = {
   'test_code': {
