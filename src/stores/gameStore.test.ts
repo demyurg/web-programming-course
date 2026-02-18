@@ -146,6 +146,16 @@ describe('GameStore', () => {
     });
 
     describe('currentQuestion', () => {
+        beforeEach(() => {
+            const mockQuestions = [
+                { id: '1', type: 'multiple-select', question: 'Q1', options: [], correctAnswers: [], difficulty: 'easy' },
+                { id: '2', type: 'essay', question: 'Q2', options: [], correctAnswers: [], difficulty: 'medium' },
+                { id: '3', type: 'multiple-select', question: 'Q3', options: [], correctAnswers: [], difficulty: 'hard' },
+            ];
+
+            store.setQuestionsFromAPI(mockQuestions as any);
+            store.startGame();
+        });
         it('should return current question', () => {
             store.currentQuestionIndex = 1;
             expect(store.currentQuestion?.id).toBe('2');
@@ -222,6 +232,8 @@ describe('GameStore', () => {
                 { id: '2', type: 'essay', question: 'Q2', options: [], correctAnswers: [], difficulty: 'medium' },
                 { id: '3', type: 'multiple-select', question: 'Q3', options: [], correctAnswers: [], difficulty: 'hard' },
             ];
+
+            store.startGame();
         });
 
         describe('progress', () => {

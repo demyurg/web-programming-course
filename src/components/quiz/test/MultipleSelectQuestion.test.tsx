@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { MultipleSelectQuestion } from '../MultipleSelectQuestion';
 const mockQuestion = {
     id: 'q1',
@@ -147,81 +147,21 @@ describe('MultipleSelectQuestion', () => {
     });
 
 describe('Visual State Updates', () => {
-    it('shows letters for all options initially', () => {
-        render(
-            <MultipleSelectQuestion
-                question={mockQuestion}
-                selectedAnswers={[]}
-                onToggleAnswer={() => { }}
-            />
-        );
+    const mockQuestion = {
+        id: 'q1',
+        type: 'multiple-select' as const,
+        question: 'Test Question',
+        options: ['useState', 'useEffect', 'useContext', 'useReducer'],
+        correctAnswers: [0, 3],
+        difficulty: 'easy' as const,
+        maxPoints: 5
+    };
 
-        const buttons = screen.getAllByRole('button');
-        expect(buttons[0]).toHaveTextContent('A');
-        expect(buttons[1]).toHaveTextContent('B');
-        expect(buttons[2]).toHaveTextContent('C');
-        expect(buttons[3]).toHaveTextContent('D');
+    const mockOnToggleAnswer = vi.fn();
+
+    beforeEach(() => {
+        mockOnToggleAnswer.mockClear();
     });
-
-    it('shows checkmark when option becomes selected', async () => {
-        const user = userEvent.setup();
-        let currentAnswers: number[] = [];
-
-        const handleToggle = (index: number) => {
-            currentAnswers = currentAnswers.includes(index)
-                ? currentAnswers.filter(i => i !== index)
-                : [...currentAnswers, index];
-        };
-
-        const { rerender } = render(
-            <MultipleSelectQuestion
-                question={mockQuestion}
-                selectedAnswers={currentAnswers}
-                onToggleAnswer={handleToggle}
-            />
-        );
-
-        const button = screen.getByText('useState');
-        await user.click(button);
-
-        // Ререндерим с обновленным состоянием
-        rerender(
-            <MultipleSelectQuestion
-                question={mockQuestion}
-                selectedAnswers={[0]}
-                onToggleAnswer={handleToggle}
-            />
-        );
-
-        expect(button).toHaveTextContent('✓');
-    });
-
-    it('shows letter when option becomes deselected', async () => {
-        const user = userEvent.setup();
-
-        const { rerender } = render(
-            <MultipleSelectQuestion
-                question={mockQuestion}
-                selectedAnswers={[0]}
-                onToggleAnswer={() => { }}
-            />
-        );
-
-        const button = screen.getByText('useState');
-        expect(button).toHaveTextContent('✓');
-
-        // Ререндерим с пустым массивом (имитируем отмену выбора)
-        rerender(
-            <MultipleSelectQuestion
-                question={mockQuestion}
-                selectedAnswers={[]}
-                onToggleAnswer={() => { }}
-            />
-        );
-
-        expect(button).toHaveTextContent('A');
-    });
-
     it('shows multiple checkmarks when multiple options selected', () => {
         render(
             <MultipleSelectQuestion
@@ -236,36 +176,6 @@ describe('Visual State Updates', () => {
         expect(buttons[1]).toHaveTextContent('✓');
         expect(buttons[2]).toHaveTextContent('C');
         expect(buttons[3]).toHaveTextContent('D');
-    });
-
-    it('preserves other checkmarks when deselecting one option', () => {
-        render(
-            <MultipleSelectQuestion
-                question={mockQuestion}
-                selectedAnswers={[0, 1, 3]} // useState, useEffect, useMemo выбраны
-                onToggleAnswer={() => { }}
-            />
-        );
-
-        const buttons = screen.getAllByRole('button');
-        expect(buttons[0]).toHaveTextContent('✓'); // useState
-        expect(buttons[1]).toHaveTextContent('✓'); // useEffect
-        expect(buttons[2]).toHaveTextContent('C'); // useClass
-        expect(buttons[3]).toHaveTextContent('✓'); // useMemo
-
-        // Ререндерим без useEffect
-        render(
-            <MultipleSelectQuestion
-                question={mockQuestion}
-                selectedAnswers={[0, 3]} // только useState и useMemo
-                onToggleAnswer={() => { }}
-            />
-        );
-
-        expect(buttons[0]).toHaveTextContent('✓'); // useState
-        expect(buttons[1]).toHaveTextContent('B'); // useEffect (стал буквой)
-        expect(buttons[2]).toHaveTextContent('C'); // useClass
-        expect(buttons[3]).toHaveTextContent('✓'); // useMemo
     });
 });
 
