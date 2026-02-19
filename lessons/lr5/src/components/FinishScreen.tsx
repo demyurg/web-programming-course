@@ -8,7 +8,14 @@ interface FinishScreenProps {
   onPlayAgain: () => void
 }
 
-function Finish({
+const getEmoji = (percentage: number) => {
+  if (percentage >= 80) return '🏆'
+  if (percentage >= 60) return '😊'
+  if (percentage >= 40) return '🤔'
+  return '😢'
+}
+
+function FinishScreen({
   theme,
   score,
   correctAnswersCount,
@@ -17,12 +24,6 @@ function Finish({
 }: FinishScreenProps) {
   const percentage = Math.round((correctAnswersCount / totalQuestions) * 100)
 
-  const getEmoji = () => {
-    if (percentage >= 80) return '🏆'
-    if (percentage >= 60) return '😊'
-    if (percentage >= 40) return '🤔'
-    return '😢'
-  }
 
   const bgGradient =
     theme === 'light'
@@ -42,7 +43,7 @@ function Finish({
       <div
         className={`${cardBg} w-full max-w-md rounded-2xl p-8 text-center shadow-2xl transition-colors duration-300`}
       >
-        <div className='mb-4 text-6xl'>{getEmoji()}</div>
+        <div className='mb-4 text-6xl'>{getEmoji(percentage)}</div>
 
         <h2 className={`mb-4 text-3xl font-bold ${textColor}`}>
           Игра завершена!
@@ -84,4 +85,4 @@ function Finish({
   )
 }
 
-export { Finish }
+export { FinishScreen }
