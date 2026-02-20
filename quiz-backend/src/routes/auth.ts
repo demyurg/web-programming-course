@@ -1,9 +1,12 @@
 import { Hono } from 'hono'
-import { sign, verify} from 'hono/jwt'
+import { sign, verify } from 'hono/jwt'
 import { AuthCodeSchema } from '../utils/validation'
 import type { GitHubUser, GitHubEmail, JWTPayload } from '../utils/validation'
+import { PrismaClient } from '@prisma/client'
 
 const auth = new Hono()
+const prisma = new PrismaClient()
+console.log('Prisma client created, DATABASE_URL:', process.env.DATABASE_URL)
 
 // Mock данные для тестирования
 const MOCK_USERS: Record<string, { id: number; login: string; name: string; email: string }> = {
@@ -89,15 +92,29 @@ auth.post('/github/callback', async (c) => {
             console.log('Mock user data:', mockUser)
 
             // Создаем тестового пользователя без БД
-            const user = {
-                id: "mock-" + Date.now(),
-                email: mockUser.email,
-                name: mockUser.name,
-                githubId: mockUser.id.toString(),
-                createdAt: new Date().toISOString()
-            }
+            // const user = {
+            //     id: "mock-" + Date.now(),
+            //     email: mockUser.email,
+            //     name: mockUser.name,
+            //     githubId: mockUser.id.toString(),
+            //     createdAt: new Date().toISOString()
+            // }
+            // console.log('Mock user created:', user)
+            const user = await prisma.user.upsert({
+                where: { githubId: mockUser.id.toString() },
+                update: {
+                    email: mockUser.email,
+                    name: mockUser.name
+                },
+                create: {
+                    githubId: mockUser.id.toString(),
+                    email: mockUser.email,
+                    name: mockUser.name
+                }
+            })
 
-            console.log('Mock user created:', user)
+            console.log('User saved to DB:', user)
+            
 
             // Создаем JWT токен
             const payload = {
@@ -177,15 +194,28 @@ auth.get('/me', async (c) => {
             return c.json({ error: 'Unauthorized - Invalid token' }, 401)
         }
 
-        // 4. В mock режиме возвращаем данные из токена
-        // (в реальном приложении здесь был бы запрос к БД)
+
+        const user = await prisma.user.findUnique({
+            where: { id: payload.userId as string }
+        })
+
+
+        if (!user) {
+            return c.json({ error: 'User not found' }, 404)
+        }
+
         return c.json({
             user: {
-                id: payload.userId,
-                email: payload.email,
-                name: 'User from token', // В реальности берем из БД
-                githubId: 'mock-github-id',
-                createdAt: new Date().toISOString()
+                // id: payload.userId,
+                // email: payload.email,
+                // name: 'User from token', 
+                // githubId: 'mock-github-id',
+                // createdAt: new Date().toISOString()
+                id: user.id,
+                email: user.email,
+                name: user.name,
+                githubId: user.githubId,
+                createdAt: user.createdAt
             }
         })
 
@@ -195,5 +225,3 @@ auth.get('/me', async (c) => {
     }
 })
 export { auth }
-
-
