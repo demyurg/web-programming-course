@@ -1,5 +1,6 @@
 import { serve } from '@hono/node-server'
 import { Hono } from 'hono'
+import { auth } from './routes/auth'
 
 const app = new Hono()
 
@@ -22,6 +23,8 @@ app.post('/users', async (c) => {
   const body = await c.req.json();
   return c.json({ created: body }, 201);
 });
+
+app.route('/api/auth', auth)
 
 serve({
   fetch: app.fetch,

@@ -1,7 +1,7 @@
 import { Hono } from 'hono'
 import { sign } from 'hono/jwt'
-import { AuthCodeSchema } from '../validation.js'
-import type { GitHubUser, GitHubEmail, JWTPayload } from '../validation.js'
+import { AuthCodeSchema } from '../utils/validation'
+import type { GitHubUser, GitHubEmail, JWTPayload } from '../utils/validation'
 
 const auth = new Hono()
 
