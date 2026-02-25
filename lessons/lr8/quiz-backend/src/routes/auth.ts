@@ -1,11 +1,10 @@
 import { Hono } from "hono";
 import { sign, verify } from "hono/jwt";
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "../db/client.js";
 import { GitHubServiceError, getGitHubUserByCode } from "../services/github.js";
 import { GitHubCallbackSchema } from "../utils/validation.js";
 
 export const auth = new Hono();
-const prisma = new PrismaClient();
 
 type JwtPayload = {
   userId: string;
