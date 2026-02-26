@@ -29,11 +29,11 @@ export const useUIStore = create<UIStore>()(
 
       // Actions
       setTheme: (theme: Theme) => set({ theme }),
-      
+
       toggleTheme: () => set((state) => ({ 
         theme: state.theme === 'light' ? 'dark' : 'light' 
       })),
-      
+
       toggleSound: () => set((state) => ({ 
         soundEnabled: !state.soundEnabled 
       })),
