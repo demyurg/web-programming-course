@@ -115,7 +115,7 @@ auth.post('/github/callback', async (c) => {
 auth.get('/me', async (c) => {
   try {
     const authHeader = c.req.header('Authorization')
-    
+
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       return c.json({ 
         success: false,
