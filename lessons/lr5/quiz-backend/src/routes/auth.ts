@@ -3,8 +3,6 @@ import { sign, verify } from 'hono/jwt'
 import { PrismaClient } from '@prisma/client'
 import { githubCallbackSchema } from '../utils/validation.js'
 
-console.log('DATABASE_URL from env:', process.env.DATABASE_URL)
-
 const prisma = new PrismaClient()
 const auth = new Hono()
 
