@@ -15,6 +15,7 @@
 ## Что нужно реализовать
 
 Вы будете использовать **только 3 API-хука**:
+
 1. `usePostApiSessions` - создание игровой сессии и получение вопросов
 2. `usePostApiSessionsSessionIdAnswers` - отправка ответов на сервер
 3. `usePostApiSessionsSessionIdSubmit` - завершение сессии и получение результатов
@@ -46,7 +47,7 @@ Mock-сервер будет доступен по адресу: `http://localho
 В корневой директории проекта:
 
 ```bash
-npm run dev
+
 ```
 
 Приложение откроется по адресу: `http://localhost:5173`
@@ -87,23 +88,23 @@ cp -r ../lr4/src/data/questions.ts src/data/
 **Важно:** Убедитесь, что в `src/App.tsx` подключен `Task4`:
 
 ```tsx
-import Task4 from './tasks/Task4';
+import Task4 from './tasks/Task4'
 
 function App() {
-  // ...
-  // ...
-  // ...
+	// ...
+	// ...
+	// ...
 
-  return (
-    <>
-      ...
-      <Task4 />
-      ...
-    </>
-  );
+	return (
+		<>
+			...
+			<Task4 />
+			...
+		</>
+	)
 }
 
-export default App;
+export default App
 ```
 
 ---
@@ -149,7 +150,9 @@ onClick={() => gameStore.toggleAnswer(index)}
 Добавьте визуальную индикацию выбранных ответов (галочка вместо буквы):
 
 ```typescript
-{isSelected ? '✓' : String.fromCharCode(65 + index)}
+{
+	isSelected ? '✓' : String.fromCharCode(65 + index)
+}
 ```
 
 ---
@@ -175,9 +178,9 @@ npm run codegen
 Добавьте импорты в `Task4.tsx`:
 
 ```typescript
-import { usePostApiSessions } from '../../generated/api/sessions/sessions';
-import { usePostApiSessionsSessionIdAnswers } from '../../generated/api/sessions/sessions';
-import { usePostApiSessionsSessionIdSubmit } from '../../generated/api/sessions/sessions';
+import { usePostApiSessions } from '../../generated/api/sessions/sessions'
+import { usePostApiSessionsSessionIdAnswers } from '../../generated/api/sessions/sessions'
+import { usePostApiSessionsSessionIdSubmit } from '../../generated/api/sessions/sessions'
 ```
 
 ### 4.2 Инициализация хуков
@@ -261,24 +264,24 @@ const handleNextQuestion = () => {
 
 ```typescript
 const handleFinishGame = () => {
-  if (sessionId) {
-    submitSession.mutate(
-      { sessionId },
-      {
-        onSuccess: (response) => {
-          console.log('Session completed:', response);
-          gameStore.finishGame();
-        },
-        onError: (error) => {
-          console.error('Failed to submit session:', error);
-          gameStore.finishGame();
-        },
-      }
-    );
-  } else {
-    gameStore.finishGame();
-  }
-};
+	if (sessionId) {
+		submitSession.mutate(
+			{ sessionId },
+			{
+				onSuccess: response => {
+					console.log('Session completed:', response)
+					gameStore.finishGame()
+				},
+				onError: error => {
+					console.error('Failed to submit session:', error)
+					gameStore.finishGame()
+				},
+			},
+		)
+	} else {
+		gameStore.finishGame()
+	}
+}
 ```
 
 Измените логику кнопки "Завершить":
@@ -302,17 +305,17 @@ API возвращает `id` как `string`, а не `number`. Обновит�
 
 ```typescript
 export interface Question {
-  id: string | number; // Было: id: number
-  question: string;
-  options: string[];
-  correctAnswer: number;
-  difficulty: 'easy' | 'medium' | 'hard';
+	id: string | number // Было: id: number
+	question: string
+	options: string[]
+	correctAnswer: number
+	difficulty: 'easy' | 'medium' | 'hard'
 }
 
 export interface Answer {
-  questionId: string | number; // Было: questionId: number
-  selectedAnswer: number;
-  isCorrect: boolean;
+	questionId: string | number // Было: questionId: number
+	selectedAnswer: number
+	isCorrect: boolean
 }
 ```
 
@@ -327,6 +330,7 @@ export interface Answer {
 5. **Завершение**: После последнего вопроса нажмите "Завершить" - сессия завершится
 
 **Проверьте в DevTools:**
+
 - Network → видны запросы к API (`POST /api/sessions`, `POST /api/sessions/{id}/answers`, `POST /api/sessions/{id}/submit`)
 - Console → нет ошибок
 - React Query DevTools → видны кэшированные данные
@@ -344,7 +348,7 @@ export interface Answer {
 **Решение:** Добавьте проверку `currentQuestion` перед использованием:
 
 ```typescript
-if (!currentQuestion) return;
+if (!currentQuestion) return
 ```
 
 ---
@@ -364,4 +368,3 @@ if (!currentQuestion) return;
 3. **Выбор сложности**: Позволить пользователю выбрать количество вопросов и сложность перед стартом
 4. **Таймер**: Добавить ограничение по времени на каждый вопрос
 5. **Режим Battle**: Реализовать соревновательный режим с другими игроками
-
