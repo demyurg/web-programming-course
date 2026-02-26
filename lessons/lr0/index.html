@@ -5,25 +5,125 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Анна Светлова - Фотограф</title>
     <link rel="stylesheet" href="css/style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Open+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;700&family=Source+Sans+Pro:wght@300;400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <!-- Header & Navigation -->
+<!-- Header & Navigation -->
+<div class="nav-fixed">
+  <div class="page-container">
+    <nav class="navbar">
+      <h1 class="logo">
+        <a href="#hero" class="logo-link" aria-label="К началу">Анна Светлова | Фотограф</a>
+      </h1>
+      <div class="burger" id="burger" aria-label="Открыть меню" aria-expanded="false" aria-controls="nav-links">☰</div>
+      <ul class="nav-links" id="nav-links" role="menu">
+        <li><a href="#about" role="menuitem">Обо мне</a></li>
+        <li><a href="#gallery" role="menuitem">Портфолио-Контакты</a></li>
+      </ul>
+    </nav>
+  </div>
+</div>
+  <main>
+    <!-- HERO -->
+    <div class="page-container">
+      <section class="hero" id="hero">
+        <div class="hero-inner">
+          <div class="hero-img">
+            <img src="images/portait_0.jpg" alt="Портретная съемка">
+          </div>
+          <div class="hero-content">
+            <h1>Захватываю моменты, создаю воспоминания</h1>
+            <a href="#gallery" class="btn-red">Посмотреть работы</a>
+          </div>
+        </div>
+      </section>
+    </div>
 
-    <main>
-        <!-- Hero Section -->
+    <!-- About -->
+    <div class="page-container">
+      <section class="about" id="about">
+        <div class="about-inner">
+          <div class="about-card about-left">
+            <img src="images/anna0.jpg" alt="Анна Светлова" class="about-photo">
+            <h3>Анна Светлова | Фотограф</h3>
+          </div>
 
-        <!-- About Section -->
+          <div class="about-card about-right">
+            <h3>Обо мне</h3>
+            <p>
+              Я специализируюсь на портретной и свадебной фотографии, стремлюсь подчеркнуть
+              естественную красоту и уникальность каждого человека. Для меня важна не только
+              качественная картинка, но и атмосфера, в которой клиент чувствует себя уверенно
+              и свободно.
+            </p>
+          </div>
+        </div>
+      </section>
+    </div>
 
-        <!-- Gallery Section -->
+    <!-- Gallery -->
+    <div class="page-container">
+      <section class="gallery" id="gallery">
+        <button class="gal-btn gal-prev" aria-label="Предыдущая">‹</button>
+        <div class="gal-viewport">
+          <div class="gal-track">
+            <div class="gal-slide"><img src="images/nature_1.jpg" alt=""></div>
+            <div class="gal-slide"><img src="images/nature_2.jpg" alt=""></div>
+            <div class="gal-slide"><img src="images/portrait_1.jpg" alt=""></div>
+            <div class="gal-slide"><img src="images/portrait_2.jpg" alt=""></div>
+            <div class="gal-slide"><img src="images/wedding_1.jpg" alt=""></div>
+            <div class="gal-slide"><img src="images/wedding_2.jpg" alt=""></div>
+          </div>
+        </div>
+        <button class="gal-btn gal-next" aria-label="Следующая">›</button>
+      </section>
+    </div>
 
-        <!-- Contact Section -->
-    </main>
+  <!-- Footer -->
+  <div class="page-container">
+    <footer class="footer" id="footer">
+      <div class="footer-top">
+        <div class="f-col f-brand">
+          <span class="author-name">Анна Светлова</span>
+          <p>Портретная и свадебная фотография. Естественный свет, живые эмоции и внимательность к деталям.</p>
+          <div class="f-social">
+            <a href="https://t.me/anna_photo" aria-label="Telegram" target="_blank">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M9.032 15.553l-.376 5.3c.538 0 .77-.231 1.048-.507l2.517-2.414 5.217 3.823c.956.528 1.64.251 1.897-.885l3.44-16.104.001-.001c.305-1.423-.514-1.978-1.448-1.63L1.36 9.46C-.03 10.004-.009 10.81 1.127 11.159l5.34 1.666 12.386-7.666c.583-.353 1.116-.157.678.196"/></svg>
+            </a>
+            <a href="mailto:anna.photo@example.com" aria-label="Email">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M20 4H4a2 2 0 00-2 2v.4l10 6.25L22 6.4V6a2 2 0 00-2-2zm2 5.2l-9.37 5.86a1 1 0 01-1.26 0L2 9.2V18a2 2 0 002 2h16a2 2 0 002-2V9.2z"/></svg>
+            </a>
+          </div>
+        </div>
 
-    <!-- Footer -->
+        <nav class="f-col f-nav">
+          <h4>Меню</h4>
+          <ul>
+            <li><a href="#hero">Главная</a></li>
+            <li><a href="#about">Обо мне</a></li>
+            <li><a href="#gallery">Портфолио-Контакты</a></li>
+          </ul>
+        </nav>
 
-    <!-- Modal for enlarged images -->
+        <div class="f-col f-contacts">
+          <h4>Контакты</h4>
+          <ul>
+            <li><a href="tel:+79990009900">+7 999 000 99 00</a></li>
+            <li><a href="mailto:anna.photo@example.com">anna.photo@example.com</a></li>
+            <li>Барнаул</li>
+            <li>Пн–Вс 10:00–20:00</li>
+          </ul>
+          <a class="btn-red" href="mailto:anna.photo@example.com">Связаться</a>
+        </div>
+      </div>
 
-    <script src="js/script.js"></script>
+      <div class="footer-bottom">
+        <span>© 2025 Анна Светлова. Все права защищены.</span>
+        <span>Сделано с любовью к свету и людям ♥</span>
+      </div>
+    </footer>
+  </div>
+
+  <script src="js/script.js"></script>
 </body>
 </html>

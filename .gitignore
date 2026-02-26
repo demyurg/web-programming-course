@@ -5,3 +5,4 @@ lessons/_*
 lessons/**/dist
 .DS_Store
 # lessons
+**/coverage

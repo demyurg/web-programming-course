@@ -1,0 +1,11 @@
+{
+  "devDependencies": {
+    "typescript": "^5.9.3"
+  },
+  "scripts": {
+    "test": "vitest",
+    "test:ui": "vitest --ui",
+    "test:coverage": "vitest --coverage",
+    "test:run": "vitest run"
+  }
+}
