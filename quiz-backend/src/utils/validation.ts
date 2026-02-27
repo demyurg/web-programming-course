@@ -7,7 +7,7 @@ export const AuthCodeSchema = z.object({
 
 export type AuthCodeInput = z.infer<typeof AuthCodeSchema>
 
-// Типы для GitHub API
+
 export interface GitHubUser {
     id: number
     login: string
@@ -22,7 +22,7 @@ export interface GitHubEmail {
     visibility: string | null
 }
 
-// Тип для JWT payload
+
 export interface JWTPayload {
     userId: string
     email: string

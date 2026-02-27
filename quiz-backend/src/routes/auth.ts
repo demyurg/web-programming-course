@@ -8,7 +8,7 @@ const auth = new Hono()
 const prisma = new PrismaClient()
 console.log('Prisma client created, DATABASE_URL:', process.env.DATABASE_URL)
 
-// Mock данные для тестирования
+
 const MOCK_USERS: Record<string, { id: number; login: string; name: string; email: string }> = {
     'test_code': {
         id: 12345678,
@@ -30,7 +30,7 @@ const MOCK_USERS: Record<string, { id: number; login: string; name: string; emai
     }
 }
 
-// Вспомогательная функция для получения email из GitHub
+
 async function getGitHubEmail(accessToken: string): Promise<string> {
     try {
         const emailsResponse = await fetch('https://api.github.com/user/emails', {
@@ -59,7 +59,7 @@ async function getGitHubEmail(accessToken: string): Promise<string> {
     }
 }
 
-// POST /api/auth/github/callback
+
 auth.post('/github/callback', async (c) => {
     try {
         // 1. Валидация входных данных
@@ -91,15 +91,6 @@ auth.post('/github/callback', async (c) => {
             const mockUser = MOCK_USERS[code] || MOCK_USERS['test_code']
             console.log('Mock user data:', mockUser)
 
-            // Создаем тестового пользователя без БД
-            // const user = {
-            //     id: "mock-" + Date.now(),
-            //     email: mockUser.email,
-            //     name: mockUser.name,
-            //     githubId: mockUser.id.toString(),
-            //     createdAt: new Date().toISOString()
-            // }
-            // console.log('Mock user created:', user)
             const user = await prisma.user.upsert({
                 where: { githubId: mockUser.id.toString() },
                 update: {
@@ -115,7 +106,6 @@ auth.post('/github/callback', async (c) => {
 
             console.log('User saved to DB:', user)
             
-
             // Создаем JWT токен
             const payload = {
                 userId: user.id,
@@ -137,11 +127,9 @@ auth.post('/github/callback', async (c) => {
             })
         }
 
-        // 3. REAL режим - работа с GitHub API
+
         console.log('Using real GitHub OAuth mode')
 
-        // Здесь будет код для реального GitHub OAuth
-        // Пока возвращаем сообщение, что режим не реализован
         return c.json({
             error: 'Real GitHub OAuth mode not implemented in mock version',
             message: 'This is a mock server. Use test_code, test_student, or test_teacher for testing.'
@@ -156,7 +144,7 @@ auth.post('/github/callback', async (c) => {
     }
 })
 
-// Добавим тестовый endpoint для проверки
+
 auth.get('/test', (c) => {
     return c.json({
         message: 'Auth routes are working!',
@@ -168,14 +156,14 @@ auth.get('/test', (c) => {
 
 auth.get('/me', async (c) => {
     try {
-        // 1. Получаем заголовок Authorization
+
         const authHeader = c.req.header('Authorization')
 
         if (!authHeader || !authHeader.startsWith('Bearer ')) {
             return c.json({ error: 'Unauthorized - No token provided' }, 401)
         }
 
-        // 2. Извлекаем токен
+       
         const token = authHeader.split(' ')[1]
         const JWT_SECRET = process.env.JWT_SECRET || 'my-super-secret-jwt-key-change-in-production'
 
@@ -184,7 +172,7 @@ auth.get('/me', async (c) => {
             return c.json({ error: 'Server configuration error' }, 500)
         }
 
-        // 3. Проверяем валидность токена
+  
         let payload
         try {
             payload = await verify(token, JWT_SECRET, 'HS256')

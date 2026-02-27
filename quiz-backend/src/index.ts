@@ -13,13 +13,13 @@ app.get('/health', (c) => {
   return c.json({ status: 'ok' })
 })
 
-// С параметрами
+
 app.get('/users/:id', (c) => {
   const id = c.req.param('id');
   return c.json({ userId: id });
 });
 
-// POST с телом
+
 app.post('/users', async (c) => {
   const body = await c.req.json();
   return c.json({ created: body }, 201);
