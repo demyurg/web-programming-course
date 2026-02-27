@@ -314,20 +314,20 @@
       "expiresAt": null
     },
     {
-      "sessionId": "sess_1763366197220",
+      "sessionId": "sess_1763366006139",
       "userId": "usr_student1",
       "status": "completed",
       "mode": "game",
       "questionIds": [
-        "q_001",
-        "q_005"
+        "q_005",
+        "q_001"
       ],
       "totalQuestions": 2,
       "answeredCount": 2,
       "maxScore": 9,
-      "currentScore": 4,
-      "createdAt": "2025-11-17T07:56:37.220Z",
-      "completedAt": "2025-11-17T07:56:41.460Z",
+      "currentScore": 5,
+      "createdAt": "2025-11-17T07:53:26.139Z",
+      "completedAt": "2025-11-17T07:53:34.428Z",
       "expiresAt": null
     }
   ],
@@ -383,34 +383,34 @@
       "createdAt": "2025-01-15T10:30:00Z"
     },
     {
-      "answerId": "ans_1763366199412",
-      "sessionId": "sess_1763366197220",
+      "answerId": "ans_1763366010518",
+      "sessionId": "sess_1763366006139",
+      "questionId": "q_005",
+      "userId": "usr_student1",
+      "selectedOptions": [
+        0,
+        1
+      ],
+      "status": "partial",
+      "pointsEarned": 1,
+      "maxPoints": 5,
+      "feedback": "Вы набрали 1 из 5 баллов.",
+      "createdAt": "2025-11-17T07:53:30.519Z"
+    },
+    {
+      "answerId": "ans_1763366014363",
+      "sessionId": "sess_1763366006139",
       "questionId": "q_001",
       "userId": "usr_student1",
       "selectedOptions": [
-        2,
-        1
+        1,
+        2
       ],
       "status": "correct",
       "pointsEarned": 4,
       "maxPoints": 4,
       "feedback": "Вы набрали 4 из 4 баллов.",
-      "createdAt": "2025-11-17T07:56:39.413Z"
-    },
-    {
-      "answerId": "ans_1763366201447",
-      "sessionId": "sess_1763366197220",
-      "questionId": "q_005",
-      "userId": "usr_student1",
-      "selectedOptions": [
-        3,
-        4
-      ],
-      "status": "partial",
-      "pointsEarned": 0,
-      "maxPoints": 5,
-      "feedback": "Вы набрали 0 из 5 баллов.",
-      "createdAt": "2025-11-17T07:56:41.447Z"
+      "createdAt": "2025-11-17T07:53:34.363Z"
     }
   ]
 }
