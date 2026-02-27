@@ -36,8 +36,7 @@ describe('QuizButton', () => {
             </QuizButton>
         );
         const button = screen.getByRole('button');
-        expect(button.className).toContain('bg-gray-200');
-        expect(button.className).toContain('text-gray-800');
+        expect(button.className).toContain('bg-gray-200 text-gray-800');
     });
 
 });
