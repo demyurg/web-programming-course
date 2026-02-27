@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-// Схема валидации для кода авторизации
+
 export const AuthCodeSchema = z.object({
     code: z.string().min(1, "Code is required")
 })

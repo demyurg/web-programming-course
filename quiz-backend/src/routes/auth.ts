@@ -30,39 +30,9 @@ const MOCK_USERS: Record<string, { id: number; login: string; name: string; emai
     }
 }
 
-
-async function getGitHubEmail(accessToken: string): Promise<string> {
-    try {
-        const emailsResponse = await fetch('https://api.github.com/user/emails', {
-            headers: {
-                'Authorization': `token ${accessToken}`,
-                'Accept': 'application/json',
-                'User-Agent': 'Quiz-Backend-App'
-            }
-        })
-
-        if (!emailsResponse.ok) {
-            throw new Error(`Failed to fetch GitHub emails: ${emailsResponse.status}`)
-        }
-
-        const emails: GitHubEmail[] = await emailsResponse.json()
-        const primaryEmail = emails.find(e => e.primary && e.verified)
-
-        if (!primaryEmail) {
-            throw new Error('No verified primary email found')
-        }
-
-        return primaryEmail.email
-    } catch (error) {
-        console.error('Error fetching GitHub email:', error)
-        throw error
-    }
-}
-
-
 auth.post('/github/callback', async (c) => {
     try {
-        // 1. Валидация входных данных
+        
         const body = await c.req.json()
         console.log('Received auth request with body:', body)
 
@@ -84,7 +54,7 @@ auth.post('/github/callback', async (c) => {
             return c.json({ error: 'Server configuration error' }, 500)
         }
 
-        // 2. MOCK режим для тестирования (БЕЗ БАЗЫ ДАННЫХ)
+        // 2. MOCK режим для тестирования
         if (code.startsWith('test_')) {
             console.log('Using mock mode with code:', code)
 
@@ -106,11 +76,11 @@ auth.post('/github/callback', async (c) => {
 
             console.log('User saved to DB:', user)
             
-            // Создаем JWT токен
+            // JWT токен
             const payload = {
                 userId: user.id,
                 email: user.email,
-                exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 7 // 7 дней
+                exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 7 
             }
 
             const token = await sign(payload, JWT_SECRET, 'HS256')
@@ -128,13 +98,6 @@ auth.post('/github/callback', async (c) => {
         }
 
 
-        console.log('Using real GitHub OAuth mode')
-
-        return c.json({
-            error: 'Real GitHub OAuth mode not implemented in mock version',
-            message: 'This is a mock server. Use test_code, test_student, or test_teacher for testing.'
-        }, 501)
-
     } catch (error) {
         console.error('Auth error:', error)
         return c.json({
@@ -150,7 +113,8 @@ auth.get('/test', (c) => {
         message: 'Auth routes are working!',
         endpoints: {
             'POST /github/callback': 'Send {"code": "test_student"} for mock auth'
-        }
+        },
+        note: 'Only mock codes (test_*) are accepted'
     })
 })
 
