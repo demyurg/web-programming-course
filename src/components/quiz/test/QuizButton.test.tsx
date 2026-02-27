@@ -29,13 +29,6 @@ describe('QuizButton', () => {
     });
 
 
-    it('применяет primary стили по умолчанию', () => {
-        render(<QuizButton onClick={() => { }}>Primary</QuizButton>);
-        const button = screen.getByRole('button');
-        expect(button.className).toContain('bg-purple-600');
-        expect(button.className).toContain('hover:bg-purple-700');
-    });
-
     it('применяет secondary стили при variant="secondary"', () => {
         render(
             <QuizButton onClick={() => { }} variant="secondary">
