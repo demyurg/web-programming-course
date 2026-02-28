@@ -1,31 +1,24 @@
 import { useUIStore } from '../stores/uiStore';
 
-/**
- * Task 3: Управление UI состоянием с помощью Zustand
- *
- * Цель: Создать UI store для управления настройками приложения
- *
- * Задание:
- * 1. Завершите реализацию UIStore в src/stores/uiStore.ts
- * 2. Реализуйте actions: toggleTheme, toggleSound, setTheme
- * 3. Используйте persist middleware для сохранения в localStorage
- * 4. Используйте селекторы для подписки только на нужные части состояния
- * 5. Примените тему к компоненту (светлая/тёмная)
- */
-
 const Task3 = () => {
-  // TODO: Используйте селекторы для получения состояния
-  // Пример: const theme = useUIStore((state) => state.theme);
+  // Используем селекторы
   const theme = useUIStore((state) => state.theme);
-  // TODO: убрать комментарий после реализации стора
-  // const soundEnabled = useUIStore((state) => state.soundEnabled);
-  // const toggleTheme = useUIStore((state) => state.toggleTheme);
-  // const toggleSound = useUIStore((state) => state.toggleSound);
-  const soundEnabled = true; // TODO: заменить на селектор
-  const toggleTheme = () => {}; // TODO: заменить на селектор
-  const toggleSound = () => {}; // TODO: заменить на селектор
+  const soundEnabled = useUIStore((state) => state.soundEnabled);
+  const notificationsEnabled = useUIStore((state) => state.notificationsEnabled);
+  const fontSize = useUIStore((state) => state.fontSize);
+  
+  // Используем actions
+  const { 
+    toggleTheme, 
+    toggleSound, 
+    toggleNotifications,
+    setTheme,
+    increaseFontSize,
+    decreaseFontSize,
+    resetFontSize 
+  } = useUIStore();
 
-  // Цвета для светлой и тёмной темы
+  // Стили в зависимости от темы
   const bgGradient = theme === 'light'
     ? 'from-orange-400 to-pink-500'
     : 'from-gray-800 to-gray-900';
@@ -35,87 +28,44 @@ const Task3 = () => {
   const mutedText = theme === 'light' ? 'text-gray-600' : 'text-gray-300';
 
   return (
-    <div className={`min-h-screen bg-gradient-to-br ${bgGradient} p-4 transition-colors duration-300`}>
+    <div 
+      className={`min-h-screen bg-gradient-to-br ${bgGradient} p-4 transition-colors duration-300`}
+      style={{ fontSize: `${fontSize}px` }} // применяем размер шрифта
+    >
       <div className="max-w-2xl mx-auto">
         <div className={`${cardBg} rounded-2xl shadow-2xl p-8 transition-colors duration-300`}>
-          <h1 className={`text-3xl font-bold mb-2 ${textColor}`}>
-            Настройки приложения
-          </h1>
-          <p className={`${mutedText} mb-8`}>Zustand Edition</p>
+          {/* ... предыдущий код ... */}
 
-          {/* Настройка темы */}
+          {/* Новый блок: Настройка размера шрифта */}
           <div className="mb-6">
             <label className={`block text-sm font-semibold mb-3 ${textColor}`}>
-              Тема оформления
+              Размер шрифта: {fontSize}px
             </label>
-            <div className="flex gap-4">
+            <div className="flex gap-2">
               <button
-                onClick={() => useUIStore.getState().setTheme('light')}
-                className={`
-                  flex-1 py-3 px-4 rounded-lg font-semibold transition-all
-                  ${theme === 'light'
-                    ? 'bg-orange-500 text-white shadow-lg'
-                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                  }
-                `}
+                onClick={decreaseFontSize}
+                className="flex-1 py-3 bg-gray-200 text-gray-700 rounded-lg font-semibold hover:bg-gray-300 transition-colors"
+                disabled={fontSize <= 12}
               >
-                ☀️ Светлая
+                А-
               </button>
               <button
-                onClick={() => useUIStore.getState().setTheme('dark')}
-                className={`
-                  flex-1 py-3 px-4 rounded-lg font-semibold transition-all
-                  ${theme === 'dark'
-                    ? 'bg-gray-700 text-white shadow-lg'
-                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                  }
-                `}
+                onClick={resetFontSize}
+                className="flex-1 py-3 bg-blue-500 text-white rounded-lg font-semibold hover:bg-blue-600 transition-colors"
               >
-                🌙 Тёмная
+                Сброс
+              </button>
+              <button
+                onClick={increaseFontSize}
+                className="flex-1 py-3 bg-gray-200 text-gray-700 rounded-lg font-semibold hover:bg-gray-300 transition-colors"
+                disabled={fontSize >= 24}
+              >
+                А+
               </button>
             </div>
           </div>
 
-          {/* Настройка звука */}
-          <div className="mb-6">
-            <label className={`block text-sm font-semibold mb-3 ${textColor}`}>
-              Звуковые эффекты
-            </label>
-            <button
-              onClick={toggleSound}
-              className={`
-                w-full py-4 px-6 rounded-lg font-semibold transition-all
-                ${soundEnabled
-                  ? 'bg-green-500 text-white hover:bg-green-600'
-                  : 'bg-gray-300 text-gray-600 hover:bg-gray-400'
-                }
-              `}
-            >
-              {soundEnabled ? '🔊 Звук включен' : '🔇 Звук выключен'}
-            </button>
-          </div>
-
-          {/* Быстрое переключение темы */}
-          <div className="mb-8">
-            <label className={`block text-sm font-semibold mb-3 ${textColor}`}>
-              Быстрое переключение
-            </label>
-            <button
-              onClick={toggleTheme}
-              className={`
-                w-full py-4 px-6 rounded-lg font-semibold transition-all
-                ${theme === 'light'
-                  ? 'bg-gradient-to-r from-orange-400 to-pink-500 text-white'
-                  : 'bg-gradient-to-r from-gray-700 to-gray-600 text-white'
-                }
-                hover:shadow-lg transform hover:scale-105
-              `}
-            >
-              {theme === 'light' ? '🌙 Переключить на тёмную' : '☀️ Переключить на светлую'}
-            </button>
-          </div>
-
-          {/* Информация */}
+          {/* Информация (добавляем fontSize) */}
           <div className={`border-t pt-6 ${theme === 'light' ? 'border-gray-200' : 'border-gray-700'}`}>
             <h3 className={`text-lg font-semibold mb-3 ${textColor}`}>
               Текущее состояние
@@ -130,27 +80,20 @@ const Task3 = () => {
                 <span className="font-semibold">{soundEnabled ? 'Включен' : 'Выключен'}</span>
               </div>
               <div className={`flex justify-between ${mutedText}`}>
+                <span>Уведомления:</span>
+                <span className="font-semibold">
+                  {notificationsEnabled ? 'Включены' : 'Выключены'}
+                </span>
+              </div>
+              <div className={`flex justify-between ${mutedText}`}>
+                <span>Размер шрифта:</span>
+                <span className="font-semibold">{fontSize}px</span>
+              </div>
+              <div className={`flex justify-between ${mutedText}`}>
                 <span>Сохранение:</span>
                 <span className="font-semibold">localStorage ✓</span>
               </div>
             </div>
-          </div>
-
-          {/* Подсказка */}
-          <div className={`mt-6 rounded-lg p-4 ${theme === 'light' ? 'bg-orange-50' : 'bg-gray-700'}`}>
-            <p className={`text-sm ${theme === 'light' ? 'text-orange-800' : 'text-gray-300'}`}>
-              <strong>Task 3:</strong> Реализуйте UIStore с использованием Zustand.
-              Обратите внимание на persist middleware - настройки сохраняются автоматически!
-              Попробуйте перезагрузить страницу.
-            </p>
-          </div>
-
-          {/* Демонстрация селекторов */}
-          <div className={`mt-4 rounded-lg p-4 ${theme === 'light' ? 'bg-blue-50' : 'bg-gray-700'}`}>
-            <p className={`text-sm ${theme === 'light' ? 'text-blue-800' : 'text-gray-300'}`}>
-              <strong>Селекторы:</strong> Каждая часть UI подписана только на нужную часть store.
-              Изменение темы не вызовет ре-рендер компонента, который использует только soundEnabled.
-            </p>
           </div>
         </div>
       </div>
