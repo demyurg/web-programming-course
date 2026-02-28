@@ -21,8 +21,67 @@
 // - UserRole: 'admin' | 'customer' | 'manager'
 // - OrderStatus: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled'
 
+type UserRole = 'admin' | 'customer' | 'manager';
+type OrderStatus = 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
+
+// Базовые интерфейсы
+interface User {
+    id: number;
+    name: string;
+    email: string;
+    role: UserRole;
+    avatar?: string;
+}
+
+interface Product {
+    id: number;
+    name: string;
+    price: number;
+    description: string;
+    category: string;
+    images: string[];
+    rating?: number;
+}
+
+interface OrderItem {
+    productId: number;
+    quantity: number;
+    price: number;
+}
+
+interface Order {
+    id: number;
+    userId: number;
+    items: OrderItem[];
+    totalAmount: number;
+    status: OrderStatus;
+    createdAt: Date;
+}
+
+// Интерфейсы для API ответов
+interface ApiResponse<T = any> {
+    data?: T;
+    success: boolean;
+    message?: string;
+    error?: string;
+}
+
+// Интерфейсы для фильтров
+interface ProductFilters {
+    category?: string;
+    minPrice?: number;
+    maxPrice?: number;
+    search?: string;
+}
+
+interface CreateOrderData {
+    userId: number;
+    items: OrderItem[];
+    totalAmount: number;
+}
+
 // Базовая функция для API запросов
-async function makeApiRequest(url, options) {
+async function makeApiRequest<T>(url: string, options?: RequestInit): Promise<ApiResponse<T>> {
     try {
         const response = await fetch(url, options);
         const data = await response.json();
@@ -31,33 +90,33 @@ async function makeApiRequest(url, options) {
             return {
                 success: false,
                 error: data.message || 'Произошла ошибка',
-                data: null
+                data: undefined
             };
         }
         
         return {
             success: true,
             data: data,
-            error: null
+            error: undefined
         };
     } catch (error) {
         return {
             success: false,
-            error: error.message,
-            data: null
+            error: (error as Error).message,
+            data: undefined
         };
     }
 }
 
+
 // Получение пользователя по ID
-async function getUser(userId) {
-    return makeApiRequest(`/api/users/${userId}`, {
+async function getUser(userId: number): Promise<ApiResponse<User>> {
+    return makeApiRequest<User>(`/api/users/${userId}`, {
         method: 'GET'
     });
 }
-
 // Получение списка товаров с фильтрами
-async function getProducts(filters) {
+async function getProducts(filters: ProductFilters): Promise<ApiResponse<Product[]>> {
     const queryParams = new URLSearchParams();
     
     if (filters.category) queryParams.set('category', filters.category);
@@ -65,14 +124,13 @@ async function getProducts(filters) {
     if (filters.maxPrice) queryParams.set('maxPrice', filters.maxPrice.toString());
     if (filters.search) queryParams.set('search', filters.search);
     
-    return makeApiRequest(`/api/products?${queryParams}`, {
+    return makeApiRequest<Product[]>(`/api/products?${queryParams}`, {
         method: 'GET'
     });
 }
-
 // Создание заказа
-async function createOrder(orderData) {
-    return makeApiRequest('/api/orders', {
+async function createOrder(orderData: CreateOrderData): Promise<ApiResponse<Order>> {
+    return makeApiRequest<Order>('/api/orders', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -82,8 +140,8 @@ async function createOrder(orderData) {
 }
 
 // Обновление статуса заказа
-async function updateOrderStatus(orderId, newStatus) {
-    return makeApiRequest(`/api/orders/${orderId}/status`, {
+async function updateOrderStatus(orderId: number, newStatus: OrderStatus): Promise<ApiResponse<Order>> {
+    return makeApiRequest<Order>(`/api/orders/${orderId}/status`, {
         method: 'PATCH',
         headers: {
             'Content-Type': 'application/json'
@@ -92,8 +150,13 @@ async function updateOrderStatus(orderId, newStatus) {
     });
 }
 
+
 // Функция для обработки результатов API
-function handleApiResponse(response, onSuccess, onError) {
+function handleApiResponse<T>(
+    response: ApiResponse<T>, 
+    onSuccess: (data: T) => void, 
+    onError: (error: string) => void
+): void {
     if (response.success && response.data) {
         onSuccess(response.data);
     } else {
@@ -101,34 +164,33 @@ function handleApiResponse(response, onSuccess, onError) {
     }
 }
 
+
 // Класс для управления состоянием загрузки
-class ApiState {
-    constructor() {
-        this.isLoading = false;
-        this.error = null;
-        this.data = null;
-    }
+class ApiState<T> {
+    public isLoading: boolean = false;
+    public error: string | null = null;
+    public data: T | null = null;
     
-    setLoading(loading) {
+    setLoading(loading: boolean): void {
         this.isLoading = loading;
         if (loading) {
             this.error = null;
         }
     }
     
-    setData(data) {
+    setData(data: T): void {
         this.data = data;
         this.isLoading = false;
         this.error = null;
     }
     
-    setError(error) {
+    setError(error: string): void {
         this.error = error;
         this.isLoading = false;
         this.data = null;
     }
     
-    getState() {
+    getState(): { isLoading: boolean; error: string | null; data: T | null } {
         return {
             isLoading: this.isLoading,
             error: this.error,
@@ -138,33 +200,38 @@ class ApiState {
 }
 
 // Композитная функция для загрузки данных с состоянием
-async function loadDataWithState(apiCall, state) {
+async function loadDataWithState<T>(
+    apiCall: () => Promise<ApiResponse<T>>, 
+    state: ApiState<T>
+): Promise<ApiResponse<T>> {
     state.setLoading(true);
     
     try {
         const response = await apiCall();
         
-        if (response.success) {
+        if (response.success && response.data) {
             state.setData(response.data);
         } else {
-            state.setError(response.error);
+            state.setError(response.error || 'Unknown error');
         }
         
         return response;
     } catch (error) {
-        state.setError(error.message);
+        const errorMessage = (error as Error).message;
+        state.setError(errorMessage);
         return {
             success: false,
-            error: error.message,
-            data: null
+            error: errorMessage,
+            data: undefined
         };
     }
 }
 
+
 // Примеры использования
-async function exampleUsage() {
-    const userState = new ApiState();
-    const productsState = new ApiState();
+async function exampleUsage(): Promise<void> {
+    const userState = new ApiState<User>();
+    const productsState = new ApiState<Product[]>();
     
     console.log('Загружаем пользователя...');
     await loadDataWithState(() => getUser(1), userState);

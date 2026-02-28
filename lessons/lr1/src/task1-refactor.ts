@@ -9,7 +9,34 @@
  */
 
 // Калькулятор с проблемами типизации
-function calculate(operation, a, b) {
+
+// Типы для калькулятора
+type Operation = 'add' | 'subtract' | 'multiply' | 'divide';
+
+// Интерфейсы для работы с пользователями
+interface User {
+    name: string;
+    age: number;
+    email: string;
+    isAdmin: boolean;
+    createdAt: Date;
+    getId(): string;
+}
+
+interface ProcessedUser extends User {
+    displayName: string;
+    isAdult: boolean;
+}
+
+interface UserCriteria {
+    name?: string;
+    age?: number;
+    email?: string;
+    isAdmin?: boolean;
+}
+
+// Калькулятор с правильной типизацией
+function calculate(operation: Operation, a: number, b: number): number | null | undefined {
     switch (operation) {
         case 'add':
             return a + b;
@@ -28,21 +55,21 @@ function calculate(operation, a, b) {
 }
 
 // Функция для работы с пользователем
-function createUser(name, age, email, isAdmin) {
+function createUser(name: string, age: number, email: string, isAdmin: boolean = false): User {
     return {
         name,
         age,
         email,
-        isAdmin: isAdmin || false,
+        isAdmin,
         createdAt: new Date(),
-        getId: function() {
+        getId: function(): string {
             return Math.random().toString(36).substr(2, 9);
         }
     };
 }
 
 // Обработка списка пользователей
-function processUsers(users) {
+function processUsers(users: User[]): ProcessedUser[] {
     return users.map(user => {
         return {
             ...user,
@@ -53,29 +80,32 @@ function processUsers(users) {
 }
 
 // Функция поиска пользователя
-function findUser(users, criteria) {
+function findUser(users: User[], criteria: string | number | UserCriteria): User | null {
     if (typeof criteria === 'string') {
-        return users.find(user => user.name === criteria);
+        return users.find(user => user.name === criteria) || null;
     }
     if (typeof criteria === 'number') {
-        return users.find(user => user.age === criteria);
+        return users.find(user => user.age === criteria) || null;
     }
     if (typeof criteria === 'object') {
         return users.find(user => {
-            return Object.keys(criteria).every(key => user[key] === criteria[key]);
-        });
+            return Object.keys(criteria).every(key => {
+                const userKey = key as keyof UserCriteria;
+                return user[userKey as keyof User] === criteria[userKey];
+            });
+        }) || null;
     }
     return null;
 }
 
-// Примеры использования (должны работать после типизации)
+// Примеры использования
 console.log(calculate('add', 10, 5)); // 15
 console.log(calculate('divide', 10, 0)); // null
 
 const user = createUser('Анна', 25, 'anna@example.com');
 console.log(user);
 
-const users = [
+const users: User[] = [
     createUser('Петр', 30, 'peter@example.com', true),
     createUser('Мария', 16, 'maria@example.com'),
 ];
