@@ -1,6 +1,7 @@
 import { makeAutoObservable } from 'mobx';
 import { Question, Answer } from '../types/quiz';
 import { mockQuestions } from '../data/questions';
+import { QuestionPreview } from '../../generated/api/quizBattleAPI.schemas';
 
 /**
  * GameStore - MobX Store для управления игровой логикой
@@ -15,7 +16,7 @@ class GameStore {
   questions: Question[] = [];
   currentQuestionIndex = 0;
   score = 0;
-  selectedAnswer: number | null = null;
+  selectedAnswers: number[] = [];
   answeredQuestions: Answer[] = [];
 
   constructor() {
@@ -29,32 +30,51 @@ class GameStore {
     this.questions = mockQuestions;
     this.currentQuestionIndex = 0;
     this.score = 0;
-    this.selectedAnswer = null;
+    this.selectedAnswers = [];
     this.answeredQuestions = [];
   }
 
-  selectAnswer(answerIndex: number) {
-    console.log('Selected answer:', answerIndex);
-    if (this.selectedAnswer !== null) return; // уже выбран
-
-    this.selectedAnswer = answerIndex;
-
-    const question = this.currentQuestion;
-    if (!question) return;
-
-    const isCorrect = answerIndex === question.correctAnswer;
-
-    if (isCorrect) {
-      this.score++;
+  toggleAnswer(answerIndex: number) {
+    if (this.selectedAnswers.includes(answerIndex)) {
+      this.selectedAnswers = this.selectedAnswers.filter(a => a !== answerIndex);
+    } else {
+      this.selectedAnswers.push(answerIndex);
     }
-
-    this.answeredQuestions.push({
-      questionId: question.id,
-      selectedAnswer: answerIndex,
-      isCorrect,
-    });
-
   }
+
+  selectAnswer(answerIndex: number) {
+  console.log('Selected answer:', answerIndex);
+
+  if (!this.selectedAnswers) {
+    this.selectedAnswers = [];
+  }
+
+  
+  // toggle
+
+
+  if (this.selectedAnswers.includes(answerIndex)) {
+    this.selectedAnswers = this.selectedAnswers.filter(a => a !== answerIndex);
+    return;
+  }
+
+  this.selectedAnswers.push(answerIndex);
+
+  const question = this.currentQuestion;
+  if (!question) return;
+
+  const isCorrect = this.selectedAnswers.includes(question.correctAnswer);
+
+  if (isCorrect) {
+    this.score++;
+  }
+
+  this.answeredQuestions.push({
+    questionId: question.id,
+    selectedAnswer: this.selectedAnswers[0],
+    isCorrect,
+  });
+}
 
   nextQuestion() {
     if (this.isLastQuestion) {
@@ -63,7 +83,7 @@ class GameStore {
     }
 
     this.currentQuestionIndex++;
-    this.selectedAnswer = null;
+    this.selectedAnswers = [];
   }
 
   finishGame() {
@@ -75,10 +95,21 @@ class GameStore {
     this.questions = [];
     this.currentQuestionIndex = 0;
     this.score = 0;
-    this.selectedAnswer = null;
+    this.selectedAnswers = [];
     this.answeredQuestions = [];
   }
 
+setQuestionsFromAPI(questions: QuestionPreview[]) {
+  this.questions = questions as unknown as Question[];
+}
+
+  updateAnswerResult(questionId: number, isCorrect: boolean) {
+    const answer = this.answeredQuestions.find(a => a.questionId === questionId);
+    if (answer) {
+      answer.isCorrect = isCorrect;
+    }
+
+  }
 
   get currentQuestion(): Question | null {
     return this.questions[this.currentQuestionIndex] ?? null;

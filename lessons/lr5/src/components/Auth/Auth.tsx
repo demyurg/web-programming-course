@@ -3,7 +3,7 @@ import { useAuth } from './useAuth';
 
 export const Auth = ({ children }: React.PropsWithChildren<{}>) => {
   const { isLoading, login, logout, token } = useAuth();
-  const [tmpLoading, set] = useState(true);
+  const [tmpLoading, set] = useState(false);
   useEffect(() => {
     set(true)
     const ref = setTimeout(
