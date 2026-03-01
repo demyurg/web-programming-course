@@ -18,6 +18,9 @@ import { Question } from '../types/quiz';
 const Task1 = () => {
   // Пример создания состояния с помощью useState
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
+  const [score, setScore] = useState<number>(0);
+  const [isFinished, setIsFinished] = useState<boolean>(false);
 
   // TODO: Создайте состояние selectedAnswer для хранения выбранного ответа
   // Подсказка: используйте useState, тип number | null, начальное значение null
@@ -32,9 +35,9 @@ const Task1 = () => {
   const currentQuestion: Question = mockQuestions[currentQuestionIndex];
 
   // Временные значения (удалите эти строки после создания состояний выше)
-  const selectedAnswer = null;
-  const score = 0;
-  const isFinished = false;
+  // const selectedAnswer = null;
+  // const score = 0;
+  // const isFinished = false;
 
   const handleAnswerClick = (answerIndex: number) => {
     // TODO: Реализуйте логику выбора ответа
@@ -42,6 +45,13 @@ const Task1 = () => {
     // 2. Сохраните выбранный ответ: setSelectedAnswer(answerIndex)
     // 3. Проверьте правильность: answerIndex === currentQuestion.correctAnswer
     // 4. Если ответ правильный - увеличьте счёт: setScore(score + 1)
+    if (selectedAnswer === null){
+      setSelectedAnswer(answerIndex);
+
+      if (answerIndex === currentQuestion.correctAnswer){
+        setScore(score + 1);
+      }
+    }
   };
 
   const handleNextQuestion = () => {
@@ -52,6 +62,12 @@ const Task1 = () => {
     // 3. Если не последний:
     //    - Увеличьте индекс: setCurrentQuestionIndex(currentQuestionIndex + 1)
     //    - Сбросьте выбранный ответ: setSelectedAnswer(null)
+    if (currentQuestionIndex === mockQuestions.length - 1){
+      setIsFinished(true);
+    } else {
+      setCurrentQuestionIndex(currentQuestionIndex + 1);
+      setSelectedAnswer(null);
+    }
   };
 
   const handleRestart = () => {
@@ -61,6 +77,10 @@ const Task1 = () => {
     // setSelectedAnswer(null);
     // setScore(0);
     // setIsFinished(false);
+    setCurrentQuestionIndex(0);
+    setSelectedAnswer(null);
+    setScore(0);
+    setIsFinished(false);
   };
 
   // Экран результатов
