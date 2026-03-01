@@ -9,93 +9,106 @@
  * 3. Убедитесь что все компоненты работают без ошибок TypeScript
  */
 
-import React from 'react';
+import React, { FC, ReactNode } from 'react';
 
 // ===== ЗАДАЧА 1.1: Простая карточка пользователя =====
 
-// TODO: Создайте интерфейс UserCardProps со следующими свойствами:
-// - name: string
-// - email: string
-// - age: number (опциональное)
-// - avatar: string (опциональное)
-// - isOnline: boolean
+interface UserCardProps {
+  name: string;
+  email: string;
+  age?: number;
+  avatar?: string;
+  isOnline: boolean;
+}
 
-// TODO: Типизируйте компонент UserCard
-function UserCard(/* TODO: добавьте типизацию props */) {
+const UserCard: FC<UserCardProps> = ({ name, email, age, avatar, isOnline }) => {
   return (
     <div className="user-card">
-      {/* TODO: добавьте отображение avatar если он есть */}
-      <h2>{/* TODO: отобразите name */}</h2>
-      <p>{/* TODO: отобразите email */}</p>
-      {/* TODO: отобразите age если он есть */}
-      <span className={`status ${/* TODO: добавьте класс на основе isOnline */}`}>
-        {/* TODO: отобразите статус онлайн/офлайн */}
+      {avatar && <img src={avatar} alt={name} className="avatar" />}
+      <h2>{name}</h2>
+      <p>{email}</p>
+      {age && <p className="age">Возраст: {age}</p>}
+      <span className={`status ${isOnline ? 'status--online' : 'status--offline'}`}>
+        {isOnline ? '🟢 Online' : '⚫ Offline'}
       </span>
     </div>
   );
-}
+};
 
 // ===== ЗАДАЧА 1.2: Кнопка с вариантами =====
 
-// TODO: Создайте интерфейс ButtonProps со следующими свойствами:
-// - children: React.ReactNode
-// - variant: 'primary' | 'secondary' | 'danger'
-// - size: 'small' | 'medium' | 'large'
-// - disabled: boolean (опциональное, по умолчанию false)
-// - onClick: () => void
+interface ButtonProps {
+  children: ReactNode;
+  variant: 'primary' | 'secondary' | 'danger';
+  size: 'small' | 'medium' | 'large';
+  disabled?: boolean;
+  onClick: () => void;
+}
 
-// TODO: Типизируйте компонент Button
-function Button(/* TODO: добавьте типизацию props */) {
+const Button: FC<ButtonProps> = ({ 
+  children, 
+  variant, 
+  size, 
+  disabled = false, 
+  onClick 
+}) => {
   return (
     <button
-      className={`btn btn--${/* TODO: используйте variant */} btn--${/* TODO: используйте size */}`}
-      disabled={/* TODO: используйте disabled */}
-      onClick={/* TODO: используйте onClick */}
+      className={`btn btn--${variant} btn--${size}`}
+      disabled={disabled}
+      onClick={onClick}
     >
-      {/* TODO: отобразите children */}
+      {children}
     </button>
   );
-}
+};
 
 // ===== ЗАДАЧА 1.3: Простой список пользователей =====
 
-// TODO: Создайте интерфейс UserListProps со следующими свойствами:
-// - users: string[] (массив имен пользователей)
-// - emptyMessage: string (опциональное, по умолчанию "Нет пользователей")
+interface UserListProps {
+  users: string[];
+  emptyMessage?: string;
+}
 
-// TODO: Типизируйте компонент UserList
-function UserList(/* TODO: добавьте типизацию props */) {
-  // TODO: если users пустой, отобразите emptyMessage
+const UserList: FC<UserListProps> = ({ 
+  users, 
+  emptyMessage = 'Нет пользователей' 
+}) => {
+  if (users.length === 0) {
+    return <p className="empty-message">{emptyMessage}</p>;
+  }
 
   return (
     <ul className="user-list">
-      {/* TODO: отрендерите users как <li> элементы */}
+      {users.map((user: string, index: number) => (
+        <li key={index}>{user}</li>
+      ))}
     </ul>
   );
-}
+};
 
 // ===== ЗАДАЧА 1.4: Карточка с children =====
 
-// TODO: Создайте интерфейс CardProps со следующими свойствами:
-// - title: string
-// - children: React.ReactNode
-// - footer: React.ReactNode (опциональное)
-// - className: string (опциональное)
+interface CardProps {
+  title: string;
+  children: ReactNode;
+  footer?: ReactNode;
+  className?: string;
+}
 
-// TODO: Типизируйте компонент Card
-function Card(/* TODO: добавьте типизацию props */) {
+const Card: FC<CardProps> = ({ title, children, footer, className = '' }) => {
   return (
-    <div className={`card ${/* TODO: добавьте className если есть */}`}>
+    <div className={`card ${className}`.trim()}>
       <div className="card-header">
-        <h3>{/* TODO: отобразите title */}</h3>
+        <h3>{title}</h3>
       </div>
       <div className="card-content">
-        {/* TODO: отобразите children */}
+        {children}
       </div>
-      {/* TODO: отобразите footer если он есть */}
+      {footer && <div className="card-footer">{footer}</div>}
     </div>
   );
-}
+};
 
 // ===== ЗАДАЧА 1.5: Демо компонент =====
 
@@ -107,17 +120,16 @@ interface User {
   isOnline: boolean;
 }
 
-// TODO: Типизируйте компонент App
-function App() {
+const App: FC = () => {
   const users: User[] = [
     { id: 1, name: 'Анна Иванова', email: 'anna@example.com', age: 28, isOnline: true },
     { id: 2, name: 'Петр Петров', email: 'petr@example.com', age: 35, isOnline: false },
     { id: 3, name: 'Мария Сидорова', email: 'maria@example.com', age: 24, isOnline: true }
   ];
 
-  const userNames = users.map(user => user.name);
+  const userNames = users.map((user: User) => user.name);
 
-  const handleButtonClick = () => {
+  const handleButtonClick = (): void => {
     console.log('Кнопка нажата!');
   };
 
@@ -142,14 +154,24 @@ function App() {
           </Button>
         </div>
       </Card>
+
+      {/* Дополнительный пример с UserCard */}
+      <div style={{ marginTop: '30px' }}>
+        <h2>Отдельные карточки пользователей:</h2>
+        <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap' }}>
+          {users.map((user: User) => (
+            <UserCard
+              key={user.id}
+              name={user.name}
+              email={user.email}
+              age={user.age}
+              isOnline={user.isOnline}
+            />
+          ))}
+        </div>
+      </div>
     </div>
   );
-}
+};
 
 export default App;
-
-// ===== БОНУСНЫЕ ЗАДАЧИ =====
-
-// TODO BONUS 1: Примените utility типы для типизации параметров компонента
-// TODO BONUS 2: Создайте generic компонент List<T> с render prop паттерном
-// TODO BONUS 3: Добавьте поддержку ref forwarding в Button компонент
