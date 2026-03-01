@@ -1,0 +1,25 @@
+.hero {
+    background: var(--color-gradient-opacity);
+    height: 250px;
+    border-radius: var(--border-radius-l);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.hero__inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    row-gap: 16px;
+}
+
+.hero__title {
+    font-size: 30px;
+    font-weight: 700;
+    color: var(--color-primary-900);
+}
+
+.hero__description {
+    font-size: 20px;
+}

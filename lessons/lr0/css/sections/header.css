@@ -1,0 +1,32 @@
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    column-gap: 16px;
+    border-radius: var(--border-radius-l);
+    background-color: var(--color-primary-800);
+    padding-inline: var(--space-8);
+    height: 65px;
+    margin-top: var(--space-8);
+}
+
+.header__list {
+    display: flex;
+    column-gap: var(--space-4);
+}
+
+.header__link {
+    color: var(--color-primary-50);
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.header__link:hover {
+    color: var(--color-accent-coral-500);
+}
+
+.header__logo {
+    color: var(--color-primary-50);
+    font-weight: 600;
+    font-size: 18px;
+}
