@@ -1,8 +1,14 @@
 import  authRoute  from './routes/auth.js'
 import { serve } from '@hono/node-server'
 import { Hono } from 'hono'
+import sessionsRoute from './routes/sessions.js'
+import adminRoute from './routes/admin.js'
 
 const app = new Hono()
+
+app.route('/api/sessions', sessionsRoute)
+
+app.route('/api/admin', adminRoute)
 
 app.get('/health', (c) => {
   return c.json({ status: 'ok'})
