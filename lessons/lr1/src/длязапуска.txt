@@ -1,0 +1,2 @@
+npx tsc lessons/lr1/src/task3-complex-data.ts
+node lessons/lr1/src/task3-complex-data.js

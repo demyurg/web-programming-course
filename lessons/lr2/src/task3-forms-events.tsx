@@ -16,25 +16,25 @@ import React, { useState, useCallback } from 'react';
 // TODO: Определите интерфейс UserFormData
 interface UserFormData {
   // TODO: добавьте поля:
-  // name: string
-  // email: string
-  // age: number
-  // message: string
+  name: string
+  email: string
+  age: number
+  message: string
 }
 
 // TODO: Определите интерфейс FormErrors
 interface FormErrors {
   // TODO: добавьте поля для ошибок (все опциональные строки)
-  // name?: string
-  // email?: string
-  // age?: string
-  // message?: string
+  name?: string
+  email?: string
+  age?: string
+  message?: string
 }
 
 // TODO: Типизируйте компонент UserForm
 function UserForm() {
   // TODO: Типизируйте состояние формы
-  const [formData, setFormData] = useState<UserFormData>(/* TODO: начальные значения */);
+  const [formData, setFormData] = useState<UserFormData>({name: '', email: '', age: 0, message: ''});
   const [errors, setErrors] = useState<FormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
@@ -44,21 +44,23 @@ function UserForm() {
     const newErrors: FormErrors = {};
 
     // TODO: Проверьте поля:
-    // name: не пустое
-    // email: не пустое и содержит @
-    // age: больше 0
-    // message: не пустое
+    if (!formData.name.trim()) newErrors.name = 'Введите имя';
+    if (!formData.email.includes('@')) newErrors.email = 'Введите корректный email';
+    if (formData.age <= 0) newErrors.age = 'Возраст должен быть больше 0';
+    if (!formData.message.trim()) newErrors.message = 'Введите сообщение';
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   // TODO: Типизируйте обработчик изменения инпутов
-  const handleInputChange = (e: /* TODO: добавьте тип события */) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
 
-    // TODO: Обновите formData
-    // Подсказка: для age преобразуйте в число
+    setFormData(prev => ({
+      ...prev,
+      [name]: name === 'age' ? Number(value) : value,
+    }));
 
     // Очистить ошибку для поля
     if (errors[name as keyof FormErrors]) {
@@ -67,7 +69,7 @@ function UserForm() {
   };
 
   // TODO: Типизируйте обработчик отправки формы
-  const handleSubmit = async (e: /* TODO: добавьте тип события */) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (!validateForm()) {
@@ -86,8 +88,10 @@ function UserForm() {
       setSubmitStatus('success');
 
       // TODO: Сбросьте форму
+      setFormData({ name: '', email: '', age: 0, message: '' });
     } catch (error) {
       // TODO: Обработайте ошибку
+      console.error('Submit error:', error);
       setSubmitStatus('error');
     } finally {
       setIsSubmitting(false);
@@ -106,7 +110,7 @@ function UserForm() {
             type="text"
             id="name"
             name="name"
-            value={/* TODO: добавьте значение */}
+            value={formData.name}
             onChange={handleInputChange}
             disabled={isSubmitting}
             className={errors.name ? 'error' : ''}
@@ -121,12 +125,12 @@ function UserForm() {
             type="email"
             id="email"
             name="email"
-            value={/* TODO */}
+            value={formData.email}
             onChange={handleInputChange}
             disabled={isSubmitting}
             className={errors.email ? 'error' : ''}
           />
-          {/* TODO: ошибка email */}
+          {errors.email && <span className="error-message">{errors.email}</span>}
         </div>
 
         {/* TODO: Возраст */}
@@ -136,13 +140,13 @@ function UserForm() {
             type="number"
             id="age"
             name="age"
-            value={/* TODO */}
+            value={formData.age}
             onChange={handleInputChange}
             disabled={isSubmitting}
             min="1"
             className={errors.age ? 'error' : ''}
           />
-          {/* TODO: ошибка age */}
+          {errors.age && <span className="error-message">{errors.age}</span>}
         </div>
 
         {/* TODO: Сообщение */}
@@ -151,13 +155,13 @@ function UserForm() {
           <textarea
             id="message"
             name="message"
-            value={/* TODO */}
+            value={formData.message}
             onChange={handleInputChange}
             disabled={isSubmitting}
             rows={4}
             className={errors.message ? 'error' : ''}
           />
-          {/* TODO: ошибка message */}
+          {errors.message && <span className="error-message">{errors.message}</span>}
         </div>
 
         {/* Кнопка отправки */}
@@ -181,23 +185,22 @@ function UserForm() {
 
 // TODO: Определите интерфейс SearchData
 interface SearchData {
-  // TODO: добавьте поля:
-  // query: string
-  // category: 'all' | 'tech' | 'design'
+  query: string
+  category: 'all' | 'tech' | 'design'
 }
 
 // TODO: Типизируйте компонент SearchForm
 function SearchForm() {
-  const [searchData, setSearchData] = useState<SearchData>(/* TODO: начальные значения */);
+  const [searchData, setSearchData] = useState<SearchData>({ query: '', category: 'all'});
 
   // TODO: Типизируйте обработчик изменения поискового запроса
-  const handleInputChange = (e: /* TODO: добавьте тип */) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    // TODO: обновите searchData
+    setSearchData(prev => ({ ...prev, [name]: value }));
   };
 
   // TODO: Типизируйте обработчик отправки поиска
-  const handleSearch = (e: /* TODO: добавьте тип */) => {
+  const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     // TODO: выполните поиск
     console.log('Поиск:', searchData);
@@ -215,7 +218,7 @@ function SearchForm() {
             type="text"
             id="query"
             name="query"
-            value={/* TODO: добавьте значение */}
+            value={searchData.query}
             onChange={handleInputChange}
             placeholder="Введите запрос..."
           />
@@ -227,7 +230,7 @@ function SearchForm() {
           <select
             id="category"
             name="category"
-            value={/* TODO */}
+            value={searchData.category}
             onChange={handleInputChange}
           >
             <option value="all">Все</option>
