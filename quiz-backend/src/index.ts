@@ -2,8 +2,21 @@ import { serve } from '@hono/node-server'
 import { Hono } from 'hono'
 import { auth } from './routes/auth'
 import 'dotenv/config'
+import { cors } from 'hono/cors'
+import { logger } from 'hono/logger'
+import sessionsRoutes from './routes/sessions'
+import questionsRoutes from './routes/questions'
 
 const app = new Hono()
+// Middleware
+app.use('*', logger())
+app.use('*', cors())
+
+// Routes
+app.route('/api/auth', auth)
+app.route('/api/sessions', sessionsRoutes)
+app.route('/api/questions', questionsRoutes)
+
 
 app.get('/', (c) => {
   return c.text('Hello World!')

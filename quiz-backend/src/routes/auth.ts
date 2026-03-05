@@ -9,24 +9,27 @@ const prisma = new PrismaClient()
 console.log('Prisma client created, DATABASE_URL:', process.env.DATABASE_URL)
 
 
-const MOCK_USERS: Record<string, { id: number; login: string; name: string; email: string }> = {
+const MOCK_USERS: Record<string, { id: number; login: string; name: string; email: string; role: string }> = {
     'test_code': {
         id: 12345678,
         login: 'testuser',
         name: 'Test User',
-        email: 'test@example.com'
+        email: 'test@example.com',
+        role: 'student' 
     },
     'test_student': {
         id: 87654321,
         login: 'student',
         name: 'Иван Петров',
-        email: 'ivan@student.ru'
+        email: 'ivan@student.ru',
+        role: 'student'
     },
     'test_teacher': {
         id: 55555555,
         login: 'teacher',
         name: 'Мария Ивановна',
-        email: 'teacher@school.ru'
+        email: 'teacher@school.ru',
+        role: 'admin'
     }
 }
 
@@ -65,12 +68,14 @@ auth.post('/github/callback', async (c) => {
                 where: { githubId: mockUser.id.toString() },
                 update: {
                     email: mockUser.email,
-                    name: mockUser.name
+                    name: mockUser.name,
+                    role: mockUser.role
                 },
                 create: {
                     githubId: mockUser.id.toString(),
                     email: mockUser.email,
-                    name: mockUser.name
+                    name: mockUser.name,
+                    role: mockUser.role
                 }
             })
 
@@ -80,6 +85,7 @@ auth.post('/github/callback', async (c) => {
             const payload = {
                 userId: user.id,
                 email: user.email,
+                role: user.role,
                 exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 7 
             }
 
@@ -91,6 +97,7 @@ auth.post('/github/callback', async (c) => {
                     id: user.id,
                     email: user.email,
                     name: user.name,
+                    role: user.role,
                     githubId: user.githubId,
                     createdAt: user.createdAt
                 }

@@ -27,5 +27,6 @@ export interface JWTPayload {
     userId: string
     email: string
     exp?: number
+    role: string
     [key: string]: unknown
 }

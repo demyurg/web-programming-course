@@ -1,10 +1,11 @@
+// This is your Prisma schema file
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "sqlite"
-  url      = env("DATABASE_URL") 
+  url      = env("DATABASE_URL")
 }
 
 model User {
@@ -28,16 +29,20 @@ model Category {
 }
 
 model Question {
-  id             String   @id @default(cuid())
+  id             String       @id @default(cuid())
   text           String
-  type           String   // "single-select", "multiple-select", "essay"
+  type           String       // "multiple-select", "essay"
   categoryId     String
-  category       Category @relation(fields: [categoryId], references: [id])
-  correctAnswer  String?      // Храним как JSON строку: "[\"A\", \"B\"]" или "{\"correct\": \"A\"}"
-  points         Int      @default(1)
+  category       Category     @relation(fields: [categoryId], references: [id])
+  correctAnswer  Json?        // Для multiple-select: ["A","B","C"]
+  points         Int          @default(1)
   answers        Answer[]
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  // Индексы для оптимизации
+  @@index([type])
+  @@index([categoryId])
 }
 
 model Session {
@@ -53,9 +58,11 @@ model Session {
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 
+  // Индексы для оптимизации
   @@index([userId])
   @@index([status])
   @@index([userId, status])
+  @@index([expiresAt])
 }
 
 model Answer {
@@ -64,14 +71,17 @@ model Answer {
   session    Session  @relation(fields: [sessionId], references: [id], onDelete: Cascade)
   questionId String
   question   Question @relation(fields: [questionId], references: [id])
-  userAnswer String
+  userAnswer Json?     // Может быть массивом для multiple-select или строкой для essay
   score      Float?   // null если ещё не проверен (essay)
   isCorrect  Boolean? // для автопроверки
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
-  @@unique([sessionId, questionId]) // один ответ на вопрос в сессии
+  // Уникальность: один ответ на вопрос в сессии
+  @@unique([sessionId, questionId])
+  
+  // Индексы для оптимизации
   @@index([sessionId])
   @@index([questionId])
-  @@index([score])
+  @@index([score]) // для поиска непроверенных essay
 }
