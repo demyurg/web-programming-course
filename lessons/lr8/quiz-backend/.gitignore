@@ -28,3 +28,7 @@ lerna-debug.log*
 .DS_Store
 
 /src/generated/prisma
+
+# local sqlite databases
+dev.db
+prisma/dev.db
