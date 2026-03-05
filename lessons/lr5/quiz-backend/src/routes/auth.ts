@@ -77,7 +77,7 @@ auth.post('/github/callback', async (c) => {
       sub: user.id,
       githubId: user.githubId,
       email: user.email,
-      exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 7 // 7 дней
+      exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 7
     }
 
     const secret = process.env.JWT_SECRET || 'dev-secret-key'
