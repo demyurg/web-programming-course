@@ -13,6 +13,8 @@ dist
 
 # Generated files
 generated/
+coverage/
+
 
 # Editor
 .vscode
