@@ -1,5 +1,5 @@
 import { Hono } from 'hono'
-import { sign } from 'hono/jwt'
+import { sign, verify } from 'hono/jwt'
 import { PrismaClient } from '../generated/prisma/client.js'
 import { PrismaBetterSqlite3 } from '@prisma/adapter-better-sqlite3'
 import { getGitHubUserByCode, GitHubServiceError } from '../services/github.js'
@@ -9,7 +9,57 @@ const adapter = new PrismaBetterSqlite3({ url: 'file:./dev.db' })
 const prisma = new PrismaClient({ adapter })
 const auth = new Hono()
 
-const JWT_SECRET = process.env.JWT_SECRET || 'default-secret'
+function getJwtSecret(): string {
+  const jwtSecret = process.env.JWT_SECRET
+  if (!jwtSecret) {
+    throw new Error('JWT_SECRET is required in .env')
+  }
+  return jwtSecret
+}
+const JWT_SECRET = getJwtSecret()
+
+type AuthTokenPayload = {
+  userId: string
+  email: string
+}
+
+class AuthError extends Error {
+  constructor(message: string) {
+    super(message)
+    this.name = 'AuthError'
+  }
+}
+
+async function verifyBearerToken(
+  authorizationHeader: string | undefined
+): Promise<AuthTokenPayload> {
+  if (!authorizationHeader) {
+    throw new AuthError('Unauthorized')
+  }
+
+  const [scheme, token] = authorizationHeader.split(' ')
+  if (scheme !== 'Bearer' || !token) {
+    throw new AuthError('Unauthorized')
+  }
+
+  try {
+    const payload = await verify(token, JWT_SECRET, 'HS256')
+
+    if (
+      typeof payload.userId !== 'string' ||
+      typeof payload.email !== 'string'
+    ) {
+      throw new AuthError('Invalid token')
+    }
+
+    return {
+      userId: payload.userId,
+      email: payload.email,
+    }
+  } catch {
+    throw new AuthError('Invalid token')
+  }
+}
 
 auth.post('/github/callback', async (c) => {
   const body = await c.req.json()
@@ -46,6 +96,36 @@ auth.post('/github/callback', async (c) => {
   } catch (error) {
     if (error instanceof GitHubServiceError) {
       return c.json({ error: error.message }, error.statusCode as 400 | 500)
+    }
+    return c.json({ error: 'Internal server error' }, 500 as const)
+  }
+})
+
+auth.get('/me', async (c) => {
+  try {
+    const authorizationHeader = c.req.header('Authorization')
+    const payload = await verifyBearerToken(authorizationHeader)
+    const user = await prisma.user.findUnique({
+      where: { id: payload.userId },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        githubId: true,
+        createdAt: true,
+      },
+    })
+
+    if (!user) {
+      return c.json({ error: 'User not found' }, 404)
+    }
+
+    return c.json({
+      user,
+    })
+  } catch (error) {
+    if (error instanceof AuthError) {
+      return c.json({ error: error.message }, 401)
     }
     return c.json({ error: 'Internal server error' }, 500 as const)
   }
