@@ -6,6 +6,7 @@ import { cors } from 'hono/cors'
 import { logger } from 'hono/logger'
 import sessionsRoutes from './routes/sessions'
 import questionsRoutes from './routes/questions'
+import adminRoutes from './routes/admin'
 
 const app = new Hono()
 // Middleware
@@ -16,7 +17,7 @@ app.use('*', cors())
 app.route('/api/auth', auth)
 app.route('/api/sessions', sessionsRoutes)
 app.route('/api/questions', questionsRoutes)
-
+app.route('/api/admin', adminRoutes) 
 
 app.get('/', (c) => {
   return c.text('Hello World!')
