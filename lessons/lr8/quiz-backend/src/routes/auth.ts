@@ -1,9 +1,9 @@
 import { Hono } from 'hono'
 import { sign, verify } from 'hono/jwt'
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient } from '@prisma/client' 
 import { githubCallbackSchema } from '../utils/validation.js'
 
-const prisma = new PrismaClient()
+const prisma = new PrismaClient() 
 const auth = new Hono()
 
 // Mock данные
@@ -24,7 +24,7 @@ const MOCK_USERS: Record<string, { id: string; email: string; name: string }> = 
 auth.post('/github/callback', async (c) => {
   try {
     const body = await c.req.json()
-    console.log('📦 Request body:', body)
+    console.log('Request body:', body)
     
     const validation = githubCallbackSchema.safeParse(body)
     
@@ -36,21 +36,21 @@ auth.post('/github/callback', async (c) => {
     }
 
     const { code } = validation.data
-    console.log('🔑 Processing code:', code)
+    console.log('Processing code:', code)
 
     let githubUser
 
     // Mock режим для тестирования
     if (code.startsWith('test_')) {
-      console.log('🧪 Using mock mode')
+      console.log('Using mock mode')
       
       githubUser = MOCK_USERS[code]
       
       if (!githubUser) {
         githubUser = {
-          id: mock_${Date.now()},
-          email: user_${code}@example.com,
-          name: User ${code}
+          id: `mock_${Date.now()}`,
+          email: `user_${code}@example.com`,
+          name: `User ${code}`
         }
       }
     } else {
@@ -60,7 +60,7 @@ auth.post('/github/callback', async (c) => {
     }
 
     // Сохраняем в базу данных
-    console.log('💾 Saving user to database:', githubUser)
+    console.log('Saving user to database:', githubUser)
     
     const user = await prisma.user.upsert({
       where: { githubId: githubUser.id },
@@ -75,7 +75,7 @@ auth.post('/github/callback', async (c) => {
       }
     })
 
-    console.log('✅ User saved:', user)
+    console.log('User saved:', user)
 
     // Создаем JWT токен
     const payload = {
@@ -85,7 +85,7 @@ auth.post('/github/callback', async (c) => {
       exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 7 // 7 дней
     }
 
-    const secret = process.env.JWT_SECRET  'dev-secret-key'
+    const secret = process.env.JWT_SECRET || 'dev-secret-key'
     const token = await sign(payload, secret)
 
     // Возвращаем ответ
@@ -101,7 +101,7 @@ auth.post('/github/callback', async (c) => {
     })
 
   } catch (error) {
-    console.error('❌ Auth error:', error)
+    console.error('Auth error:', error)
     return c.json({ 
       success: false,
       error: 'Internal server error',
@@ -113,8 +113,8 @@ auth.post('/github/callback', async (c) => {
 auth.get('/me', async (c) => {
   try {
     const authHeader = c.req.header('Authorization')
-
-    if (!authHeader  !authHeader.startsWith('Bearer ')) {
+    
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
       return c.json({ 
         success: false,
         error: 'Unauthorized',
