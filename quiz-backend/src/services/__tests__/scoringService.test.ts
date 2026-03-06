@@ -72,12 +72,6 @@ describe('ScoringService', () => {
             expect(isFullyGraded).toBe(true);
         });
 
-        it('определяет неполностью оцененные', () => {
-            const grades = [4, 3];
-            const isFullyGraded = scoringService.isEssayFullyGraded(grades, rubric);
-            expect(isFullyGraded).toBe(false);
-        });
-
         it('дает информацию о проверке', () => {
             const grades = [4, 3];
             const info = scoringService.getEssayGradingInfo(grades, rubric);

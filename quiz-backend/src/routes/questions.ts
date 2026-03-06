@@ -1,5 +1,7 @@
 import { Hono } from 'hono';
 import { PrismaClient } from '@prisma/client';
+import { mockDataService } from '../services/mockDataService'
+import { config } from '../config'
 import { verify } from 'hono/jwt';
 
 const prisma = new PrismaClient();
@@ -25,11 +27,28 @@ app.get('/', async (c) => {
         // Получаем параметры фильтрации
         const { category, type } = c.req.query();
 
+        if (config.USE_MOCK_DATA) {
+            console.log('📦 Using MOCK data for questions');
+
+            // Получаем все вопросы из моков
+            let questions = await mockDataService.getQuestions();
+
+            // Применяем фильтры вручную для мок-данных
+            if (category) {
+                questions = questions.filter(q => q.categoryId === category);
+            }
+            if (type) {
+                questions = questions.filter(q => q.type === type);
+            }
+
+            return c.json({ questions });
+        }
+
+        // РЕАЛЬНАЯ БД
         const where: any = {};
         if (category) where.categoryId = category;
         if (type) where.type = type;
 
-        // Получаем вопросы без correctAnswer
         const questions = await prisma.question.findMany({
             where,
             select: {
@@ -46,7 +65,6 @@ app.get('/', async (c) => {
                         slug: true
                     }
                 }
-                // correctAnswer не включаем!
             },
             orderBy: {
                 createdAt: 'desc'
@@ -77,6 +95,13 @@ app.get('/categories', async (c) => {
             return c.json({ error: 'Invalid token' }, 401);
         }
 
+        if (config.USE_MOCK_DATA) {
+            console.log('📦 Using MOCK data for categories');
+            const categories = await mockDataService.getCategories();
+            return c.json({ categories });
+        }
+
+        // РЕАЛЬНАЯ БД
         const categories = await prisma.category.findMany({
             select: {
                 id: true,
@@ -117,6 +142,18 @@ app.get('/:id', async (c) => {
 
         const { id } = c.req.param();
 
+        if (config.USE_MOCK_DATA) {
+            console.log('📦 Using MOCK data for single question');
+            const question = await mockDataService.getQuestionById(id);
+
+            if (!question) {
+                return c.json({ error: 'Question not found' }, 404);
+            }
+
+            return c.json({ question });
+        }
+
+        // РЕАЛЬНАЯ БД
         const question = await prisma.question.findUnique({
             where: { id },
             select: {
@@ -133,7 +170,6 @@ app.get('/:id', async (c) => {
                         slug: true
                     }
                 }
-                // correctAnswer не включаем!
             }
         });
 
