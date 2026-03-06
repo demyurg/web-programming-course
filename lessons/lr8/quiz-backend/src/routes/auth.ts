@@ -24,7 +24,7 @@ const MOCK_USERS: Record<string, { id: string; email: string; name: string }> = 
 auth.post('/github/callback', async (c) => {
   try {
     const body = await c.req.json()
-    console.log('📦 Request body:', body)
+    console.log('Request body:', body)
     
     const validation = githubCallbackSchema.safeParse(body)
     
@@ -36,13 +36,13 @@ auth.post('/github/callback', async (c) => {
     }
 
     const { code } = validation.data
-    console.log('🔑 Processing code:', code)
+    console.log('Processing code:', code)
 
     let githubUser
 
     // Mock режим для тестирования
     if (code.startsWith('test_')) {
-      console.log('🧪 Using mock mode')
+      console.log('Using mock mode')
       
       githubUser = MOCK_USERS[code]
       
@@ -59,8 +59,6 @@ auth.post('/github/callback', async (c) => {
       }, 501)
     }
 
-    // Сохраняем в базу данных
-    console.log('💾 Saving user to database:', githubUser)
     
     const user = await prisma.user.upsert({
       where: { githubId: githubUser.id },
@@ -74,8 +72,6 @@ auth.post('/github/callback', async (c) => {
         email: githubUser.email
       }
     })
-
-    console.log('✅ User saved:', user)
 
     // Создаем JWT токен
     const payload = {
@@ -101,7 +97,7 @@ auth.post('/github/callback', async (c) => {
     })
 
   } catch (error) {
-    console.error('❌ Auth error:', error)
+    console.error('error:', error)
     return c.json({ 
       success: false,
       error: 'Internal server error',
