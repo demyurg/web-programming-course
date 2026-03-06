@@ -1,14 +1,13 @@
 import { Hono } from 'hono';
 import { z } from 'zod';
 import { PrismaClient } from '@prisma/client';
-import { verify } from 'hono/jwt';
+import { requireAdmin } from '../middleware/admin'; 
 import { scoringService } from '../services/scoringService';
 
 const prisma = new PrismaClient();
 const app = new Hono();
-const JWT_SECRET = process.env.JWT_SECRET || 'my-super-secret-jwt-key-change-in-production';
 
-// Схемы валидации
+
 const QuestionSchema = z.object({
     text: z.string().min(3).max(500),
     type: z.enum(['multiple-select', 'essay']),
@@ -27,44 +26,12 @@ const CategorySchema = z.object({
     slug: z.string().min(2).max(50).regex(/^[a-z0-9-]+$/)
 });
 
-// Вспомогательная функция для проверки admin прав
-async function checkAdminAccess(c: any): Promise<{ userId: string; user: any } | null> {
-    const authHeader = c.req.header('Authorization');
+app.use('*', requireAdmin);
 
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-        return null;
-    }
-
-    const token = authHeader.split(' ')[1];
-
-    try {
-        const payload = await verify(token, JWT_SECRET, 'HS256');
-
-        const user = await prisma.user.findUnique({
-            where: { id: payload.userId as string },
-            select: { id: true, role: true, name: true, email: true }
-        });
-
-        if (!user || user.role !== 'admin') {
-            return null;
-        }
-
-        return { userId: user.id, user };
-    } catch (error) {
-        return null;
-    }
-}
-
-// ============= УПРАВЛЕНИЕ ВОПРОСАМИ =============
 
 // GET /api/admin/questions - все вопросы (с правильными ответами)
 app.get('/questions', async (c) => {
     try {
-        const admin = await checkAdminAccess(c);
-        if (!admin) {
-            return c.json({ error: 'Доступ запрещен. Требуются права администратора' }, 403);
-        }
-
         const questions = await prisma.question.findMany({
             include: {
                 category: {
@@ -90,11 +57,6 @@ app.get('/questions', async (c) => {
 // POST /api/admin/questions - создать вопрос
 app.post('/questions', async (c) => {
     try {
-        const admin = await checkAdminAccess(c);
-        if (!admin) {
-            return c.json({ error: 'Доступ запрещен. Требуются права администратора' }, 403);
-        }
-
         const body = await c.req.json();
         const validation = QuestionSchema.safeParse(body);
 
@@ -134,11 +96,6 @@ app.post('/questions', async (c) => {
 // PUT /api/admin/questions/:id - обновить вопрос
 app.put('/questions/:id', async (c) => {
     try {
-        const admin = await checkAdminAccess(c);
-        if (!admin) {
-            return c.json({ error: 'Доступ запрещен. Требуются права администратора' }, 403);
-        }
-
         const { id } = c.req.param();
         const body = await c.req.json();
         const validation = QuestionSchema.partial().safeParse(body);
@@ -170,11 +127,6 @@ app.put('/questions/:id', async (c) => {
 // DELETE /api/admin/questions/:id - удалить вопрос
 app.delete('/questions/:id', async (c) => {
     try {
-        const admin = await checkAdminAccess(c);
-        if (!admin) {
-            return c.json({ error: 'Доступ запрещен. Требуются права администратора' }, 403);
-        }
-
         const { id } = c.req.param();
 
         await prisma.question.delete({
@@ -191,16 +143,9 @@ app.delete('/questions/:id', async (c) => {
     }
 });
 
-// ============= УПРАВЛЕНИЕ КАТЕГОРИЯМИ =============
-
 // GET /api/admin/categories - все категории
 app.get('/categories', async (c) => {
     try {
-        const admin = await checkAdminAccess(c);
-        if (!admin) {
-            return c.json({ error: 'Доступ запрещен. Требуются права администратора' }, 403);
-        }
-
         const categories = await prisma.category.findMany({
             include: {
                 _count: {
@@ -223,11 +168,6 @@ app.get('/categories', async (c) => {
 // POST /api/admin/categories - создать категорию
 app.post('/categories', async (c) => {
     try {
-        const admin = await checkAdminAccess(c);
-        if (!admin) {
-            return c.json({ error: 'Доступ запрещен. Требуются права администратора' }, 403);
-        }
-
         const body = await c.req.json();
         const validation = CategorySchema.safeParse(body);
 
@@ -253,16 +193,10 @@ app.post('/categories', async (c) => {
     }
 });
 
-// ============= ПРОВЕРКА ЭССЕ =============
 
 // GET /api/admin/answers/pending - непроверенные эссе
 app.get('/answers/pending', async (c) => {
     try {
-        const admin = await checkAdminAccess(c);
-        if (!admin) {
-            return c.json({ error: 'Доступ запрещен. Требуются права администратора' }, 403);
-        }
-
         const { page = '1', limit = '20' } = c.req.query();
         const skip = (parseInt(page) - 1) * parseInt(limit);
 
@@ -325,11 +259,6 @@ app.get('/answers/pending', async (c) => {
 // POST /api/admin/answers/:id/grade - оценить эссе
 app.post('/answers/:id/grade', async (c) => {
     try {
-        const admin = await checkAdminAccess(c);
-        if (!admin) {
-            return c.json({ error: 'Доступ запрещен. Требуются права администратора' }, 403);
-        }
-
         const { id } = c.req.param();
         const body = await c.req.json();
         const validation = GradeSchema.safeParse(body);
@@ -343,7 +272,7 @@ app.post('/answers/:id/grade', async (c) => {
 
         const { scores, feedback } = validation.data;
 
-        // Используем транзакцию
+
         const result = await prisma.$transaction(async (tx) => {
             const answer = await tx.answer.findUnique({
                 where: { id },
@@ -363,7 +292,7 @@ app.post('/answers/:id/grade', async (c) => {
                 throw new Error('Можно оценивать только эссе');
             }
 
-            // Получаем рубрику из correctAnswer
+
             const rubric = answer.question.correctAnswer as Record<string, number> || {};
             const totalScore = scoringService.scoreEssay(scores, rubric);
 
@@ -375,7 +304,7 @@ app.post('/answers/:id/grade', async (c) => {
                 }
             });
 
-            // Проверяем, все ли ответы в сессии проверены
+
             const sessionAnswers = await tx.answer.findMany({
                 where: { sessionId: answer.sessionId }
             });
@@ -414,16 +343,10 @@ app.post('/answers/:id/grade', async (c) => {
     }
 });
 
-// ============= СТАТИСТИКА =============
 
 // GET /api/admin/stats - общая статистика
 app.get('/stats', async (c) => {
     try {
-        const admin = await checkAdminAccess(c);
-        if (!admin) {
-            return c.json({ error: 'Доступ запрещен. Требуются права администратора' }, 403);
-        }
-
         const [
             totalUsers,
             totalSessions,
@@ -448,7 +371,6 @@ app.get('/stats', async (c) => {
             _avg: { score: true }
         });
 
-        // ИСПРАВЛЕНО: проверка на null
         const averageScore = avgScore._avg.score ? Math.round(avgScore._avg.score * 100) / 100 : 0;
 
         return c.json({
@@ -459,7 +381,7 @@ app.get('/stats', async (c) => {
                 totalQuestions,
                 completedSessions,
                 pendingGrading,
-                averageScore: averageScore,
+                averageScore,
                 completionRate: totalSessions ?
                     Math.round((completedSessions / totalSessions) * 100) : 0
             }
@@ -473,11 +395,6 @@ app.get('/stats', async (c) => {
 // GET /api/admin/leaderboard - топ студентов
 app.get('/leaderboard', async (c) => {
     try {
-        const admin = await checkAdminAccess(c);
-        if (!admin) {
-            return c.json({ error: 'Доступ запрещен. Требуются права администратора' }, 403);
-        }
-
         const { limit = '10' } = c.req.query();
 
         const leaderboard = await prisma.session.groupBy({
@@ -492,7 +409,7 @@ app.get('/leaderboard', async (c) => {
             take: parseInt(limit)
         });
 
-        // Добавляем имена студентов
+
         const withNames = await Promise.all(
             leaderboard.map(async (entry) => {
                 const user = await prisma.user.findUnique({
@@ -500,14 +417,13 @@ app.get('/leaderboard', async (c) => {
                     select: { name: true, email: true }
                 });
 
-                // ИСПРАВЛЕНО: проверка на null
                 const averageScore = entry._avg.score ? Math.round(entry._avg.score * 100) / 100 : 0;
 
                 return {
                     userId: entry.userId,
                     userName: user?.name || 'Неизвестный',
                     email: user?.email,
-                    averageScore: averageScore,
+                    averageScore,
                     bestScore: entry._max.score || 0,
                     sessionsCount: entry._count.id
                 };
@@ -523,14 +439,10 @@ app.get('/leaderboard', async (c) => {
         return c.json({ error: 'Ошибка при получении таблицы лидеров' }, 500);
     }
 });
+
 // GET /api/admin/students/:userId/stats - статистика студента
 app.get('/students/:userId/stats', async (c) => {
     try {
-        const admin = await checkAdminAccess(c);
-        if (!admin) {
-            return c.json({ error: 'Доступ запрещен. Требуются права администратора' }, 403);
-        }
-
         const { userId } = c.req.param();
 
         const user = await prisma.user.findUnique({
