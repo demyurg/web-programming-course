@@ -1,6 +1,4 @@
-<<<<<<< HEAD
 node_modules
-=======
 .claude
 .vscode
 **/node_modules
@@ -8,4 +6,3 @@ lessons/_*
 lessons/**/dist
 .DS_Store
 # lessons
->>>>>>> d506b8ebe85f67ed147c546aa7427472ac47eec1
