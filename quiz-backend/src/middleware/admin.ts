@@ -1,6 +1,8 @@
 import { Context, Next } from 'hono';
 import { verify } from 'hono/jwt';
 import { PrismaClient } from '@prisma/client';
+import { handleError, throwError } from '../utils/errors';
+
 
 const prisma = new PrismaClient();
 const JWT_SECRET = process.env.JWT_SECRET || 'my-super-secret-jwt-key-change-in-production';
@@ -8,9 +10,9 @@ const JWT_SECRET = process.env.JWT_SECRET || 'my-super-secret-jwt-key-change-in-
 export async function requireAdmin(c: Context, next: Next) {
     const authHeader = c.req.header('Authorization');
 
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-        return c.json({ error: 'Unauthorized - No token provided' }, 401);
-    }
+    if (!authHeader || !authHeader.startsWith('Bearer ')) 
+        throwError("Unauthorized - No token provided");
+
 
     const token = authHeader.split(' ')[1];
 
@@ -24,19 +26,14 @@ export async function requireAdmin(c: Context, next: Next) {
             select: { id: true, role: true, name: true, email: true }
         });
 
-        if (!user) {
-            return c.json({ error: 'User not found' }, 401);
-        }
+        if (!user) throwError("User not found");
 
-        if (user.role !== 'admin') {
-            return c.json({ error: 'Forbidden - Admin access required' }, 403);
-        }
+        if (user.role !== 'admin')throw new Error("Forbidden - Admin access required");
 
         c.set('user', user);
 
         await next();
     } catch (error) {
-        console.error('Admin middleware error:', error);
-        return c.json({ error: 'Invalid or expired token' }, 401);
+        return handleError(c, error);
     }
 }

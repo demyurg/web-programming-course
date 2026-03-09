@@ -3,6 +3,7 @@ import { PrismaClient } from '@prisma/client';
 import { mockDataService } from '../services/mockDataService'
 import { config } from '../config'
 import { verify } from 'hono/jwt';
+import { handleError, throwError } from '../utils/errors';
 
 const prisma = new PrismaClient();
 const app = new Hono();
@@ -13,15 +14,13 @@ app.get('/', async (c) => {
     try {
         // Проверяем авторизацию
         const authHeader = c.req.header('Authorization');
-        if (!authHeader || !authHeader.startsWith('Bearer ')) {
-            return c.json({ error: 'Unauthorized' }, 401);
-        }
+        if (!authHeader || !authHeader.startsWith('Bearer ')) throwError("Unauthorized, 401");
 
         const token = authHeader.split(' ')[1];
         try {
             await verify(token, JWT_SECRET, 'HS256');
         } catch {
-            return c.json({ error: 'Invalid token' }, 401);
+            return throwError ('Invalid token 401');
         }
 
         // Получаем параметры фильтрации
@@ -74,8 +73,7 @@ app.get('/', async (c) => {
         return c.json({ questions });
 
     } catch (error) {
-        console.error('Error fetching questions:', error);
-        return c.json({ error: 'Failed to fetch questions' }, 500);
+        return throwError('Failed to fetch questions, 500');
     }
 });
 
@@ -84,15 +82,13 @@ app.get('/categories', async (c) => {
     try {
         // Проверяем авторизацию
         const authHeader = c.req.header('Authorization');
-        if (!authHeader || !authHeader.startsWith('Bearer ')) {
-            return c.json({ error: 'Unauthorized' }, 401);
-        }
+        if (!authHeader || !authHeader.startsWith('Bearer ')) throwError("Unauthorized 401");
 
         const token = authHeader.split(' ')[1];
         try {
             await verify(token, JWT_SECRET, 'HS256');
         } catch {
-            return c.json({ error: 'Invalid token' }, 401);
+            return throwError ('Invalid token, 401');
         }
 
         if (config.USE_MOCK_DATA) {
@@ -119,9 +115,8 @@ app.get('/categories', async (c) => {
         return c.json({ categories });
 
     } catch (error) {
-        console.error('Error fetching categories:', error);
-        return c.json({ error: 'Failed to fetch categories' }, 500);
-    }
+        return throw new Error("Failed to fetch categories, 500");
+
 });
 
 // GET /api/questions/:id - получить конкретный вопрос
@@ -129,15 +124,13 @@ app.get('/:id', async (c) => {
     try {
         // Проверяем авторизацию
         const authHeader = c.req.header('Authorization');
-        if (!authHeader || !authHeader.startsWith('Bearer ')) {
-            return c.json({ error: 'Unauthorized' }, 401);
-        }
+        if (!authHeader || !authHeader.startsWith('Bearer ')) throwError("Unauthorized, 401");
 
         const token = authHeader.split(' ')[1];
         try {
             await verify(token, JWT_SECRET, 'HS256');
         } catch {
-            return c.json({ error: 'Invalid token' }, 401);
+            return throwError("Invalid token, 401");
         }
 
         const { id } = c.req.param();
@@ -146,9 +139,7 @@ app.get('/:id', async (c) => {
             console.log('📦 Using MOCK data for single question');
             const question = await mockDataService.getQuestionById(id);
 
-            if (!question) {
-                return c.json({ error: 'Question not found' }, 404);
-            }
+            if (!question) throwError("Question not found, 404");
 
             return c.json({ question });
         }

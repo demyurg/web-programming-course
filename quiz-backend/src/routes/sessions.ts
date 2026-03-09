@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { PrismaClient } from '@prisma/client';
 import { verify } from 'hono/jwt';
 import { sessionService } from '../services/sessionService';
+import { handleError, throwError } from '../utils/errors';
 
 const prisma = new PrismaClient();
 const app = new Hono();
@@ -42,39 +43,22 @@ app.post('/', async (c) => {
     try {
         // Проверяем токен
         const userId = await getUserIdFromToken(c);
-        if (!userId) {
-            return c.json({ error: 'Unauthorized' }, 401);
-        }
-
+        if (!userId) throwError("Unauthorized");
+        
         // Проверяем, что пользователь существует
         const user = await prisma.user.findUnique({
             where: { id: userId }
         });
 
-        if (!user) {
-            return c.json({ error: 'User not found' }, 404);
-        }
-
+        if (!user) throwError("User not found");
+ 
         // Получаем и валидируем тело запроса
         const body = await c.req.json().catch(() => ({}));
 
         // Валидация с обработкой ошибок
-        let durationHours = 1;
-        try {
-            const validated = CreateSessionSchema.parse(body);
-            durationHours = validated.durationHours;
-        } catch (error) {
-            if (error instanceof z.ZodError) {
-                return c.json({
-                    error: 'Validation failed',
-                    details: error.format()
-                }, 400);
-            }
-            throw error;
-        }
-
-        // Создаем сессию
-        const session = await sessionService.createSession(userId, durationHours);
+        const validated = CreateSessionSchema.parse(body);
+        const durationHours = validated.durationHours;
+         const session = await sessionService.createSession(userId, durationHours);
 
         // Получаем количество вопросов
         const questionsCount = await prisma.question.count();
@@ -90,11 +74,7 @@ app.post('/', async (c) => {
         }, 201);
 
     } catch (error) {
-        if (error instanceof Error) {
-            return c.json({ error: error.message }, 400);
-        }
-        console.error('Session creation error:', error);
-        return c.json({ error: 'Internal server error' }, 500);
+        return handleError(c, error); 
     }
 });
 
@@ -103,26 +83,13 @@ app.post('/:id/answers', async (c) => {
     try {
         // Проверяем токен
         const userId = await getUserIdFromToken(c);
-        if (!userId) {
-            return c.json({ error: 'Unauthorized' }, 401);
-        }
+        if (!userId) throwError("Unauthorized");
 
         const { id } = c.req.param();
         const body = await c.req.json();
 
         // Валидация
-        let validatedData;
-        try {
-            validatedData = AnswerSchema.parse(body);
-        } catch (error) {
-            if (error instanceof z.ZodError) {
-                return c.json({
-                    error: 'Validation failed',
-                    details: error.format()
-                }, 400);
-            }
-            throw error;
-        }
+                const validatedData = AnswerSchema.parse(body); // Если ошибка - уйдет в catch
 
         // Проверяем, что сессия принадлежит пользователю
         const session = await prisma.session.findUnique({
@@ -130,21 +97,13 @@ app.post('/:id/answers', async (c) => {
             select: { userId: true, status: true, expiresAt: true }
         });
 
-        if (!session) {
-            return c.json({ error: 'Session not found' }, 404);
-        }
+        if (!session) throwError("Сессия не найдена");
 
-        if (session.userId !== userId) {
-            return c.json({ error: 'Access denied' }, 403);
-        }
+        if (session.userId !== userId) throwError("Доступ запрещен");
 
-        if (session.status !== 'in_progress') {
-            return c.json({ error: 'Session is not active' }, 400);
-        }
+        if (session.status !== 'in_progress') throwError("Сессия не активна");
 
-        if (session.expiresAt < new Date()) {
-            return c.json({ error: 'Session has expired' }, 400);
-        }
+        if (session.expiresAt < new Date()) throwError("Сессия истекла");
 
         // Добавляем ответ
         const answer = await sessionService.submitAnswer(
@@ -170,11 +129,7 @@ app.post('/:id/answers', async (c) => {
         }, 201);
 
     } catch (error) {
-        if (error instanceof Error) {
-            return c.json({ error: error.message }, 400);
-        }
-        console.error('Answer submission error:', error);
-        return c.json({ error: 'Internal server error' }, 500);
+        return handleError(c, error); // Одна строка для всех ошибок!
     }
 });
 
@@ -183,10 +138,8 @@ app.get('/:id', async (c) => {
     try {
         // Проверяем токен
         const userId = await getUserIdFromToken(c);
-        if (!userId) {
-            return c.json({ error: 'Unauthorized' }, 401);
-        }
-
+        if (!userId) throwError("Unauthorized");
+      
         const { id } = c.req.param();
 
         // Получаем сессию через сервис
@@ -228,11 +181,7 @@ app.get('/:id', async (c) => {
         });
 
     } catch (error) {
-        if (error instanceof Error) {
-            return c.json({ error: error.message }, 404);
-        }
-        console.error('Get session error:', error);
-        return c.json({ error: 'Internal server error' }, 500);
+        return handleError(c, error);
     }
 });
 
@@ -241,10 +190,7 @@ app.post('/:id/submit', async (c) => {
     try {
         // Проверяем токен
         const userId = await getUserIdFromToken(c);
-        if (!userId) {
-            return c.json({ error: 'Unauthorized' }, 401);
-        }
-
+        if (!userId) throwError("Unauthorized");
         const { id } = c.req.param();
 
         // Проверяем, что сессия принадлежит пользователю
@@ -253,18 +199,12 @@ app.post('/:id/submit', async (c) => {
             select: { userId: true, status: true }
         });
 
-        if (!session) {
-            return c.json({ error: 'Session not found' }, 404);
-        }
+        if (!session) throwError("Session not found");
 
-        if (session.userId !== userId) {
-            return c.json({ error: 'Access denied' }, 403);
-        }
+        if (session.userId !== userId)throwError("Access denied");
 
-        if (session.status !== 'in_progress') {
-            return c.json({ error: 'Session is already completed' }, 400);
-        }
-
+        if (session.status !== 'in_progress') throwError("Session is already completed");
+        
         // Завершаем сессию
         const completedSession = await sessionService.submitSession(id);
 
@@ -277,12 +217,8 @@ app.post('/:id/submit', async (c) => {
             }
         });
 
-    } catch (error) {
-        if (error instanceof Error) {
-            return c.json({ error: error.message }, 400);
-        }
-        console.error('Submit session error:', error);
-        return c.json({ error: 'Internal server error' }, 500);
+    } catch (error) 
+        return handleError(c, error)
     }
 });
 
