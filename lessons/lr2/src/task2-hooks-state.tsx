@@ -14,52 +14,88 @@ import { useState, useEffect, useCallback } from 'react';
 // ===== ЗАДАЧА 2.1: Счетчик с расширенным состоянием =====
 
 // TODO: Определите интерфейс CounterState со следующими свойствами:
-// - count: number
-// - step: number
-// - isRunning: boolean
-// - history: number[]
+interface CounterState {
+  count: number
+  step: number
+  isRunning: boolean
+  history: number[]
+}
 
 // TODO: Типизируйте компонент Counter
 function Counter() {
   // TODO: Добавьте типизацию к useState
-  const [state, setState] = useState(/* TODO: добавьте типизацию и начальное значение */);
+  const [state, setState] = useState<CounterState>({
+    count: 0,
+    step: 1,
+    isRunning: false,
+    history: [],
+  });
 
   // TODO: Добавьте типизацию к функциям
   const increment = () => {
-    // TODO: реализуйте increment с обновлением истории
+    setState(prev => ({
+      ...prev,
+      count: prev.count + prev.step,
+      history: [...prev.history, prev.count + prev.step],
+    }));
   };
 
   const decrement = () => {
-    // TODO: реализуйте decrement с обновлением истории
+    setState(prev => ({
+      ...prev,
+      count: prev.count - prev.step,
+      history: [...prev.history, prev.count - prev.step],
+    }));
   };
 
-  const setStep = (newStep: /* TODO: добавьте тип */) => {
-    // TODO: реализуйте изменение шага
+  const setStep = (newStep: number) => {
+    setState(prev => ({
+      ...prev,
+      step: newStep > 0 ? newStep : 1,
+    }));
   };
 
   const toggleRunning = () => {
-    // TODO: реализуйте переключение автоинкремента
+    setState(prev => ({
+      ...prev,
+      isRunning: !prev.isRunning,
+    }));
   };
 
   const reset = () => {
-    // TODO: реализуйте сброс состояния
+    setState({
+      count: 0,
+      step: 1,
+      isRunning: false,
+      history: [],
+    });
   };
 
   // TODO: Добавьте useEffect с типизацией для автоинкремента
   useEffect(() => {
-    // TODO: реализуйте автоинкремент когда isRunning === true
-  }, [/* TODO: зависимости */]);
+    if (!state.isRunning) return;
+
+    const interval = setInterval(() => {
+      setState(prev => ({
+        ...prev,
+        count: prev.count + prev.step,
+        history: [...prev.history, prev.count + prev.step],
+      }));
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [state.isRunning, state.step]);
 
   return (
     <div className="counter">
-      <h2>Счетчик: {/* TODO: отобразите count */}</h2>
-      <p>Шаг: {/* TODO: отобразите step */}</p>
+      <h2>Счетчик: {state.count}</h2>
+      <p>Шаг: {state.step}</p>
 
       <div className="controls">
         <button onClick={increment}>+</button>
         <button onClick={decrement}>-</button>
         <button onClick={toggleRunning}>
-          {/* TODO: отобразите текст на основе isRunning */}
+          {state.isRunning ? 'Стоп' : 'Авто'}
         </button>
         <button onClick={reset}>Сброс</button>
       </div>
@@ -69,8 +105,8 @@ function Counter() {
           Шаг:
           <input
             type="number"
-            value={/* TODO: используйте step */}
-            onChange={(e) => setStep(/* TODO: преобразуйте в число */)}
+            value={state.step}
+            onChange={(e) => setStep(Number(e.target.value))}
             min="1"
           />
         </label>
@@ -79,7 +115,8 @@ function Counter() {
       <div className="history">
         <h3>История:</h3>
         <ul>
-          {/* TODO: отрендерите историю значений */}
+          {state.history.map((v, i) => (
+            <li key={i}>{v}</li>))}
         </ul>
       </div>
     </div>
@@ -96,28 +133,36 @@ interface Todo {
 
 // TODO: Типизируйте компонент TodoApp
 function TodoApp() {
-  const [todos, setTodos] = useState</* TODO: добавьте тип */>(/* TODO: начальное значение */);
+  const [todos, setTodos] = useState<Todo[]>([]);
   const [newTodoText, setNewTodoText] = useState<string>('');
 
-  const addTodo = (e: /* TODO: добавьте тип события */) => {
-    e.preventDefault();
-    if (newTodoText.trim()) {
-      // TODO: создайте новую todo и добавьте в массив
-      // Подсказка: используйте Date.now().toString() для id
+  const addTodo = (e: React.FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
+      if (newTodoText.trim()) {
+        const newTodo: Todo = {
+        id: Date.now().toString(),
+        text: newTodoText.trim(),
+        completed: false,
+      };
+      setTodos(prev => [...prev, newTodo]);
       setNewTodoText('');
     }
   };
 
   const toggleTodo = (id: string) => {
-    // TODO: измените completed статус для todo с данным id
+    setTodos(prev =>
+      prev.map(todo =>
+        todo.id === id ? { ...todo, completed: !todo.completed } : todo
+      )
+    );
   };
 
   const deleteTodo = (id: string) => {
-    // TODO: удалите todo с данным id
+    setTodos(prev => prev.filter(todo => todo.id !== id));
   };
 
   // TODO: Посчитайте количество завершенных todos
-  const completedCount = 0;
+  const completedCount = todos.filter(t => t.completed).length;
 
   return (
     <div className="todo-app">
@@ -153,8 +198,8 @@ function TodoApp() {
 
       {/* TODO: Отобразите статистику */}
       <div className="stats">
-        <p>Всего: {/* TODO */}</p>
-        <p>Завершено: {/* TODO */}</p>
+        <p>Всего: {todos.length}</p>
+        <p>Завершено: {completedCount}</p>
       </div>
     </div>
   );
@@ -165,22 +210,29 @@ function TodoApp() {
 // TODO: Создайте типизированный хук useToggle
 // Параметры: initialValue?: boolean
 // Возвращает: [boolean, () => void] (value, toggle)
-function useToggle(/* TODO: добавьте параметры и типизацию */) {
-  // TODO: реализуйте логику с useState
+function useToggle(initialValue: boolean = false): [boolean, () => void] {
+  const [value, setValue] = useState<boolean>(initialValue);
+  const toggle = () => setValue(prev => !prev);
+  return [value, toggle];
 }
 
 // TODO: Создайте типизированный хук useCounter
 // Параметры: initialValue?: number
 // Возвращает: { count: number, increment: () => void, decrement: () => void, reset: () => void }
-function useCounter(/* TODO: добавьте параметры и типизацию */) {
-  // TODO: реализуйте логику с useState
+function useCounter(initialValue: number = 0) {
+  const [count, setCount] = useState<number>(initialValue);
+  const increment = () => setCount(prev => prev + 1);
+  const decrement = () => setCount(prev => prev - 1);
+  const reset = () => setCount(initialValue);
+  return {count, increment, decrement, reset };
 }
 
 // ===== ЗАДАЧА 2.4: Демо компонент для кастомных хуков =====
 
 // TODO: Типизируйте компонент HooksDemo
 function HooksDemo() {
-  // TODO: Используйте созданные кастомные хуки
+  const {count, increment, decrement, reset } = useCounter(0);
+  const [isOn, toggle] = useToggle(false);
 
   return (
     <div className="hooks-demo">
@@ -189,13 +241,21 @@ function HooksDemo() {
       {/* TODO: Демо useCounter */}
       <div className="demo-section">
         <h3>useCounter</h3>
-        {/* TODO: используйте useCounter и добавьте кнопки */}
+        <p>Значение счётчика: {count}</p>
+        <div className="controls">
+          <button onClick={increment}>+</button>
+          <button onClick={decrement}>−</button>
+          <button onClick={reset}>Сброс</button>
+        </div>
       </div>
 
       {/* TODO: Демо useToggle */}
       <div className="demo-section">
         <h3>useToggle</h3>
-        {/* TODO: используйте useToggle и добавьте кнопку */}
+        <p>Состояние: {isOn ? 'Включено' : 'Выключено'}</p>
+        <button onClick={toggle}>
+          {isOn ? 'Выключить' : 'Включить'}
+        </button>
       </div>
     </div>
   );
@@ -219,7 +279,7 @@ const TABS = {
 
 // TODO: Типизируйте компонент App
 function App() {
-  const [activeTab, setActiveTab] = useState<>('counter');
+  const [activeTab, setActiveTab] = useState<'counter' | 'todos' | 'hooks'>('counter');
 
   return (
     <div className="app">
