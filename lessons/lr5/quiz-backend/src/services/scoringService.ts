@@ -1,10 +1,6 @@
 export class ScoringService {
   //Правила: +1 за правильный, -0.5 за неправильный, min 0  
   scoreMultipleSelect(correctAnswers: string[], studentAnswers: string[]): number { 
-    if (!correctAnswers.length || !studentAnswers.length) {
-      return 0
-    }
-
     let score = 0;
 
     for (const answer of studentAnswers) {
