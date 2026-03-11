@@ -8,7 +8,9 @@
   },
   "dependencies": {
     "@hono/node-server": "^1.19.11",
-    "hono": "^4.12.5"
+    "@prisma/client": "^6.19.2",
+    "hono": "^4.12.5",
+    "prisma": "^6.19.2"
   },
   "devDependencies": {
     "@types/node": "^20.11.17",
