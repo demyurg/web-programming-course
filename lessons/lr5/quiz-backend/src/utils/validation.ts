@@ -41,14 +41,10 @@ export const QuestionSchema = z.object({
     z.array(z.string()),  // for multiple-select
     z.string()             // for essay
   ]).optional(),
-  options: z.array(z.string()).optional() // for multiple-select questions
 }).refine((data) => {
   // If type is multiple-select, correctAnswer should be an array and options should be provided
   if (data.type === 'multiple-select') {
-    return Array.isArray(data.correctAnswer) && 
-           data.correctAnswer.length > 0 && 
-           Array.isArray(data.options) && 
-           data.options.length > 0;
+    return Array.isArray(data.correctAnswer) && data.correctAnswer.length > 0;
   }
   // If type is essay, correctAnswer should be a string (optional for essay)
   return true;

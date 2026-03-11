@@ -4,6 +4,7 @@ import { cors } from 'hono/cors';
 import { logger } from 'hono/logger';
 import auth from './middleware/auth.js';
 import sessions from './routes/sessions.js';
+import admin from './routes/admin.js';
 
 const app = new Hono()
 
@@ -20,6 +21,7 @@ app.get('/health', async (c) => {
 
 app.route('/api/auth', auth)
 app.route('/api/sessions', sessions)
+app.route('/api/admin', admin)
 
 serve({
   fetch: app.fetch,

@@ -67,6 +67,7 @@ model Answer {
   userAnswer Json
   score      Float?   // null если ещё не проверен (essay)
   isCorrect  Boolean? // для автопроверки
+  feedback   String?
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
