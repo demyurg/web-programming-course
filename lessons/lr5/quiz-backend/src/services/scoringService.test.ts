@@ -17,10 +17,10 @@ describe('ScoringService', () => {
       expect(scoringService.scoreMultipleSelect(correct, student)).toBe(1.5);
     });
 
-    // Тест 3: Только неправильные ответы (должен вернуть 0, не -1.5)
+    // Тест 3: Только неправильные ответы (должен вернуть 0)
     it('должен вернуть 0 когда все ответы неправильные', () => {
       const correct = ['A', 'B'];
-      const student = ['C', 'D', 'E']; // -0.5 * 3 = -1.5 -> min 0
+      const student = ['C', 'D', 'E'];
       expect(scoringService.scoreMultipleSelect(correct, student)).toBe(0);
     });
 
