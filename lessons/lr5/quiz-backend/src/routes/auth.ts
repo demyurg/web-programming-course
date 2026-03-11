@@ -1,9 +1,8 @@
 import { Hono } from 'hono'
 import { sign, verify } from 'hono/jwt'
-import { PrismaClient } from '@prisma/client'
 import { githubCallbackSchema } from '../utils/validation.js'
+import { prisma } from '../lib/prisma.js'
 
-const prisma = new PrismaClient()
 const auth = new Hono()
 
 // Mock данные

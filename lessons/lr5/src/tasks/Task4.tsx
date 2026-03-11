@@ -15,12 +15,22 @@ const Task4 = observer(() => {
   const soundEnabled = useUIStore((s) => s.soundEnabled);
   const toggleTheme = useUIStore((s) => s.toggleTheme);
 
-  const handleStart = () => {
-    // логика старта (API + startGame)
+  const handleStart = async () => {
+    try {
+      // Используем моковые данные для демонстрации
+      const { mockQuestions } = await import('../data/questions');
+      gameStore.startGame(mockQuestions as any);
+    } catch (error) {
+      console.error('Ошибка загрузки вопросов:', error);
+    }
   };
-
+  
   const handleNext = () => {
-    // логика отправки ответа
+    if (gameStore.isLastQuestion) {
+      gameStore.finishGame(); // завершаем игру
+    } else {
+      gameStore.nextQuestion(); // переходим к следующему вопросу
+    }
   };
 
   if (gameStatus === 'idle') {
