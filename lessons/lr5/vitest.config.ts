@@ -5,7 +5,7 @@ export default defineConfig({
 	plugins: [react()],
 	test: {
 		globals: true,
-		environment: 'jsdom',
+		environment: 'jsdom', // вирт браузер
 		setupFiles: './src/tasks/setupTest.ts',
 		include: ['src/**/*.{test,spec}.{ts,tsx}'],
 		coverage: {
@@ -16,3 +16,4 @@ export default defineConfig({
 		},
 	},
 })
+// конфигурация теста

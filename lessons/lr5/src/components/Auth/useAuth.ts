@@ -1,18 +1,25 @@
-import { useCallback } from 'react';
-import { useLocalStorageWithSubscription } from './useLocalStorageWithSubscription';
-import { getApiAuthGithubCallback } from '../../../generated/api/auth/auth';
+import { useCallback } from 'react'
+import { useLocalStorageWithSubscription } from './useLocalStorageWithSubscription'
+import { getApiAuthGithubCallback } from '../../../generated/api/auth/auth'
 
 export const useAuth = () => {
-  const { isLoading, data: token, setValue } = useLocalStorageWithSubscription('auth_token');
+	const {
+		isLoading,
+		data: token,
+		setValue,
+	} = useLocalStorageWithSubscription('auth_token') // Используем кастомный хук для работы с localStorage
 
-  const login = useCallback(async () => {
-    const { token } = await getApiAuthGithubCallback({ code: '' });
-    setValue(token);
-  }, []);
+	// Функция входа (login)
+	const login = useCallback(async () => {
+		const { token } = await getApiAuthGithubCallback({ code: '' })
+		// Сохраняем полученный токен в localStorage
+		setValue(token)
+	}, [])
 
-  const logout = useCallback(async () => {
-    setValue(null);
-  }, []);
+	const logout = useCallback(async () => {
+		setValue(null)
+	}, [])
 
-  return { isLoading, login, logout, token };
-};
+	// Возвращаем значения, которые будут использовать компоненты
+	return { isLoading, login, logout, token }
+}

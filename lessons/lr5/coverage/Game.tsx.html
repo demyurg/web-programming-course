@@ -141,7 +141,14 @@
 <a name='L76'></a><a href='#L76'>76</a>
 <a name='L77'></a><a href='#L77'>77</a>
 <a name='L78'></a><a href='#L78'>78</a>
-<a name='L79'></a><a href='#L79'>79</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L79'></a><a href='#L79'>79</a>
+<a name='L80'></a><a href='#L80'>80</a>
+<a name='L81'></a><a href='#L81'>81</a>
+<a name='L82'></a><a href='#L82'>82</a>
+<a name='L83'></a><a href='#L83'>83</a>
+<a name='L84'></a><a href='#L84'>84</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -166,7 +173,9 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-yes">3x</span>
@@ -219,84 +228,90 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import * as React from 'react';
-import { observer } from 'mobx-react-lite';
-import { gameStore } from '../stores/gameStore';
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import * as React from 'react'
+import { observer } from 'mobx-react-lite'
+import { gameStore } from '../stores/gameStore'
 &nbsp;
+// Типы props компонента
 interface GameScreenProps {
-  theme: string;
-  toggleTheme: () =&gt; void;
-  onNext: () =&gt; void;
+	theme: string
+	toggleTheme: () =&gt; void
+	onNext: () =&gt; void
 }
 &nbsp;
+// observer следит за изменениями gameStore
 export const GameScreen = observer(
-  ({ theme, toggleTheme, onNext }: GameScreenProps) =&gt; {
-    const {
-      currentQuestion,
-      selectedAnswers,
-      essayAnswer,
-      setEssayAnswer,
-      selectAnswer,
-      score,
-      progress,
-      currentQuestionIndex,
-      questions,
-      isLastQuestion,
-    } = gameStore;
+	({ theme, toggleTheme, onNext }: GameScreenProps) =&gt; {
+		const {
+			currentQuestion,
+			selectedAnswers,
+			essayAnswer,
+			setEssayAnswer,
+			selectAnswer,
+			score,
+			progress,
+			currentQuestionIndex,
+			questions,
+			isLastQuestion,
+		} = gameStore
 &nbsp;
-    <span class="missing-if-branch" title="if path not taken" >I</span>if (!currentQuestion) <span class="cstat-no" title="statement not covered" >return null;</span>
+		// Если вопроса нет — ничего не рендерим
+		<span class="missing-if-branch" title="if path not taken" >I</span>if (!currentQuestion) <span class="cstat-no" title="statement not covered" >return null</span>
 &nbsp;
-    const canProceed = () =&gt; {
-      <span class="missing-if-branch" title="if path not taken" >I</span>if (currentQuestion.type === 'essay') {
-<span class="cstat-no" title="statement not covered" >        return essayAnswer?.trim().length &gt; 0;</span>
-      }
-      return selectedAnswers.length &gt; 0;
-    };
+		// Функция проверки: можно ли перейти к следующему вопросу
+		const canProceed = () =&gt; {
+			<span class="missing-if-branch" title="if path not taken" >I</span>if (currentQuestion.type === 'essay') {
+<span class="cstat-no" title="statement not covered" >				return essayAnswer?.trim().length &gt; 0</span>
+			}
+			return selectedAnswers.length &gt; 0
+		}
 &nbsp;
-    return (
-      &lt;div className="min-h-screen p-4"&gt;
-        &lt;div className="max-w-2xl mx-auto"&gt;
-          &lt;div className="mb-4"&gt;
-            Вопрос {currentQuestionIndex + 1} из {questions.length}
-          &lt;/div&gt;
+		return (
+			&lt;div className='min-h-screen p-4'&gt;
+				&lt;div className='max-w-2xl mx-auto'&gt;
+					&lt;div className='mb-4'&gt;
+						Вопрос {currentQuestionIndex + 1} из {questions.length}
+					&lt;/div&gt;
 &nbsp;
-          &lt;h2 className="text-2xl font-bold mb-6"&gt;
-            {currentQuestion.question}
-          &lt;/h2&gt;
+					&lt;h2 className='text-2xl font-bold mb-6'&gt;
+						{currentQuestion.question}
+					&lt;/h2&gt;
 &nbsp;
-          {currentQuestion.type === 'essay' ? (
-<span class="branch-0 cbranch-no" title="branch not covered" >            &lt;textarea</span>
-              value={essayAnswer || ''}
-              onChange={<span class="fstat-no" title="function not covered" >(e</span>) =&gt; <span class="cstat-no" title="statement not covered" >setEssayAnswer(e.target.value)}</span>
-              className="w-full p-4 border rounded-lg"
-            /&gt;
-          ) : (
-            &lt;div className="space-y-3"&gt;
-              {currentQuestion.options.map((option, index) =&gt; (
-                &lt;button
-                  key={index}
-                  onClick={() =&gt; selectAnswer(index)}
-                  className="w-full p-4 border rounded-lg"
-                &gt;
-                  {option}
-                &lt;/button&gt;
-              ))}
-            &lt;/div&gt;
-          )}
+					{currentQuestion.type === 'essay' ? (
+<span class="branch-0 cbranch-no" title="branch not covered" >						&lt;textarea</span>
+							value={essayAnswer || ''}
+							onChange={<span class="fstat-no" title="function not covered" >e =&gt; <span class="cstat-no" title="statement not covered" >s</span>etEssayAnswer(e.target.value)}</span>
+							className='w-full p-4 border rounded-lg'
+						/&gt;
+					) : (
+						&lt;div className='space-y-3'&gt;
+							{currentQuestion.options.map((option, index) =&gt; (
+								&lt;button
+									key={index}
+									onClick={() =&gt; selectAnswer(index)}
+									className='w-full p-4 border rounded-lg'
+								&gt;
+									{option}
+								&lt;/button&gt;
+							))}
+						&lt;/div&gt;
+					)}
 &nbsp;
-          {canProceed() &amp;&amp; (
-<span class="branch-1 cbranch-no" title="branch not covered" >            &lt;button</span>
-              onClick={onNext}
-              className="mt-6 w-full bg-purple-600 text-white py-3 rounded-lg"
-            &gt;
-              {isLastQuestion ? 'Завершить' : 'Следующий вопрос'}
-            &lt;/button&gt;
-          )}
-        &lt;/div&gt;
-      &lt;/div&gt;
-    );
-  }
-);
+					{/* кнопка перехода к следующему вопросу */}
+					{canProceed() &amp;&amp; (
+<span class="branch-1 cbranch-no" title="branch not covered" >						&lt;button</span>
+							onClick={onNext}
+							className='mt-6 w-full bg-purple-600 text-white py-3 rounded-lg'
+						&gt;
+							{isLastQuestion ? 'Завершить' : 'Следующий вопрос'}
+						&lt;/button&gt;
+					)}
+				&lt;/div&gt;
+			&lt;/div&gt;
+		)
+	},
+)
 &nbsp;</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->
@@ -304,7 +319,7 @@ export const GameScreen = observer(
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-03-04T16:38:23.879Z
+                at 2026-03-11T09:49:50.566Z
             </div>
         <script src="prettify.js"></script>
         <script>
