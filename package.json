@@ -1,0 +1,11 @@
+{
+  "devDependencies": {
+    "@vitest/coverage-v8": "^4.0.18",
+    "jsdom": "^28.1.0",
+    "prisma": "^7.4.2"
+  },
+  "dependencies": {
+    "@prisma/client": "^7.4.2",
+    "dotenv": "^17.3.1"
+  }
+}
