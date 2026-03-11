@@ -2,7 +2,7 @@ import { Hono } from 'hono';
 import { z } from 'zod';
 import { verify } from 'hono/jwt';
 import { PrismaClient } from '@prisma/client';
-import { AnswerSchema } from '../utils/validation.js';
+import { AnswerSchema, SessionSubmitSchema } from '../utils/validation.js';
 import { sessionService } from '../services/sessionService.js';
 
 const prisma = new PrismaClient();
@@ -103,7 +103,7 @@ sessions.post('/', async (c) => {
     const expiresAt = new Date();
     expiresAt.setHours(expiresAt.getHours() + 1);
     
-    // Создаем сессию и сразу создаем записи для ответов
+    // Создаем сессию
     const session = await prisma.session.create({
       data: {
         userId: auth.user.id,
@@ -111,22 +111,7 @@ sessions.post('/', async (c) => {
         status: 'in_progress',
         score: 0,
         startedAt: new Date(),
-        /*answers: {
-          create: questions.map(q => ({
-            questionId: q.id,
-            userAnswer: q.type === 'essay' ? '' : [], 
-            isCorrect: null,
-            score: null
-          }))
-        }*/
-      },
-      /*include: {
-        answers: {
-          include: {
-            question: true
-          }
-        }
-      }*/
+      }
     });
     
     // Возвращаем информацию о сессии
@@ -138,10 +123,7 @@ sessions.post('/', async (c) => {
         startedAt: session.startedAt,
         expiresAt: session.expiresAt,
         totalQuestions: actualQuestionCount,
-        answeredQuestions: 0 /*session.answers.filter(a => 
-          a.userAnswer !== null && 
-          (Array.isArray(a.userAnswer) ? a.userAnswer.length > 0 : a.userAnswer !== '')
-        ).length*/,
+        answeredQuestions: 0,
         score: session.score,
         questions: questions.map(question => ({
           id: question.id,
@@ -276,7 +258,6 @@ sessions.post('/:id/answers', async (c) => {
 });
 
 // GET /api/sessions/:id
-// GET /api/sessions/:id
 sessions.get('/:id', async (c) => {
   try {
     const { id } = c.req.param();
@@ -406,6 +387,25 @@ sessions.post('/:id/submit', async (c) => {
         success: false,
         error: 'Bad Request',
         message: 'Session already completed'
+      }, 400);
+    }
+    
+    // Пытаемся получить тело запроса (если есть)
+    let body = {};
+    try {
+      body = await c.req.json();
+    } catch {
+      // Если тело не является JSON, игнорируем
+    }
+    
+    // Валидация тела запроса (если есть)
+    const validationResult = SessionSubmitSchema.safeParse(body);
+    
+    if (!validationResult.success) {
+      return c.json({ 
+        success: false,
+        error: 'Validation failed',
+        details: validationResult.error.issues
       }, 400);
     }
     
