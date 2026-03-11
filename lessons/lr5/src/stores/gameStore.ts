@@ -1,6 +1,7 @@
 import { makeAutoObservable } from 'mobx';
 import { Question, Answer } from '../types/quiz';
 import { mockQuestions } from '../data/questions';
+import { QuestionPreview } from '../../generated/api/quizBattleAPI.schemas';
 
 /**
  * GameStore - MobX Store для управления игровой логикой
@@ -13,72 +14,84 @@ class GameStore {
   questions: Question[] = [];
   currentQuestionIndex = 0;
   score = 0;
-  selectedAnswer: number | null = null;
+  selectedAnswers: number[] = [];
   answeredQuestions: Answer[] = [];
 
   constructor() {
     makeAutoObservable(this);
   }
-
+ 
+  essayAnswer: string = '';
+  
+  // Метод для установки текстового ответа
+  setEssayAnswer = (answer: string) => {
+    this.essayAnswer = answer;
+  };
   // Actions - методы для изменения состояния
 
-  startGame() {
+  startGame = (questions: QuestionPreview[]) => {
     this.gameStatus = 'playing';
-    this.questions = [...mockQuestions];
+    this.questions = questions.map(item => ({...item, correctAnswer: -1, options: item.options ?? []}));
     this.currentQuestionIndex = 0;
     this.score = 0;
-    this.selectedAnswer = null;
+    this.selectedAnswers = [];
     this.answeredQuestions = [];
-  }
+  };
 
-  selectAnswer(answerIndex: number) {
+  selectAnswer = (answerIndex: number) => {
     // Проверяем, что ответ еще не был выбран и игра идет
-    if (this.selectedAnswer !== null || this.gameStatus !== 'playing') {
+    if (this.gameStatus !== 'playing') {
       return;
     }
 
-    this.selectedAnswer = answerIndex;
-    
+    // Проверяем, выбран ли уже этот ответ
+    if (this.selectedAnswers.includes(answerIndex)) {
+      this.selectedAnswers = this.selectedAnswers.filter(
+        selectedIndex => selectedIndex !== answerIndex
+      );
+    } else {
+      this.selectedAnswers.push(answerIndex);
+    }
+
     const currentQuestion = this.currentQuestion;
     if (!currentQuestion) return;
 
-    // Проверяем правильность ответа
     const isCorrect = answerIndex === currentQuestion.correctAnswer;
-    
+
     if (isCorrect) {
       this.score += this.getPointsForDifficulty(currentQuestion.difficulty);
     }
 
-    // Сохраняем в историю ответов
     this.answeredQuestions.push({
       questionId: currentQuestion.id,
-      selectedAnswer: answerIndex,
+      selectedAnswers: [...this.selectedAnswers],
       isCorrect: isCorrect
     });
-  }
+  };
 
-  nextQuestion() {
+  nextQuestion = () => {
     if (this.isLastQuestion) {
-      this.finishGame();
-      return;
+      return false;
     }
-
     this.currentQuestionIndex++;
-    this.selectedAnswer = null;
-  }
+    this.selectedAnswers = [];
+    this.essayAnswer = '';
+    return true;
+  };
 
   finishGame() {
     this.gameStatus = 'finished';
   }
 
-  resetGame() {
+  resetGame = () => {
     this.gameStatus = 'idle';
     this.questions = [];
     this.currentQuestionIndex = 0;
     this.score = 0;
-    this.selectedAnswer = null;
+    this.selectedAnswers = [];
     this.answeredQuestions = [];
-  }
+    this.essayAnswer = '';
+  };
 
   // Вспомогательный метод для получения очков за сложность
   private getPointsForDifficulty(difficulty: string): number {
@@ -108,6 +121,7 @@ class GameStore {
   get correctAnswersCount(): number {
     return this.answeredQuestions.filter(answer => answer.isCorrect).length;
   }
+
 }
 
 export const gameStore = new GameStore();
