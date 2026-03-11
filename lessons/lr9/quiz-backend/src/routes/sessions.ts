@@ -10,13 +10,32 @@ const sessionsRoute = new Hono()
 sessionsRoute.post('/', authMiddleware, async (c) => {
   const user = c.get('user')
 
-  // считаем количество вопросов
+  // Проверяем, есть ли вопросы
   const totalQuestions = await prisma.question.count()
+  if (totalQuestions === 0) {
+    return c.json({ error: 'No questions available. Please contact administrator.' }, 400)
+  }
+
+  // Проверяем, нет ли уже активной сессии
+  const activeSession = await prisma.session.findFirst({
+    where: {
+      userId: user.id,
+      status: 'in_progress',
+      expiresAt: { gt: new Date() }
+    }
+  })
+
+  if (activeSession) {
+    return c.json({ 
+      error: 'You already have an active session',
+      session: activeSession 
+    }, 400)
+  }
 
   const session = await prisma.session.create({
     data: {
       userId: user.id,
-      expiresAt: new Date(Date.now() + 60 * 60 * 1000),
+      expiresAt: new Date(Date.now() + 60 * 60 * 1000), // 1 час
     },
   })
 
@@ -29,6 +48,7 @@ sessionsRoute.post('/', authMiddleware, async (c) => {
 // Submit answer (with validation)
 sessionsRoute.post('/:id/answers', authMiddleware, async (c) => {
   const { id } = c.req.param()
+  const user = c.get('user')
   const body = await c.req.json()
 
   const parsed = AnswerSchema.safeParse({
@@ -44,7 +64,8 @@ sessionsRoute.post('/:id/answers', authMiddleware, async (c) => {
     const answer = await sessionService.submitAnswer(
       id,
       parsed.data.questionId,
-      parsed.data.userAnswer
+      parsed.data.userAnswer,
+      user.id  // Передаем userId для проверки
     )
 
     return c.json({ answer })
@@ -62,14 +83,22 @@ sessionsRoute.get('/:id', authMiddleware, async (c) => {
     where: { id },
     include: {
       answers: {
-        include: { question: true },
+        include: { 
+          question: {
+            select: {
+              id: true,
+              text: true,
+              type: true,
+              points: true
+            }
+          }
+        },
       },
     },
   })
 
-  if (!session) return c.json({ error: 'Not found' }, 404)
-  if (session.userId !== user.id)
-    return c.json({ error: 'Forbidden' }, 403)
+  if (!session) return c.json({ error: 'Session not found' }, 404)
+  if (session.userId !== user.id) return c.json({ error: 'Forbidden' }, 403)
 
   return c.json({ session })
 })
@@ -77,13 +106,14 @@ sessionsRoute.get('/:id', authMiddleware, async (c) => {
 // Submit session
 sessionsRoute.post('/:id/submit', authMiddleware, async (c) => {
   const { id } = c.req.param()
+  const user = c.get('user')
 
   if (!id) {
-    return c.json({ error: 'Invalid id' }, 400)
+    return c.json({ error: 'Invalid session id' }, 400)
   }
 
   try {
-    const session = await sessionService.submitSession(id)
+    const session = await sessionService.submitSession(id, user.id)  // Передаем userId
     return c.json({ session })
   } catch (e: any) {
     return c.json({ error: e.message }, 400)
