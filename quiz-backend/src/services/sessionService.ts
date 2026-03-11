@@ -1,9 +1,14 @@
 import { PrismaClient } from '@prisma/client';
 import { scoringService } from './scoringService';
 
-const prisma = new PrismaClient();
-
 export class SessionService {
+    private prisma: PrismaClient;
+
+    constructor(prismaClient?: PrismaClient) {
+        // Если клиент передан, используем его, иначе создаем новый
+        this.prisma = prismaClient || new PrismaClient();
+    }
+
     /**
      * Создание новой сессии (без предварительного создания ответов)
      */
@@ -11,12 +16,10 @@ export class SessionService {
         const expiresAt = new Date();
         expiresAt.setHours(expiresAt.getHours() + durationHours);
 
-        // Просто создаем сессию без ответов
-        const session = await prisma.session.create({
+        const session = await this.prisma.session.create({
             data: {
                 userId,
                 expiresAt,
-                // Не создаем answers здесь!
             }
         });
 
@@ -27,7 +30,7 @@ export class SessionService {
      * Отправка ответа на вопрос
      */
     async submitAnswer(sessionId: string, questionId: string, userAnswer: any) {
-        return await prisma.$transaction(async (tx) => {
+        return await this.prisma.$transaction(async (tx) => {
             // Проверяем сессию
             const session = await tx.session.findUnique({
                 where: { id: sessionId }
@@ -115,7 +118,7 @@ export class SessionService {
      * Завершение сессии
      */
     async submitSession(sessionId: string) {
-        return await prisma.$transaction(async (tx) => {
+        return await this.prisma.$transaction(async (tx) => {
             const session = await tx.session.findUnique({
                 where: { id: sessionId },
                 include: {
@@ -165,7 +168,7 @@ export class SessionService {
      * Получение сессии с ответами
      */
     async getSession(sessionId: string, userId: string) {
-        const session = await prisma.session.findFirst({
+        const session = await this.prisma.session.findFirst({
             where: {
                 id: sessionId,
                 userId
@@ -203,7 +206,7 @@ export class SessionService {
      * Получить все вопросы (для клиента)
      */
     async getQuestions() {
-        const questions = await prisma.question.findMany({
+        const questions = await this.prisma.question.findMany({
             include: {
                 category: {
                     select: {
@@ -221,4 +224,5 @@ export class SessionService {
     }
 }
 
+// Создаем экземпляр для продакшена с реальным PrismaClient
 export const sessionService = new SessionService();

@@ -217,7 +217,7 @@ app.post('/:id/submit', async (c) => {
             }
         });
 
-    } catch (error) 
+    } catch (error) {
         return handleError(c, error)
     }
 });

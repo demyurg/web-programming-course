@@ -14,13 +14,15 @@ app.get('/', async (c) => {
     try {
         // Проверяем авторизацию
         const authHeader = c.req.header('Authorization');
-        if (!authHeader || !authHeader.startsWith('Bearer ')) throwError("Unauthorized, 401");
+        if (!authHeader || !authHeader.startsWith('Bearer ')) {
+            return c.json({ error: 'Unauthorized' }, 401); // ← ВАЖНО: сразу возвращаем 401
+        }
 
         const token = authHeader.split(' ')[1];
         try {
             await verify(token, JWT_SECRET, 'HS256');
         } catch {
-            return throwError ('Invalid token 401');
+            return c.json({ error: 'Invalid token' }, 401); // ← ВАЖНО: 401 при неверном токене
         }
 
         // Получаем параметры фильтрации
@@ -73,7 +75,8 @@ app.get('/', async (c) => {
         return c.json({ questions });
 
     } catch (error) {
-        return throwError('Failed to fetch questions, 500');
+        console.error('Error:', error);
+        return c.json({ error: 'Internal server error' }, 500);
     }
 });
 
@@ -115,7 +118,7 @@ app.get('/categories', async (c) => {
         return c.json({ categories });
 
     } catch (error) {
-        return throw new Error("Failed to fetch categories, 500");
+        return throwError("Failed to fetch categories, 500");}
 
 });
 
