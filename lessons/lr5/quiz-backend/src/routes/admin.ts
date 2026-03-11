@@ -1,21 +1,36 @@
 import { Hono } from 'hono';
 import type { Context } from 'hono';
 import { z } from 'zod';
-import { Prisma, PrismaClient } from '@prisma/client';
+import prisma from '../lib/prisma.js'
 import { adminAuth } from '../middleware/admin.js';
 import { QuestionSchema, GradeSchema } from '../utils/validation.js';
 
-const prisma = new PrismaClient();
 const admin = new Hono();
 
 // Применяем middleware ко всем admin роутам
 admin.use('*', adminAuth);
 
-// GET /api/admin/questions - Получить все вопросы с информацией
+// GET /api/admin/questions - Получить все вопросы с информацией (с пагинацией)
 admin.get('/questions', async (c: Context) => {
   try {
+    // Параметры пагинации
+    const page = Number(c.req.query('page')) || 1;
+    const limit = Number(c.req.query('limit')) || 20;
+    const skip = (page - 1) * limit;
+    
+    // Получаем общее количество
+    const totalCount = await prisma.question.count();
+    
+    // Оптимизированный запрос с select
     const questions = await prisma.question.findMany({
-      include: {
+      select: {
+        id: true,
+        text: true,
+        type: true,
+        points: true,
+        correctAnswer: true,
+        createdAt: true,
+        updatedAt: true,
         category: {
           select: {
             id: true,
@@ -23,31 +38,27 @@ admin.get('/questions', async (c: Context) => {
             slug: true
           }
         },
-        answers: {
-          select: {
-            id: true,
-            score: true,
-            createdAt: true,
-            session: {
-              select: {
-                userId: true,
-                status: true
-              }
-            }
-          }
-        },
+        // Считаем количество ответов без загрузки всех данных
         _count: {
           select: {
             answers: true
+          }
+        },
+        // Только нужные поля из answers для статистики
+        answers: {
+          select: {
+            score: true
           }
         }
       },
       orderBy: {
         createdAt: 'desc'
-      }
+      },
+      skip,
+      take: limit
     });
 
-    // Форматируем ответ с дополнительной статистикой
+    // Форматируем ответ
     const formattedQuestions = questions.map(question => {
       const totalAnswers = question.answers.length;
       const answeredCount = question.answers.filter(a => a.score !== null).length;
@@ -88,7 +99,12 @@ admin.get('/questions', async (c: Context) => {
     return c.json({
       success: true,
       questions: formattedQuestions,
-      total: formattedQuestions.length
+      pagination: {
+        page,
+        limit,
+        total: totalCount,
+        pages: Math.ceil(totalCount / limit)
+      }
     });
 
   } catch (error) {
@@ -294,9 +310,25 @@ admin.put('/questions/:id', async (c: Context) => {
   }
 });
 
-// GET /api/admin/answers/pending - Получить непроверенные essay ответы
+/// GET /api/admin/answers/pending - Получить непроверенные essay ответы (с пагинацией)
 admin.get('/answers/pending', async (c: Context) => {
   try {
+    // Параметры пагинации из query string
+    const page = Number(c.req.query('page')) || 1;
+    const limit = Number(c.req.query('limit')) || 20;
+    const skip = (page - 1) * limit;
+    
+    // Получаем общее количество для пагинации
+    const totalCount = await prisma.answer.count({
+      where: {
+        score: null,
+        question: {
+          type: 'essay'
+        }
+      }
+    });
+    
+    // Используем select вместо include для оптимизации
     const pendingAnswers = await prisma.answer.findMany({
       where: {
         score: null,
@@ -304,9 +336,15 @@ admin.get('/answers/pending', async (c: Context) => {
           type: 'essay'
         }
       },
-      include: {
+      select: {
+        id: true,
+        userAnswer: true,
+        createdAt: true,
         session: {
-          include: {
+          select: {
+            id: true,
+            status: true,
+            startedAt: true,
             user: {
               select: {
                 id: true,
@@ -327,7 +365,9 @@ admin.get('/answers/pending', async (c: Context) => {
       },
       orderBy: {
         createdAt: 'asc'
-      }
+      },
+      skip,
+      take: limit
     });
 
     const formattedAnswers = pendingAnswers.map(answer => {
@@ -358,7 +398,12 @@ admin.get('/answers/pending', async (c: Context) => {
     return c.json({
       success: true,
       pendingAnswers: formattedAnswers,
-      total: formattedAnswers.length
+      pagination: {
+        page,
+        limit,
+        total: totalCount,
+        pages: Math.ceil(totalCount / limit)
+      }
     });
 
   } catch (error) {
@@ -508,93 +553,198 @@ admin.post('/answers/:id/grade', async (c: Context) => {
   }
 });
 
-// GET /api/admin/students/:userId/stats - Получить статистику студента
-admin.get('/students/:userId/stats', async (c: Context) => {
+// GET /api/admin/students - Получить список студентов (с пагинацией)
+admin.get('/students', async (c: Context) => {
   try {
-    const { userId } = c.req.param();
-
-    // Проверяем существование пользователя
-    const user = await prisma.user.findUnique({
-      where: { id: userId },
-      include: {
+    const page = Number(c.req.query('page')) || 1;
+    const limit = Number(c.req.query('limit')) || 20;
+    const skip = (page - 1) * limit;
+    const search = c.req.query('search') || '';
+    
+    // Фильтр для поиска
+    const where = search ? {
+      OR: [
+        { email: { contains: search } },
+        { name: { contains: search } }
+      ]
+    } : {};
+    
+    // Получаем общее количество
+    const totalCount = await prisma.user.count({ where });
+    
+    // Оптимизированный запрос с select
+    const students = await prisma.user.findMany({
+      where,
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        githubId: true,
+        role: true,
+        createdAt: true,
+        // Только количество сессий без загрузки всех данных
+        _count: {
+          select: {
+            sessions: {
+              where: {
+                status: 'completed'
+              }
+            }
+          }
+        },
+        // Только нужные поля из сессий для статистики
         sessions: {
           where: {
             status: 'completed'
           },
-          include: {
-            answers: true
+          select: {
+            score: true
           },
-          orderBy: {
-            completedAt: 'desc'
-          }
+          take: 1 // Нам нужны только scores, не все сессии
         }
-      }
+      },
+      orderBy: {
+        createdAt: 'desc'
+      },
+      skip,
+      take: limit
     });
 
-    if (!user) {
-      return c.json({
-        success: false,
-        error: 'Not Found',
-        message: 'Student not found'
-      }, 404);
-    }
+    // Форматируем ответ с базовой статистикой
+    const formattedStudents = students.map(student => {
+      const scores = student.sessions
+        .map(s => s.score || 0)
+        .filter(s => s > 0);
+      
+      const averageScore = scores.length > 0
+        ? scores.reduce((sum, s) => sum + s, 0) / scores.length
+        : 0;
 
-    const completedSessions = user.sessions;
-
-    // Рассчитываем статистику
-    const totalSessions = completedSessions.length;
-    
-    if (totalSessions === 0) {
-      return c.json({
-        success: true,
+      return {
+        id: student.id,
+        email: student.email,
+        name: student.name,
+        githubId: student.githubId,
+        role: student.role,
+        createdAt: student.createdAt,
         stats: {
-          userId: user.id,
-          userName: user.name,
-          userEmail: user.email,
-          totalSessions: 0,
-          averageScore: null,
-          bestScore: null,
-          worstScore: null,
-          recentSessions: []
+          totalSessions: student._count.sessions,
+          averageScore: Number(averageScore.toFixed(2))
         }
-      });
-    }
-
-    const scores = completedSessions
-      .map(s => s.score || 0)
-      .filter(score => score > 0);
-
-    const averageScore = scores.length > 0
-      ? scores.reduce((sum, score) => sum + score, 0) / scores.length
-      : 0;
-
-    const bestScore = scores.length > 0 ? Math.max(...scores) : 0;
-    const worstScore = scores.length > 0 ? Math.min(...scores) : 0;
-
-    // Получаем последние 5 сессий
-    const recentSessions = completedSessions.slice(0, 5).map(session => ({
-      id: session.id,
-      score: session.score,
-      completedAt: session.completedAt,
-      totalAnswers: session.answers?.length || 0
-    }));
+      };
+    });
 
     return c.json({
       success: true,
-      stats: {
-        userId: user.id,
-        userName: user.name,
-        userEmail: user.email,
-        totalSessions,
-        averageScore: Number(averageScore.toFixed(2)),
-        bestScore,
-        worstScore,
-        recentSessions
+      students: formattedStudents,
+      pagination: {
+        page,
+        limit,
+        total: totalCount,
+        pages: Math.ceil(totalCount / limit)
       }
     });
 
   } catch (error) {
-    console.error('Get student stats error:', error);
+    console.error('Get students error:', error);
+    return c.json({
+      success: false,
+      error: 'Internal server error',
+      message: error instanceof Error ? error.message : 'Unknown error'
+    }, 500);
+  }
+});
+
+// POST /api/admin/questions/batch - Создать несколько вопросов за раз
+admin.post('/questions/batch', async (c: Context) => {
+  try {
+    const body = await c.req.json() as { questions: any[] };
+    
+    if (!Array.isArray(body.questions)) {
+      return c.json({
+        success: false,
+        error: 'Validation failed',
+        message: 'Expected array of questions'
+      }, 400);
+    }
+
+    // Валидируем все вопросы
+    const validationResults = body.questions.map((q: unknown) => 
+      QuestionSchema.safeParse(q)
+    );
+    
+    interface ValidationError {
+      index: number;
+      errors: any;
+    }
+    
+    const errors: ValidationError[] = [];
+    validationResults.forEach((result, index) => {
+      if (!result.success) {
+        errors.push({ index, errors: result.error.issues });
+      }
+    });
+    
+    if (errors.length > 0) {
+      return c.json({
+        success: false,
+        error: 'Validation failed',
+        details: errors
+      }, 400);
+    }
+
+    // Проверяем существование всех категорий
+    const validQuestions = body.questions.filter((_, index) => validationResults[index].success);
+    const categoryIds = [...new Set(validQuestions.map((q: any) => q.categoryId))];
+    
+    const categories = await prisma.category.findMany({
+      where: { id: { in: categoryIds } },
+      select: { id: true }
+    });
+    
+    const foundCategoryIds = new Set(categories.map(c => c.id));
+    const missingCategories = categoryIds.filter(id => !foundCategoryIds.has(id));
+    
+    if (missingCategories.length > 0) {
+      return c.json({
+        success: false,
+        error: 'Categories not found',
+        message: `Categories not found: ${missingCategories.join(', ')}`
+      }, 404);
+    }
+
+    // Подготавливаем данные для createMany с правильными типами Prisma
+    const questionsData = validQuestions.map((q: any) => {
+      const data: any = {
+        text: q.text,
+        type: q.type,
+        points: q.points,
+        categoryId: q.categoryId,
+      };
+      
+      // Правильная обработка JSON для Prisma
+      if (q.correctAnswer !== undefined) {
+        data.correctAnswer = JSON.stringify(q.correctAnswer);
+      } else {
+        data.correctAnswer = null; // Prisma принимает null для Json полей
+      }
+      
+      return data;
+    });
+
+    // Используем createMany для batch вставки
+    const result = await prisma.question.createMany({
+      data: questionsData,
+    });
+
+    return c.json({
+      success: true,
+      message: `Successfully created ${result.count} questions`,
+      count: result.count
+    }, 201);
+
+  } catch (error) {
+    console.error('Batch create questions error:', error);
     return c.json({
       success: false,
       error: 'Internal server error',

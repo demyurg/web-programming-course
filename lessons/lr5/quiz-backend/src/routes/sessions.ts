@@ -1,11 +1,10 @@
 import { Hono } from 'hono';
 import { z } from 'zod';
 import { verify } from 'hono/jwt';
-import { PrismaClient } from '@prisma/client';
+import prisma from '../lib/prisma.js'
 import { AnswerSchema, SessionSubmitSchema } from '../utils/validation.js';
 import { sessionService } from '../services/sessionService.js';
 
-const prisma = new PrismaClient();
 const sessions = new Hono();
 
 // Схема для создания сессии

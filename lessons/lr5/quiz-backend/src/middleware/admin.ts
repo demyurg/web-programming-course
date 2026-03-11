@@ -1,8 +1,7 @@
 import type { Context, Next } from 'hono';
 import { verify } from 'hono/jwt';
-import { PrismaClient } from '@prisma/client';
+import prisma from '../lib/prisma.js'
 
-const prisma = new PrismaClient();
 
 export const adminAuth = async (c: Context, next: Next) => {
   try {

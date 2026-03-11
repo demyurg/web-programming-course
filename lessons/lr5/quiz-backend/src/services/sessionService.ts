@@ -1,7 +1,6 @@
-import { PrismaClient } from "@prisma/client"; 
+import prisma from '../lib/prisma.js'
 import { scoringService } from "./scoringService.js";
 
-const prisma = new PrismaClient();
 
 export class SessionService {
   async submitAnswer(
