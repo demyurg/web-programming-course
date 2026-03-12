@@ -71,6 +71,28 @@ admin.post('/questions', zValidator('json', questionSchema), async (c) => {
   }
 })
 
+// POST /api/admin/questions/batch - создать несколько вопросов
+admin.post('/questions/batch', async (c) => {
+  try {
+    const { questions } = await c.req.json()
+    
+    const result = await prisma.question.createMany({
+      data: questions.map((q: any) => ({
+        text: q.text,
+        type: q.type,
+        categoryId: q.categoryId,
+        correctAnswer: q.correctAnswer ? JSON.stringify(q.correctAnswer) : null,
+        points: q.points || 1
+      })),
+    })
+
+    return c.json({ count: result.count })
+  } catch (error) {
+    console.error(error)
+    return c.json({ error: 'Внутренняя ошибка сервера' }, 500)
+  }
+})
+
 // PUT /api/admin/questions/:id - обновить вопрос
 admin.put('/questions/:id', zValidator('json', questionSchema), async (c) => {
   try {

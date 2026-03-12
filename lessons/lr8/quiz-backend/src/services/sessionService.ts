@@ -127,33 +127,53 @@ export class SessionService {
   }
 
   async getSessionWithAnswers(sessionId: string, userId: string) {
-    const session = await prisma.session.findUnique({
-      where: { id: sessionId },
-      include: {
-        user: true,
-        answers: {
-          include: {
-            question: {
-              include: {
-                category: true
+  const session = await prisma.session.findUnique({
+    where: { id: sessionId },
+    // Используем select вместо include для контроля полей
+    select: {
+      id: true,
+      status: true,
+      score: true,
+      startedAt: true,
+      expiresAt: true,
+      completedAt: true,
+      user: {
+        select: {
+          id: true,
+          name: true,
+          email: true // только нужные поля пользователя
+        }
+      },
+      answers: {
+        select: {
+          id: true,
+          userAnswer: true,
+          score: true,
+          isCorrect: true,
+          createdAt: true,
+          question: {
+            select: {
+              id: true,
+              text: true,
+              type: true,
+              points: true,
+              category: {
+                select: {
+                  name: true // только имя категории
+                }
               }
             }
           }
         }
       }
-    })
-
-    if (!session) {
-      throw new Error('Сессия не найдена')
     }
+  })
 
-    // Проверяем, что пользователь имеет доступ к сессии
-    if (session.userId !== userId) {
-      throw new Error('Нет доступа к этой сессии')
-    }
+  if (!session) throw new Error('Сессия не найдена')
+  if (session.user.id !== userId) throw new Error('Нет доступа к этой сессии')
 
-    return session
-  }
+  return session
+}
 }
 
 export const sessionService = new SessionService()
