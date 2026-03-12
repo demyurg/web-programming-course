@@ -9,8 +9,11 @@
     "typecheck": "tsc --noEmit",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
+     "test": "vitest run",
+  "test:watch": "vitest",
     "prisma:studio": "prisma studio"
   },
+
   "dependencies": {
     "@hono/node-server": "^1.19.11",
     "@prisma/adapter-better-sqlite3": "^7.5.0",
