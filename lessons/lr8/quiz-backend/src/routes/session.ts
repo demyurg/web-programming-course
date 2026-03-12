@@ -1,19 +1,16 @@
 import { Hono } from 'hono'
+import { zValidator } from '@hono/zod-validator'
 import { PrismaClient } from '@prisma/client'
 import { sessionService } from '../services/sessionService.js'
+import { startSessionSchema, answerSchema } from '../utils/validation.js'
 
 const prisma = new PrismaClient()
 const sessions = new Hono()
 
-// POST /api/sessions - начать сессию
-sessions.post('/', async (c) => {
+// POST /api/sessions
+sessions.post('/', zValidator('json', startSessionSchema), async (c) => {
   try {
-    const body = await c.req.json()
-    const { userId } = body
-
-    if (!userId) {
-      return c.json({ error: 'userId обязателен' }, 400)
-    }
+    const { userId } = c.req.valid('json')
 
     const user = await prisma.user.findUnique({
       where: { id: userId }
@@ -31,7 +28,7 @@ sessions.post('/', async (c) => {
     const session = await prisma.session.create({
       data: {
         userId,
-        expiresAt: new Date(Date.now() + 60 * 60 * 1000) // 1 час
+        expiresAt: new Date(Date.now() + 60 * 60 * 1000)
       },
       include: { user: true }
     })
@@ -43,7 +40,25 @@ sessions.post('/', async (c) => {
   }
 })
 
-// GET /api/sessions/:id - получить сессию
+// POST /api/sessions/:id/answers
+sessions.post('/:id/answers', zValidator('json', answerSchema), async (c) => {
+  try {
+    const sessionId = c.req.param('id')
+    const { questionId, userAnswer } = c.req.valid('json') 
+
+    const answer = await sessionService.submitAnswer({
+      sessionId,
+      questionId,
+      userAnswer
+    })
+
+    return c.json({ answer }, 201)
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Внутренняя ошибка сервера'
+    return c.json({ error: message }, 400)
+  }
+})
+
 sessions.get('/:id', async (c) => {
   try {
     const sessionId = c.req.param('id')
@@ -61,35 +76,6 @@ sessions.get('/:id', async (c) => {
   }
 })
 
-// POST /api/sessions/:id/answers - отправить ответ
-sessions.post('/:id/answers', async (c) => {
-  try {
-    const sessionId = c.req.param('id')
-    const body = await c.req.json()
-    const { questionId, userAnswer } = body
-
-    if (!questionId) {
-      return c.json({ error: 'questionId обязателен' }, 400)
-    }
-
-    if (userAnswer === undefined) {
-      return c.json({ error: 'userAnswer обязателен' }, 400)
-    }
-
-    const answer = await sessionService.submitAnswer({
-      sessionId,
-      questionId,
-      userAnswer
-    })
-
-    return c.json({ answer }, 201)
-  } catch (error) {
-    const message = error instanceof Error ? error.message : 'Внутренняя ошибка сервера'
-    return c.json({ error: message }, 400)
-  }
-})
-
-// POST /api/sessions/:id/submit - завершить сессию
 sessions.post('/:id/submit', async (c) => {
   try {
     const sessionId = c.req.param('id')
