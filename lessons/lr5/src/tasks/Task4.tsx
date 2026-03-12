@@ -14,14 +14,14 @@ const Task4 = observer(() => {
   const theme = useUIStore((s) => s.theme);
   const soundEnabled = useUIStore((s) => s.soundEnabled);
   const toggleTheme = useUIStore((s) => s.toggleTheme);
+const handleStart = async () => {
+  await gameStore.createSession(5, 'medium');
+  gameStore.startGame();
+};
 
-  const handleStart = () => {
-    // логика старта (API + startGame)
-  };
-
-  const handleNext = () => {
-    // логика отправки ответа
-  };
+const handleNext = async () => {
+  await gameStore.nextQuestion();
+};
 
   if (gameStatus === 'idle') {
     return (
