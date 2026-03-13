@@ -5,13 +5,11 @@ export class SessionService {
     private prisma: PrismaClient;
 
     constructor(prismaClient?: PrismaClient) {
-        // Если клиент передан, используем его, иначе создаем новый
+
         this.prisma = prismaClient || new PrismaClient();
     }
 
-    /**
-     * Создание новой сессии (без предварительного создания ответов)
-     */
+
     async createSession(userId: string, durationHours: number = 1) {
         const expiresAt = new Date();
         expiresAt.setHours(expiresAt.getHours() + durationHours);
@@ -26,12 +24,10 @@ export class SessionService {
         return session;
     }
 
-    /**
-     * Отправка ответа на вопрос
-     */
+
     async submitAnswer(sessionId: string, questionId: string, userAnswer: any) {
         return await this.prisma.$transaction(async (tx) => {
-            // Проверяем сессию
+
             const session = await tx.session.findUnique({
                 where: { id: sessionId }
             });
@@ -52,7 +48,7 @@ export class SessionService {
                 throw new Error('Session expired');
             }
 
-            // Получаем вопрос
+
             const question = await tx.question.findUnique({
                 where: { id: questionId }
             });
@@ -61,7 +57,7 @@ export class SessionService {
                 throw new Error('Question not found');
             }
 
-            // Вычисляем баллы
+
             let score: number | null = null;
             let isCorrect: boolean | null = null;
 
@@ -74,7 +70,7 @@ export class SessionService {
                 isCorrect = score > 0;
             }
 
-            // Пытаемся найти существующий ответ
+
             const existingAnswer = await tx.answer.findUnique({
                 where: {
                     sessionId_questionId: {
@@ -85,7 +81,6 @@ export class SessionService {
             });
 
             if (existingAnswer) {
-                // Обновляем существующий ответ
                 return await tx.answer.update({
                     where: {
                         sessionId_questionId: {
@@ -100,7 +95,7 @@ export class SessionService {
                     }
                 });
             } else {
-                // Создаем новый ответ
+  
                 return await tx.answer.create({
                     data: {
                         sessionId,
@@ -114,9 +109,7 @@ export class SessionService {
         });
     }
 
-    /**
-     * Завершение сессии
-     */
+
     async submitSession(sessionId: string) {
         return await this.prisma.$transaction(async (tx) => {
             const session = await tx.session.findUnique({
@@ -164,9 +157,7 @@ export class SessionService {
         });
     }
 
-    /**
-     * Получение сессии с ответами
-     */
+
     async getSession(sessionId: string, userId: string) {
         const session = await this.prisma.session.findFirst({
             where: {
@@ -202,9 +193,7 @@ export class SessionService {
         return session;
     }
 
-    /**
-     * Получить все вопросы (для клиента)
-     */
+
     async getQuestions() {
         const questions = await this.prisma.question.findMany({
             include: {
@@ -219,10 +208,10 @@ export class SessionService {
 
         return questions.map(q => ({
             ...q,
-            correctAnswer: undefined // Не отправляем правильные ответы клиенту!
+            correctAnswer: undefined 
         }));
     }
 }
 
-// Создаем экземпляр для продакшена с реальным PrismaClient
+
 export const sessionService = new SessionService();

@@ -4,20 +4,17 @@ import { SessionService } from '../sessionService'
 
 describe('SessionService with Prismock', () => {
     let sessionService: SessionService
-    let prismock: any // Используем any - это проще всего
+    let prismock: any 
 
     beforeEach(async () => {
-        // Создаем новый экземпляр prismock для каждого теста
         prismock = new PrismockClient()
 
-        // Очищаем все таблицы
         await prismock.answer.deleteMany()
         await prismock.session.deleteMany()
         await prismock.question.deleteMany()
         await prismock.category.deleteMany()
         await prismock.user.deleteMany()
 
-        // Создаем тестового пользователя
         await prismock.user.create({
             data: {
                 id: 'user-123',
@@ -28,7 +25,6 @@ describe('SessionService with Prismock', () => {
             }
         })
 
-        // Создаем тестовую категорию
         const category = await prismock.category.create({
             data: {
                 id: 'cat-123',
@@ -37,7 +33,6 @@ describe('SessionService with Prismock', () => {
             }
         })
 
-        // Создаем тестовые вопросы
         await prismock.question.createMany({
             data: [
                 {
@@ -63,7 +58,6 @@ describe('SessionService with Prismock', () => {
             ]
         })
 
-        // Создаем сервис с prismock
         sessionService = new SessionService(prismock)
     })
 
