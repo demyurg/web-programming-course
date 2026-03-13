@@ -16,8 +16,49 @@
 // - ValidationRule: validate: (value: string) => boolean, message: string
 // - FormData: [fieldName: string]: string
 
+//Создание интерфейсов
+interface ValidationRule {
+    validate: (value: string) => boolean;
+    message: string;
+}
+
+interface FormField {
+    name: string;
+    element: HTMLElement;
+    validators: ValidationRule[];
+    errorElement?: HTMLElement;
+}
+
+interface FormData {
+    [fieldName: string]: string;
+}
+
+interface ElementCreationOptions {
+    id?: string;
+    className?: string;
+    textContent?: string;
+    innerHTML?: string;
+    attributes?: Record<string, string>;
+    styles?: Partial<CSSStyleDeclaration>;
+    parent?: HTMLElement;
+}
+
+// Type Guards функциия
+
+
+function isHTMLInputElement(element: HTMLElement): element is HTMLInputElement {
+    return element.tagName.toLowerCase() === 'input';
+}
+
+function isHTMLFormElement(element: HTMLElement): element is HTMLFormElement {
+    return element.tagName.toLowerCase() === 'form';
+}
+
+function isHTMLButtonElement(element: HTMLElement): element is HTMLButtonElement {
+    return element.tagName.toLowerCase() === 'button';
+}
 // Утилита для безопасного получения элемента
-function getElementById(id) {
+function getElementById(id: string): HTMLElement {
     const element = document.getElementById(id);
     if (!element) {
         throw new Error(`Элемент с ID "${id}" не найден`);
@@ -26,20 +67,35 @@ function getElementById(id) {
 }
 
 // Утилита для получения элемента определенного типа
-function getElementByIdAsType(id, expectedType) {
+function getElementByIdAsType<T extends HTMLElement>(
+    id: string, 
+    expectedTag: string
+): T {
     const element = getElementById(id);
     
-    if (element.tagName.toLowerCase() !== expectedType.toLowerCase()) {
-        throw new Error(`Элемент "${id}" должен быть ${expectedType}, но это ${element.tagName}`);
+    if (element.tagName.toLowerCase() !== expectedTag.toLowerCase()) {
+        throw new Error(`Элемент "${id}" должен быть ${expectedTag}, но это ${element.tagName}`);
     }
     
-    return element;
+    return element as T;
+}
+
+//Добавим функцию для сохранения
+
+function safeGetElementById<T extends HTMLElement = HTMLElement>(
+    id: string
+): T | null {
+    return document.getElementById(id) as T | null;
 }
 
 // Класс для управления формой
 class FormManager {
-    constructor(formId) {
-        this.form = getElementByIdAsType(formId, 'form');
+    private form: HTMLFormElement;
+    private fields: Map<string, FormField>;
+    private errors: Map<string, string>;
+    
+    constructor(formId: string) {
+        this.form = getElementByIdAsType<HTMLFormElement>(formId, 'form');
         this.fields = new Map();
         this.errors = new Map();
         
@@ -47,49 +103,55 @@ class FormManager {
     }
     
     // Добавление поля с валидацией
-    addField(fieldName, fieldId, validators) {
+    addField(
+        fieldName: string, 
+        fieldId: string, 
+        validators: ValidationRule[] = []
+    ): this {
         const element = getElementById(fieldId);
-        const errorElement = document.getElementById(`${fieldId}-error`);
+        const errorElement = safeGetElementById(`${fieldId}-error`);
         
-        const field = {
+        const field: FormField = {
             name: fieldName,
             element: element,
-            validators: validators || [],
-            errorElement: errorElement
+            validators: validators,
+            errorElement: errorElement || undefined
         };
         
         this.fields.set(fieldName, field);
         
         // Добавляем обработчики событий для поля
-        element.addEventListener('input', (event) => {
-            this.validateField(fieldName, event.target.value);
+        element.addEventListener('input', (event: Event) => {
+            const target = event.target as HTMLInputElement;
+            this.validateField(fieldName, target.value);
         });
         
-        element.addEventListener('blur', (event) => {
-            this.validateField(fieldName, event.target.value);
+        element.addEventListener('blur', (event: Event) => {
+            const target = event.target as HTMLInputElement;
+            this.validateField(fieldName, target.value);
         });
         
         return this;
     }
     
     // Настройка основных обработчиков событий
-    setupEventListeners() {
-        this.form.addEventListener('submit', (event) => {
+    private setupEventListeners(): void {
+        this.form.addEventListener('submit', (event: SubmitEvent) => {
             event.preventDefault();
             this.handleSubmit(event);
         });
         
         // Обработчик для кнопки сброса
         const resetButton = this.form.querySelector('button[type="reset"]');
-        if (resetButton) {
-            resetButton.addEventListener('click', (event) => {
+        if (resetButton && isHTMLButtonElement(resetButton)) {
+            resetButton.addEventListener('click', (event: MouseEvent) => {
                 this.handleReset(event);
             });
         }
     }
     
     // Валидация отдельного поля
-    validateField(fieldName, value) {
+    validateField(fieldName: string, value: string): boolean {
         const field = this.fields.get(fieldName);
         if (!field) return true;
         
@@ -108,7 +170,7 @@ class FormManager {
     }
     
     // Установка ошибки для поля
-    setFieldError(fieldName, message) {
+    private setFieldError(fieldName: string, message: string): void {
         const field = this.fields.get(fieldName);
         if (!field) return;
         
@@ -125,7 +187,7 @@ class FormManager {
     }
     
     // Очистка ошибки для поля
-    clearFieldError(fieldName) {
+    private clearFieldError(fieldName: string): void {
         const field = this.fields.get(fieldName);
         if (!field) return;
         
@@ -139,20 +201,26 @@ class FormManager {
     }
     
     // Получение данных формы
-    getFormData() {
-        const formData = {};
+    getFormData(): FormData {
+        const formData: FormData = {};
         
         this.fields.forEach((field, fieldName) => {
             const element = field.element;
             
-            if (element.type === 'checkbox') {
-                formData[fieldName] = element.checked.toString();
-            } else if (element.type === 'radio') {
-                const radioGroup = this.form.querySelectorAll(`input[name="${element.name}"]`);
-                const checked = Array.from(radioGroup).find(radio => radio.checked);
-                formData[fieldName] = checked ? checked.value : '';
+            if (isHTMLInputElement(element)) {
+                if (element.type === 'checkbox') {
+                    formData[fieldName] = element.checked.toString();
+                } else if (element.type === 'radio') {
+                    const radioGroup = this.form.querySelectorAll<HTMLInputElement>(`input[name="${element.name}"]`);
+                    const checked = Array.from(radioGroup).find(radio => radio.checked);
+                    formData[fieldName] = checked ? checked.value : '';
+                } else {
+                    formData[fieldName] = element.value;
+                }
+            } else if ('value' in element && typeof (element as any).value === 'string') {
+                formData[fieldName] = (element as any).value;
             } else {
-                formData[fieldName] = element.value;
+                formData[fieldName] = element.textContent || '';
             }
         });
         
@@ -160,7 +228,7 @@ class FormManager {
     }
     
     // Обработка отправки формы
-    handleSubmit(_event) {
+    private handleSubmit(event: SubmitEvent): void {
         console.log('Отправка формы...');
         
         // Валидируем все поля
@@ -181,15 +249,21 @@ class FormManager {
     }
     
     // Получение значения поля
-    getFieldValue(fieldName) {
+    private getFieldValue(fieldName: string): string {
         const field = this.fields.get(fieldName);
         if (!field) return '';
         
-        return field.element.value;
+        if (isHTMLInputElement(field.element)) {
+            return field.element.value;
+        } else if ('value' in field.element && typeof (field.element as any).value === 'string') {
+            return (field.element as any).value;
+        }
+        
+        return field.element.textContent || '';
     }
     
     // Обработка сброса формы
-    handleReset(_event) {
+    private handleReset(event: MouseEvent): void {
         console.log('Сброс формы...');
         
         // Очищаем все ошибки
@@ -201,40 +275,56 @@ class FormManager {
     }
     
     // Успешная отправка формы (переопределяется)
-    onSubmitSuccess(formData) {
+    onSubmitSuccess(formData: FormData): void {
         console.log('✅ Форма отправлена успешно:', formData);
         alert('Форма отправлена успешно!');
     }
     
     // Ошибка при отправке формы (переопределяется)  
-    onSubmitError() {
+    onSubmitError(): void {
         console.log('❌ Ошибки в форме');
         alert('Пожалуйста, исправьте ошибки в форме');
     }
+    
+    // Получение текущих ошибок
+    getErrors(): Map<string, string> {
+        return new Map(this.errors);
+    }
+    
+    // Проверка валидности всей формы
+    isValid(): boolean {
+        return this.errors.size === 0;
+    }
 }
+
 
 // Фабрика валидаторов
 const Validators = {
-    required: (message) => ({
-        validate: (value) => value.trim().length > 0,
+    required: (message?: string): ValidationRule => ({
+        validate: (value: string) => value.trim().length > 0,
         message: message || 'Поле обязательно для заполнения'
     }),
     
-    minLength: (minLen, message) => ({
-        validate: (value) => value.length >= minLen,
+    minLength: (minLen: number, message?: string): ValidationRule => ({
+        validate: (value: string) => value.length >= minLen,
         message: message || `Минимальная длина: ${minLen} символов`
     }),
     
-    email: (message) => ({
-        validate: (value) => {
+    maxLength: (maxLen: number, message?: string): ValidationRule => ({
+        validate: (value: string) => value.length <= maxLen,
+        message: message || `Максимальная длина: ${maxLen} символов`
+    }),
+    
+    email: (message?: string): ValidationRule => ({
+        validate: (value: string) => {
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             return emailRegex.test(value);
         },
         message: message || 'Введите корректный email'
     }),
     
-    phone: (message) => ({
-        validate: (value) => {
+    phone: (message?: string): ValidationRule => ({
+        validate: (value: string) => {
             const phoneRegex = /^\+?[\d\s\-\(\)]{10,}$/;
             return phoneRegex.test(value);
         },
@@ -242,19 +332,28 @@ const Validators = {
     })
 };
 
+
 // Утилиты для работы с DOM событиями
-function addClickListener(elementId, handler) {
+function addClickListener(
+    elementId: string, 
+    handler: (event: MouseEvent) => void
+): HTMLElement {
     const element = getElementById(elementId);
     element.addEventListener('click', handler);
     return element;
 }
 
-function addKeyboardListener(elementId, handler, keyCode) {
+function addKeyboardListener(
+    elementId: string, 
+    handler: (event: KeyboardEvent) => void, 
+    keyCode?: string
+): HTMLElement {
     const element = getElementById(elementId);
     
-    element.addEventListener('keydown', (event) => {
-        if (!keyCode || event.code === keyCode) {
-            handler(event);
+    element.addEventListener('keydown', (event: Event) => {
+        const keyboardEvent = event as KeyboardEvent;
+        if (!keyCode || keyboardEvent.code === keyCode) {
+            handler(keyboardEvent);
         }
     });
     
@@ -262,7 +361,10 @@ function addKeyboardListener(elementId, handler, keyCode) {
 }
 
 // Утилита для создания элементов
-function createElement(tagName, options) {
+function createElement<T extends keyof HTMLElementTagNameMap>(
+    tagName: T,
+    options: ElementCreationOptions = {}
+): HTMLElementTagNameMap[T] {
     const element = document.createElement(tagName);
     
     if (options.id) element.id = options.id;
@@ -278,7 +380,9 @@ function createElement(tagName, options) {
     
     if (options.styles) {
         Object.entries(options.styles).forEach(([property, value]) => {
-            element.style[property] = value;
+            if (value) {
+                (element.style as any)[property] = value;
+            }
         });
     }
     
