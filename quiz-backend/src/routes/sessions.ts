@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { PrismaClient } from '@prisma/client';
 import { verify } from 'hono/jwt';
 import { sessionService } from '../services/sessionService';
-import { handleError, throwError } from '../utils/errors';
+import { handleError, throwError, throwUnauthorized, throwNotFound, throwForbidden } from '../utils/errors';
 
 const prisma = new PrismaClient();
 const app = new Hono();
@@ -25,15 +25,20 @@ const AnswerSchema = z.object({
 // Вспомогательная функция для проверки токена и получения userId
 async function getUserIdFromToken(c: any): Promise<string | null> {
     const authHeader = c.req.header('Authorization');
+    console.log('🔍 Auth header:', authHeader) 
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        console.log('❌ No valid auth header')
         return null;
     }
 
     const token = authHeader.split(' ')[1];
+    console.log('🔍 Token:', token.substring(0, 20) + '...')
     try {
         const payload = await verify(token, JWT_SECRET, 'HS256');
+        console.log('✅ Token verified, userId:', payload.userId)
         return payload.userId as string;
     } catch {
+        console.log('❌ Token verification failed:')
         return null;
     }
 }
@@ -41,26 +46,22 @@ async function getUserIdFromToken(c: any): Promise<string | null> {
 // POST /api/sessions - создать новую сессию
 app.post('/', async (c) => {
     try {
-        // Проверяем токен
+        // 1. Проверяем токен
         const userId = await getUserIdFromToken(c);
-        if (!userId) throwError("Unauthorized");
-        
-        // Проверяем, что пользователь существует
+        if (!userId) throwUnauthorized(); // ← ТЕПЕРЬ 401!
+
+        // 2. Проверяем пользователя
         const user = await prisma.user.findUnique({
             where: { id: userId }
         });
+        if (!user) throwNotFound("User not found");
 
-        if (!user) throwError("User not found");
- 
-        // Получаем и валидируем тело запроса
+        // 3. Валидация
         const body = await c.req.json().catch(() => ({}));
-
-        // Валидация с обработкой ошибок
         const validated = CreateSessionSchema.parse(body);
-        const durationHours = validated.durationHours;
-         const session = await sessionService.createSession(userId, durationHours);
 
-        // Получаем количество вопросов
+        // 4. Создаем сессию
+        const session = await sessionService.createSession(userId, validated.durationHours);
         const questionsCount = await prisma.question.count();
 
         return c.json({
@@ -74,7 +75,7 @@ app.post('/', async (c) => {
         }, 201);
 
     } catch (error) {
-        return handleError(c, error); 
+        return handleError(c, error);
     }
 });
 
@@ -83,13 +84,10 @@ app.post('/:id/answers', async (c) => {
     try {
         // Проверяем токен
         const userId = await getUserIdFromToken(c);
-        if (!userId) throwError("Unauthorized");
+        if (!userId) throwUnauthorized;
 
         const { id } = c.req.param();
         const body = await c.req.json();
-
-        // Валидация
-                const validatedData = AnswerSchema.parse(body); // Если ошибка - уйдет в catch
 
         // Проверяем, что сессия принадлежит пользователю
         const session = await prisma.session.findUnique({
@@ -97,11 +95,13 @@ app.post('/:id/answers', async (c) => {
             select: { userId: true, status: true, expiresAt: true }
         });
 
-        if (!session) throwError("Сессия не найдена");
+        if (!session) throwNotFound('Сессия не найдена');
 
-        if (session.userId !== userId) throwError("Доступ запрещен");
+        const validatedData = AnswerSchema.parse(body);
 
-        if (session.status !== 'in_progress') throwError("Сессия не активна");
+        if (session.userId !== userId) throwForbidden();
+
+        if (session.status !== 'in_progress') throwError('Сессия не активна');
 
         if (session.expiresAt < new Date()) throwError("Сессия истекла");
 
@@ -139,46 +139,29 @@ app.get('/:id', async (c) => {
         // Проверяем токен
         const userId = await getUserIdFromToken(c);
         if (!userId) throwError("Unauthorized");
-      
-        const { id } = c.req.param();
 
-        // Получаем сессию через сервис
-        const session = await sessionService.getSession(id, userId);
-
-        // Форматируем ответы
-        const answers = session.answers.map(answer => {
-            let userAnswer = answer.userAnswer;
-            // Парсим если это строка
-            if (typeof userAnswer === 'string') {
-                try {
-                    userAnswer = JSON.parse(userAnswer);
-                } catch {
-                    // Оставляем как есть если не парсится
-                }
-            }
-
-            return {
-                id: answer.id,
-                questionId: answer.questionId,
-                question: answer.question,
-                userAnswer,
-                score: answer.score,
-                isCorrect: answer.isCorrect,
-                createdAt: answer.createdAt
-            };
+        const user = await prisma.user.findUnique({
+            where: { id: userId }
         });
+
+        if (!user) throwNotFound("User not found");
+        const body = await c.req.json().catch(() => ({}));
+        const validated = CreateSessionSchema.parse(body);
+        const durationHours = validated.durationHours;
+
+        const session = await sessionService.createSession(userId, durationHours);
+      
+        const questionsCount = await prisma.question.count();
 
         return c.json({
             session: {
                 id: session.id,
                 status: session.status,
-                score: session.score,
-                startedAt: session.startedAt,
                 expiresAt: session.expiresAt,
-                completedAt: session.completedAt,
-                answers
+                startedAt: session.startedAt,
+                totalQuestions: questionsCount
             }
-        });
+        }, 201);
 
     } catch (error) {
         return handleError(c, error);
