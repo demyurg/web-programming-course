@@ -3,29 +3,171 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Анна Аннушкина - Фотограф</title>
+    <title>Анна Аннушкина - Гениальный фотограф</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
     <header>
-        <!-- TODO: добавьте навигацию по разделам страницы -->
+        <nav>
+            <div class="menu">
+                <button class = "button-menu">
+                    <a class="ssilka" href="#starter-title">Главная</a>
+                </button>
+                <button class = "button-menu">
+                    <a class="ssilka" href="#obo-mne">Обо мне</a>
+                </button>
+                <button class = "button-menu">
+                    <a class="ssilka" href="#galereya">Галерея</a>
+                </button>
+                <button class = "button-menu">
+                    <a class="ssilka" href="#kontakti">Контакты</a>
+                </button>
+            </div>
+        </nav>
     </header>
 
     <main>
         <section class="starter-note" aria-labelledby="starter-title">
-            <h1 id="starter-title">Стартовая страница нулевого занятия</h1>
-            <p>Замените этот блок содержимым портфолио фотографа по заданию в README.</p>
+            <h1 id="starter-title">Добро пожаловать к фотографу!</h1>
+            <h2>Я фотограф Анна Аннушкина и буду рада поработать с вами))</h2>
+
+            <p> 
+               <img
+                    src="images/portrait_1.jpg"
+                    alt="Портрет фотографа"
+                    width="800"
+                    height="600"> 
+            </p>
+        </section>
+        <section class="starter-note">
+            <h2 id="obo-mne">Обо мне</h2>
+             <p> 
+               <img
+                    src="images/about.jpeg"
+                    alt="Другая личность фотографа"
+                    width="800"
+                    height="600"> 
+            </p>
+            <p>Меня зовут Анна, я уже 3 года работаю фотографом. 
+                Я окончила курсы фотографа и занимаюсь любимым делом.
+            </p>
+            <p>Я делаю фотографии свадеб, природы и просто фотографирую людей на улице.</p>
+            <p>У меня достаточно плотный график, поэтому записывайтесь заренее. 
+                Контактная информация находится в разделе Контакты.</p>
+
+        </section>
+        <section class="starter-note">
+            <h2 id="galereya">
+                <abbr  title="Здесь можно записаться на фотосессию">Галерея</abbr></h2>
+            <p>Мои прошлые работы представлены ниже. Все работы разбиты на категории, чтобы вам было удобнее их просматривать.</p>
+            <div >
+                 
+                 <p class="p-for-galereya">Природа</p>
+                    <div class="galereya-div">
+                        <img class="img-galereya"
+                                src="images/nature_1.jpg"
+                                alt="Портрет фотографа"
+                                width="800"
+                                height="600">
+                        <img class="img-galereya"
+                            src="images/nature_2.jpg"
+                            alt="Портрет фотографа"
+                            width="800"
+                            height="600"> 
+                    
+                    </div>
+
+                <p class="p-for-galereya">Портреты</p>
+                    <div class="galereya-div">
+                        <img class="img-galereya"
+                            src="images/portrait_2.jpg"
+                            alt="Портрет фотографа"
+                            width="800"
+                            height="600"> 
+                        
+                    </div>
+
+              
+                <p class="p-for-galereya">Свадьбы</p>
+                    <div class="galereya-div"> 
+                        <img class="img-galereya"
+                            src="images/wedding_1.jpg"
+                            alt="Портрет фотографа"
+                            width="800"
+                            height="600"> 
+                        <img class="img-galereya"
+                            src="images/wedding_2.jpg"
+                            alt="Портрет фотографа"
+                            width="800"
+                            height="600"> 
+                    </div> 
+            
+            </div>
+
+          
+            <button id="zapisBut" class = "button-ostalnie">Записаться на фотосессию</button>
+
+            <dialog id="zapisNaFoto" class="forma">
+                <form method="dialog">
+                    <h3>Запись на съёмку</h3>
+                    <p>
+                    <label for="email">Введите ваше имя:
+                        <input type="text" placeholder="Иван">
+                    </label>
+                    </p>
+                    <p>
+                    <label for="email">Напишите тип съёмки:
+                        <input type="text" placeholder="Портрет, пейзаж, свадьба">
+                    </label>
+                    </p>
+                    <p>
+                    <label for="email">Введите ваш номер/почту:
+                        <input type="text" placeholder="8999.../pochta@mail.ru">
+                    </label>
+                    </p>
+                    <button id="zakritBut" class = "button-ostalnie">Записаться</button>
+
+                </form>
+            </dialog>
+
+            <script>
+                const dialog = document.getElementById('zapisNaFoto');
+                const zapisBut = document.getElementById('zapisBut');
+                const zakritBut = document.getElementById('zakritBut');
+
+                
+                zapisBut.addEventListener('click', () => dialog.showModal());
+                zakritBut.addEventListener('click', () =>{
+                    alert("Отправлено");
+                    dialog.close();
+                })
+            </script>
+
+        </section>
+        <section class="starter-note">
+            <h2 id="kontakti">Контакты</h2>
+            <p>Связаться со мной можно по телефону +7(999)863-02-58 или по почте anna_anushkina@gmail.com</p>
         </section>
 
-        <!-- TODO: добавьте раздел с информацией о фотографе -->
 
-        <!-- TODO: добавьте галерею из локальных изображений -->
-
-        <!-- TODO: добавьте контактную информацию -->
     </main>
 
     <footer>
-        <!-- TODO: добавьте подвал страницы -->
+        <div class="menu">
+                <button class = "footer-but">
+                    <a  href="#starter-title">Главная</a>
+                </button>
+                <button class = "footer-but">
+                    <a  href="#obo-mne">Обо мне</a>
+                </button>
+                <button class = "footer-but">
+                    <a  href="#galereya">Галерея</a>
+                </button>
+                <button class = "footer-but">
+                    <a  href="#kontakti">Контакты</a>
+                </button>
+            </div>
+        Буду рада новым клиентам!
     </footer>
 
     <script src="js/script.js" defer></script>
