@@ -8,24 +8,51 @@
 </head>
 <body>
     <header>
-        <!-- TODO: добавьте навигацию по разделам страницы -->
+        <nav aria-label="Основная навигация">
+            <ul>
+                <li><a href="#about">О себе</a></li>
+                <li><a href="#gallery">Галерея</a></li>
+                <li><a href="#contact">Контакты</a></li>
+            </ul>
+        </nav>
     </header>
-
+                 
     <main>
-        <section class="starter-note" aria-labelledby="starter-title">
-            <h1 id="starter-title">Стартовая страница нулевого занятия</h1>
-            <p>Замените этот блок содержимым портфолио фотографа по заданию в README.</p>
+        <section id="about" aria-labelledby="about-title">
+            <h1 id="about-title">Анна Аннушкина</h1>
+            <p class="subtitle">Профессиональный фотограф</p>
+            <p>Я занимаюсь портретной и свадебной съёмкой, а также снимаю красоту природы. Помогу запечатлеть ваши самые важные моменты и создать атмосферные кадры.</p>
         </section>
 
-        <!-- TODO: добавьте раздел с информацией о фотографе -->
+        <section id="gallery" aria-labelledby="gallery-title">
+            <h2 id="gallery-title">Галерея работ</h2>
+            
+            <h3>Портретная съёмка</h3>
+            <img src="images/portrait_1.jpg" alt="Портретная фотография 1" width="300">
+            <img src="images/portrait_2.jpg" alt="Портретная фотография 2" width="300">
+            
+            <h3>Свадебная съёмка</h3>
+            <img src="images/wedding_1.jpg" alt="Свадебная фотография 1" width="300">
+            <img src="images/wedding_2.jpg" alt="Свадебная фотография 2" width="300">
+            
+            <h3>Природа</h3>
+            <img src="images/nature_1.jpg" alt="Фотография природы 1" width="300">
+            <img src="images/nature_2.jpg" alt="Фотография природы 2" width="300">
 
-        <!-- TODO: добавьте галерею из локальных изображений -->
+        </section>
 
-        <!-- TODO: добавьте контактную информацию -->
+        <section id="contact" aria-labelledby="contact-title">
+
+            <h2 id="contact-title">Контакты</h2>
+            <p>Телефон: +7 (999) 000-00-00</p>
+            <p>Email: anna.annushkina@example.com</p>
+            <p>Telegram: @anna_photo</p>
+        
+        </section>
     </main>
 
     <footer>
-        <!-- TODO: добавьте подвал страницы -->
+        <p>&copy; 2026 Анна Аннушкина. Все права защищены.</p>
     </footer>
 
     <script src="js/script.js" defer></script>
