@@ -6,28 +6,98 @@
     <title>Анна Аннушкина - Фотограф</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
-<body>
+<body id="top">
     <header>
-        <!-- TODO: добавьте навигацию по разделам страницы -->
+        <nav>
+            <a href="#main" class="logo"> Анна Анушкина</a>
+            <ul>     
+                <li><a href="#about">О себе</a></li>
+                <li><a href="#service">Услуги</a></li>
+                <li><a href="#gallery">Галерея</a></li>
+                <li><a href="#info">Контакты</a></li>
+            </ul>
+        </nav>
     </header>
 
     <main>
-        <section class="starter-note" aria-labelledby="starter-title">
-            <h1 id="starter-title">Стартовая страница нулевого занятия</h1>
-            <p>Замените этот блок содержимым портфолио фотографа по заданию в README.</p>
+        <section id="about" class="about">
+            <h2>О себе</h2>
+            <div  class="block_about">
+                <img src="images/about.jpeg" alt="Портрет фотографа Анны Анушкиной">
+                <div class="block_about_text">  
+                    <p>
+                        Меня зовут Анна Аннушкина, я фотограф из Барнаула. Уже более семи лет
+                        снимаю людей и природу и помогаю сохранить самые тёплые моменты — от
+                        семейных портретов до большого свадебного дня.
+                    </p>
+                    <p>
+                        Работаю в студии и на выезде, люблю естественный свет и живые эмоции
+                        в кадре, без лишней постановки. Для меня важно, чтобы на фотографиях вы
+                        узнавали себя настоящих, а снимки хотелось пересматривать спустя годы.
+                    </p>
+                </div>    
+            </div>
         </section>
 
-        <!-- TODO: добавьте раздел с информацией о фотографе -->
+        <section  id="gallery" class="gallery_section">
+            <h2>Галерея</h2>
+            <ul class="gallery">
+                <li><img src="images/nature_1.jpg"></li>
+                <li><img src="images/nature_2.jpg"></li>
+                <li><img src="images/portrait_1.jpg"></li>
+                <li><img src="images/portrait_2.jpg"></li>
+                <li><img src="images/wedding_1.jpg"></li>
+                <li><img src="images/wedding_2.jpg"></li>
+           </ul>  
+        </section>
 
-        <!-- TODO: добавьте галерею из локальных изображений -->
+        <section id="service" class="services">
+        <h2>Услуги</h2>
+        <ul class="services-list">
+            <li>
+                <div class="card">
+                    <h3>Портретная съёмка</h3>
+                    <p>Индивидуальные и семейные портреты в студии или на природе.</p>
+                    <button class="order-btn">Заказать</button>
+                </div>
+            </li>
+            <li>
+                <div class="card">
+                    <h3>Портретная съёмка</h3>
+                    <p>Индивидуальные и семейные портреты в студии или на природе.</p>
+                    <button class="order-btn">Заказать</button>
+                </div>
+            </li>
+            <li>
+                <div class="card">
+                    <h3>Портретная съёмка</h3>
+                    <p>Индивидуальные и семейные портреты в студии или на природе.</p>
+                    <button class="order-btn">Заказать</button>
+                </div>
+            </li>
+            
+        </ul>
+        </section>
 
-        <!-- TODO: добавьте контактную информацию -->
     </main>
 
     <footer>
-        <!-- TODO: добавьте подвал страницы -->
-    </footer>
+        <p class="footer-name">Анна Аннушкина</p>
+        <p>Фотограф · Барнаул</p>
+        <p>Телефон: +7 888 888-88-88</p>
+        <p class="footer-copy">© 2026 Все права защищены</p>
+    <p><a href="#top">Наверх ↑</a></p>
+</footer>
 
-    <script src="js/script.js" defer></script>
+<div id="order-modal" class="modal" hidden>
+    <div class="modal-box">
+        <h3>Оставьте номер телефона</h3>
+        <input id="phone" class="input-modal-phone">
+        <button id="send-btn" class="btn-modal-send">Отправить</button>
+        <p id="thanks"></p>
+    </div>
+</div>
+
+<script src="js/script.js" defer></script>
 </body>
 </html>
