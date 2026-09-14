@@ -79,6 +79,30 @@ footer {
     box-sizing: border-box;
 }
 
+.btn-primary {
+    display: inline-block;
+    padding: 12px 28px;
+    margin-top: 20px;
+    background-color: #2c3e50; 
+    color: #ffffff; 
+    border-radius: 50px;
+    border: none;
+    cursor: pointer; 
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); 
+    transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn-primary:hover {
+    background-color: #34495e;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
 .card {
     background: white;
     border-radius: 16px;
@@ -100,7 +124,7 @@ footer {
     padding: 32px;
 }
 
-/* Layout Preview */
+/* Классы макета */
 .layout-preview {
     background: white;
     border-radius: 12px;
@@ -172,9 +196,10 @@ footer {
 }
 
 .layout-gallery-item {
-    background: #e2e8f0;
-    height: 80px;
+    width: 100%;
+    height: 100%;
     border-radius: 6px;
+    object-fit: cover;
 }
 
 .layout-footer {
@@ -187,7 +212,7 @@ footer {
     
 }
 
-/* Responsive */
+/* Адаптивность */
 @media (max-width: 768px) {
     .container {
         padding: 16px;
@@ -195,14 +220,6 @@ footer {
     
     .title {
         font-size: 2rem;
-    }
-    
-    .color-section {
-        grid-template-columns: 1fr;
-    }
-    
-    .components-grid {
-        grid-template-columns: 1fr;
     }
     
     .layout-sections {

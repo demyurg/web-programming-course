@@ -5,27 +5,80 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Анна Аннушкина - Фотограф</title>
     <link rel="stylesheet" href="css/style.css">
+    
 </head>
 <body>
     <header>
-        <!-- TODO: добавьте навигацию по разделам страницы -->
+        <!-- Шапка -->
+        <div class="layout-header">
+            <div class="layout-brand">Анна Аннушкина</div>
+            <div class="layout-nav">
+                <span>Главная</span>
+                <span>Обо мне</span>
+                <span>Галерея</span>
+                <span>Контакты</span>
+            </div>
+        </div>
     </header>
 
     <main>
-        <section class="starter-note" aria-labelledby="starter-title">
-            <h1 id="starter-title">Стартовая страница нулевого занятия</h1>
-            <p>Замените этот блок содержимым портфолио фотографа по заданию в README.</p>
-        </section>
+        <!-- Макет -->
+        <div class="container">
+            <div class="card">
+                <div class="layout-preview">
+                    <!-- Вкратце о работе Анны -->
+                    <div class="layout-hero">
+                        <h2>Захватываю моменты, создаю воспоминания</h2>
+                        <p>Профессиональная фотосъемка портретов и свадеб</p>
+                        <button class="btn-primary">Посмотреть работы</button>
+                    </div>
 
-        <!-- TODO: добавьте раздел с информацией о фотографе -->
+                    <!-- Расширенное представление о деятельности Анны -->
+                    <div class="layout-sections">
+                        <div class="layout-section">
+                            <h4>Обо мне</h4>
+                            <p>Привет &#128075;! Я Анна, профессиональный фотограф. Ловлю искренние эмоции, естественный свет и создаю живые снимки, которые хочется пересматривать спустя годы.</p>
+                        </div>
+                        <div class="layout-section">
+                            <h4>Статистика</h4>
+                            <p>&#11088; 5+ лет в фотографии<br>&#128248; Более 200 счастливых свадеб<br>&#128147; 500+ проведенных фотосессий</p>
+                        </div>
+                    </div>
 
-        <!-- TODO: добавьте галерею из локальных изображений -->
+                    <!-- Галлерея работ -->
+                    <div style="margin-bottom: 16px;">
+                        <h3 style="text-align: center; margin-bottom: 16px; color: #374151;">Галерея работ</h4>
+                        <div class="layout-gallery">
+                            <img class="layout-gallery-item" src="images/nature_1.jpg" alt="Фотография №1"></img>
+                            <img class="layout-gallery-item" src="images/portrait_1.jpg" alt="Фотография №2"></img>
+                            <img class="layout-gallery-item" src="images/nature_2.jpg" alt="Фотография №3"></img>
+                            <img class="layout-gallery-item" src="images/wedding_1.jpg" alt="Фотография №4"></img>
+                            <img class="layout-gallery-item" src="images/portrait_2.jpg" alt="Фотография №5"></img>
+                            <img class="layout-gallery-item" src="images/wedding_2.jpg" alt="Фотография №6"></img>
+                        </div>
+                    </div>
 
-        <!-- TODO: добавьте контактную информацию -->
+                    <!-- Контактная информация -->
+                    <div class="layout-sections">
+                        <div class="layout-section">
+                            <h4>Контакты</h4>
+                            <p>&#128222; 8 (800) 555-35-35<br>&#128233; info@annushkina.ru<br>&#128205; Работаю в Барнауле</p>
+                        </div>
+                        <div class="layout-section">
+                            <h4>Форма связи</h4>
+                            <p>Оставьте заявку, чтобы обсудить детали съемки. Напишите ваше имя, дату мероприятия и желаемый формат фотосессии.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </main>
-
+    </main>
+    <!-- Подвал -->
     <footer>
-        <!-- TODO: добавьте подвал страницы -->
+        <div class="layout-footer">
+            © 2026 Анна Аннушкина. Все права защищены.
+        </div>
     </footer>
 
     <script src="js/script.js" defer></script>
