@@ -45,23 +45,234 @@ button {
     outline-offset: 3px;
 }
 
-.starter-note {
-    max-width: 720px;
-    margin: 10vh auto;
-    padding: 32px;
-    border: 1px dashed #b9a28e;
-    border-radius: 16px;
-    background: #fffdf9;
-    text-align: center;
+header {
+    /*background-color: lightgray;
+    border-radius: 10px;*/
+
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+
+    padding: 1.2rem 2rem;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 1000;
 }
 
-.starter-note h1 {
-    margin-bottom: 12px;
+header li {
+    display: inline;
+    margin: 5px;
+}
+
+header p {
+    font-family: Montserrat, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-size: 22px;
+    font-weight: bold;
+}
+
+header li a {
+    text-decoration: none;
+    color: black;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-size: 18px;
+    font-weight: bold;
+    margin: 0px 10px;
+}
+
+header ul {
+    display: flex;
+    justify-content: flex-end;
+    list-style: none;
+}
+
+main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding-top: 100px;
+}
+
+.about {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 4rem;
+    padding: 5rem 2rem 2rem;
+    margin: 0 auto;
+}
+
+.about-content {
+    flex: 1;
+}
+
+.about-content h1 {
+    font-size: 3rem;
+    margin: 0 0 0.5rem 0;
+    color: #222;
+}
+
+.about-content .subtitle {
+    font-size: 1.2rem;
+    color: #2c3e50;
+    font-weight: 500;
+    margin-bottom: 1.5rem;
+}
+
+.about-content .description {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: #555;
+    margin-bottom: 2rem;
+}
+
+.about-image {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+}
+
+.about-image img {
+    width: 100%;
+    max-width: 450px;
+    height: 550px;
+    object-fit: cover;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+}
+
+/* Поменять */
+@media (max-width: 768px) {
+    .about {
+        flex-direction: column-reverse;
+        gap: 2rem;
+        padding: 3rem 1.5rem;
+        text-align: center;
+    }
+
+    .about-content h1 {
+        font-size: 2.2rem;
+    }
+
+    .about-image img {
+        height: 350px;
+    }
 }
 
 footer {
-    max-width: 720px;
-    margin: 0 auto;
+    margin-top: 50px;
     color: #6d665e;
     text-align: center;
+}
+
+/* Галерея */
+
+.responsive-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+}
+
+.responsive-grid p {
+    text-align: left;
+    font-size: 16px;
+}
+
+
+/*
+#header-grid {
+    grid-column: 1 / -1;
+    font-size: 1.2rem;
+    text-align: center;
+}
+*/
+
+.section-title {
+    font-size: 1.5rem;
+    text-align: center;
+    margin-bottom: 1rem;
+    margin-top: 1rem;
+}
+
+.contacts {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+    padding: 2rem;
+    
+
+}
+
+.contacts p {
+    text-align: left;
+    font-size: 1.1rem;
+}
+
+.contacts button {
+    display: block;
+    margin: 1rem auto;
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    background-color: white;
+    color: #555;
+    border: 1px solid #555;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.contacts button:hover {
+    background-color: #555;
+    color: white;
+}
+
+@media (min-width: 768px) {
+    .responsive-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 1024px) {
+    .responsive-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* Карточки */
+.card {
+    height: 380px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    transition: transform 0.3s ease;
+    overflow: hidden;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+    cursor: pointer;
+}
+
+.card img {
+    width: 100%;
+    height: 65%;
+    object-fit: cover;
+}
+
+.card-content {
+    height: 35%;
+    padding: 1rem;
+    box-sizing: border-box;
 }
