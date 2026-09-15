@@ -19,7 +19,7 @@
     </header>
 
     <main>
-        <section class="starter-note" aria-labelledby="starter-title">
+        <section class="starter-note">
             <h1 id="starter-title">Добро пожаловать к фотографу!</h1>
             
             <div class="img-text">
@@ -35,15 +35,16 @@
                 </div>
 
             </div>
-           
         </section>
+
         <section class="starter-note">
             <h2 id="obo-mne">Обо мне</h2>
             <div class="img-text">
                  <p> 
                     <img src="images/about.jpeg"
                          alt="Другая личность фотографа"> 
-            </p>
+                </p>
+
                 <div>
                      <p>Меня зовут Анна, я уже 3 года работаю фотографом. 
                         Я окончила курсы фотографа и занимаюсь любимым делом.
@@ -53,33 +54,30 @@
                         Контактная информация находится в разделе Контакты.</p>
                 </div>
                    
-
-
             </div>
-            
         </section>
+
         <section class="starter-note">
             <h2 id="galereya">
                 <abbr  title="Здесь можно записаться на фотосессию">Галерея</abbr></h2>
             <p>Мои прошлые работы представлены ниже. Все работы разбиты на категории, чтобы вам было удобнее их просматривать.</p>
             <div >
-                 
-                 <p class="p-for-galereya">Природа</p>
-
-                    <div class="galereya-div">
+                <p class="p-for-galereya">Природа</p>
+                <div class="galereya-div">
                         <div class="photo">
                             <img class="img-galereya"
                                 src="images/nature_1.jpg"
                                 alt="Портрет фотографа">
                             <p>Тишина летного леса</p>
                         </div>
+
                         <div class="photo">
                             <img class="img-galereya"
                                 src="images/nature_2.jpg"
                                 alt="Портрет фотографа">
                             <p>Облака с вершины гор</p>
                         </div>
-                    </div>
+                </div>
 
                 <p class="p-for-galereya">Портреты</p>
 
@@ -96,9 +94,8 @@
                                 alt="Портрет фотографа">
                             <p>Живое фото на природе</p>
                         </div>
-                    </div>
+                </div>
                     
-
                 <p class="p-for-galereya">Свадьбы</p>
                 <div class="galereya-div">
                         <div class="photo">
@@ -114,33 +111,31 @@
                                 alt="Портрет фотографа">
                             <p>Начало моментов </p>
                         </div>
-                    </div>                  
+                </div>                  
                     
             </div>
 
-          
             <button id="zapisBut" class = "button-ostalnie">Записаться на фотосессию</button>
 
             <dialog id="zapisNaFoto" class="forma">
                 <form method="dialog">
                     <h3>Запись на съёмку</h3>
                     <p>
-                    <label for="email">Введите ваше имя:
-                        <input type="text" placeholder="Иван">
-                    </label>
+                        <label for="name">Введите ваше имя: </label>
+                        <input id="name" type="text" placeholder="Иван">
                     </p>
-                    <p>
-                    <label for="email">Напишите тип съёмки:
-                        <input type="text" placeholder="Портрет, пейзаж, свадьба">
-                    </label>
-                    </p>
-                    <p>
-                    <label for="email">Введите ваш номер/почту:
-                        <input type="text" placeholder="8999.../pochta@mail.ru">
-                    </label>
-                    </p>
-                    <button id="zakritBut" class = "button-ostalnie">Записаться</button>
 
+                    <p>
+                        <label for="type-siemki">Напишите тип съёмки: </label>
+                        <input id="type-siemki" type="text" placeholder="Портрет, пейзаж, свадьба">
+                    </p>
+
+                    <p>
+                        <label for="email">Введите ваш номер/почту: </label>
+                        <input id="email" type="text" placeholder="8999.../pochta@mail.ru">
+                    </p>
+
+                    <button id="zakritBut" type="button" class = "button-ostalnie">Записаться</button>
                 </form>
             </dialog>
 
@@ -157,6 +152,7 @@
             </script>
 
         </section>
+
         <section class="starter-note">
             <h2 id="kontakti">Контакты</h2>
             <p>Связаться со мной можно по телефону +7(999)863-02-58 или по почте anna_anushkina@gmail.com</p>
