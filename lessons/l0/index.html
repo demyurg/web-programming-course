@@ -10,18 +10,10 @@
     <header>
         <nav>
             <div class="menu">
-                <button class = "button-menu">
                     <a class="ssilka" href="#starter-title">Главная</a>
-                </button>
-                <button class = "button-menu">
                     <a class="ssilka" href="#obo-mne">Обо мне</a>
-                </button>
-                <button class = "button-menu">
                     <a class="ssilka" href="#galereya">Галерея</a>
-                </button>
-                <button class = "button-menu">
                     <a class="ssilka" href="#kontakti">Контакты</a>
-                </button>
             </div>
         </nav>
     </header>
@@ -29,32 +21,42 @@
     <main>
         <section class="starter-note" aria-labelledby="starter-title">
             <h1 id="starter-title">Добро пожаловать к фотографу!</h1>
-            <h2>Я фотограф Анна Аннушкина и буду рада поработать с вами))</h2>
+            
+            <div class="img-text">
+                <div>
+                    <img src="images/portrait_1.jpg"
+                    alt="Портрет фотографа"> 
+                </div>
+                
+                <div>
+                    <p class="p-format">Я фотограф Анна Аннушкина и буду рада поработать с вами))
+                        Здесь вы можете увидеть мои работы, и записаться на съёмку. Жду ваших заявок.
+                    </p>
+                </div>
 
-            <p> 
-               <img
-                    src="images/portrait_1.jpg"
-                    alt="Портрет фотографа"
-                    width="800"
-                    height="600"> 
-            </p>
+            </div>
+           
         </section>
         <section class="starter-note">
             <h2 id="obo-mne">Обо мне</h2>
-             <p> 
-               <img
-                    src="images/about.jpeg"
-                    alt="Другая личность фотографа"
-                    width="800"
-                    height="600"> 
+            <div class="img-text">
+                 <p> 
+                    <img src="images/about.jpeg"
+                         alt="Другая личность фотографа"> 
             </p>
-            <p>Меня зовут Анна, я уже 3 года работаю фотографом. 
-                Я окончила курсы фотографа и занимаюсь любимым делом.
-            </p>
-            <p>Я делаю фотографии свадеб, природы и просто фотографирую людей на улице.</p>
-            <p>У меня достаточно плотный график, поэтому записывайтесь заренее. 
-                Контактная информация находится в разделе Контакты.</p>
+                <div>
+                     <p>Меня зовут Анна, я уже 3 года работаю фотографом. 
+                        Я окончила курсы фотографа и занимаюсь любимым делом.
+                    </p>
+                    <p>Я делаю фотографии свадеб, природы и просто фотографирую людей на улице.</p>
+                    <p>У меня достаточно плотный график, поэтому записывайтесь заренее. 
+                        Контактная информация находится в разделе Контакты.</p>
+                </div>
+                   
 
+
+            </div>
+            
         </section>
         <section class="starter-note">
             <h2 id="galereya">
@@ -63,45 +65,57 @@
             <div >
                  
                  <p class="p-for-galereya">Природа</p>
+
                     <div class="galereya-div">
-                        <img class="img-galereya"
+                        <div class="photo">
+                            <img class="img-galereya"
                                 src="images/nature_1.jpg"
-                                alt="Портрет фотографа"
-                                width="800"
-                                height="600">
-                        <img class="img-galereya"
-                            src="images/nature_2.jpg"
-                            alt="Портрет фотографа"
-                            width="800"
-                            height="600"> 
-                    
+                                alt="Портрет фотографа">
+                            <p>Тишина летного леса</p>
+                        </div>
+                        <div class="photo">
+                            <img class="img-galereya"
+                                src="images/nature_2.jpg"
+                                alt="Портрет фотографа">
+                            <p>Облака с вершины гор</p>
+                        </div>
                     </div>
 
                 <p class="p-for-galereya">Портреты</p>
-                    <div class="galereya-div">
-                        <img class="img-galereya"
-                            src="images/portrait_2.jpg"
-                            alt="Портрет фотографа"
-                            width="800"
-                            height="600"> 
-                        
-                    </div>
 
-              
+                <div class="galereya-div">
+                        <div class="photo">
+                            <img class="img-galereya"
+                                src="images/portrait_2.jpg"
+                                alt="Портрет фотографа">
+                            <p>Портрет в фотостудии</p>
+                        </div>
+                        <div class="photo">
+                            <img class="img-galereya"
+                                src="images/portrait_1.jpg"
+                                alt="Портрет фотографа">
+                            <p>Живое фото на природе</p>
+                        </div>
+                    </div>
+                    
+
                 <p class="p-for-galereya">Свадьбы</p>
-                    <div class="galereya-div"> 
-                        <img class="img-galereya"
-                            src="images/wedding_1.jpg"
-                            alt="Портрет фотографа"
-                            width="800"
-                            height="600"> 
-                        <img class="img-galereya"
-                            src="images/wedding_2.jpg"
-                            alt="Портрет фотографа"
-                            width="800"
-                            height="600"> 
-                    </div> 
-            
+                <div class="galereya-div">
+                        <div class="photo">
+                            <img class="img-galereya"
+                               src="images/wedding_1.jpg"
+                                alt="Портрет фотографа">
+                            <p>Любая счастливая пара  <br>
+                                может здесь быть</p>
+                        </div>
+                        <div class="photo">
+                            <img class="img-galereya"
+                                src="images/wedding_2.jpg"
+                                alt="Портрет фотографа">
+                            <p>Начало моментов </p>
+                        </div>
+                    </div>                  
+                    
             </div>
 
           
@@ -135,7 +149,6 @@
                 const zapisBut = document.getElementById('zapisBut');
                 const zakritBut = document.getElementById('zakritBut');
 
-                
                 zapisBut.addEventListener('click', () => dialog.showModal());
                 zakritBut.addEventListener('click', () =>{
                     alert("Отправлено");
@@ -148,26 +161,10 @@
             <h2 id="kontakti">Контакты</h2>
             <p>Связаться со мной можно по телефону +7(999)863-02-58 или по почте anna_anushkina@gmail.com</p>
         </section>
-
-
     </main>
 
     <footer>
-        <div class="menu">
-                <button class = "footer-but">
-                    <a  href="#starter-title">Главная</a>
-                </button>
-                <button class = "footer-but">
-                    <a  href="#obo-mne">Обо мне</a>
-                </button>
-                <button class = "footer-but">
-                    <a  href="#galereya">Галерея</a>
-                </button>
-                <button class = "footer-but">
-                    <a  href="#kontakti">Контакты</a>
-                </button>
-            </div>
-        Буду рада новым клиентам!
+        © 2026 Анна Анушкина. Смотрите на свой страх и риск!
     </footer>
 
     <script src="js/script.js" defer></script>
