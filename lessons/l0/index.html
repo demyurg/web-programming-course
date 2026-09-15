@@ -8,25 +8,75 @@
 </head>
 <body>
     <header>
-        <!-- TODO: добавьте навигацию по разделам страницы -->
+        <div class="container header-inner">
+    <a>Анна Анушкина</a>
+
+    <nav class="main-nav">
+      <ul class="nav-list">
+        <li><a href="#about">Обо мне</a></li>
+        <li><a href="#works">Мои работы</a></li>
+        <li><a href="#contacts">Контактная информация</a></li>
+      </ul>
+    </nav>
+  </div>
     </header>
 
     <main>
-        <section class="starter-note" aria-labelledby="starter-title">
-            <h1 id="starter-title">Стартовая страница нулевого занятия</h1>
-            <p>Замените этот блок содержимым портфолио фотографа по заданию в README.</p>
+        <section id="about" class="about-section">
+            <div class="flex-row">
+                <img src="images/about.jpeg" alt="Фотограф Анна Аннушкина" class="photo">
+                <div class="text-block">
+                <h2>Фотограф Анна Аннушкина</h2>
+                <p>Я снимаю портреты и семейные истории — чтобы на фото были живые эмоции, а не натянутые улыбки. Люблю работать со светом и находить красивые кадры даже в обычных местах.</p>
+                <p>Съёмки в Москве и области. Если хотите сохранить важный момент — напишите, придумаем идею вместе.</p>
+                <p><b>Свадебные фотоссесии</b></p>
+                <p><b>Портреты</b></p>
+                <p><b>Семейные фотоссесии</b></p>
+                </div>
+            </div>
         </section>
 
-        <!-- TODO: добавьте раздел с информацией о фотографе -->
 
-        <!-- TODO: добавьте галерею из локальных изображений -->
+        <section id="works" class="page-section">
+            <h3>Мои работы</h3>
+            <p>«Анна Анушкина. Фотография — это способ замедлиться и увидеть красоту в обычном.» — философский оттенок, подойдёт для лонгридов или блога.</p>
+            <div class="gallery-grid">
+                <img src="images/nature_1.jpg" alt="Пейзаж: утро в лесу">
+                <img src="images/nature_2.jpg" alt="Пейзаж: закат у озера">
+                <img src="images/portrait_1.jpg" alt="Портрет: девушка в лучах солнца">
+                <img src="images/portrait_2.jpg" alt="Портрет: задумчивый взгляд">
+                <img src="images/wedding_1.jpg" alt="Свадебная съёмка: момент обмена кольцами">
+                <img src="images/wedding_2.jpg" alt="Свадебная съёмка: прогулка по парку">
+            </div>
+        </section>
 
-        <!-- TODO: добавьте контактную информацию -->
+
+       
+        <section id="contacts" class="page-section">
+            <h3>Хотите запечатлеть важный момент?</h3>
+            <h5>Я с радостью помогу создать историю в кадре.</h5>
+            <p>Позвоните или напишите в WhatsApp: +7 (999) 111‑22‑33</p>
+            <p>email : anna.annu@yandex.ru</p>
+            <a href="index.html">Сайт: anna-anushkina.ru</a>
+            <p>Съёмки: Москва и область, выезд в другие города по договорённости.</p>
+        </section>
+
+        
     </main>
 
-    <footer>
-        <!-- TODO: добавьте подвал страницы -->
+    <footer class="photographer-footer">
+        <section class="footer-intro">
+        <h2>Готовы к съёмке?</h2>
+        <p>Давайте создадим историю в кадре вместе.</p>
+        </section>
+
+
+        <section class="footer-meta">
+            <p>&copy; 2025 Анна Анушкина. Все права на фотографии защищены.</p>
+            <p>Москва и область, выезд по договорённости.</p>
+        </section>
     </footer>
+
 
     <script src="js/script.js" defer></script>
 </body>
