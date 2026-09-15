@@ -94,14 +94,6 @@ section > div > p {
     margin-bottom: 4px;
 }
 
-section > div > img {
-    flex: 1 1 calc(50% - 6px);
-    width: calc(50% - 6px);
-    margin: 0;
-    object-fit: cover;
-    aspect-ratio: 4 / 3;
-}
-
 dev {
     display: block;
     margin-bottom: 14px;
