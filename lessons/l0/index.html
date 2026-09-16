@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
@@ -8,24 +8,73 @@
 </head>
 <body>
     <header>
-        <!-- TODO: добавьте навигацию по разделам страницы -->
+        <p>Анна Аннушкина</p>
+        <button type="button" id="menu-btn">Меню</button>
+        <nav id="menu">
+            <ul>
+                <li><a href="#about">Обо мне</a></li>
+                <li><a href="#gallery">Галерея</a></li>
+                <li><a href="#contacts">Контакты</a></li>
+            </ul>
+        </nav>
     </header>
 
     <main>
-        <section class="starter-note" aria-labelledby="starter-title">
-            <h1 id="starter-title">Стартовая страница нулевого занятия</h1>
-            <p>Замените этот блок содержимым портфолио фотографа по заданию в README.</p>
+        <section id="hero">
+            <h1>Анна Аннушкина</h1>
+            <p>Портретная и свадебная съёмка, а также фотографии природы.</p>
+            <p>Захватываю моменты, создаю воспоминания.</p>
         </section>
 
-        <!-- TODO: добавьте раздел с информацией о фотографе -->
+        <section id="about">
+            <h2>Обо мне</h2>
+            <img src="images/about.jpeg" alt="Фотограф Анна Аннушкина" width="800" height="600">
+            <p>Я фотограф Анна Аннушкина. Снимаю портреты, свадьбы и природу. Помогаю сохранить важные моменты спокойно и естественно.</p>
+        </section>
 
-        <!-- TODO: добавьте галерею из локальных изображений -->
+        <section id="gallery">
+            <h2>Галерея работ</h2>
+            <div class="gallery">
+                <figure>
+                    <img src="images/portrait_1.jpg" alt="Портретная фотография" width="800" height="600">
+                    <figcaption>Портрет</figcaption>
+                </figure>
+                <figure>
+                    <img src="images/portrait_2.jpg" alt="Портретная фотография" width="800" height="600">
+                    <figcaption>Портрет</figcaption>
+                </figure>
+                <figure>
+                    <img src="images/wedding_1.jpg" alt="Свадебная фотография" width="800" height="600">
+                    <figcaption>Свадьба</figcaption>
+                </figure>
+                <figure>
+                    <img src="images/wedding_2.jpg" alt="Свадебная фотография" width="800" height="600">
+                    <figcaption>Свадьба</figcaption>
+                </figure>
+                <figure>
+                    <img src="images/nature_1.jpg" alt="Фотография природы" width="800" height="600">
+                    <figcaption>Природа</figcaption>
+                </figure>
+                <figure>
+                    <img src="images/nature_2.jpg" alt="Фотография природы" width="800" height="600">
+                    <figcaption>Природа</figcaption>
+                </figure>
+            </div>
+        </section>
 
-        <!-- TODO: добавьте контактную информацию -->
+        <section id="contacts">
+            <h2>Контакты</h2>
+            <address>
+                <p>Email: <a href="mailto:anna@example.com">anna@example.com</a></p>
+                <p>Телефон: <a href="tel:+79001234567">+7 900 123-45-67</a></p>
+            </address>
+            <button type="button" id="contact-button">Показать контакты</button>
+            <p id="contact-message" hidden>Напишите: anna@example.com</p>
+        </section>
     </main>
 
     <footer>
-        <!-- TODO: добавьте подвал страницы -->
+        <p>© 2026 Анна Аннушкина</p>
     </footer>
 
     <script src="js/script.js" defer></script>

@@ -1,6 +1,17 @@
-/*
- * Стартовый файл нулевого занятия.
- *
- * Дополнительная интерактивность не обязательна. Если она нужна для выбранного
- * уровня, добавьте её после того, как закончите HTML и CSS.
- */
+const menuButton = document.getElementById("menu-btn");
+const menu = document.getElementById("menu");
+
+if (menuButton && menu) {
+    menuButton.addEventListener("click", () => {
+        menu.classList.toggle("open");
+    });
+}
+
+const contactButton = document.querySelector("#contact-button");
+const contactMessage = document.querySelector("#contact-message");
+
+if (contactButton && contactMessage) {
+    contactButton.addEventListener("click", () => {
+        contactMessage.hidden = !contactMessage.hidden;
+    });
+}
