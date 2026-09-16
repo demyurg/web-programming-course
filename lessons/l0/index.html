@@ -1,33 +1,90 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Анна Аннушкина - Фотограф</title>
-    <link rel="stylesheet" href="css/style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Анна Аннушкина — Фотограф</title>
+  <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <header>
-        <!-- TODO: добавьте навигацию по разделам страницы -->
-    </header>
 
-    <main>
-        <section class="starter-note" aria-labelledby="starter-title">
-            <h1 id="starter-title">Стартовая страница нулевого занятия</h1>
-            <p>Замените этот блок содержимым портфолио фотографа по заданию в README.</p>
-        </section>
+  <header class="header">
+    <p class="brand">Анна Аннушкина</p>
+    <nav class="nav">
+      <ul>
+        <li><a href="#about">Обо мне</a></li>
+        <li><a href="#gallery">Галерея</a></li>
+        <li><a href="#contact">Контакты</a></li>
+      </ul>
+    </nav>
+  </header>
 
-        <!-- TODO: добавьте раздел с информацией о фотографе -->
+  <main>
+    <section id="about" class="about">
+      <div class="author">
+        <img class="author-photo" src="images/about.jpeg" alt="Анна Аннушкина с камерой">
+        <p class="author-name">Анна Аннушкина</p>
+      </div>
 
-        <!-- TODO: добавьте галерею из локальных изображений -->
+      <div class="about-text">
+        <h1>Снимаю живые моменты, а не постановочные кадры</h1>
+        <p>
+          «Более восьми лет я специализируюсь на портретной, свадебной и семейной фотографии. 
+          Мой стиль — это естественный свет, лаконичность и живые эмоции. 
+          Я против избыточной ретуши и постановочных кадров. 
+          На съемке я создаю комфортную атмосферу, чтобы вы могли расслабиться, быть собой и просто наслаждаться моментом».
+        </p>
+        <p class="services">
+          Услуги: портретная съёмка, свадебная фотография, семейные фотосессии
+          и съёмка на природе — в студии или с выездом.
+        </p>
+      </div>
+    </section>
 
-        <!-- TODO: добавьте контактную информацию -->
-    </main>
+    <section id="gallery">
+      <h2>Галерея</h2>
+      <ul class="gallery">
+        <li class="card">
+          <img src="images/portrait_1.jpg" alt="Портрет в мягком естественном свете">
+          <p class="card-caption">Портрет в мягком естественном свете</p>
+        </li>
+        <li class="card">
+          <img src="images/portrait_2.jpg" alt="Портрет крупным планом">
+          <p class="card-caption">Портрет крупным планом</p>
+        </li>
+        <li class="card">
+          <img src="images/wedding_1.jpg" alt="Свадебная съёмка">
+          <p class="card-caption">Свадебная съёмка</p>
+        </li>
+        <li class="card">
+          <img src="images/wedding_2.jpg" alt="Момент со свадьбы">
+          <p class="card-caption">Момент со свадьбы</p>
+        </li>
+        <li class="card">
+          <img src="images/nature_1.jpg" alt="Пейзажная съёмка на природе">
+          <p class="card-caption">Пейзажная съёмка на природе</p>
+        </li>
+        <li class="card">
+          <img src="images/nature_2.jpg" alt="Природа в естественном свете">
+          <p class="card-caption">Природа в естественном свете</p>
+        </li>
+      </ul>
+    </section>
 
-    <footer>
-        <!-- TODO: добавьте подвал страницы -->
-    </footer>
+    <section id="contact">
+      <h2>Контакты</h2>
+      <address>
+        <p>Email: <a href="mailto:anna.annushkina.photo@gmail.com">anna.annushkina.photo@gmail.com</a></p>
+        <p>Телефон: <a href="tel:+79161234567">+7 916 123-45-67</a></p>
+        <p>Instagram: <a href="https://instagram.com/annushkina.photo" target="_blank" rel="noopener">@annushkina.photo</a></p>
+        <p>Красноярск, съёмка возможна с выездом</p>
+      </address>
+    </section>
+  </main>
 
-    <script src="js/script.js" defer></script>
+  <footer class="footer">
+    <p>&copy; 2026 Анна Аннушкина. Все права защищены.</p>
+  </footer>
+
 </body>
 </html>
