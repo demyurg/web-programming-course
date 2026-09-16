@@ -1,15 +1,7 @@
-/* Базовые стили стартового проекта. Основную стилизацию добавляет студент. */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-}
-
-:root {
-    color: #202124;
-    background: #f7f4ef;
-    font-family: Arial, sans-serif;
-    line-height: 1.6;
 }
 
 html {
@@ -20,7 +12,9 @@ body {
     min-height: 100vh;
     padding: 24px;
     background: #f7f4ef;
-    overflow-x: hidden;
+    color: #202124;
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
 }
 
 h1,
@@ -45,23 +39,107 @@ button {
     outline-offset: 3px;
 }
 
-.starter-note {
+header {
     max-width: 720px;
-    margin: 10vh auto;
-    padding: 32px;
-    border: 1px dashed #b9a28e;
-    border-radius: 16px;
-    background: #fffdf9;
+    margin: 0 auto 32px;
+}
+
+header nav ul {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+}
+
+header nav a {
+    color: #8b5e3c;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+header nav a:hover {
+    text-decoration: underline;
+}
+
+main {
+    max-width: 720px;
+    margin: 0 auto;
+}
+
+section {
+    margin-bottom: 48px;
+}
+
+#about {
     text-align: center;
 }
 
-.starter-note h1 {
+#about h1 {
+    font-size: 2rem;
+    margin-bottom: 8px;
+}
+
+.subtitle {
+    color: #8b5e3c;
+    font-size: 1.1rem;
+    font-style: italic;
+    margin-bottom: 16px;
+}
+
+#gallery h2 {
+    font-size: 1.5rem;
+    margin-bottom: 24px;
+}
+
+.gallery-category {
+    margin-bottom: 32px;
+}
+
+.gallery-category h3 {
+    font-size: 1.2rem;
+    color: #8b5e3c;
     margin-bottom: 12px;
+}
+
+.image-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px;
+}
+
+.image-grid img {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    border: 1px solid #e0d5c8;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.image-grid img:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 16px rgba(139, 94, 60, 0.15);
+}
+
+#contact h2 {
+    font-size: 1.5rem;
+    margin-bottom: 16px;
+}
+
+#contact p {
+    margin-bottom: 8px;
+}
+
+#contact p:last-child {
+    margin-top: 16px;
+    color: #6d665e;
+    font-style: italic;
 }
 
 footer {
     max-width: 720px;
     margin: 0 auto;
+    padding-top: 24px;
+    border-top: 1px solid #e0d5c8;
     color: #6d665e;
     text-align: center;
 }
