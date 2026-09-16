@@ -8,46 +8,68 @@
 </head>
 <body>
     <header>
+        <img class="logo" src="images/camera.png" alt="Иконка сайта">
+
         <nav aria-label="Основная навигация">
             <ul>
                 <li><a href="#about">О себе</a></li>
+                <li><a href="#services">Услуги</a></li>
                 <li><a href="#gallery">Галерея</a></li>
                 <li><a href="#contact">Контакты</a></li>
             </ul>
         </nav>
     </header>
-                 
+    
     <main>
         <section id="about" aria-labelledby="about-title">
             <h1 id="about-title">Анна Аннушкина</h1>
+            <img class="about-photo" src="images/about.jpeg" alt="Портрет Анны Аннушкиной">
             <p class="subtitle">Профессиональный фотограф</p>
             <p>Я занимаюсь портретной и свадебной съёмкой, а также снимаю красоту природы. Помогу запечатлеть ваши самые важные моменты и создать атмосферные кадры.</p>
         </section>
 
+        <section id="services" aria-labelledby="services-title">
+            <h2 id="services-title">Услуги</h2>
+
+            <div class="services-grid">
+                <div class="service-card">
+                    <h3>Портретная съёмка</h3>
+                    <p>Индивидуальные и семейные портреты в студии и на улице. Помогу с позированием и подберу удачный свет.</p>
+                </div>
+
+                <div class="service-card">
+                    <h3>Свадебная съёмка</h3>
+                    <p>Полное сопровождение вашего дня: от сборов до праздничного вечера. Живые, эмоциональные кадры без лишнего позирования.</p>
+                </div>
+
+                <div class="service-card">
+                    <h3>Съёмка природы</h3>
+                    <p>Пейзажи, детали и атмосфера разных сезонов. Идеально для оформления интерьера, календарей и личных проектов.</p>
+                </div>
+            </div>
+        </section>
+
         <section id="gallery" aria-labelledby="gallery-title">
             <h2 id="gallery-title">Галерея работ</h2>
-            
-            <h3>Портретная съёмка</h3>
-            <img src="images/portrait_1.jpg" alt="Портретная фотография 1" width="300">
-            <img src="images/portrait_2.jpg" alt="Портретная фотография 2" width="300">
-            
-            <h3>Свадебная съёмка</h3>
-            <img src="images/wedding_1.jpg" alt="Свадебная фотография 1" width="300">
-            <img src="images/wedding_2.jpg" alt="Свадебная фотография 2" width="300">
-            
-            <h3>Природа</h3>
-            <img src="images/nature_1.jpg" alt="Фотография природы 1" width="300">
-            <img src="images/nature_2.jpg" alt="Фотография природы 2" width="300">
 
+            <h3>Портретная съёмка</h3>
+            <img src="images/portrait_1.jpg" alt="Портретная фотография 1">
+            <img src="images/portrait_2.jpg" alt="Портретная фотография 2">
+
+            <h3>Свадебная съёмка</h3>
+            <img src="images/wedding_1.jpg" alt="Свадебная фотография 1">
+            <img src="images/wedding_2.jpg" alt="Свадебная фотография 2">
+
+            <h3>Природа</h3>
+            <img src="images/nature_1.jpg" alt="Фотография природы 1">
+            <img src="images/nature_2.jpg" alt="Фотография природы 2">
         </section>
 
         <section id="contact" aria-labelledby="contact-title">
-
             <h2 id="contact-title">Контакты</h2>
             <p>Телефон: +7 (999) 000-00-00</p>
             <p>Email: anna.annushkina@example.com</p>
             <p>Telegram: @anna_photo</p>
-        
         </section>
     </main>
 
