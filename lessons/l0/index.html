@@ -3,31 +3,76 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Анна Аннушкина - Фотограф</title>
+    <title>Анна Светлова - Фотограф</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
     <header>
-        <!-- TODO: добавьте навигацию по разделам страницы -->
+        <p class="logo">Анна Светлова</p>
+        <label for="menu-toggle" class="menu-icon" aria-label="Открыть меню">&#9776;</label>
+        <input type="checkbox" id="menu-toggle">
+        <nav>
+            <a href="#about">Обо мне</a>
+            <a href="#gallery">Галерея</a>
+            <a href="#contacts">Контакты</a>
+        </nav>
     </header>
 
     <main>
-        <section class="starter-note" aria-labelledby="starter-title">
-            <h1 id="starter-title">Стартовая страница нулевого занятия</h1>
-            <p>Замените этот блок содержимым портфолио фотографа по заданию в README.</p>
+        <section id="about">
+            <img src="images/about.jpeg" alt="Фотограф Анна Светлова">
+            <article class="about-text">
+                <h1>Анна Светлова</h1>
+                <p>Привет! Меня зовут Анна. Мой путь в фотографии начался более 5 лет назад со съемки горных пейзажей. Сегодня я специализируюсь на портретной и свадебной съемке, а природа остается моей главной любовью.</p>
+                <p class="stats">
+                    <strong>Стаж:</strong> более 5 лет<br>
+                    <strong>Направления:</strong> портреты, свадьбы, природа<br>
+                    <strong>Опыт:</strong> более 150 успешных фотосессий
+                </p>
+            </article>
         </section>
 
-        <!-- TODO: добавьте раздел с информацией о фотографе -->
+        <section id="gallery">
+            <h2>Моя галерея</h2>
+            <figure>
+                <img src="images/portrait_1.jpg" alt="Портретная фотография 1">
+                <figcaption>Портретная съёмка</figcaption>
+            </figure>
+            <figure>
+                <img src="images/portrait_2.jpg" alt="Портретная фотография 2">
+                <figcaption>Портретная съёмка</figcaption>
+            </figure>
+            <figure>
+                <img src="images/wedding_1.jpg" alt="Свадебная фотография 1">
+                <figcaption>Свадебная съёмка</figcaption>
+            </figure>
+            <figure>
+                <img src="images/wedding_2.jpg" alt="Свадебная фотография 2">
+                <figcaption>Свадебная съёмка</figcaption>
+            </figure>
+            <figure>
+                <img src="images/nature_1.jpg" alt="Фотография природы 1">
+                <figcaption>Природа</figcaption>
+            </figure>
+            <figure>
+                <img src="images/nature_2.jpg" alt="Фотография природы 2">
+                <figcaption>Природа</figcaption>
+            </figure>
+        </section>
 
-        <!-- TODO: добавьте галерею из локальных изображений -->
-
-        <!-- TODO: добавьте контактную информацию -->
+        <section id="contacts">
+            <h2>Контакты</h2>
+            <p class="contact-info">
+                Вы можете связаться со мной для обсуждения вашей съемки.<br>
+                Телефон: +7 (999) 123-45-67<br>
+                Email: anna.svetlova@example.com<br>
+                Instagram: @anna_svetlova_photo
+            </p>
+        </section>
     </main>
 
     <footer>
-        <!-- TODO: добавьте подвал страницы -->
+        <p>© 2026 Анна Светлова. Все права защищены.</p>
     </footer>
-
-    <script src="js/script.js" defer></script>
 </body>
 </html>
