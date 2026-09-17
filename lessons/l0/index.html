@@ -7,25 +7,187 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <header>
-        <!-- TODO: добавьте навигацию по разделам страницы -->
+    <!-- Навигация по разделам страницы -->
+    <header class="header">
+        <p class="logo">
+            <span class="logo-name">Анна Аннушкина</span>
+            <span class="logo-role">фотограф</span>
+        </p>
+
+        <nav class="nav">
+            <ul class="nav-list">
+                <li><a href="#about">Обо мне</a></li>
+                <li><a href="#services">Услуги</a></li>
+                <li><a href="#gallery">Галерея</a></li>
+                <li><a href="#contacts">Контакты</a></li>
+            </ul>
+        </nav>
     </header>
 
-    <main>
-        <section class="starter-note" aria-labelledby="starter-title">
-            <h1 id="starter-title">Стартовая страница нулевого занятия</h1>
-            <p>Замените этот блок содержимым портфолио фотографа по заданию в README.</p>
+        <!-- Заголовок -->
+        <section class="title">
+            <p class="title-city">Санкт-Петербург · съёмки по всей России</p>
+            <h1 id="title-name">Анна Аннушкина</h1>
+            <p class="title-text">
+                Снимаю портреты, семейные истории и свадьбы. Помогаю людям, которые
+                стесняются камеры, увидеть себя красивыми — без наигранных поз
+                и постановочных улыбок.
+            </p>
+            <p class="title-buttons">
+                <a class="btn1" href="#contacts">Записаться на съёмку</a>
+                <a class="btn2" href="#gallery">Смотреть галерею</a>
+            </p>
         </section>
 
-        <!-- TODO: добавьте раздел с информацией о фотографе -->
+        <!-- Раздел о фотографе -->
+        <section class="about" id="about">
+            <h2 class="about-title" id="about-title">Обо мне</h2>
 
-        <!-- TODO: добавьте галерею из локальных изображений -->
+            <div class="about-photo">
+                <img src="images/about.jpeg" alt="Анна Аннушкина">
+                <p class="about-text">Анна Аннушкина, фотограф</p>
+            </div>
 
-        <!-- TODO: добавьте контактную информацию -->
+            <p>
+                Меня зовут Анна, и вот уже восемь лет фотография — моя работа
+                и главное увлечение. Я закончила школу фотографии в Санкт-Петербурге,
+                много снимаю на плёнку и люблю естественный свет: он делает кадры
+                живыми, а не «журнальными».
+            </p>
+            <p>
+                За это время я провела больше трёхсот съёмок — от коротких портретных
+                прогулок до свадеб на два дня. Ко мне приходят за спокойной атмосферой,
+                честными эмоциями и кадрами, которые хочется напечатать и повесить
+                на стену.
+            </p>
+
+            <ul class="about-work">
+                <li><strong>8 лет</strong> практики</li>
+                <li><strong>300+</strong> съёмок</li>
+                <li><strong>48 часов</strong> на обработку</li>
+            </ul>
+        </section>
+
+        <!-- Услуги -->
+        <section class="services" id="services">
+            <h2 class="section-title" id="services-title">Услуги и стоимость</h2>
+            <p class="section-text">
+                В каждую съёмку входит подбор локации, помощь с образами,
+                цветокоррекция и ретушь всех удачных кадров.
+            </p>
+
+            <ul class="cards">
+                <li class="card">
+                    <h3 class="card-title">Портретная съёмка</h3>
+                    <p class="card-text">
+                        Прогулка по городу или студия, 1,5–2 часа работы,
+                        25 обработанных кадров.
+                    </p>
+                    <p class="card-price">от 6 000 ₽</p>
+                </li>
+                <li class="card">
+                    <h3 class="card-title">Семейная фотосессия</h3>
+                    <p class="card-text">
+                        Съёмка для пар и родителей с детьми, 2 часа,
+                        подбор удобной локации.
+                    </p>
+                    <p class="card-price">от 9 000 ₽</p>
+                </li>
+                <li class="card">
+                    <h3 class="card-title">Свадебный день</h3>
+                    <p class="card-text">
+                        Полный день от сборов до первого танца,
+                        репортаж без вмешательства в события.
+                    </p>
+                    <p class="card-price">от 45 000 ₽</p>
+                </li>
+            </ul>
+        </section>
+
+        <!-- Галерея -->
+        <section class="gallery" id="gallery">
+            <h2 class="gallery-title" id="gallery-title">Галерея</h2>
+            <p class="gallery-text">
+                Несколько кадров из последних съёмок.
+            </p>
+
+            <ul class="gallery-grid">
+                <li class="gallery-item">
+                    <div class="gallery-card">
+                        <img src="images/portrait_1.jpg" alt="Портрет девушки">
+                        <p class="gallery-name">Портрет</p>
+                    </div>
+                </li>
+
+                <li class="gallery-item">
+                    <div class="gallery-card">
+                        <img src="images/portrait_2.jpg" alt="Студийный портрет">
+                        <p class="gallery-name">Портрет</p>
+                    </div>
+                </li>
+
+                <li class="gallery-item">
+                    <div class="gallery-card">
+                        <img src="images/wedding_1.jpg" alt="Молодожёны в день свадьбы">
+                        <p class="gallery-name">Свадьба</p>
+                    </div>
+                </li>
+
+                <li class="gallery-item">
+                    <div class="gallery-card">
+                        <img src="images/wedding_2.jpg" alt="Свадебная церемония">
+                        <p class="gallery-name">Свадьба</p>
+                    </div>
+                </li>
+
+                <li class="gallery-item">
+                    <div class="gallery-card">
+                        <img src="images/nature_1.jpg" alt="Утро в лесу">
+                        <p class="gallery-name">Природа</p>
+                    </div>
+                </li>
+
+                <li class="gallery-item">
+                    <div class="gallery-card">
+                        <img src="images/nature_2.jpg" alt="Горы">
+                        <p class="gallery-name">Природа</p>
+                    </div>
+                </li>
+            </ul>
+        </section>
+
+        <!-- Контакты -->
+        <section class="contacts" id="contacts">
+            <h2 class="contacts-title" id="contacts-title">Контакты</h2>
+            <p class="contacts-text">
+                Напишите или позвоните — обсудим идею, даты и подберём удобный формат съёмки.
+            </p>
+
+            <ul class="contacts-list">
+                <li>
+                    <span class="contacts-label">Телефон</span>
+                    <a href="tel:+79000000000">+7 (900) 000-00-00</a>
+                </li>
+                <li>
+                    <span class="contacts-label">E-mail</span>
+                    <a href="anna@annushkina.photo">anna@annushkina.photo</a>
+                </li>
+                <li>
+                    <span class="contacts-label">Мессенджеры</span>
+                    <a href="https://t.me/">Telegram</a>
+                    <a href="https://wa.me/79000000000">WhatsApp</a>
+                </li>
+                <li>
+                    <span class="contacts-label">Студия</span>
+                    Санкт-Петербург, ул. Большая Конюшенная, 12
+                </li>
+            </ul>
+        </section>
     </main>
 
-    <footer>
-        <!-- TODO: добавьте подвал страницы -->
+    <!-- Подвал -->
+    <footer class="footer">
+        <p>© 2025 Анна Аннушкина - фотограф. Все права защищены.</p>
     </footer>
 
     <script src="js/script.js" defer></script>
