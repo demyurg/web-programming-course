@@ -1,33 +1,135 @@
 <!doctype html>
 <html lang="ru">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Анна Аннушкина - Фотограф</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
+
 <body>
     <header>
-        <!-- TODO: добавьте навигацию по разделам страницы -->
+        <div class="brand">
+            <div style="font-size: 1.5rem; font-weight: 600; ">Анна Аннушкина</div>
+            <div style="color: #5d6d7e;">УСЛУГИ НАСТОЯЩЕГО ФОТОГРАФА</div>
+        </div>
+        <hr
+            style="border: none; height: 1px; background-color: #5d6d7e; width: 100%; margin-bottom:16px; margin-top: 0;">
+        <nav class="nav">
+            <a class="nav_span" href="#gallery">Галерея
+            </a>
+            <a class="nav_span" href="#contacts">Контакты</a>
+        </nav>
+
     </header>
 
     <main>
-        <section class="starter-note" aria-labelledby="starter-title">
-            <h1 id="starter-title">Стартовая страница нулевого занятия</h1>
-            <p>Замените этот блок содержимым портфолио фотографа по заданию в README.</p>
-        </section>
+        <div class="about">
+            <div class="about-img-section">
+                <img class="about-img" src="images\about.jpeg">
+                <figcaption><span class="about-fig-span">Анна Аннушкина</span>, автопортрет</figcaption>
+            </div>
+            <div class="about-text-section">
+                <h4 style="text-align: center; font-size: larger;">Обо мне</h4>
+                <p>Меня зовут Анна, и уже более десяти лет я ловлю мгновения, которые хочется сохранить навсегда. Для
+                    меня фотография — это не просто кадр, а возможность остановить время и вернуть вам те эмоции,
+                    которые вы испытывали в тот самый момент. Я работаю с естественным светом, люблю живые эмоции и
+                    искренние улыбки. Мои герои — люди, природа и истории, которые они рассказывают. Давайте вместе
+                    создадим фотографии, которые будут радовать вас долгие годы.
+                </p>
+            </div>
+        </div>
 
-        <!-- TODO: добавьте раздел с информацией о фотографе -->
+        <div style="margin-bottom: 45px;" id="gallery">
+            <h4 style="text-align: center; font-size: larger;">Галерея работ</h4>
 
-        <!-- TODO: добавьте галерею из локальных изображений -->
+            <div class="slider slider-desktop">
+                <button class="slider-btn prev" aria-label="Назад">‹</button>
 
-        <!-- TODO: добавьте контактную информацию -->
+                <div class="slider-viewport">
+                    <div class="slider-track">
+
+                        <div class="slide">
+                            <div class="slide-images">
+                                <img class="gallery-img" src="images/nature_1.jpg" alt="Фото природы">
+                                <img class="gallery-img" src="images/nature_2.jpg" alt="Фото природы">
+                            </div>
+                            <figcaption>Фотографии природы</figcaption>
+                        </div>
+
+                        <div class="slide">
+                            <div class="slide-images">
+                                <img class="gallery-img" src="images/portrait_1.jpg" alt="Портретная фотография">
+                                <img class="gallery-img" src="images/portrait_2.jpg" alt="Портретная фотография">
+                            </div>
+                            <figcaption>Портретные фото</figcaption>
+                        </div>
+
+                        <div class="slide">
+                            <div class="slide-images">
+                                <img class="gallery-img" src="images/wedding_1.jpg" alt="Свадебная фотография">
+                                <img class="gallery-img" src="images/wedding_2.jpg" alt="Свадебная фотография">
+                            </div>
+                            <figcaption>Свадебные фото</figcaption>
+                        </div>
+
+                    </div>
+                </div>
+
+                <button class="slider-btn next" aria-label="Вперёд">›</button>
+            </div>
+
+            <div class="slider slider-mobile">
+                <button class="slider-btn prev" aria-label="Назад">‹</button>
+
+                <div class="slider-viewport">
+                    <div class="slider-track">
+
+                        <div class="slide">
+                            <img class="gallery-img" src="images/nature_1.jpg" alt="Фото природы">
+                        </div>
+                        <div class="slide">
+                            <img class="gallery-img" src="images/nature_2.jpg" alt="Фото природы">
+                        </div>
+                        <div class="slide">
+                            <img class="gallery-img" src="images/portrait_1.jpg" alt="Портретная фотография">
+                        </div>
+                        <div class="slide">
+                            <img class="gallery-img" src="images/portrait_2.jpg" alt="Портретная фотография">
+                        </div>
+                        <div class="slide">
+                            <img class="gallery-img" src="images/wedding_1.jpg" alt="Свадебная фотография">
+                        </div>
+                        <div class="slide">
+                            <img class="gallery-img" src="images/wedding_2.jpg" alt="Свадебная фотография">
+                        </div>
+
+                    </div>
+                </div>
+
+                <button class="slider-btn next" aria-label="Вперёд">›</button>
+            </div>
+        </div>
+        <div class="section" id="contacts">
+            <h4 style="text-align: center; font-size: larger; margin-top: 0;">Контакты</h4>
+            <div style="display: flex; flex-direction: column;">
+                <a>+7(906)555-12-48</a>
+                <a>anan@gmail.com </a>
+                <a>VK: @ananush</a>
+                <a>Inst: ananush</a>
+                <a>Tg: @ananush</a>
+            </div>
+        </div>
+
     </main>
 
     <footer>
-        <!-- TODO: добавьте подвал страницы -->
+        © 2026 Анна Аннушкина. Все права защищены.
+
     </footer>
 
     <script src="js/script.js" defer></script>
 </body>
+
 </html>
