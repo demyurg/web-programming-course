@@ -1,6 +1,4 @@
-/*const message: string = "TypeScript запускается";
-console.log(message);*/
-import type { Answer, TrainingSet} from "./domain.js";
+import type { Answer, TrainingSet} from "./domain";
 import { findTask, filterTasksByTopic, getProgress} from "./domain.js";
 const trainingSet: TrainingSet = {
   id: "web-basics",

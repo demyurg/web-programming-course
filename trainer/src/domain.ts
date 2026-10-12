@@ -47,7 +47,9 @@ export function findTask(tasks: Task[], id: string): Task | undefined {
 export function filterTasksByTopic(tasks: Task[], topic: string): Task[] {
   return tasks.filter(task => task.topic === topic);
 }
-
+/*export function filterTasksByText(tasks: Task[], text: string): Task[] {
+  return tasks.filter(task => task.prompt.includes(text) || (task.kind === 'single-choice' && task.options.find(opt => opt.label.includes(text))));
+}*/
 export function getProgress(tasks: Task[], answers: Answer[]): {
   filled: number;
   total: number;
