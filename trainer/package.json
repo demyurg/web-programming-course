@@ -1,0 +1,18 @@
+{
+  "name": "trainer",
+  "version": "1.0.0",
+  "description": "Учебный тренажёр: типизированное ядро данных и демонстрация A1.",
+  "scripts": {
+    "check": "tsc --noEmit",
+    "demo": "tsx src/demo.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "private": true,
+  "devDependencies": {
+    "tsx": "4.23.13",
+    "typescript": "5.8.3"
+  }
+}
