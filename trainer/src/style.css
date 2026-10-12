@@ -1,0 +1,19 @@
+main {
+    box-sizing: border-box;
+    max-width: 100%;
+}
+
+h1,
+h2 {
+    overflow-wrap: anywhere;
+}
+
+button {
+    max-width: 100%;
+    white-space: normal;
+}
+
+pre {
+    max-width: 100%;
+    overflow-x: auto;
+}
