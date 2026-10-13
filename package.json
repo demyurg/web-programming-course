@@ -1,0 +1,31 @@
+{
+  "name": "web-programming-course",
+  "version": "1.0.0",
+  "description": "Публичные материалы курса собраны по занятиям. Для каждого занятия доступны задание и справочные материалы, необходимые для самостоятельной работы.",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "check": "tsc --noEmit",
+    "demo": "tsx src/demo.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Nikita-fink/web-programming-course.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/Nikita-fink/web-programming-course/issues"
+  },
+  "homepage": "https://github.com/Nikita-fink/web-programming-course#readme",
+  "private": true,
+  "devDependencies": {
+    "tsx": "4.23.13",
+    "typescript": "5.8.3"
+  }
+}
