@@ -8,26 +8,118 @@
 </head>
 <body>
     <header>
-        <!-- TODO: добавьте навигацию по разделам страницы -->
+        <nav>
+            <a href="index.html" class="brand">
+                <img src="images/logo.png" height="26" width="26" alt="Логотип">
+            </a>
+            <input type="checkbox" id="menu-toggle">
+            <label for="menu-toggle" class="menu-button">
+                <span></span>
+                <span></span>
+                <span></span>
+            </label>
+            <ul>
+                <li><a href="#profile"> Обо мне </a></li>
+                <li><a href="#works"> Галерея </a></li>
+                <li><a href="#contact"> Контакты </a></li>
+            </ul>
+        </nav>
     </header>
 
     <main>
-        <section class="starter-note" aria-labelledby="starter-title">
-            <h1 id="starter-title">Стартовая страница нулевого занятия</h1>
-            <p>Замените этот блок содержимым портфолио фотографа по заданию в README.</p>
+        <section id="profile" class="section-profile">
+            <div>
+                <img src="images/about.jpeg" alt="My photo">
+            </div>
+            <div>
+                <h1> Анна Аннушкина </h1>
+                <p>Профессиональный фотограф из Москвы с более чем 8-летним опытом работы. Специализируюсь на портретной, свадебной и пейзажной съёмке. Каждая фотосессия — это уникальная история, которую я помогаю рассказать через изображения.</p>
+                <p>Мои услуги включают индивидуальные и семейные фотосессии, съёмку мероприятий и торжеств, предметную фотографию для бизнеса, а также корпоративные проекты. Работаю как на студии, так и на выездных локациях по всей Москве и области.</p>
+                <p>Верю, что хорошая фотография — это не просто красивая картинка, а эмоция, закрёпленная во времени. Поэтому уделяю особое внимание комфорту клиентов и работаю в непринуждённой атмосфере, чтобы каждый кадр получался живым и искренним.</p>
+            </div>
         </section>
 
-        <!-- TODO: добавьте раздел с информацией о фотографе -->
+        <section id="works" class="works">
+            <h2 style="text-align: center;"> Галерея работ</h2>
+            <div class="gallery">
+                <div class="card">
+                    <img src="images/portrait_1.jpg" alt="Портретная фотография 1">
+                    <p> Портретная фотография №1 </p>
+                </div>
+                <div class="card">
+                    <img src="images/portrait_2.jpg" alt="Портретная фотография 2">
+                    <p> Портретная фотография №2 </p>
+                </div>
+                <div class="card">
+                    <img src="images/nature_1.jpg" alt="Природа, пейзаж 1">
+                    <p> Пейзажная фотография №1 </p>
+                </div>
+                <div class="card">
+                    <img src="images/nature_2.jpg" alt="Природа, пейзаж 2">
+                    <p> Пейзажная фотография №2 </p>
+                </div>
+                <div class="card">
+                    <img src="images/wedding_1.jpg" alt="Свадебная съёмка 1">
+                    <p> Свадебная фотография №1 </p>
+                </div>
+                <div class="card">
+                    <img src="images/wedding_2.jpg" alt="Свадебная съёмка 2">
+                    <p> Свадебная фотография №2 </p>
+                </div>
+            </div>
+        </section>
 
-        <!-- TODO: добавьте галерею из локальных изображений -->
+        <section id="contact">
+            <div class="content">
+                
+                <div class="info-form">
+                    <div class="info-box">
+                        <div class="topic"> Адрес </div>
+                        <p> ул. Правды, 24, стр. 3, г. Москва </p>
+                    </div>
+                    <div class="info-box">
+                        <div class="topic"> Телефон </div>
+                        <p> 8 913 277-10-63 </p>
+                    </div>
+                    <div class="info-box">
+                        <div class="topic"> Почта </div>
+                        <p> AnnaAnnychka@gmail.com </p>
+                    </div>
+                </div>
 
-        <!-- TODO: добавьте контактную информацию -->
+                <div class="feedback-form">
+                    <div class="topic"> Отправить мне сообщение </div>
+                    <p> Если у вас есть предложение или появились вопросы, заполните форму ниже </p>
+                    <form id="feedback-form" action="#">
+                        <div class="input-form">
+                            <input id="name" type="text" placeholder="Введите имя" />
+                            <span class="error"></span>
+                        </div>
+                        <div class="input-form">
+                            <input id="email" type="text" placeholder="Введите почту" />
+                            <span class="error"></span>
+                        </div>
+                        <div class="input-form">
+                            <input id="phone" type="text" placeholder="Введите телефон" />
+                            <span class="error"></span>
+                        </div>
+                        <div class="input-form">
+                            <textarea id="message" placeholder="Напишите свой вопрос или предложение"></textarea>
+                            <span class="error"></span>
+                        </div>
+                        <div>
+                            <button id="submit-btn" type="button"> Отправить </button>
+                        </div>
+                    </form>                         
+                </div>
+            </div>
+        </section>
     </main>
-
+    
     <footer>
-        <!-- TODO: добавьте подвал страницы -->
+        <p>© 2024 Анна Аннушкина. Все права защищены.</p>
     </footer>
-
     <script src="js/script.js" defer></script>
+    <div id="toast" class="toast">Сообщение отправлено!</div>
 </body>
 </html>
