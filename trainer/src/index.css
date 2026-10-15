@@ -1,0 +1,62 @@
+:root {
+  color-scheme: light dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, sans-serif;
+  line-height: 1.5;
+}
+
+main {
+  max-width: 60rem;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+h1 {
+  font-size: 1.5rem;
+  margin-bottom: 0.25rem;
+}
+
+.task-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.task-list button {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.task-list button[aria-pressed="true"] {
+  outline: 2px solid currentColor;
+}
+
+.task-card {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  border: 1px solid currentColor;
+  border-radius: 0.5rem;
+}
+
+.task-card h2 {
+  font-size: 1.15rem;
+}
+
+.task-card pre {
+  margin: 0.5rem 0;
+  padding: 0.5rem;
+  background: rgba(127, 127, 127, 0.15);
+  overflow-x: auto;
+}
