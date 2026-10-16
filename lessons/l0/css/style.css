@@ -1,67 +1,263 @@
-/* Базовые стили стартового проекта. Основную стилизацию добавляет студент. */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+:root {
+  --color-bg: #F6F0D7;
+  --color-text: #4A4A3C;
+  --color-muted: #6B6F5C;
+  --color-border: #9CAB84;
+  --color-dark: #30431c;
+  --color-light: #FFFFFF;
 }
 
-:root {
-    color: #202124;
-    background: #f7f4ef;
-    font-family: Arial, sans-serif;
-    line-height: 1.6;
+* {
+  box-sizing: border-box;
 }
 
 html {
-    scroll-behavior: smooth;
+  scroll-behavior: smooth;
 }
 
 body {
-    min-height: 100vh;
-    padding: 24px;
-    background: #f7f4ef;
-    overflow-x: hidden;
-}
-
-h1,
-h2,
-h3 {
-    line-height: 1.2;
+  margin: 0;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-family: Georgia, "Times New Roman", serif;
+  line-height: 1.6;
 }
 
 img {
-    display: block;
-    max-width: 100%;
-    height: auto;
+  width: 100%;
+  height: auto;
+  display: block;
 }
 
-a,
-button {
-    font: inherit;
+a {
+  color: var(--color-dark);
+  text-decoration: none;
 }
 
-:focus-visible {
-    outline: 3px solid #8b5e3c;
-    outline-offset: 3px;
+a:hover {
+  text-decoration: underline;
 }
 
-.starter-note {
-    max-width: 720px;
-    margin: 10vh auto;
-    padding: 32px;
-    border: 1px dashed #b9a28e;
-    border-radius: 16px;
-    background: #fffdf9;
+h1, h2 {
+  line-height: 1.2;
+}
+
+h1 {
+  font-size: 38px;
+  margin: 0 0 15px;
+}
+
+h2 {
+  font-size: 32px;
+  text-align: center;
+  margin: 0 0 25px;
+}
+
+/* Шапка */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 15px;
+  padding: 15px 5%;
+  background-color: var(--color-dark);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.brand {
+  color: var(--color-light);
+  font-size: 28px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.nav ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 25px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.nav a {
+  color: var(--color-light);
+  font-size: 18px;
+}
+
+/* Основной контент */
+main {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 4%;
+}
+
+section {
+  padding: 60px 0;
+  border-bottom: 1px solid var(--color-border);
+  scroll-margin-top: 80px;
+}
+
+/* Обо мне */
+.about {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 50px;
+}
+
+.author {
+  text-align: center;
+}
+
+.author-photo {
+  max-width: 320px;
+  border-radius: 8px;
+}
+
+.author-name {
+  margin: 12px 0 0;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.about-text {
+  flex: 1 1 320px;
+}
+
+.about-text p {
+  font-size: 18px;
+  color: var(--color-muted);
+  margin: 0 0 12px;
+}
+
+.about-text p.services {
+  color: var(--color-text);
+  margin-top: 15px;
+}
+
+/* Галерея */
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 25px;
+  margin: 30px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.card {
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  overflow: hidden;
+  transition: transform 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+}
+
+.card-caption {
+  margin: 0;
+  padding: 12px;
+  font-size: 16px;
+  color: var(--color-muted);
+  text-align: center;
+}
+
+/* Контакты и подвал */
+address {
+  font-style: normal;
+  text-align: center;
+  color: var(--color-muted);
+  font-size: 18px;
+}
+
+address p {
+  margin: 8px 0;
+  overflow-wrap: anywhere;
+}
+
+.footer {
+  text-align: center;
+  padding: 25px;
+  color: var(--color-light);
+  font-size: 16px;
+  background-color: var(--color-dark);
+}
+
+/* Планшет: 768px – 1023px */
+@media (max-width: 1023px) {
+  .gallery {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+
+  section {
+    padding: 50px 0;
+  }
+
+  .about {
+    gap: 35px;
+  }
+}
+
+/* Телефон: 320px – 767px */
+@media (max-width: 767px) {
+  .header {
+    justify-content: center;
+    padding: 12px 16px;
+    gap: 10px;
+  }
+
+  .brand {
+    font-size: 22px;
     text-align: center;
-}
+    width: 100%;
+  }
 
-.starter-note h1 {
-    margin-bottom: 12px;
-}
+  .nav ul {
+    justify-content: center;
+    gap: 14px;
+  }
 
-footer {
-    max-width: 720px;
-    margin: 0 auto;
-    color: #6d665e;
+  .nav a {
+    font-size: 16px;
+  }
+
+  section {
+    padding: 40px 0;
+  }
+
+  .about {
     text-align: center;
+    gap: 24px;
+  }
+
+  .author-photo {
+    max-width: 240px;
+  }
+
+  .about-text p {
+    font-size: 16px;
+  }
+
+  h1 {
+    font-size: 26px;
+  }
+
+  h2 {
+    font-size: 24px;
+  }
+
+  .gallery {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
 }
