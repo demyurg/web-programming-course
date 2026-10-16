@@ -8,24 +8,40 @@
 </head>
 <body>
     <header>
-        <!-- TODO: добавьте навигацию по разделам страницы -->
+        <nav>
+            <a href="#about">О фотографе</a>
+            <a href="#portfolio">Портфолио</a>
+            <a href="#contacts">Контакты</a>
+        </nav>
     </header>
 
     <main>
-        <section class="starter-note" aria-labelledby="starter-title">
-            <h1 id="starter-title">Стартовая страница нулевого занятия</h1>
-            <p>Замените этот блок содержимым портфолио фотографа по заданию в README.</p>
+        <section id="about">
+            <h1>Анна Аннушкина</h1>
+            <p>Фотограф, специализирующийся на портретной и свадебной съёмке, а также фотографии природы.</p>
+        </section>
+        
+        <section id="portfolio">
+            <h2>Портфолио</h2>
+            <div class="gallery">
+                <img src="images/portrait_1.jpg" alt="Портретная съёмка">
+                <img src="images/portrait_2.jpg" alt="Портретная съёмка">
+                <img src="images/wedding_1.jpg" alt="Свадебная съёмка">
+                <img src="images/wedding_2.jpg" alt="Свадебная съёмка">
+                <img src="images/nature_1.jpg" alt="Фотография природы">
+                <img src="images/nature_2.jpg" alt="Фотография природы">
+            </div>
         </section>
 
-        <!-- TODO: добавьте раздел с информацией о фотографе -->
-
-        <!-- TODO: добавьте галерею из локальных изображений -->
-
-        <!-- TODO: добавьте контактную информацию -->
+        <section id="contacts">
+            <h2>Контакты</h2>
+            <p>Телефон: +7 (913) 233-45-67</p>
+            <p>Email: annannyshkina@gmail.com</p>
+        </section>
     </main>
 
     <footer>
-        <!-- TODO: добавьте подвал страницы -->
+        <p>© 2026 Анна Аннушкина. Все права защищены.</p>
     </footer>
 
     <script src="js/script.js" defer></script>

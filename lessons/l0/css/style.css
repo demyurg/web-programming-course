@@ -45,18 +45,41 @@ button {
     outline-offset: 3px;
 }
 
-.starter-note {
-    max-width: 720px;
-    margin: 10vh auto;
-    padding: 32px;
-    border: 1px dashed #b9a28e;
-    border-radius: 16px;
-    background: #fffdf9;
-    text-align: center;
+header,
+main {
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
-.starter-note h1 {
-    margin-bottom: 12px;
+nav {
+    display: flex;
+    gap: 2rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+}
+
+nav a {
+    color: #202124;
+    text-decoration: none;
+}
+
+nav a:hover {
+    color: #8b5e3c;
+}
+
+section {
+    margin-bottom: 2rem;
+}
+
+h1,
+h2 {
+    margin-bottom: 1rem;
+}
+
+.gallery {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
 }
 
 footer {
@@ -64,4 +87,24 @@ footer {
     margin: 0 auto;
     color: #6d665e;
     text-align: center;
+}
+
+.gallery img {
+    transition: transform 0.3s ease;
+}
+
+.gallery img:hover {
+    transform: scale(1.03);
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+    .gallery {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 767px) {
+    .gallery {
+        grid-template-columns: 1fr;
+    }
 }
