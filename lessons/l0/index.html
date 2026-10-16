@@ -1,33 +1,118 @@
 <!doctype html>
 <html lang="ru">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Анна Аннушкина - Фотограф</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
+
 <body>
     <header>
-        <!-- TODO: добавьте навигацию по разделам страницы -->
+        <div>
+            <p>Анна Аннушкина</p>
+        </div>
+        <ul>
+            <li><a href="#about">Обо мне</a></li>
+            <li><a href="#examples">Портфолио</a></li>
+            <li><a href="#contacts">Контакты</a></li>
+        </ul>
     </header>
 
     <main>
-        <section class="starter-note" aria-labelledby="starter-title">
-            <h1 id="starter-title">Стартовая страница нулевого занятия</h1>
-            <p>Замените этот блок содержимым портфолио фотографа по заданию в README.</p>
+        <section class="about" id="about">
+            <div class="about-content">
+                <h1>Анна Аннушкина</h1>
+                <p class="subtitle">Начинающий фотограф • Барнаул</p>
+                <p class="description">
+                    Привет! Я помогаю сохранять ваши самые искренние эмоции, важные моменты и живые истории.
+                    Специализируюсь на свадебной, портретной и пейзажной фотографии. Верю, что в каждом кадре должна
+                    быть магия и настоящая жизнь.
+                </p>
+            </div>
+            <div class="about-image">
+                <img src="images/about.jpeg" alt="Фотограф Анна Аннушкина">
+            </div>
+
         </section>
 
-        <!-- TODO: добавьте раздел с информацией о фотографе -->
 
-        <!-- TODO: добавьте галерею из локальных изображений -->
+        <p class="section-title">Портфолио</p>
 
-        <!-- TODO: добавьте контактную информацию -->
+        <section class="examples responsive-grid" id="examples">
+            <!--<p id="header-grid">Вот некоторые из моих работ:</p>-->
+
+            <div class="card">
+                <img src="images/nature_1.jpg" alt="Природа">
+                <div class="card-content">
+                    <h3>Красивая природа</h3>
+                    <p>Три медведя в лесу.</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <img src="images/nature_2.jpg" alt="Природа">
+                <div class="card-content">
+                    <h3>Горный массив</h3>
+                    <p>Вид на горный массив.</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <img src="images/wedding_1.jpg" alt="Природа">
+                <div class="card-content">
+                    <h3>Свадьба</h3>
+                    <p>Свадьба в парке.</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <img src="images/wedding_2.jpg" alt="Природа">
+                <div class="card-content">
+                    <h3>Свадьба</h3>
+                    <p>Свадьба в саду.</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <img src="images/portrait_1.jpg" alt="Природа">
+                <div class="card-content">
+                    <h3>Портрет</h3>
+                    <p>Портрет молодой женщины.</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <img src="images/portrait_2.jpg" alt="Природа">
+                <div class="card-content">
+                    <h3>Портрет</h3>
+                    <p>Портрет негритосской женщины.</p>
+                </div>
+            </div>
+
+        </section>
+
+        <p class="section-title">Контакты</p>
+
+        <section class="contacts" id="contacts">
+            <div>
+                <p>
+                    <strong>Телефон:</strong> +7 (123) 456-78-90<br>
+                    <strong>Email:</strong> anna@example.com
+                </p>
+            </div>
+            <div>
+                <button>Отправить сообщение</button>
+            </div>
+        </section>
     </main>
 
     <footer>
-        <!-- TODO: добавьте подвал страницы -->
+        <p>© 2026 Анна Аннушкина. Все права защищены.</p>
     </footer>
 
     <script src="js/script.js" defer></script>
 </body>
+
 </html>
