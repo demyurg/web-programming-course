@@ -3,29 +3,132 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Анна Аннушкина - Фотограф</title>
+    <title>Анна Аннушкина - фотограф</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
     <header>
-        <!-- TODO: добавьте навигацию по разделам страницы -->
+        <nav>
+            <a href="#about">Обо мне</a>
+            <a href="#portfolio">Портфолио</a>
+            <a href="#contacts">Контакты</a>
+        </nav>
     </header>
 
     <main>
-        <section class="starter-note" aria-labelledby="starter-title">
-            <h1 id="starter-title">Стартовая страница нулевого занятия</h1>
-            <p>Замените этот блок содержимым портфолио фотографа по заданию в README.</p>
+        <section class="hero">
+            <h1>Анна Аннушкина</h1>
+            <p>Фотограф, который сохраняет ваши истории</p>
+            <a href="#portfolio">Смотреть работы</a>
         </section>
 
-        <!-- TODO: добавьте раздел с информацией о фотографе -->
+        <section id="about" class="about">
+            <h2>Обо мне</h2>
 
-        <!-- TODO: добавьте галерею из локальных изображений -->
+            <img
+                src="images/about.jpeg"
+                alt="Фотограф Анна Аннушкина"
+            >
 
-        <!-- TODO: добавьте контактную информацию -->
+            <div>
+                <p>
+                    Привет! Меня зовут Анна, я фотограф.
+                    Помогаю сохранить важные моменты жизни в тёплых и естественных фотографиях.
+                </p>
+
+                <p>
+                    Снимаю портреты, свадьбы и истории на природе.
+                    Для меня важно, чтобы во время съёмки вы чувствовали себя комфортно и оставались собой.
+                </p>
+            </div>
+        </section>
+
+        <section id="portfolio" class="portfolio">
+            <h2>Портфолио</h2>
+
+            <div class="filters">
+                <button class="filter-button active" data-filter="all">
+                    Все
+                </button>
+
+                <button class="filter-button" data-filter="portrait">
+                    Портреты
+                </button>
+
+                <button class="filter-button" data-filter="wedding">
+                    Свадьбы
+                </button>
+
+                <button class="filter-button" data-filter="nature">
+                    Природа
+                </button>
+            </div>
+
+            <div class="gallery">
+                <img
+                    src="images/portrait_1.jpg"
+                    alt="Портретная фотосессия"
+                    data-category="portrait"
+                >
+
+                <img
+                    src="images/portrait_2.jpg"
+                    alt="Портретная фотосессия"
+                    data-category="portrait"
+                >
+
+                <img
+                    src="images/wedding_1.jpg"
+                    alt="Свадебная фотосессия"
+                    data-category="wedding"
+                >
+
+                <img
+                    src="images/wedding_2.jpg"
+                    alt="Свадебная фотосессия"
+                    data-category="wedding"
+                >
+
+                <img
+                    src="images/nature_1.jpg"
+                    alt="Фотосессия на природе"
+                    data-category="nature"
+                >
+
+                <img
+                    src="images/nature_2.jpg"
+                    alt="Фотосессия на природе"
+                    data-category="nature"
+                >
+            </div>
+        </section>
+
+        <section id="contacts" class="contacts">
+            <h2>Контакты</h2>
+
+            <p>
+                Хотите записаться на съёмку?
+                Свяжитесь со мной удобным способом.
+            </p>
+
+            <p>
+                Телефон:
+                <a href="tel:+79991234567">
+                    +7 (999) 123-45-67
+                </a>
+            </p>
+
+            <p>
+                Email:
+                <a href="mailto:anna@example.com">
+                    anna@example.com
+                </a>
+            </p>
+        </section>
     </main>
 
     <footer>
-        <!-- TODO: добавьте подвал страницы -->
+        <p>&copy; 2026 Анна Аннушкина. Все права защищены.</p>
     </footer>
 
     <script src="js/script.js" defer></script>

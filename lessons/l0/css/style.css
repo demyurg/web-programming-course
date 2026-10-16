@@ -18,50 +18,404 @@ html {
 
 body {
     min-height: 100vh;
-    padding: 24px;
     background: #f7f4ef;
     overflow-x: hidden;
-}
-
-h1,
-h2,
-h3 {
-    line-height: 1.2;
 }
 
 img {
     display: block;
     max-width: 100%;
-    height: auto;
 }
 
-a,
-button {
+a {
+    color: inherit;
+}
+
+button,
+a {
     font: inherit;
 }
 
+button {
+    cursor: pointer;
+}
+
+.container {
+    width: min(1200px, calc(100% - 48px));
+    margin: 0 auto;
+}
+
+.section {
+    padding: 100px 0;
+}
+
+h1,
+h2 {
+    line-height: 1.1;
+}
+
+h2 {
+    margin-bottom: 40px;
+    font-size: 42px;
+}
+
+/* Header */
+
+.header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+
+    background: rgba(247, 244, 239, 0.95);
+    border-bottom: 1px solid #ddd5cb;
+}
+
+.header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    min-height: 72px;
+}
+
+.logo {
+    font-size: 20px;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.nav {
+    display: flex;
+    gap: 28px;
+}
+
+.nav a {
+    text-decoration: none;
+    transition: opacity 0.2s;
+}
+
+.nav a:hover {
+    opacity: 0.6;
+}
+
+/* Hero */
+
+.hero {
+    min-height: 80vh;
+
+    display: flex;
+    align-items: center;
+
+    background:
+        linear-gradient(
+            rgba(32, 33, 36, 0.35),
+            rgba(32, 33, 36, 0.35)
+        ),
+        url("../images/nature_1.jpg") center / cover no-repeat;
+
+    color: white;
+}
+
+.hero-inner {
+    max-width: 1200px;
+}
+
+.hero-label {
+    margin-bottom: 12px;
+
+    font-size: 18px;
+    text-transform: uppercase;
+    letter-spacing: 4px;
+}
+
+.hero h1 {
+    max-width: 850px;
+    margin-bottom: 24px;
+
+    font-size: clamp(52px, 8vw, 100px);
+}
+
+.hero-text {
+    max-width: 620px;
+    margin-bottom: 36px;
+
+    font-size: 22px;
+}
+
+.button {
+    display: inline-block;
+
+    padding: 14px 28px;
+
+    background: white;
+    color: #202124;
+
+    border-radius: 999px;
+
+    font-weight: 700;
+    text-decoration: none;
+
+    transition:
+        transform 0.2s,
+        opacity 0.2s;
+}
+
+.button:hover {
+    transform: translateY(-2px);
+    opacity: 0.9;
+}
+
+/* About */
+
+.about-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 64px;
+    align-items: center;
+}
+
+.about-image img {
+    width: 100%;
+    height: 600px;
+
+    object-fit: cover;
+
+    border-radius: 16px;
+}
+
+.about-text {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+
+    font-size: 20px;
+}
+
+/* Portfolio */
+
+.portfolio {
+    background: #eee9e2;
+}
+
+.section-heading {
+    display: flex;
+    justify-content: space-between;
+    gap: 40px;
+    align-items: flex-end;
+
+    margin-bottom: 32px;
+}
+
+.section-heading h2 {
+    margin-bottom: 0;
+}
+
+.section-heading p {
+    max-width: 480px;
+    color: #6d665e;
+}
+
+.filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+
+    margin-bottom: 32px;
+}
+
+.filter-button {
+    padding: 10px 20px;
+
+    border: 1px solid #9f9488;
+    border-radius: 999px;
+
+    background: transparent;
+    color: #202124;
+
+    transition:
+        background 0.2s,
+        color 0.2s;
+}
+
+.filter-button:hover,
+.filter-button.active {
+    background: #202124;
+    color: white;
+}
+
+.gallery {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+.gallery img {
+    width: 100%;
+    height: 420px;
+
+    object-fit: cover;
+
+    border-radius: 12px;
+
+    transition:
+        transform 0.25s,
+        opacity 0.25s;
+}
+
+.gallery img:hover {
+    transform: scale(1.02);
+}
+
+.gallery img.hidden {
+    display: none;
+}
+
+/* Contacts */
+
+.contacts {
+    background: #202124;
+    color: white;
+}
+
+.contacts-inner {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: 80px;
+}
+
+.contacts-label {
+    margin-bottom: 12px;
+
+    text-transform: uppercase;
+    letter-spacing: 3px;
+
+    color: #c9c1b8;
+}
+
+.contacts h2 {
+    max-width: 650px;
+}
+
+.contacts-text {
+    max-width: 580px;
+
+    font-size: 19px;
+    color: #d7d1ca;
+}
+
+.contact-list {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+
+    justify-content: center;
+}
+
+.contact-list p {
+    display: flex;
+    flex-direction: column;
+}
+
+.contact-list span {
+    color: #aaa29a;
+}
+
+.contact-list a {
+    font-size: 22px;
+}
+
+/* Footer */
+
+.footer {
+    padding: 28px 0;
+
+    background: #171719;
+    color: #aaa29a;
+
+    text-align: center;
+}
+
+/* Focus */
+
 :focus-visible {
     outline: 3px solid #8b5e3c;
-    outline-offset: 3px;
+    outline-offset: 4px;
 }
 
-.starter-note {
-    max-width: 720px;
-    margin: 10vh auto;
-    padding: 32px;
-    border: 1px dashed #b9a28e;
-    border-radius: 16px;
-    background: #fffdf9;
-    text-align: center;
+/* Tablet */
+
+@media (max-width: 900px) {
+    .section {
+        padding: 72px 0;
+    }
+
+    .about-content {
+        grid-template-columns: 1fr;
+    }
+
+    .about-image img {
+        height: 500px;
+    }
+
+    .gallery {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .contacts-inner {
+        grid-template-columns: 1fr;
+    }
 }
 
-.starter-note h1 {
-    margin-bottom: 12px;
-}
+/* Mobile */
 
-footer {
-    max-width: 720px;
-    margin: 0 auto;
-    color: #6d665e;
-    text-align: center;
+@media (max-width: 600px) {
+    .container {
+        width: min(100% - 32px, 1200px);
+    }
+
+    .header-inner {
+        flex-direction: column;
+        justify-content: center;
+        gap: 8px;
+
+        padding: 12px 0;
+    }
+
+    .nav {
+        gap: 14px;
+        font-size: 14px;
+    }
+
+    .hero {
+        min-height: 70vh;
+    }
+
+    .hero h1 {
+        font-size: 48px;
+    }
+
+    .hero-text {
+        font-size: 18px;
+    }
+
+    h2 {
+        font-size: 34px;
+    }
+
+    .about-image img {
+        height: 400px;
+    }
+
+    .section-heading {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .gallery {
+        grid-template-columns: 1fr;
+    }
+
+    .gallery img {
+        height: 460px;
+    }
 }
