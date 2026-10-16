@@ -7,27 +7,106 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <header>
-        <!-- TODO: добавьте навигацию по разделам страницы -->
+    <header class="header">
+        <a class="logo" href="#top">Анна Аннушкина</a>
+
+        <nav class="nav">
+            <div class="nav-list">
+                <a class="nav-link" href="#about">Обо мне</a>
+                <a class="nav-link" href="#gallery">Галерея</a>
+                <a class="nav-link" href="#contacts">Контакты</a>
+            </div>
+        </nav>
     </header>
 
-    <main>
-        <section class="starter-note" aria-labelledby="starter-title">
-            <h1 id="starter-title">Стартовая страница нулевого занятия</h1>
-            <p>Замените этот блок содержимым портфолио фотографа по заданию в README.</p>
+    <main id="top">
+        <section class="hero">
+            <h1>Фотограф Анна Аннушкина</h1>
+            <p class="hero-text">
+                Портретная и свадебная съёмка, а также съёмка природы.
+                Помогаю сохранить важные моменты в спокойных и естественных кадрах.
+            </p>
+            <a class="button" href="#gallery">Смотреть работы</a>
         </section>
 
-        <!-- TODO: добавьте раздел с информацией о фотографе -->
+        <section class="section" id="about">
+            <h2>Обо мне</h2>
 
-        <!-- TODO: добавьте галерею из локальных изображений -->
+            <div class="about">
+                <img
+                    class="about-photo"
+                    src="images/about.jpeg"
+                    alt="Фотограф Анна Аннушкина с камерой в руках"
+                    width="600"
+                    height="600"
+                >
 
-        <!-- TODO: добавьте контактную информацию -->
+                <div class="about-text">
+                    <p>
+                        Меня зовут Анна, я фотограф. Фотографией занимаюсь пять лет:
+                        начинала с прогулок по городу, а сейчас снимаю портреты, свадьбы
+                        и пейзажи.
+                    </p>
+                    <p>
+                        На съёмке мне важно, чтобы человек чувствовал себя спокойно.
+                        Поэтому я не прошу специально позировать, а подсказываю, как
+                        встать и куда смотреть, и ловлю живые моменты.
+                    </p>
+                    <ul class="about-list">
+                        <li>Портретная съёмка</li>
+                        <li>Свадебная съёмка</li>
+                        <li>Съёмка природы</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section class="section" id="gallery">
+            <h2>Галерея</h2>
+
+            <div class="gallery">
+                    <img src="images/portrait_1.jpg" alt="Портрет девушки на светлом фоне" width="800" height="600">
+                    <img src="images/portrait_2.jpg" alt="Портрет мужчины в парке" width="800" height="600">
+                    <img src="images/wedding_1.jpg" alt="Молодожёны во время свадебной прогулки" width="800" height="600">
+                    <img src="images/wedding_2.jpg" alt="Свадебный букет невесты в руках" width="800" height="600">
+                    <img src="images/nature_1.jpg" alt="Туман над рекой ранним утром" width="800" height="600">
+                    <img src="images/nature_2.jpg" alt="Горное озеро и лес" width="800" height="600">
+            </div>
+        </section>
+
+        <section class="section" id="contacts">
+            <h2>Контакты</h2>
+
+            <div class="contacts">
+                <ul class="contacts-list">
+                    <li><span class="contacts-label">Телефон:</span> <a href="tel:+79990000000">+7 999 000-00-00</a></li>
+                    <li><span class="contacts-label">Почта:</span> <a href="mailto:anna@example.com">anna@example.com</a></li>
+                    <li><span class="contacts-label">Город:</span> Москва, выезд на съёмку по городу и области</li>
+                </ul>
+
+                <form class="form" id="contact-form">
+                    <p class="form-title">Напишите мне</p>
+
+                    <label class="form-label" for="name">Ваше имя</label>
+                    <input class="form-input" type="text" id="name" name="name" placeholder="Например, Анна">
+
+                    <label class="form-label" for="email">Email</label>
+                    <input class="form-input" type="email" id="email" name="email" placeholder="you@example.com">
+
+                    <label class="form-label" for="message">Сообщение</label>
+                    <input class="form-input" type="text" id="message" name="message" placeholder="Какая съёмка нужна и на какую дату">
+
+                    <button class="form-button" type="submit">Отправить</button>
+
+                    <p class="form-message" id="form-message" hidden></p>
+                </form>
+            </div>
+        </section>
     </main>
 
-    <footer>
-        <!-- TODO: добавьте подвал страницы -->
+    <footer class="footer">
+        <p>Анна Аннушкина — фотограф, <span id="current-year">2026</span></p>
     </footer>
 
-    <script src="js/script.js" defer></script>
 </body>
 </html>
