@@ -1,32 +1,27 @@
-/* Базовые стили стартового проекта. Основную стилизацию добавляет студент. */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
 :root {
-    color: #202124;
-    background: #f7f4ef;
-    font-family: Arial, sans-serif;
-    line-height: 1.6;
+    --bg-color: #f0f7ff;
+    --text-color: #2d3748;
+    --header-bg: #2c3e50;
+    --footer-bg: #2c3e50;
+    --card-bg: #ffffff;
+    --accent-color: #4ecdc4;
 }
 
 html {
     scroll-behavior: smooth;
 }
 
-body {
-    min-height: 100vh;
-    padding: 24px;
-    background: #f7f4ef;
-    overflow-x: hidden;
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
 
-h1,
-h2,
-h3 {
-    line-height: 1.2;
+body {
+    font-family: Arial, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    line-height: 1.6;
 }
 
 img {
@@ -35,33 +30,177 @@ img {
     height: auto;
 }
 
-a,
-button {
-    font: inherit;
+header {
+    background-color: var(--header-bg);
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
 }
 
-:focus-visible {
-    outline: 3px solid #8b5e3c;
-    outline-offset: 3px;
+.logo {
+    color: #ffffff;
+    font-size: 1.2rem;
+    font-weight: bold;
 }
 
-.starter-note {
-    max-width: 720px;
-    margin: 10vh auto;
-    padding: 32px;
-    border: 1px dashed #b9a28e;
-    border-radius: 16px;
-    background: #fffdf9;
+.menu-icon {
+    color: #ffffff;
+    font-size: 1.5rem;
+    cursor: pointer;
+    display: none;
+}
+
+#menu-toggle {
+    display: none;
+}
+
+nav {
+    display: flex;
+    gap: 20px;
+}
+
+nav a {
+    color: #ffffff;
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.3s ease;
+}
+
+nav a:hover {
+    color: var(--accent-color);
+}
+
+main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+h1, h2 {
+    margin-bottom: 15px;
     text-align: center;
 }
 
-.starter-note h1 {
-    margin-bottom: 12px;
+#about {
+    display: flex;
+    gap: 30px;
+    align-items: center;
+    margin-bottom: 40px;
+}
+
+#about img {
+    width: 300px;
+    border-radius: 8px;
+    flex-shrink: 0;
+}
+
+.about-text h1 {
+    text-align: left;
+}
+
+.about-text p {
+    text-align: left;
+    margin-bottom: 10px;
+}
+
+.stats {
+    margin-top: 15px;
+    background-color: #e8f0fe;
+    padding: 15px;
+    border-radius: 8px;
+}
+
+#gallery {
+    margin-bottom: 40px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+#gallery h2 {
+    grid-column: 1 / -1;
+}
+
+figure {
+    background-color: var(--card-bg);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+figure:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+}
+
+figure img {
+    width: 100%;
+    height: auto;
+}
+
+figcaption {
+    padding: 10px;
+    text-align: center;
+    font-size: 0.9em;
+}
+
+#contacts {
+    margin-top: 80px;
+    padding: 40px 0;
+    text-align: center;
+}
+
+.contact-info {
+    max-width: 600px;
+    margin: 0 auto;
+    font-size: 1.1em;
 }
 
 footer {
-    max-width: 720px;
-    margin: 0 auto;
-    color: #6d665e;
+    background-color: var(--footer-bg);
+    color: #ffffff;
     text-align: center;
+    padding: 20px;
+    margin-top: 40px;
+}
+
+@media (max-width: 1023px) {
+    #gallery {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 767px) {
+    .menu-icon {
+        display: block;
+    }
+    
+    nav {
+        display: none;
+        flex-direction: column;
+        width: 100%;
+        margin-top: 15px;
+        gap: 10px;
+    }
+    
+    #menu-toggle:checked + nav {
+        display: flex;
+    }
+
+    #about {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .about-text h1,
+    .about-text p {
+        text-align: center;
+    }
+
+    #gallery {
+        grid-template-columns: 1fr;
+    }
 }
