@@ -3,29 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Анна Аннушкина - Фотограф</title>
+    <title>Анна Аннушкина — Магия кадра</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
     <header>
-        <!-- TODO: добавьте навигацию по разделам страницы -->
+        <nav aria-label="Основная навигация">
+            <ul>
+                <li><a href="#about">О фотографе</a></li>
+                <li><a href="#gallery">Мои работы</a></li>
+                <li><a href="#contact">Связаться со мной</a></li>
+            </ul>
+        </nav>
     </header>
-
+                 
     <main>
-        <section class="starter-note" aria-labelledby="starter-title">
-            <h1 id="starter-title">Стартовая страница нулевого занятия</h1>
-            <p>Замените этот блок содержимым портфолио фотографа по заданию в README.</p>
+        <section id="about" aria-labelledby="about-title">
+            <h1 id="about-title">Анна Аннушкина</h1>
+            <p class="subtitle">Ловлю мгновения, создаю эмоции</p>
+            <p>Моя цель — не просто сделать снимок, а передать атмосферу момента и раскрыть характер героя. Специализируюсь на портретах, свадебных историях и пейзажной съёмке. Помогу сохранить ваши самые ценные воспоминания в выразительных кадрах.</p>
         </section>
 
-        <!-- TODO: добавьте раздел с информацией о фотографе -->
+        <section id="gallery" aria-labelledby="gallery-title">
+            <h2 id="gallery-title">Портфолио: мир в кадре</h2>
+            
+            <div class="gallery-category">
+                
+                <div class="image-grid">
+                    <img src="images/portrait_1.jpg" alt="Эмоциональный портрет 1" width="300">
+                    <img src="images/portrait_2.jpg" alt="Эмоциональный портрет 2" width="300">
+                </div>
+            </div>
+            
+            <div class="gallery-category">
+                
+                <div class="image-grid">
+                    <img src="images/wedding_1.jpg" alt="Свадебный кадр 1" width="300">
+                    <img src="images/wedding_2.jpg" alt="Свадебный кадр 2" width="300">
+                </div>
+            </div>
+            
+            <div class="gallery-category">
+               
+                <div class="image-grid">
+                    <img src="images/nature_1.jpg" alt="Пейзаж 1" width="300">
+                    <img src="images/nature_2.jpg" alt="Пейзаж 2" width="300">
+                </div>
+            </div>
+        </section>
 
-        <!-- TODO: добавьте галерею из локальных изображений -->
-
-        <!-- TODO: добавьте контактную информацию -->
+        <section id="contact" aria-labelledby="contact-title">
+            <h2 id="contact-title">Контакты и сотрудничество</h2>
+            <p>Телефон: +7 (999) 000-00-00</p>
+            <p>Email: anna.annushkina@example.com</p>
+            <p>Telegram: @anna_photo</p>
+            <p>Готова обсудить ваш проект и предложить идеи для съёмки!</p>
+        </section>
     </main>
 
     <footer>
-        <!-- TODO: добавьте подвал страницы -->
+        <p>&copy; 2026 Анна Аннушкина. Все права защищены.</p>
     </footer>
 
     <script src="js/script.js" defer></script>
