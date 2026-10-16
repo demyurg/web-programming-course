@@ -1,4 +1,3 @@
-/* Базовые стили стартового проекта. Основную стилизацию добавляет студент. */
 * {
     margin: 0;
     padding: 0;
@@ -9,7 +8,7 @@
     color: #202124;
     background: #f7f4ef;
     font-family: Arial, sans-serif;
-    line-height: 1.6;
+    line-height: 1.1;
 }
 
 html {
@@ -19,39 +18,71 @@ html {
 body {
     min-height: 100vh;
     padding: 24px;
-    background: #f7f4ef;
-    overflow-x: hidden;
+    background: #f2f4f9;
 }
 
 h1,
 h2,
 h3 {
     line-height: 1.2;
+    font-family: Open Sans, 28px, SemiBold, 1.3 line-height;
+}
+
+.p-format{
+    text-align: left;
+    padding-left: 10px;
+    font-size: 24px;
 }
 
 img {
     display: block;
     max-width: 100%;
-    height: auto;
+    height: auto;  
+    border-radius: 12px;
+}
+
+img:hover{
+    cursor: pointer;
 }
 
 a,
 button {
     font: inherit;
+    margin: 5px;
+    cursor: pointer;
 }
 
 :focus-visible {
-    outline: 3px solid #8b5e3c;
+    outline: 3px solid #435f7f;
     outline-offset: 3px;
+}
+
+nav{
+    position: fixed;
+    margin: 10px;
+    top: 0;
+    left: 0;
+    background: #5d6d7e;
+    right: 0;
+    align-items: center;
+    border-radius: 12px;
+}
+
+input{
+    border: 1px solid rgb(0, 0, 0);
+}
+
+input:focus{
+     outline: none;
 }
 
 .starter-note {
     max-width: 720px;
     margin: 10vh auto;
     padding: 32px;
-    border: 1px dashed #b9a28e;
-    border-radius: 16px;
-    background: #fffdf9;
+
+    border-radius: 12px;
+    background: #cad2e48f;
     text-align: center;
 }
 
@@ -59,9 +90,87 @@ button {
     margin-bottom: 12px;
 }
 
+.menu{
+    display: flex;
+    gap: 5px;
+    justify-content: center;
+    flex-wrap: wrap;
+
+}
+
+.button-ostalnie{
+    display: flex;
+    padding: 5px;
+    background-color: rgba(123, 147, 241, 0.689);
+    border: none;
+    border-radius: 5px;
+    margin: 10px;
+    font-size: 15px; 
+    justify-content: center;
+}
+
+.img-text{
+    display:flex;
+}
+
+@media(max-width:400px){
+    .img-text{
+        flex-direction: column;
+    }
+}
+
+.ssilka{
+    text-decoration: none;
+    color: #ffffff;
+    padding: 10px;
+}
+
+.galereya-div{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.img-galereya{
+    object-fit: cover;
+    width: 100%;
+    height: 280px;   
+}
+
+.photo{
+    border-radius: 12px;
+    background-color: #edeff5;
+    margin: 10px;
+}
+p {
+    text-align: left; 
+    font-size: 18px;
+    font-family:Open Sans;
+    padding: 5px;
+}
+
+.p-for-galereya{
+    text-align: center; 
+    font-size: 22px;
+}
+
+.forma{
+    max-width: 700px;
+    border: 1px solid;
+}
+
+
+.footer-but{
+    background-color: transparent;
+    border: none;
+    
+}
+
 footer {
-    max-width: 720px;
-    margin: 0 auto;
-    color: #6d665e;
+    height: 15%;
+    color: #ffffff;
+    background-color: #5d6d7e;
     text-align: center;
+    padding: 15px;
+    
 }
