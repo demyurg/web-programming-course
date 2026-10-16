@@ -7,27 +7,92 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <header>
-        <!-- TODO: добавьте навигацию по разделам страницы -->
+    <header class="site-header">
+        <div class="header-inner">
+            <p class="logo">Анна Аннушкина</p>
+            <nav class="main-nav" aria-label="Основная навигация">
+                <ul>
+                    <li><a href="#about">Обо мне</a></li>
+                    <li><a href="#services">Услуги</a></li>
+                    <li><a href="#gallery">Галерея</a></li>
+                    <li><a href="#contact">Контакты</a></li>
+                </ul>
+            </nav>
+        </div>
     </header>
 
     <main>
-        <section class="starter-note" aria-labelledby="starter-title">
-            <h1 id="starter-title">Стартовая страница нулевого занятия</h1>
-            <p>Замените этот блок содержимым портфолио фотографа по заданию в README.</p>
+        <section class="hero" id="hero">
+            <h1>Анна Аннушкина</h1>
+            <p class="tagline">Фотограф. Портреты, свадьбы и природа — с вниманием к деталям и свету.</p>
         </section>
 
-        <!-- TODO: добавьте раздел с информацией о фотографе -->
+        <section class="about" id="about" aria-labelledby="about-title">
+            <figure class="about-photo">
+                <img src="images/about.jpeg" alt="Портрет фотографа Анны Аннушкиной">
+            </figure>
+            <div class="about-text">
+                <h2 id="about-title">Обо мне</h2>
+                <p>Меня зовут Анна, я профессиональный фотограф с многолетним опытом съёмки людей и природы. Люблю естественный свет, живые эмоции и истории, которые можно рассказать одним кадром.</p>
+                <p>Работаю как в студии, так и на выезде — от свадебной церемонии до прогулки в лесу на закате.</p>
+            </div>
+        </section>
 
-        <!-- TODO: добавьте галерею из локальных изображений -->
+        <section class="services" id="services" aria-labelledby="services-title">
+            <h2 id="services-title">Услуги</h2>
+            <ul class="services-list">
+                <li class="service-card">
+                    <h3>Портретная съёмка</h3>
+                    <p>Индивидуальные и семейные портреты в студии или на природе.</p>
+                </li>
+                <li class="service-card">
+                    <h3>Свадебная съёмка</h3>
+                    <p>Полное сопровождение свадебного дня — от сборов до банкета.</p>
+                </li>
+                <li class="service-card">
+                    <h3>Съёмка природы</h3>
+                    <p>Пейзажи и природные сюжеты для души и для выставок.</p>
+                </li>
+            </ul>
+        </section>
 
-        <!-- TODO: добавьте контактную информацию -->
+    <section class="gallery" id="gallery" aria-labelledby="gallery-title">
+            <h2 id="gallery-title">Галерея</h2>
+            <ul class="gallery-grid">
+                <li class="gallery-item">
+                    <img src="images/portrait_1.jpg" alt="Портретная фотография — работа 1">
+                </li>
+                <li class="gallery-item">
+                    <img src="images/portrait_2.jpg" alt="Портретная фотография — работа 2">
+                </li>
+                <li class="gallery-item">
+                    <img src="images/wedding_1.jpg" alt="Свадебная фотография — работа 1">
+                </li>
+                <li class="gallery-item">
+                    <img src="images/wedding_2.jpg" alt="Свадебная фотография — работа 2">
+                </li>
+                <li class="gallery-item">
+                    <img src="images/nature_1.jpg" alt="Фотография природы — работа 1">
+                </li>
+                <li class="gallery-item">
+                    <img src="images/nature_2.jpg" alt="Фотография природы — работа 2">
+                </li>
+            </ul>
+        </section>
+
+        <section class="contact" id="contact" aria-labelledby="contact-title">
+            <h2 id="contact-title">Контакты</h2>
+            <address>
+                <p>Email: <a href="mailto:anna.annushkina@example.com">anna.annushkina@example.com</a></p>
+                <p>Телефон: <a href="tel:+70000000000">+7 (000) 000-00-00</a></p>
+                <p>Instagram: <a href="#" target="_blank" rel="noopener">@anna.annushkina.photo</a></p>
+            </address>
+        </section>
     </main>
 
-    <footer>
-        <!-- TODO: добавьте подвал страницы -->
+    <footer class="site-footer">
+        <p>&copy; 2026 Анна Аннушкина. Все права защищены.</p>
     </footer>
-
-    <script src="js/script.js" defer></script>
+    
 </body>
 </html>
