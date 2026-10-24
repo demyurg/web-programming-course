@@ -6,7 +6,7 @@ import {
     findTaskById,
 } from "./domain.js";
 
-const mainSet: TrainingSet = {
+export const mainSet: TrainingSet = {
     id: "web-basics",
     title: "Основы веб-программирования",
     tasks: [
