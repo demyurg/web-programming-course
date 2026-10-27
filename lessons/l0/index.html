@@ -2,30 +2,69 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Анна Аннушкина - Фотограф</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Фотограф Анна Аннушкина</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <header>
-        <!-- TODO: добавьте навигацию по разделам страницы -->
-    </header>
 
+    <header>
+        <h1>Анна Аннушкина</h1>
+        <p>Начинающий фотограф с большой любовью к искусству</p>
+        <nav>
+            <a href="#about">Обо мне</a> &bull; 
+            <a href="#services">Услуги</a> &bull; 
+            <a href="#portfolio">Портфолио</a> &bull; 
+            <a href="#contacts">Контакты</a>
+        </nav>
+    </header>
+                 
     <main>
-        <section class="starter-note" aria-labelledby="starter-title">
-            <h1 id="starter-title">Стартовая страница нулевого занятия</h1>
-            <p>Замените этот блок содержимым портфолио фотографа по заданию в README.</p>
+        <section id="about">
+            <h2>Привет!</h2>
+            <p>Меня зовут <b>Анна Аннушкина</b>. Я только начинаю свой путь в фотографии, но уже сейчас стараюсь ловить самые искренние эмоции и красивые моменты. Люблю снимать портреты, свадьбы и просто красивые места. Буду рада стать частью вашей истории!</p>
         </section>
 
-        <!-- TODO: добавьте раздел с информацией о фотографе -->
+        <hr>
 
-        <!-- TODO: добавьте галерею из локальных изображений -->
+        <section id="services">
+            <h2>Что я снимаю</h2>
+            <ul>
+                <li> <b>Портреты:</b> индивидуальные и семейные фотосессии на улице или в студии.</li>
+                <li> <b>Свадьбы:</b> трогательные кадры вашего важного дня.</li>
+                <li> <b>Природа:</b> атмосферные пейзажи и детали для вдохновения.</li>
+            </ul>
+        </section>
 
-        <!-- TODO: добавьте контактную информацию -->
+        <hr>
+
+        <section id="portfolio">
+            <h2>Мои работы</h2>
+            
+            <div class="gallery">
+                <img src="images/portrait_1.jpg" alt="Портрет на улице">
+                <img src="images/wedding_1.jpg" alt="Свадебная прогулка">
+                <img src="images/nature_1.jpg" alt="Красивый закат">
+                <img src="images/portrait_2.jpg" alt="Студийная съемка">
+                <img src="images/wedding_2.jpg" alt="Детали свадьбы">
+                <img src="images/nature_2.jpg" alt="Утренний лес">
+            </div>
+        </section>
+
+        <hr>
+
+        <section id="contacts">
+            <h2>Свяжитесь со мной</h2>
+            <p>Буду очень рада ответить на ваши вопросы и обсудить будущую съемку!</p>
+            <p> Телефон: +7 (999) 123-45-67</p>
+            <p> Email: anna.annushkina.foto@example.com</p>
+            <p> Telegram: @anna_annushkina_2026</p>
+        </section>
     </main>
 
     <footer>
-        <!-- TODO: добавьте подвал страницы -->
+        <p>&copy; 2026 Анна Аннушкина. Все права защищены.</p>
+        <p><small>Сайт сделан в учебных целях</small></p>
     </footer>
 
     <script src="js/script.js" defer></script>
