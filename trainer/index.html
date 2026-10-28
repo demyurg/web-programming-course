@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Trainer</title>
+    <style>
+      body {
+        font: 16px/1.5 system-ui;
+        max-width: 980px;
+        margin: auto;
+        padding: 24px;
+        background: #f5f7fb;
+        color: #172033;
+      }
+      button {
+        font: inherit;
+        padding: 9px 10px;
+        max-width: 100%;
+      }
+      .list button[aria-current="true"] {
+        border-color: #244a7c;
+        background: #e8f0fb;
+      }
+      .layout {
+        display: grid;
+        grid-template-columns: minmax(180px, 0.7fr) 1.3fr;
+        gap: 16px;
+      }
+      .list {
+        display: grid;
+        gap: 8px;
+      }
+      .list button {
+        text-align: left;
+      }
+      pre {
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+      }
+      @media (max-width: 650px) {
+        .layout {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
