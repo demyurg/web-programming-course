@@ -1,0 +1,133 @@
+﻿* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Segoe UI";
+  line-height: 1.6;
+  color: #2b2724;
+  background: #f7f4ef;
+  padding: 16px;
+}
+
+h1 {
+  font-size: 1.5rem;
+  margin-bottom: 8px;
+}
+
+/* Сетка  */
+.task-layout {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 1fr;
+  margin-top: 16px;
+}
+
+/* Список заданий */
+.task-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Кнопки заданий */
+.task-list button {
+  width: 100%;
+  padding: 10px 14px;
+  background: #fffdf9;
+  border: 1px solid #e3dbd0;
+  border-radius: 10px;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.task-list button:hover {
+  border-color: #8b5e3c;
+}
+
+.task-list button[aria-pressed="true"] {
+  background: #8b5e3c;
+  color: #fff;
+  border-color: #8b5e3c;
+}
+
+/* Карточка задания */
+.task-card {
+  background: #fffdf9;
+  border: 1px solid #e3dbd0;
+  border-radius: 16px;
+  padding: 20px;
+}
+
+.task-card h3 {
+  font-size: 1.2rem;
+  margin-bottom: 8px;
+}
+
+.task-card p {
+  margin-bottom: 8px;
+}
+
+.task-card pre {
+  background: #f2ece4;
+  border-radius: 8px;
+  padding: 12px;
+  overflow-x: auto;
+  font-family: "Consolas", "Courier New", monospace;
+  font-size: 0.9rem;
+  margin-bottom: 12px;
+}
+
+.task-card ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.task-card li {
+  padding: 8px 12px;
+  background: #f7f4ef;
+  border-radius: 8px;
+}
+
+
+@media (min-width: 768px) {
+  .task-layout {
+    grid-template-columns: 240px minmax(0, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .task-layout {
+    grid-template-columns: 280px minmax(0, 1fr);
+  }
+}
+
+@media (min-width: 1280px) {
+  body {
+    padding: 24px;
+  }
+  .task-layout {
+    grid-template-columns: 320px minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 767px) {
+  .task-list {
+    flex-direction: row;
+    overflow-x: auto;
+    padding-bottom: 4px;
+  }
+
+  .task-list button {
+    width: auto;
+    white-space: nowrap;
+  }
+}
