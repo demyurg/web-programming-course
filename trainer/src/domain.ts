@@ -56,6 +56,22 @@ export interface ProgressResult {
   total: number;
 }
 
+export function isAnswerFilled(
+  answer: Answer | undefined
+): boolean {
+  if (!answer) return false;
+
+  if (answer.kind === "short-text") {
+    return answer.text.trim().length > 0;
+  }
+
+  if (answer.kind === "single-choice") {
+    return !!answer.optionId;
+  }
+
+  return false;
+}
+
 export function calculateProgress(set: TrainingSet, answers: readonly Answer[]): ProgressResult {
   const total = set.tasks.length;
   if (total === 0) {

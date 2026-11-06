@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { findTaskById, calculateProgress, Answer, Task, TrainingSet } from "./domain";
+import { findTaskById, calculateProgress, Answer, Task, TrainingSet, isAnswerFilled } from "./domain";
 //import { sampleSet1 } from "./demo";
 import { TaskList } from "./components/taskList";
 import { TaskCard } from "./components/taskCard";
@@ -7,20 +7,9 @@ import trainingData from "../../course/data/training-set.json"
 
 const sampleSet1 = trainingData as TrainingSet;
 
-function isAnswerFilled(answer: Answer | undefined): boolean {
-  if (!answer) return false;
-  if (answer.kind === "short-text") {
-    return answer.text.trim().length > 0;
-  }
-  if (answer.kind === "single-choice") {
-    return !!answer.optionId;
-  }
-  return false;
-}
-
 export default function App() {
   const [selectedTaskId, setSelectedTaskId] = useState<string | null>(
-    sampleSet1.tasks?.[0]?.id || null
+    sampleSet1.tasks?.[0]?.id ?? null
   );
 
   const [answers, setAnswers] = useState<readonly Answer[]>([]);
@@ -106,7 +95,6 @@ export default function App() {
             answers={answers}
             onSelect={setSelectedTaskId}
           />
-
 
           <div style={{ marginTop: "20px" }}>
             {!isSubmitted ? (

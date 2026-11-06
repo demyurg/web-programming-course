@@ -1,4 +1,4 @@
-import { Task, Answer } from "../domain";
+import { Task, Answer, isAnswerFilled } from "../domain";
 
 type TaskListProps = {
   tasks: readonly Task[];
@@ -7,20 +7,14 @@ type TaskListProps = {
   onSelect: (id: string) => void;
 };
 
-function isTaskFilled(taskId: string, answers: readonly Answer[]): boolean {
-  const ans = answers.find((a) => a.taskId === taskId);
-  if (!ans) return false;
-  if (ans.kind === "short-text") return ans.text.trim().length > 0;
-  if (ans.kind === "single-choice") return !!ans.optionId;
-  return false;
-}
 
 export function TaskList({ tasks, activeId, answers, onSelect }: TaskListProps) {
   return (
     <nav style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
       {tasks.map((task) => {
         const isCurrent = task.id === activeId;
-        const isFilled = isTaskFilled(task.id, answers);
+        const answer = answers.find(a => a.taskId === task.id);
+        const isFilled = isAnswerFilled(answer);
 
         return (
           <button
