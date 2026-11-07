@@ -4,7 +4,7 @@
 
 body {
     margin: 0;
-    padding: 24px;
+    padding: 0;
     font-family: Arial, sans-serif;
     line-height: 1.6;
     color: #202124;
@@ -12,22 +12,18 @@ body {
 }
 
 main {
-    max-width: 900px;
-    margin: 24px auto;
-    padding: 32px;
-    background: #fffdf9;
-    border: 1px solid #e4d9cc;
-    border-radius: 16px;
-    box-shadow: 0 4px 16px rgba(60, 45, 30, 0.08);
+    width: 100%;
+    min-height: 100vh;
+    padding: 24px;
 }
 
 h1 {
-    margin-top: 0;
+    margin: 0 0 16px;
     font-size: 30px;
 }
 
 h2 {
-    margin-top: 28px;
+    margin: 0 0 16px;
     font-size: 22px;
 }
 
@@ -97,17 +93,117 @@ section section {
     background: #ffffff;
 }
 
-@media (max-width: 600px) {
-    body {
-        padding: 10px;
-    }
+/*основная область*/
 
+.trainer-layout {
+    display: grid;
+    grid-template-columns: minmax(320px, 35%) minmax(0, 1fr);
+    gap: 24px;
+    margin-top: 24px;
+    align-items: start;
+}
+
+/*левая панель со списком заданий*/
+
+.trainer-sidebar {
+    min-width: 0;
+    padding: 24px;
+    background: #fffdf9;
+    border: 1px solid #e4d9cc;
+    border-radius: 12px;
+}
+
+.trainer-sidebar h2 {
+    margin: 0 0 20px;
+    font-size: 20px;
+}
+
+.trainer-sidebar ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.trainer-sidebar li {
+    margin-bottom: 10px;
+}
+
+.trainer-sidebar li:last-child {
+    margin-bottom: 0;
+}
+
+.trainer-sidebar li button {
+    display: block;
+    width: 100%;
+    margin: 0;
+    padding: 14px 16px;
+    text-align: left;
+    line-height: 1.5;
+    border-radius: 8px;
+}
+
+.trainer-sidebar li button.selected-task {
+    background: #70482c;
+    outline: 2px solid #b58a68;
+    outline-offset: 2px;
+}
+
+/*индикаторы выполнения заданий*/
+
+.task-status {
+    display: inline-block;
+    margin-right: 8px;
+    font-weight: bold;
+    color: #c9b9a8;
+}
+
+.task-status.answered {
+    color: #e8c98a;
+}
+
+/*правая область с выбранным заданием*/
+
+.trainer-content {
+    min-width: 0;
+    min-height: 400px;
+    padding: 32px;
+    background: #fffdf9;
+    border: 1px solid #e4d9cc;
+    border-radius: 12px;
+}
+
+.trainer-content > div:last-child {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 32px;
+}
+
+.trainer-content > div:last-child button {
+    margin: 0;
+}
+
+.trainer-content h2 {
+    margin: 0 0 20px;
+    font-size: 20px;
+}
+
+@media (max-width: 700px) {
     main {
-        margin: 8px auto;
-        padding: 20px;
+        padding: 16px;
     }
 
     h1 {
         font-size: 25px;
+    }
+
+    .trainer-layout {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    .trainer-sidebar,
+    .trainer-content {
+        padding: 16px;
     }
 }
