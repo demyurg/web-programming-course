@@ -4,9 +4,11 @@ import { isAnswerFilled } from "../domain";
 type TaskReviewProps = {
   tasks: Task[];
   answers: Answer[];
+  onClear?: (taskId: string) => void;
+  onSelectTask?: (taskId: string) => void;
 };
 
-export function TaskReview({ tasks, answers }: TaskReviewProps) {
+export function TaskReview({ tasks, answers, onClear, onSelectTask }: TaskReviewProps) {
   return (
     <div style={{ marginTop: 20 }}>
       <h3>Обзор ответов:</h3>
@@ -33,6 +35,28 @@ export function TaskReview({ tasks, answers }: TaskReviewProps) {
               </span>
               <br />
               <span>{answerText}</span>
+              
+              <div style={{ marginTop: 10, display: "flex", gap: 10 }}>
+                {onSelectTask && (
+                  <button 
+                    onClick={() => onSelectTask(task.id)}
+                    className="btn-secondary"
+                    style={{ padding: "4px 10px", fontSize: "0.85rem" }}
+                  >
+                    Перейти к заданию
+                  </button>
+                )}
+
+                {onClear && answer && (
+                  <button 
+                    onClick={() => onClear(task.id)}
+                    className="btn-secondary"
+                    style={{ padding: "4px 10px", fontSize: "0.85rem" }}
+                  >
+                    Очистить
+                  </button>
+                )}
+              </div>
             </li>
           );
         })}

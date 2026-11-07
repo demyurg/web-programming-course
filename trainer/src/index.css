@@ -1,5 +1,5 @@
 :root {
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-family: system-ui, "Segoe UI", Roboto, sans-serif;
   line-height: 1.5;
   color: #172033;
   background-color: #f5f7fb;
@@ -64,7 +64,6 @@ progress::-moz-progress-bar {
   border-radius: 5px;
 }
 
-/* Список заданий */
 .task-list {
   display: flex;
   flex-wrap: wrap;

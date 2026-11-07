@@ -1,6 +1,7 @@
-import { useState } from "react";
-import type { Answer, TrainingSet } from "./domain";
-import { findTaskById, calculateProgress, isAnswerFilled } from "./domain";
+import { useReducer, useState } from "react";
+import type { TrainingSet } from "./domain";
+import { findTaskById, calculateProgress } from "./domain";
+import { attemptReducer, getUnansweredTasks } from "./attempt";
 import { TaskList } from "./components/TaskList";
 import { TaskCard } from "./components/TaskCard";
 import { TaskReview } from "./components/TaskReview";
@@ -49,27 +50,17 @@ const moduleSet: TrainingSet = {
 };
 
 export default function App() {
-  const [answers, setAnswers] = useState<Answer[]>([]);
+  const [attempt, dispatch] = useReducer(attemptReducer, {
+    status: "in-progress",
+    answers: [],
+  });
+  
   const [selectedId, setSelectedId] = useState<string>(moduleSet.tasks[0]?.id ?? "");
-  const [status, setStatus] = useState<"in-progress" | "submitted">("in-progress");
+  const [showReview, setShowReview] = useState(false);
 
   const currentTask = findTaskById(moduleSet.tasks, selectedId);
-  const progress = calculateProgress(moduleSet, answers);
-
-  const unansweredTasks = moduleSet.tasks.filter((task) => {
-    const answer = answers.find((a) => a.taskId === task.id);
-    return !answer || !isAnswerFilled(answer, task);
-  });
-
-  const handleAnswerChange = (newAnswer: Answer) => {
-    setAnswers((prev) => {
-      const exists = prev.some((a) => a.taskId === newAnswer.taskId);
-      if (exists) {
-        return prev.map((a) => (a.taskId === newAnswer.taskId ? newAnswer : a));
-      }
-      return [...prev, newAnswer];
-    });
-  };
+  const progress = calculateProgress(moduleSet, attempt.answers);
+  const unansweredTasks = getUnansweredTasks(moduleSet.tasks, attempt.answers);
 
   const currentIndex = moduleSet.tasks.findIndex((t) => t.id === selectedId);
   
@@ -88,28 +79,54 @@ export default function App() {
       );
       if (!confirmed) return;
     }
-    setStatus("submitted");
+    dispatch({ type: "SUBMIT" });
+    setShowReview(false);
   };
 
   const handleRestart = () => {
-    setAnswers([]);
+    dispatch({ type: "RESTART" });
     setSelectedId(moduleSet.tasks[0]?.id ?? "");
-    setStatus("in-progress");
+    setShowReview(false);
   };
 
-  if (status === "submitted") {
+  if (attempt.status === "submitted") {
     return (
       <main>
         <h1>{moduleSet.title}</h1>
         <h2>Попытка завершена</h2>
-        <TaskReview tasks={moduleSet.tasks} answers={answers} />
-        <button 
-          onClick={handleRestart} 
-          className="btn-primary" 
-          style={{ marginTop: 20 }}
-        >
+        <TaskReview 
+          tasks={moduleSet.tasks} 
+          answers={attempt.answers} 
+        />
+        <button onClick={handleRestart} className="btn-primary" style={{ marginTop: 20 }}>
           Начать новую попытку
         </button>
+      </main>
+    );
+  }
+
+  if (showReview) {
+    return (
+      <main>
+        <h1>{moduleSet.title}</h1>
+        <h2>Обзор ответов (до завершения)</h2>
+        <TaskReview 
+          tasks={moduleSet.tasks} 
+          answers={attempt.answers} 
+          onClear={(taskId) => dispatch({ type: "CLEAR_ANSWER", taskId })}
+          onSelectTask={(taskId) => {
+            setSelectedId(taskId);
+            setShowReview(false);
+          }}
+        />
+        <div style={{ marginTop: 20, display: "flex", gap: 10 }}>
+          <button onClick={() => setShowReview(false)} className="btn-secondary">
+            Вернуться к заданиям
+          </button>
+          <button onClick={handleFinish} className="btn-success">
+            Завершить
+          </button>
+        </div>
       </main>
     );
   }
@@ -128,15 +145,15 @@ export default function App() {
       <TaskList
         tasks={moduleSet.tasks}
         selectedId={selectedId}
-        answers={answers}
+        answers={attempt.answers}
         onSelect={setSelectedId}
       />
 
       {currentTask ? (
         <TaskCard
           task={currentTask}
-          answer={answers.find((a) => a.taskId === currentTask.id)}
-          onChange={handleAnswerChange}
+          answer={attempt.answers.find((a) => a.taskId === currentTask.id)}
+          onChange={(answer) => dispatch({ type: "CHANGE_ANSWER", answer })}
         />
       ) : (
         <p>Задание не найдено.</p>
@@ -149,6 +166,19 @@ export default function App() {
         <button onClick={handleNext} disabled={currentIndex === moduleSet.tasks.length - 1} className="btn-secondary">
           Далее
         </button>
+        
+        <button 
+          onClick={() => dispatch({ type: "CLEAR_ANSWER", taskId: selectedId })} 
+          className="btn-secondary"
+          style={{ marginLeft: 'auto' }}
+        >
+          Очистить
+        </button>
+
+        <button onClick={() => setShowReview(true)} className="btn-secondary">
+          Обзор
+        </button>
+
         <button onClick={handleFinish} className="btn-success">
           Завершить
         </button>
