@@ -40,8 +40,6 @@ export type ShortTextAnswer = {
     text: string;
 };
 
-export type Answer = SingleChoiceAnswer | ShortTextAnswer;
-
 export type Progress = {
     filled: number;
     total: number;
@@ -85,4 +83,30 @@ export function calculateProgress(
         filled,
         total: tasks.length,
     };
+}
+
+export type Answer =
+  | { taskId: string; kind: "single-choice"; optionId: string }
+  | { taskId: string; kind: "short-text"; text: string };
+
+
+export function updateAnswer(answers: Answer[], newAnswer: Answer): Answer[] {
+  const others = answers.filter((a) => a.taskId !== newAnswer.taskId);
+  
+  if (newAnswer.kind === "short-text" && newAnswer.text.trim() === "") {
+    return others;
+  }
+  
+  return [...others, newAnswer];
+}
+
+export function getUnansweredTaskIds(tasks: Task[], answers: Answer[]): string[] {
+  return tasks
+    .filter((task) => {
+      const answer = answers.find((a) => a.taskId === task.id);
+      if (!answer) return true;
+      if (answer.kind === "short-text" && answer.text.trim() === "") return true; 
+      return false;
+    })
+    .map((t) => t.id);
 }
