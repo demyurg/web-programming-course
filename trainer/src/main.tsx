@@ -1,0 +1,7 @@
+import "./index.css";
+import { createRoot } from "react-dom/client";
+import App from "./App";
+
+const root = document.getElementById("root");
+if (!root) throw new Error("Отсутствует элемент root");
+createRoot(root).render(<App />);
