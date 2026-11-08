@@ -42,6 +42,11 @@ export type ShortTextAnswer = {
 
 export type Answer = SingleChoiceAnswer | ShortTextAnswer;
 
+export type Attempt = {
+  answers: Answer[];
+  submitted: boolean;
+};
+
 export function findTaskById(
   trainingSet: TrainingSet,
   taskId: string
@@ -82,5 +87,50 @@ export function calculateProgress(
   return {
     completed,
     total: trainingSet.tasks.length
+  };
+}
+
+export function updateAnswer(attempt: Attempt, newAnswer: Answer): Attempt {
+  if (attempt.submitted) {
+    return attempt;
+  }
+
+  const existingAnswer = attempt.answers.some(
+    (answer) => answer.taskId === newAnswer.taskId
+  );
+
+  const answers = existingAnswer
+    ? attempt.answers.map((answer) =>
+        answer.taskId === newAnswer.taskId ? newAnswer : answer
+      )
+    : [...attempt.answers, newAnswer];
+
+  return {
+    ...attempt,
+    answers
+  };
+}
+
+export function clearAnswer(attempt: Attempt, taskId: string): Attempt {
+  if (attempt.submitted) {
+    return attempt;
+  }
+
+  return {
+    ...attempt,
+    answers: attempt.answers.filter(
+      (answer) => answer.taskId !== taskId
+    )
+  };
+}
+
+export function submitAttempt(attempt: Attempt): Attempt {
+  if (attempt.submitted) {
+    return attempt;
+  }
+
+  return {
+    ...attempt,
+    submitted: true
   };
 }

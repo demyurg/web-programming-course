@@ -5,8 +5,8 @@ import TaskList from "./TaskList";
 
 import { useState } from "react";
 
-import type { Answer } from "./domain";
-import { calculateProgress, findTaskById } from "./domain";
+import type { Attempt } from "./domain";
+import { calculateProgress, findTaskById, updateAnswer, clearAnswer, submitAttempt } from "./domain";
 import { trainingSet } from "./trainingData";
 
 export default function App() {
@@ -14,9 +14,15 @@ export default function App() {
         trainingSet.tasks[0]?.id ?? null
     );
 
-    const [answers, setAnswers] = useState<Answer[]>([]);
+    const [attempt, setAttempt] = useState<Attempt>({
+        answers: [],
+        submitted: false
+    });
 
-    const [submitted, setSubmitted] = useState(false);
+    const [showReview, setShowReview] = useState(false);
+
+    const answers = attempt.answers;
+    const submitted = attempt.submitted;
 
     const progress = calculateProgress(trainingSet, answers);
 
@@ -73,9 +79,12 @@ export default function App() {
                     <button
                         type="button"
                         onClick={() => {
-                            setAnswers([]);
-                            setSubmitted(false);
+                            setAttempt({
+                                answers: [],
+                                submitted: false
+                            });
                             setSelectedTaskId(trainingSet.tasks[0]?.id ?? null);
+                            setShowReview(false);
                         }}
                     >
                         Начать новую попытку
@@ -113,19 +122,14 @@ export default function App() {
                                         disabled={submitted}
                                         answer={answers.find((answer) => answer.taskId === selectedTask.id)}
                                         onAnswerChange={(newAnswer) => {
-                                            setAnswers((previousAnswers) => {
-                                                const existingAnswer = previousAnswers.find(
-                                                    (answer) => answer.taskId === newAnswer.taskId
-                                                );
-
-                                                if (existingAnswer) {
-                                                    return previousAnswers.map((answer) =>
-                                                        answer.taskId === newAnswer.taskId ? newAnswer : answer
-                                                    );
-                                                }
-
-                                                return [...previousAnswers, newAnswer];
-                                            });
+                                            setAttempt((previousAttempt) =>
+                                                updateAnswer(previousAttempt, newAnswer)
+                                            );
+                                        }}
+                                        onClearAnswer={(taskId) => {
+                                            setAttempt((previousAttempt) =>
+                                                clearAnswer(previousAttempt, taskId)
+                                            );
                                         }}
                                     />
                                     <div>
@@ -158,6 +162,13 @@ export default function App() {
 
                                     <button
                                         type="button"
+                                        onClick={() => setShowReview(!showReview)}
+                                    >
+                                        {showReview ? "Скрыть обзор" : "Обзор ответов"}
+                                    </button>
+
+                                    <button
+                                        type="button"
                                         onClick={() => {
                                             if (progress.completed < progress.total) {
                                                 const confirmed = window.confirm(
@@ -167,7 +178,7 @@ export default function App() {
                                                 if (!confirmed) return;
                                             }
 
-                                            setSubmitted(true);
+                                            setAttempt((previousAttempt) => submitAttempt(previousAttempt));
                                         }}
                                     >
                                         Завершить попытку
@@ -180,6 +191,50 @@ export default function App() {
                                 <p>В наборе нет заданий.</p>
                             ) : (
                                 <p>Задание не найдено. Выберите другое из списка.</p>
+                            )}
+                            {showReview && (
+                                <section className="answers-review">
+                                    <h2>Обзор ответов</h2>
+
+                                    {trainingSet.tasks.map((task) => {
+                                        const answer = answers.find(
+                                            (answer) => answer.taskId === task.id
+                                        );
+
+                                        return (
+                                            <div key={task.id}>
+                                                <h3>{task.prompt}</h3>
+
+                                                <p>
+                                                    Ответ:{" "}
+                                                    {task.kind === "single-choice"
+                                                        ? answer?.kind === "single-choice"
+                                                            ? task.options.find(
+                                                                (option) => option.id === answer.optionId
+                                                            )?.label ?? "Нет ответа"
+                                                            : "Нет ответа"
+                                                        : answer?.kind === "short-text" &&
+                                                            answer.text.trim().length > 0
+                                                            ? answer.text
+                                                            : "Нет ответа"}
+                                                </p>
+
+                                                {answer && (
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => {
+                                                            setAttempt((previousAttempt) =>
+                                                                clearAnswer(previousAttempt, task.id)
+                                                            );
+                                                        }}
+                                                    >
+                                                        Очистить ответ
+                                                    </button>
+                                                )}
+                                            </div>
+                                        );
+                                    })}
+                                </section>
                             )}
                         </div>
                     </div>
