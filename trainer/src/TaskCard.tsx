@@ -1,10 +1,13 @@
-import type { Task } from "./domain";
+import type { Task, Answer } from "./domain";
 
 type TaskCardProps = {
   task: Task | undefined;
+  answer: Answer | undefined; // Текущий ответ на это задание
+  onChange: (newAnswer: Answer) => void; // Функция обновления ответа
+  disabled: boolean; // Флаг: завершена ли попытка (блокировка полей)
 };
 
-export function TaskCard({ task }: TaskCardProps) {
+export function TaskCard({ task, answer, onChange, disabled }: TaskCardProps) {
   if (!task) {
     return (
       <section className="task-card task-card--empty">
@@ -27,15 +30,39 @@ export function TaskCard({ task }: TaskCardProps) {
       )}
 
       {task.kind === "single-choice" ? (
-        <ul className="task-card__options">
-          {task.options.map((option) => (
-            <li key={option.id}>{option.label}</li>
-          ))}
-        </ul>
+        <fieldset className="task-card__options" disabled={disabled}>
+          <legend>Выберите вариант:</legend>
+          {task.options.map((option) => {
+            // Проверяем, выбран ли этот вариант
+            const isChecked = answer?.kind === "single-choice" && answer.optionId === option.id;
+            
+            return (
+              <label key={option.id} className="task-card__option-label">
+                <input
+                  type="radio"
+                  name={`task-${task.id}`} // Группируем радиокнопки по ID задания
+                  checked={isChecked}
+                  onChange={() =>
+                    onChange({ taskId: task.id, kind: "single-choice", optionId: option.id })
+                  }
+                />
+                {option.label}
+              </label>
+            );
+          })}
+        </fieldset>
       ) : (
-        <p className="task-card__hint">
-          Это задание с текстовым ответом. Поле ввода появится позже.
-        </p>
+        <fieldset className="task-card__text-answer" disabled={disabled}>
+          <legend>Ваш ответ:</legend>
+          <textarea
+            value={answer?.kind === "short-text" ? answer.text : ""}
+            onChange={(e) =>
+              onChange({ taskId: task.id, kind: "short-text", text: e.target.value })
+            }
+            placeholder="Введите текст..."
+            rows={4}
+          />
+        </fieldset>
       )}
     </section>
   );
