@@ -1,18 +1,18 @@
 import type { Task, Answer } from "../domain";
 
-type TaskCardProps = {
+type Props = {
   task: Task;
   answer: Answer | undefined;
   onChange: (answer: Answer) => void;
+  onDelete: () => void;
 };
 
-export function TaskCard({ task, answer, onChange }: TaskCardProps) {
+export function TaskCard({ task, answer, onChange, onDelete }: Props) {
   return (
     <div className="card">
       <h2>{task.prompt}</h2>
       <p style={{ color: "#666" }}>Тема: {task.topic}</p>
 
-      {/* Безопасный вывод кода */}
       {task.code !== undefined && (
         <pre><code>{task.code}</code></pre>
       )}
@@ -42,6 +42,16 @@ export function TaskCard({ task, answer, onChange }: TaskCardProps) {
             placeholder="Введите ответ..."
           />
         </div>
+      )}
+
+      {/* Кнопка очистки ответа */}
+      {answer && (
+        <button 
+          onClick={onDelete} 
+          style={{ marginTop: "10px", background: "#dc3545", fontSize: "14px" }}
+        >
+          Очистить ответ
+        </button>
       )}
     </div>
   );
