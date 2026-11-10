@@ -38,7 +38,7 @@ export function TaskList({ tasks, activeId, answers, onSelect }: TaskListProps) 
             <span>{task.topic}</span>
 
 
-            {isFilled && <span style={{ color: "green", fontSize: "0.9rem" }}>+</span>}
+            {!isFilled && <span style={{ color: "gray", fontSize: "0.9rem" }}>●</span>}
           </button>
         );
       })}
