@@ -16,18 +16,15 @@ import trainingData from "../../course/data/training-set.json";
 const sampleSet1 = trainingData as TrainingSet;
 
 export default function App() {
-  // Владелец общего состояния попытки
   const [attempt, setAttempt] = useState<AttemptState>({
     answers: [],
     isSubmitted: false
   });
 
-  // Деталь интерфейса (местное состояние по гайду): выбранный ID таски или режим 'overview'
   const [viewMode, setViewMode] = useState<string | 'overview'>(
     sampleSet1.tasks?.[0]?.id || 'overview'
   );
 
-  // Производные значения вычисляются на лету из единого источника правды
   const currentTask = viewMode !== 'overview' ? findTaskById(sampleSet1.tasks, viewMode) : undefined;
   const progress = calculateProgress(sampleSet1, attempt.answers);
 
@@ -38,16 +35,15 @@ export default function App() {
     })
     .map(task => task.id);
 
-  // --- Путь действия: Интерфейс принимает ввод и передает общему правилу ---
   
   const handleAnswerChange = (newAnswer: any) => {
     const result = updateTaskAnswer(attempt, newAnswer);
-    if (result.ok) setAttempt(result.state); // Если правило разрешило — обновляем отображение
+    if (result.ok) setAttempt(result.state); 
   };
 
   const handleClearAnswer = (taskId: string) => {
     const result = clearTaskAnswer(attempt, taskId);
-    if (result.ok) setAttempt(result.state); // Меняет одну попытку из любого места UI
+    if (result.ok) setAttempt(result.state); 
   };
 
   const handleFinalize = () => {
@@ -60,11 +56,11 @@ export default function App() {
       const confirmSubmit = window.confirm(
         `Внимание! У вас остались незаполненные задания по темам: ${uncompletedTitles.join(", ")}.\n\nВы уверены, что хотите завершить попытку?`
       );
-      if (!confirmSubmit) return; // Отмена сохраняет ответы и редактирование
+      if (!confirmSubmit) return; 
     }
     
-    setAttempt(submitAttempt(attempt)); // Правило переводит состояние в submitted
-    setViewMode('overview'); // После завершения переключаем в обзор результатов
+    setAttempt(submitAttempt(attempt)); 
+    setViewMode('overview'); 
   };
 
   const handleRestart = () => {

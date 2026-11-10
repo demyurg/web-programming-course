@@ -101,19 +101,17 @@ export function calculateProgress(set: TrainingSet, answers: readonly Answer[]):
   return { filled, total };
 }
 
-// В самый конец файла src/domain.ts
-
 export interface AttemptState {
   answers: readonly Answer[];
   isSubmitted: boolean;
 }
 
-// Контракт результата выполнения доменного правила (как RenameResult в гайде)
+
 export type AttemptUpdateResult =
   | { ok: true; state: AttemptState }
   | { ok: false; message: string };
 
-// 1. ЧИСТОЕ ПРАВИЛО: Изменение/добавление ответа
+
 export function updateTaskAnswer(state: AttemptState, newAnswer: Answer): AttemptUpdateResult {
   if (state.isSubmitted) {
     return { ok: false, message: "Попытка уже завершена. Изменения запрещены." };
@@ -127,7 +125,6 @@ export function updateTaskAnswer(state: AttemptState, newAnswer: Answer): Attemp
   return { ok: true, state: { ...state, answers: nextAnswers } };
 }
 
-// 2. ЧИСТОЕ ПРАВИЛО: Очистка ответа (используется и в карточке, и в обзоре)
 export function clearTaskAnswer(state: AttemptState, taskId: string): AttemptUpdateResult {
   if (state.isSubmitted) {
     return { ok: false, message: "Попытка уже завершена. Удаление запрещено." };
@@ -137,7 +134,6 @@ export function clearTaskAnswer(state: AttemptState, taskId: string): AttemptUpd
   return { ok: true, state: { ...state, answers: nextAnswers } };
 }
 
-// 3. ЧИСТОЕ ПРАВИЛО: Финализация (завершение) попытки
 export function submitAttempt(state: AttemptState): AttemptState {
   return { ...state, isSubmitted: true };
 }
