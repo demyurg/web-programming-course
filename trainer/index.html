@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Trainer</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 1rem;
+        background: #ffffff; /* белый по стандарту */
+        color: #222222;
+        font-family: Arial, sans-serif;
+        line-height: 1.45;
+      }
+
+      main {
+        max-width: 40rem;
+        margin: 0 auto;
+      }
+
+      ul {
+        padding-left: 1.3rem;
+        list-style: square;
+      }
+
+      button {
+        display: block;
+        width: 100%;
+        margin: 0.5rem 0;
+        padding: 0.6rem 0.8rem;
+        font: inherit;
+        text-align: left;
+        cursor: pointer;
+        background: #ffffff;
+        border: 1px solid #8a8a8a;
+        border-radius: 0.3rem;
+      }
+
+      button[aria-current="true"] {
+        border-color: #000000;
+        background: #e9e9e9;
+        font-weight: bold;
+      }
+
+      pre {
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+        background: #f3f3f3;
+        border: 1px solid #dddddd;
+        border-radius: 0.3rem;
+        padding: 0.6rem;
+      }
+
+      textarea {
+        display: block;
+        width: 100%;
+        min-height: 6rem;
+        margin-top: 0.4rem;
+        padding: 0.5rem;
+        font: inherit;
+        box-sizing: border-box;
+        border: 1px solid #8a8a8a;
+        border-radius: 0.3rem;
+      }
+
+      label {
+        display: block;
+        margin: 0.5rem 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
