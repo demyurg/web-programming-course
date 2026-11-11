@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useReducer, useState } from "react";
 import { type FormEvent } from "./AnswerField";
+import { attemptReducer, emptyAttempt } from "./attempt";
 import { TaskCard } from "./TaskCard";
 import { TaskList } from "./TaskList";
 import {
@@ -11,14 +12,7 @@ import {
   type TrainingSet,
 } from "./domain";
 
-type AttemptStatus = "in-progress" | "submitted";
 type Screen = "task" | "review";
-
-type AttemptState = {
-  answers: Answer[];
-  currentIndex: number;
-  status: AttemptStatus;
-};
 
 const set: TrainingSet = {
   id: "web-basics",
@@ -77,11 +71,7 @@ function formatAnswer(task: Task, answer: Answer | undefined): string {
 }
 
 export default function App() {
-  const [attempt, setAttempt] = useState<AttemptState>({
-    answers: [],
-    currentIndex: 0,
-    status: "in-progress",
-  });
+  const [attempt, dispatch] = useReducer(attemptReducer, emptyAttempt);
   const [screen, setScreen] = useState<Screen>("task");
 
   const { answers, currentIndex, status } = attempt;
@@ -92,38 +82,37 @@ export default function App() {
   );
   const canEdit = status === "in-progress";
 
-  const replaceAnswer = (next: Answer) => {
-    if (!canEdit) return;
-    setAttempt((current) => ({
-      ...current,
-      answers: [
-        ...current.answers.filter((item) => item.taskId !== next.taskId),
-        next,
-      ],
-    }));
-  };
-
   const handleFormEvent = (event: FormEvent) => {
     if (event.type === "choose") {
-      replaceAnswer({
-        taskId: event.taskId,
-        kind: "single-choice",
-        optionId: event.optionId,
+      dispatch({
+        type: "answerChanged",
+        answer: {
+          taskId: event.taskId,
+          kind: "single-choice",
+          optionId: event.optionId,
+        },
       });
       return;
     }
-    replaceAnswer({
-      taskId: event.taskId,
-      kind: "short-text",
-      text: event.text,
+
+    dispatch({
+      type: "answerChanged",
+      answer: {
+        taskId: event.taskId,
+        kind: "short-text",
+        text: event.text,
+      },
     });
   };
 
+  const clearAnswer = (taskId: string) => {
+    dispatch({ type: "answerCleared", taskId });
+  };
+
   const goTo = (index: number) => {
-    setAttempt((current) => ({
-      ...current,
-      currentIndex: Math.max(0, Math.min(index, set.tasks.length - 1)),
-    }));
+    const last = set.tasks.length - 1;
+    const next = Math.max(0, Math.min(index, last));
+    dispatch({ type: "moved", index: next });
     setScreen("task");
   };
 
@@ -136,12 +125,12 @@ export default function App() {
       );
       if (!ok) return;
     }
-    setAttempt((current) => ({ ...current, status: "submitted" }));
+    dispatch({ type: "submitted" });
     setScreen("review");
   };
 
   const restart = () => {
-    setAttempt({ answers: [], currentIndex: 0, status: "in-progress" });
+    dispatch({ type: "restarted" });
     setScreen("task");
   };
 
@@ -192,23 +181,29 @@ export default function App() {
               <p>
                 <button
                   type="button"
+                  onClick={() => task && clearAnswer(task.id)}
+                >
+                  Очистить ответ
+                </button>
+              </p>
+              <p>
+                <button
+                  type="button"
                   disabled={currentIndex === 0}
                   onClick={() => goTo(currentIndex - 1)}
                 >
                   Назад
                 </button>{" "}
-                {currentIndex < set.tasks.length - 1 ? (
-                  <button
-                    type="button"
-                    onClick={() => goTo(currentIndex + 1)}
-                  >
-                    Далее
-                  </button>
-                ) : (
-                  <button type="button" onClick={() => setScreen("review")}>
-                    К обзору
-                  </button>
-                )}{" "}
+                <button
+                  type="button"
+                  disabled={currentIndex >= set.tasks.length - 1}
+                  onClick={() => goTo(currentIndex + 1)}
+                >
+                  Далее
+                </button>{" "}
+                <button type="button" onClick={() => setScreen("review")}>
+                  К обзору
+                </button>{" "}
                 <button type="button" onClick={finish}>
                   Завершить
                 </button>
@@ -224,6 +219,17 @@ export default function App() {
                 {set.tasks.map((item) => (
                   <li key={item.id}>
                     {item.id}: {formatAnswer(item, findAnswer(answers, item.id))}
+                    {canEdit ? (
+                      <>
+                        {" "}
+                        <button
+                          type="button"
+                          onClick={() => clearAnswer(item.id)}
+                        >
+                          Удалить
+                        </button>
+                      </>
+                    ) : null}
                   </li>
                 ))}
               </ul>

@@ -1,4 +1,11 @@
 import {
+  attemptReducer,
+  changeAnswer,
+  emptyAttempt,
+  finishAttempt,
+  removeAnswer,
+} from "./attempt";
+import {
   type Answer,
   type TrainingSet,
   countProgress,
@@ -91,3 +98,46 @@ console.log("прогресс другой набор:", countProgress(otherSet,
 
 console.log("набор не изменился:", JSON.stringify(set) === setBefore);
 console.log("ответы не изменились:", JSON.stringify(answers) === answersBefore);
+
+let attempt = changeAnswer(emptyAttempt, {
+  taskId: "ts-1",
+  kind: "single-choice",
+  optionId: "b",
+});
+attempt = changeAnswer(attempt, {
+  taskId: "ts-1",
+  kind: "single-choice",
+  optionId: "a",
+});
+console.log(
+  "один ответ на taskId:",
+  attempt.answers.length === 1 &&
+    attempt.answers[0]?.kind === "single-choice" &&
+    attempt.answers[0].optionId === "a",
+);
+
+attempt = removeAnswer(attempt, "ts-1");
+console.log("удаление из попытки:", attempt.answers.length === 0);
+
+attempt = changeAnswer(attempt, {
+  taskId: "react-1",
+  kind: "short-text",
+  text: "props приходят снаружи",
+});
+attempt = finishAttempt(attempt);
+const changedAfterFinish = changeAnswer(attempt, {
+  taskId: "react-1",
+  kind: "short-text",
+  text: "другой текст",
+});
+const removedAfterFinish = removeAnswer(attempt, "react-1");
+const finishedAgain = finishAttempt(attempt);
+console.log("submitted не меняется:", changedAfterFinish === attempt);
+console.log("submitted не очищается:", removedAfterFinish === attempt);
+console.log("повторное завершение:", finishedAgain === attempt);
+
+const byAction = attemptReducer(attempt, {
+  type: "answerCleared",
+  taskId: "react-1",
+});
+console.log("редьюсер тоже отклоняет:", byAction === attempt);
