@@ -1,4 +1,4 @@
-import { useReducer } from "react";
+import { useEffect, useReducer, useState } from "react";
 import trainingSetData from "../../course/data/training-set.json";
 import {
     calculateProgress,
@@ -16,11 +16,22 @@ type AttemptState = {
     status: "in-progress" | "submitted";
 };
 
+type Draft = {
+    version: 1;
+    setId: string;
+    taskId: string;
+    answers: Answer[];
+    status: "in-progress" | "submitted";
+};
+
 type AttemptEvent =
-    | { type: "answer-changed"; answer: Answer }
-    | { type: "task-selected"; index: number }
-    | { type: "submitted" }
-    | { type: "restarted" };
+    | { type: "answerChanged"; answer: Answer }
+    | { type: "moved"; index: number }
+    | { type: "restored"; draft: Draft }
+    | { type: "reset" }
+    | { type: "submitted" };
+
+const draftStorageKey = "trainer.attempt-draft";
 
 const initialAttempt: AttemptState = {
     answers: [],
@@ -29,8 +40,17 @@ const initialAttempt: AttemptState = {
 };
 
 function attemptReducer(state: AttemptState, event: AttemptEvent): AttemptState {
-    if (event.type === "restarted") {
+    if (event.type === "reset") {
         return initialAttempt;
+    }
+
+    if (event.type === "restored") {
+        const index = trainingSet.tasks.findIndex((task) => task.id === event.draft.taskId);
+        return {
+            answers: event.draft.answers,
+            currentIndex: Math.max(0, index),
+            status: event.draft.status,
+        };
     }
 
     if (state.status === "submitted") {
@@ -38,7 +58,7 @@ function attemptReducer(state: AttemptState, event: AttemptEvent): AttemptState 
     }
 
     switch (event.type) {
-        case "answer-changed":
+        case "answerChanged":
             return {
                 ...state,
                 answers: [
@@ -46,7 +66,7 @@ function attemptReducer(state: AttemptState, event: AttemptEvent): AttemptState 
                     event.answer,
                 ],
             };
-        case "task-selected":
+        case "moved":
             return {
                 ...state,
                 currentIndex: Math.max(0, Math.min(event.index, trainingSet.tasks.length - 1)),
@@ -54,6 +74,86 @@ function attemptReducer(state: AttemptState, event: AttemptEvent): AttemptState 
         case "submitted":
             return { ...state, status: "submitted" };
     }
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+    return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function validateDraft(value: unknown):
+    | { valid: true; draft: Draft }
+    | { valid: false; message: string } {
+    if (!isRecord(value)) {
+        return { valid: false, message: "Черновик повреждён: ожидался объект с данными попытки." };
+    }
+    if (value.version !== 1) {
+        return { valid: false, message: "Черновик использует неизвестную версию формата." };
+    }
+    if (value.setId !== trainingSet.id) {
+        return { valid: false, message: "Черновик относится к другому набору заданий." };
+    }
+    if (value.status !== "in-progress" && value.status !== "submitted") {
+        return { valid: false, message: "В черновике указан недопустимый статус попытки." };
+    }
+    if (
+        typeof value.taskId !== "string" ||
+        (trainingSet.tasks.length > 0 &&
+            !trainingSet.tasks.some((task) => task.id === value.taskId)) ||
+        (trainingSet.tasks.length === 0 && value.taskId !== "")
+    ) {
+        return { valid: false, message: "Текущее задание из черновика отсутствует в этом наборе." };
+    }
+    if (!Array.isArray(value.answers)) {
+        return { valid: false, message: "Черновик повреждён: список ответов имеет неверный формат." };
+    }
+
+    const answers: Answer[] = [];
+    const seenTaskIds = new Set<string>();
+
+    for (const item of value.answers) {
+        if (!isRecord(item) || typeof item.taskId !== "string" || seenTaskIds.has(item.taskId)) {
+            return { valid: false, message: "Черновик содержит некорректный или повторный ответ." };
+        }
+
+        const task = trainingSet.tasks.find((candidate) => candidate.id === item.taskId);
+        if (!task) {
+            return { valid: false, message: "В черновике есть ответ на задание из другого набора." };
+        }
+
+        if (
+            task.kind === "single-choice" &&
+            item.kind === "single-choice" &&
+            typeof item.optionId === "string" &&
+            task.options.some((option) => option.id === item.optionId)
+        ) {
+            answers.push({
+                taskId: item.taskId,
+                kind: "single-choice",
+                optionId: item.optionId,
+            });
+        } else if (
+            task.kind === "short-text" &&
+            item.kind === "short-text" &&
+            typeof item.text === "string"
+        ) {
+            answers.push({ taskId: item.taskId, kind: "short-text", text: item.text });
+        } else {
+            return { valid: false, message: "Черновик содержит ответ неподходящего формата." };
+        }
+
+        seenTaskIds.add(item.taskId);
+    }
+
+    return {
+        valid: true,
+        draft: {
+            version: 1,
+            setId: trainingSet.id,
+            taskId: value.taskId,
+            answers,
+            status: value.status,
+        },
+    };
 }
 
 type TaskListProps = {
@@ -214,15 +314,72 @@ function SubmittedOverview({ answers, onRestart }: { answers: Answer[]; onRestar
 
 export default function App() {
     const [attempt, dispatch] = useReducer(attemptReducer, initialAttempt);
+    const [isHydrated, setIsHydrated] = useState(false);
+    const [draftIssue, setDraftIssue] = useState<string | null>(null);
+    const [storageWarning, setStorageWarning] = useState<string | null>(null);
     const { answers, currentIndex, status } = attempt;
-    const progress = calculateProgress(trainingSet, answers);
     const currentTask = trainingSet.tasks[currentIndex];
     const currentAnswer = currentTask
         ? answers.find((answer) => answer.taskId === currentTask.id)
         : undefined;
+    const progress = calculateProgress(trainingSet, answers);
     const unansweredTasks = trainingSet.tasks.filter(
         (task) => !isAnswered(answers.find((answer) => answer.taskId === task.id)),
     );
+
+    useEffect(() => {
+        let storedDraft: string | null;
+        try {
+            storedDraft = window.localStorage.getItem(draftStorageKey);
+        } catch {
+            setStorageWarning("Хранилище недоступно. Ответы останутся только в этой вкладке.");
+            setIsHydrated(true);
+            return;
+        }
+
+        if (storedDraft !== null) {
+            let parsedDraft: unknown;
+            try {
+                parsedDraft = JSON.parse(storedDraft);
+            } catch {
+                setDraftIssue("Черновик повреждён: не удалось прочитать JSON.");
+                setIsHydrated(true);
+                return;
+            }
+
+            const validation = validateDraft(parsedDraft);
+            if (!validation.valid) {
+                setDraftIssue(validation.message);
+                setIsHydrated(true);
+                return;
+            }
+
+            dispatch({ type: "restored", draft: validation.draft });
+        }
+
+        setIsHydrated(true);
+    }, []);
+
+    useEffect(() => {
+        if (!isHydrated || draftIssue !== null) {
+            return;
+        }
+
+        const draft: Draft = {
+            version: 1,
+            setId: trainingSet.id,
+            taskId: currentTask?.id ?? "",
+            answers,
+            status,
+        };
+
+        try {
+            window.localStorage.setItem(draftStorageKey, JSON.stringify(draft));
+            setStorageWarning(null);
+        } catch {
+            setStorageWarning("Черновик не сохранён: хранилище недоступно. Ввод продолжается.");
+        }
+    }, [answers, currentTask, draftIssue, isHydrated, status]);
 
     function finishAttempt() {
         const missingTasks = unansweredTasks.map((task) => {
@@ -241,8 +398,19 @@ export default function App() {
 
     function restartAttempt() {
         if (window.confirm("Начать новую попытку? Ответы текущей попытки будут очищены.")) {
-            dispatch({ type: "restarted" });
+            dispatch({ type: "reset" });
         }
+    }
+
+    function resetInvalidDraft() {
+        try {
+            window.localStorage.removeItem(draftStorageKey);
+            setStorageWarning(null);
+        } catch {
+            setStorageWarning("Хранилище недоступно. Попытка продолжится без сохранения черновика.");
+        }
+        setDraftIssue(null);
+        dispatch({ type: "reset" });
     }
 
     return (
@@ -269,6 +437,18 @@ export default function App() {
                 </div>
             </section>
 
+            {draftIssue !== null && (
+                <section className="draft-notice draft-notice-error" role="alert">
+                    <p>{draftIssue} Данные не восстановлены.</p>
+                    <button className="primary-button" onClick={resetInvalidDraft} type="button">
+                        Сбросить черновик
+                    </button>
+                </section>
+            )}
+            {storageWarning !== null && (
+                <p className="draft-notice" role="status">{storageWarning}</p>
+            )}
+
             {status === "submitted" ? (
                 <SubmittedOverview answers={answers} onRestart={restartAttempt} />
             ) : (
@@ -294,7 +474,7 @@ export default function App() {
                             <TaskList
                                 answers={answers}
                                 currentIndex={currentIndex}
-                                onChoose={(index) => dispatch({ type: "task-selected", index })}
+                                onChoose={(index) => dispatch({ type: "moved", index })}
                                 tasks={trainingSet.tasks}
                             />
                         </section>
@@ -312,7 +492,7 @@ export default function App() {
                                     <TaskForm
                                         answer={currentAnswer}
                                         onAnswerChange={(answer) =>
-                                            dispatch({ type: "answer-changed", answer })
+                                            dispatch({ type: "answerChanged", answer })
                                         }
                                         task={currentTask}
                                     />
@@ -321,7 +501,7 @@ export default function App() {
                                             disabled={currentIndex === 0}
                                             onClick={() =>
                                                 dispatch({
-                                                    type: "task-selected",
+                                                    type: "moved",
                                                     index: currentIndex - 1,
                                                 })
                                             }
@@ -333,7 +513,7 @@ export default function App() {
                                             disabled={currentIndex === trainingSet.tasks.length - 1}
                                             onClick={() =>
                                                 dispatch({
-                                                    type: "task-selected",
+                                                    type: "moved",
                                                     index: currentIndex + 1,
                                                 })
                                             }
@@ -363,7 +543,7 @@ export default function App() {
                                         <li key={task.id}>
                                             <button
                                                 onClick={() =>
-                                                    dispatch({ type: "task-selected", index })
+                                                    dispatch({ type: "moved", index })
                                                 }
                                                 type="button"
                                             >

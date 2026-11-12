@@ -201,6 +201,23 @@ button:disabled {
     margin-bottom: 20px;
 }
 
+.draft-notice {
+    margin: 0 0 16px;
+    padding: 12px 14px;
+    border: 1px solid #aaa;
+    background: #fff;
+    color: #444;
+}
+
+.draft-notice-error {
+    border-color: #a33;
+    color: #702020;
+}
+
+.draft-notice p {
+    margin: 0 0 10px;
+}
+
 .progress-copy {
     display: flex;
     justify-content: space-between;
