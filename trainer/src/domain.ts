@@ -84,3 +84,12 @@ export function countProgress(
 
   return { filled, total: tasks.length };
 }
+
+// Черновик попытки для localStorage
+export type Draft = {
+  version: 1;
+  setId: string;
+  taskId: string; // id текущего задания для восстановления позиции
+  answers: Answer[];
+  status: "in-progress" | "submitted";
+};

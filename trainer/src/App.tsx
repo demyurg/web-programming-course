@@ -1,7 +1,9 @@
-import { useState, useMemo } from "react";
-import type { Task, TrainingSet, Answer } from "./domain.js";
-import { findTaskById } from "./domain.js";
+import { useReducer, useEffect, useMemo, useState } from "react";
+import type { Task, TrainingSet, Answer, Draft } from "./domain.js";
+import { countProgress } from "./domain.js";
 import { trainingSet } from "./demo.js";
+import { reducer, createInitialState } from "./reducer.js";
+import { getStorageKey, readDraft, writeDraft, clearDraft } from "./storage.js";
 
 // --- Утилиты ---
 function isAnswered(answer: Answer | undefined): boolean {
@@ -11,40 +13,51 @@ function isAnswered(answer: Answer | undefined): boolean {
     : answer.text.trim().length > 0;
 }
 
-function replaceAnswer(
-  current: readonly Answer[],
-  next: Answer,
-): Answer[] {
-  return [
-    ...current.filter((item) => item.taskId !== next.taskId),
-    next,
-  ];
-}
-
 // --- Заголовок модуля с прогрессом ---
 type ModuleHeaderProps = {
   title: string;
   answered: number;
   total: number;
+  isSubmitted: boolean;
+  isReviewOpen: boolean;
+  onToggleReview: () => void;
 };
 
-export function ModuleHeader({ title, answered, total }: ModuleHeaderProps) {
+export function ModuleHeader({
+  title,
+  answered,
+  total,
+  isSubmitted,
+  isReviewOpen,
+  onToggleReview,
+}: ModuleHeaderProps) {
   return (
     <header className="module-header">
-      <h1 className="module-title">{title}</h1>
-      <p className="module-count">
-        Заполнено: {answered} из {total}
-      </p>
+      <div className="module-header-info">
+        <h1 className="module-title">{title}</h1>
+        <p className="module-count">
+          Заполнено: {answered} из {total}
+        </p>
+      </div>
+      {!isSubmitted && total > 0 && (
+        <button
+          type="button"
+          className="nav-button"
+          onClick={onToggleReview}
+        >
+          {isReviewOpen ? "← Вернуться к заданиям" : "Обзор ответов"}
+        </button>
+      )}
     </header>
   );
 }
-
 // --- Список заданий с прогрессом ---
 type TaskListProps = {
   tasks: readonly Task[];
   currentIndex: number;
   answers: readonly Answer[];
   onSelect: (index: number) => void;
+  disabled: boolean;
 };
 
 export function TaskList({
@@ -52,6 +65,7 @@ export function TaskList({
   currentIndex,
   answers,
   onSelect,
+  disabled,
 }: TaskListProps) {
   return (
     <nav aria-label="Список заданий">
@@ -70,6 +84,7 @@ export function TaskList({
                   (filled ? " is-filled" : "")
                 }
                 onClick={() => onSelect(index)}
+                disabled={disabled}
                 aria-current={isCurrent ? "step" : undefined}
               >
                 <span className="task-list-number">{index + 1}</span>
@@ -160,6 +175,7 @@ type TaskCardProps = {
   task: Task;
   answer: Answer | undefined;
   onChange: (answer: Answer) => void;
+  onClear: (taskId: string) => void;
   disabled: boolean;
 };
 
@@ -167,8 +183,11 @@ export function TaskCard({
   task,
   answer,
   onChange,
+  onClear,
   disabled,
 }: TaskCardProps) {
+  const hasAnswer = answer !== undefined;
+
   return (
     <article className="task-card">
       <header className="task-card-header">
@@ -190,10 +209,21 @@ export function TaskCard({
         onChange={onChange}
         disabled={disabled}
       />
+
+      {!disabled && hasAnswer && (
+        <div className="task-card-actions">
+          <button
+            type="button"
+            className="clear-button"
+            onClick={() => onClear(task.id)}
+          >
+            Очистить ответ
+          </button>
+        </div>
+      )}
     </article>
   );
 }
-
 // --- Навигация ---
 type NavigationProps = {
   currentIndex: number;
@@ -311,17 +341,33 @@ export function WarningModal({
 type ReviewProps = {
   tasks: readonly Task[];
   answers: readonly Answer[];
+  isSubmitted: boolean;
+  onClear: (taskId: string) => void;
+  onBackToTasks: () => void;
+  onFinish: () => void;
   onRestart: () => void;
 };
 
-export function Review({ tasks, answers, onRestart }: ReviewProps) {
+export function Review({
+  tasks,
+  answers,
+  isSubmitted,
+  onClear,
+  onBackToTasks,
+  onFinish,
+  onRestart,
+}: ReviewProps) {
   return (
     <div className="review">
-      <h2 className="review-title">Обзор ответов</h2>
+      <h2 className="review-title">
+        {isSubmitted ? "Итоги попытки" : "Обзор ответов"}
+      </h2>
       <ul className="review-list">
         {tasks.map((task, index) => {
           const answer = answers.find((a) => a.taskId === task.id);
           const filled = isAnswered(answer);
+          const hasAnswer = answer !== undefined;
+
           return (
             <li key={task.id} className="review-item">
               <div className="review-item-header">
@@ -342,32 +388,93 @@ export function Review({ tasks, answers, onRestart }: ReviewProps) {
                   <code>{task.code}</code>
                 </pre>
               )}
-              <div className="review-item-answer">
-                {answer?.kind === "single-choice" && task.kind === "single-choice" ? (
-                  <span>
-                    Вариант:{" "}
-                    {task.options.find((o) => o.id === answer.optionId)?.text ?? "—"}
-                  </span>
-                ) : answer?.kind === "short-text" ? (
-                  <span>
-                    Ответ:{" "}
-                    {answer.text.trim().length > 0 ? answer.text : "—"}
-                  </span>
-                ) : (
-                  <span className="review-item-empty">Нет ответа</span>
+              <div className="review-item-answer-row">
+                <div className="review-item-answer">
+                  {answer?.kind === "single-choice" && task.kind === "single-choice" ? (
+                    <span>
+                      Вариант:{" "}
+                      {task.options.find((o) => o.id === answer.optionId)
+                        ?.text ?? "—"}
+                    </span>
+                  ) : answer?.kind === "short-text" ? (
+                    <span>
+                      Ответ:{" "}
+                      {answer.text.trim().length > 0 ? answer.text : "—"}
+                    </span>
+                  ) : (
+                    <span className="review-item-empty">Нет ответа</span>
+                  )}
+                </div>
+                {!isSubmitted && hasAnswer && (
+                  <button
+                    type="button"
+                    className="clear-button"
+                    onClick={() => onClear(task.id)}
+                  >
+                    Очистить
+                  </button>
                 )}
               </div>
             </li>
           );
         })}
       </ul>
-      <button
-        type="button"
-        className="review-restart"
-        onClick={onRestart}
-      >
-        Начать новую попытку
-      </button>
+
+      <div className="review-actions">
+        {isSubmitted ? (
+          <button
+            type="button"
+            className="review-restart"
+            onClick={onRestart}
+          >
+            Начать новую попытку
+          </button>
+        ) : (
+          <>
+            <button
+              type="button"
+              className="nav-button"
+              onClick={onBackToTasks}
+            >
+              ← Вернуться к заданиям
+            </button>
+            <button
+              type="button"
+              className="nav-button nav-button-finish"
+              onClick={onFinish}
+            >
+              Завершить попытку
+            </button>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// --- Сообщения об ошибках ---
+type ErrorBannerProps = {
+  message: string;
+  onDismiss?: () => void;
+  onReset?: () => void;
+};
+
+export function ErrorBanner({ message, onDismiss, onReset }: ErrorBannerProps) {
+  return (
+    <div className="error-banner" role="alert">
+      <p>{message}</p>
+      <div className="error-banner-actions">
+        {onReset && (
+          <button type="button" className="error-button" onClick={onReset}>
+            Сбросить черновик
+          </button>
+        )}
+        {onDismiss && (
+          <button type="button" className="error-button" onClick={onDismiss}>
+            Закрыть
+          </button>
+        )}
+      </div>
     </div>
   );
 }
@@ -380,71 +487,125 @@ export function EmptyState({ message }: { message: string }) {
     </div>
   );
 }
-
 // --- Корневой компонент ---
 export function App() {
   const trainingModule: TrainingSet = trainingSet;
   const tasks = trainingModule.tasks;
 
-  const [answers, setAnswers] = useState<readonly Answer[]>([]);
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [status, setStatus] = useState<"active" | "submitted">("active");
+  const [state, dispatch] = useReducer(reducer, tasks, createInitialState);
   const [showWarning, setShowWarning] = useState(false);
+  const [isReviewOpen, setIsReviewOpen] = useState(false);
+
+  // Эффект чтения черновика при монтировании
+  useEffect(() => {
+    try {
+      const key = getStorageKey(trainingModule.id);
+      const raw = localStorage.getItem(key);
+      const draft = readDraft(raw, trainingModule.id);
+      if (draft) {
+        dispatch({ type: "restored", draft, tasks });
+      } else if (raw !== null) {
+        dispatch({ type: "draftCorrupted" });
+      }
+    } catch {
+      dispatch({
+        type: "storageFailed",
+        message: "Не удалось прочитать черновик. Ввод продолжается в памяти.",
+      });
+    }
+  }, [trainingModule.id, tasks]);
+
+  // Эффект записи черновика при изменении состояния
+  useEffect(() => {
+    if (state.status === "in-progress") {
+      const currentTask = tasks[state.currentIndex];
+      const draft: Draft = {
+        version: 1,
+        setId: trainingModule.id,
+        taskId: currentTask?.id ?? "",
+        answers: state.answers,
+        status: "in-progress",
+      };
+      try {
+        const key = getStorageKey(trainingModule.id);
+        writeDraft(key, draft);
+      } catch {
+        dispatch({
+          type: "storageFailed",
+          message: "Не удалось сохранить черновик. Ввод продолжается в памяти.",
+        });
+      }
+    }
+  }, [state.answers, state.currentIndex, state.status, trainingModule.id, tasks]);
+
+  const isSubmitted = state.status === "submitted";
 
   const currentTask =
-    status === "active" && tasks.length > 0
-      ? tasks[currentIndex]
+    !isSubmitted && tasks.length > 0
+      ? tasks[state.currentIndex]
       : undefined;
 
   const currentAnswer =
     currentTask !== undefined
-      ? answers.find((a) => a.taskId === currentTask.id)
+      ? state.answers.find((a) => a.taskId === currentTask.id)
       : undefined;
 
-  const answeredCount = useMemo(
-    () =>
-      tasks.reduce(
-        (count, task) =>
-          count + (isAnswered(answers.find((a) => a.taskId === task.id)) ? 1 : 0),
-        0,
-      ),
-    [tasks, answers],
+  const { filled: answeredCount } = useMemo(
+    () => countProgress(tasks, state.answers),
+    [tasks, state.answers],
   );
 
   const unansweredTasks = useMemo(
-    () => tasks.filter((task) => !isAnswered(answers.find((a) => a.taskId === task.id))),
-    [tasks, answers],
+    () => tasks.filter((task) => !isAnswered(state.answers.find((a) => a.taskId === task.id))),
+    [tasks, state.answers],
   );
 
   const handleAnswerChange = (answer: Answer) => {
-    setAnswers((current) => replaceAnswer(current, answer));
+    dispatch({ type: "answerChanged", answer });
+  };
+
+  const handleClearAnswer = (taskId: string) => {
+    dispatch({ type: "answerCleared", taskId });
   };
 
   const handleSelect = (index: number) => {
-    if (status === "active") {
-      setCurrentIndex(index);
+    if (!isSubmitted) {
+      dispatch({ type: "moved", index });
     }
   };
 
   const handlePrev = () => {
-    setCurrentIndex((index) => Math.max(index - 1, 0));
+    dispatch({ type: "moved", index: Math.max(state.currentIndex - 1, 0) });
   };
 
   const handleNext = () => {
-    setCurrentIndex((index) => Math.min(index + 1, tasks.length - 1));
+    dispatch({
+      type: "moved",
+      index: Math.min(state.currentIndex + 1, tasks.length - 1),
+    });
+  };
+
+  const finishAttempt = () => {
+    setIsReviewOpen(false);
+    dispatch({ type: "submitted" });
+    try {
+      clearDraft(getStorageKey(trainingModule.id));
+    } catch {
+      // игнорируем
+    }
   };
 
   const handleFinish = () => {
     if (unansweredTasks.length > 0) {
       setShowWarning(true);
     } else {
-      setStatus("submitted");
+      finishAttempt();
     }
   };
 
   const handleConfirmFinish = () => {
     setShowWarning(false);
-    setStatus("submitted");
+    finishAttempt();
   };
 
   const handleCancelFinish = () => {
@@ -452,34 +613,37 @@ export function App() {
   };
 
   const handleRestart = () => {
-    setAnswers([]);
-    setCurrentIndex(0);
-    setStatus("active");
-    setShowWarning(false);
+    setIsReviewOpen(false);
+    dispatch({ type: "reset" });
+    try {
+      clearDraft(getStorageKey(trainingModule.id));
+    } catch {
+      // игнорируем
+    }
+  };
+
+  const handleResetDraft = () => {
+    setIsReviewOpen(false);
+    dispatch({ type: "reset" });
+    try {
+      clearDraft(getStorageKey(trainingModule.id));
+    } catch {
+      // игнорируем
+    }
   };
 
   if (tasks.length === 0) {
     return (
       <div className="app">
-        <ModuleHeader title={trainingModule.title} answered={0} total={0} />
-        <EmptyState message="В этом модуле пока нет заданий." />
-      </div>
-    );
-  }
-
-  if (status === "submitted") {
-    return (
-      <div className="app">
         <ModuleHeader
           title={trainingModule.title}
-          answered={answeredCount}
-          total={tasks.length}
+          answered={0}
+          total={0}
+          isSubmitted={isSubmitted}
+          isReviewOpen={false}
+          onToggleReview={() => {}}
         />
-        <Review
-          tasks={tasks}
-          answers={answers}
-          onRestart={handleRestart}
-        />
+        <EmptyState message="В этом модуле пока нет заданий." />
       </div>
     );
   }
@@ -490,35 +654,65 @@ export function App() {
         title={trainingModule.title}
         answered={answeredCount}
         total={tasks.length}
+        isSubmitted={isSubmitted}
+        isReviewOpen={isReviewOpen}
+        onToggleReview={() => setIsReviewOpen((prev) => !prev)}
       />
-      <div className="app-layout">
-        <TaskList
-          tasks={tasks}
-          currentIndex={currentIndex}
-          answers={answers}
-          onSelect={handleSelect}
+
+      {state.storageError && (
+        <ErrorBanner message={state.storageError} />
+      )}
+
+      {state.draftError && (
+        <ErrorBanner
+          message={state.draftError}
+          onReset={handleResetDraft}
         />
-        <div className="app-main">
-          {currentTask !== undefined ? (
-            <TaskCard
-              task={currentTask}
-              answer={currentAnswer}
-              onChange={handleAnswerChange}
-              disabled={false}
-            />
-          ) : (
-            <EmptyState message="Задание не найдено." />
-          )}
-          <Navigation
-            currentIndex={currentIndex}
-            total={tasks.length}
-            onPrev={handlePrev}
-            onNext={handleNext}
-            onFinish={handleFinish}
+      )}
+
+      {isSubmitted || isReviewOpen ? (
+        <Review
+          tasks={tasks}
+          answers={state.answers}
+          isSubmitted={isSubmitted}
+          onClear={handleClearAnswer}
+          onBackToTasks={() => setIsReviewOpen(false)}
+          onFinish={handleFinish}
+          onRestart={handleRestart}
+        />
+      ) : (
+        <div className="app-layout">
+          <TaskList
+            tasks={tasks}
+            currentIndex={state.currentIndex}
+            answers={state.answers}
+            onSelect={handleSelect}
             disabled={false}
           />
+          <div className="app-main">
+            {currentTask !== undefined ? (
+              <TaskCard
+                task={currentTask}
+                answer={currentAnswer}
+                onChange={handleAnswerChange}
+                onClear={handleClearAnswer}
+                disabled={false}
+              />
+            ) : (
+              <EmptyState message="Задание не найдено." />
+            )}
+            <Navigation
+              currentIndex={state.currentIndex}
+              total={tasks.length}
+              onPrev={handlePrev}
+              onNext={handleNext}
+              onFinish={handleFinish}
+              disabled={false}
+            />
+          </div>
         </div>
-      </div>
+      )}
+
       {showWarning && (
         <WarningModal
           unanswered={unansweredTasks}
