@@ -3,9 +3,11 @@ import type { Answer, TrainingSet } from "./domain";
 type ReviewListProps = {
   set: TrainingSet;
   answers: Answer[];
+  onClear?: (taskId: string) => void;
+  canEdit?: boolean;
 };
 
-export function ReviewList({ set, answers }: ReviewListProps) {
+export function ReviewList({ set, answers, onClear, canEdit }: ReviewListProps) {
   return (
     <ol>
       {set.tasks.map((task) => {
@@ -28,6 +30,12 @@ export function ReviewList({ set, answers }: ReviewListProps) {
               </p>
             ) : (
               <p>Ответ: {answer.text.trim() || "пусто"}</p> // || - Логическое ИЛИ
+            )}
+
+            {canEdit && onClear && answer && (
+              <button type="button" onClick={() => onClear(task.id)}>
+                Удалить ответ
+              </button>
             )}
           </li>
         );

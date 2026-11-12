@@ -1,133 +1,116 @@
-import { useState } from "react";
-import type { Answer, TrainingSet } from "./domain";
+import { useReducer, useState } from "react";
+import type { TrainingSet } from "./domain";
+import { getProgress, isAnswered } from "./domain";
+import { attemptReducer, getMissedTasks } from "./attempt";
+import type { AttemptState } from "./attempt";
 import { TaskCardForm } from "./TaskCardForm";
 import { ReviewList } from "./ReviewList";
-import { getProgress, isAnswered } from "./domain";
 
 type AttemptScreenProps = {
   set: TrainingSet;
 };
 
+const initialState: AttemptState = {
+  answers: [],
+  currentIndex: 0,
+  status: "in-progress",
+};
+
 export function AttemptScreen({ set }: AttemptScreenProps) {
-  const [answers, setAnswers] = useState<Answer[]>([]);
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [status, setStatus] = useState<"in-progress" | "submitted">("in-progress");
+  const [state, dispatch] = useReducer(
+    (state, action) => attemptReducer(state, action, set),
+    initialState,
+  );
 
-  // current - гарантированно актуальное значение. filter - вернет новый массив без старого ответа
-  function replaceAnswer(next: Answer) {
-    setAnswers((current) => [
-      ...current.filter((item) => item.taskId !== next.taskId),
-      next,
-    ]);
-  }
+  const [showReview, setShowReview] = useState(false);
 
-  // index - актуальное значение. В выражении - проверка, чтобы индекс не вылез за пределы
-  function goNext() {
-    setCurrentIndex((index) => Math.min(index + 1, set.tasks.length - 1));
-  }
+  const currentTask = set.tasks[state.currentIndex];
+  if (!currentTask) return <p>Заданий нет.</p>;
 
-  function goPrev() {
-    setCurrentIndex((index) => Math.max(index - 1, 0));
-  }
+  const currentAnswer = state.answers.find((a) => a.taskId === currentTask.id);
+  const progress = getProgress(set, state.answers);
 
-  // Обработка завершения
   function handleFinish() {
-    const missedTasks = set.tasks.filter((task) => {
-      // Ищем в состоянии answers ответ. find - первый объект массива удовлетворяющий условию
-      const answer = answers.find((a) => a.taskId === task.id);
-      // Проверка ответа
-      return !isAnswered(task, answer);
-    });
+    const missed = getMissedTasks(set, state);
+    let message = "Все задания заполнены. Завершить попытку?";
 
-    let message: string;
-
-    if (missedTasks.length > 0) {
-      // Получаем индексы пропущенных заданий (из set) и преобразуем их в строку
-      const missedNumbers = missedTasks
+    if (missed.length > 0) {
+      const missedNumbers = missed
         .map((task) => set.tasks.indexOf(task) + 1)
         .join(", ");
-      message = `Не заполнены задания под номерами: ${missedNumbers}. Всё равно завершить?`;
-    } else {
-      message = "Все задания заполнены. Завершить попытку?";
+      message = `Не заполнены задания: ${missedNumbers}. Всё равно завершить?`;
     }
 
-    // Отображаем сообщение. Если нажата Ок - идем дальше, если Отмена - выходим
     if (!window.confirm(message)) return;
-
-
-    setStatus("submitted");
+    dispatch({ type: "finish" });
   }
 
-  // Обработка начала новой попытки
-  function handleRestart() {
-    setAnswers([]);
-    setCurrentIndex(0);
-    setStatus("in-progress");
-  }
-
-  // Функция написанная на L1 для поиска общего количества и количества выолненных заданий
-  const progress = getProgress(set, answers);
-
-  // Задание по текущему индексу
-  const currentTask = set.tasks[currentIndex];
-  // Нет задания - нет ответа
-  const currentAnswer = currentTask // find - первый элемент удовлетворяющий условию
-    ? answers.find((a) => a.taskId === currentTask.id)
-    : undefined;
-
-  if (!currentTask) {
-    return <p>Заданий нет.</p>;
-  }
-
-  // Обработка состояния submitted. Отображение компонента с обзором на внесенные ответы
-  if (status === "submitted") {
-    return (
-      <section>
-        <h1>{set.title}</h1>
-        <p>Попытка завершена.</p>
-        <ReviewList set={set} answers={answers} />
-        <button type="button" onClick={handleRestart}>
-          Начать новую попытку
-        </button>
-      </section>
-    );
-  }
-
-  // Отображение задания и кнопок навигации
   return (
     <section>
       <h1>{set.title}</h1>
       <p>
-        Задание {currentIndex + 1} из {set.tasks.length}
+        Задание {state.currentIndex + 1} из {set.tasks.length}
       </p>
-      <p>Статус: {status}</p>
       <p>
         Заполнено {progress.filled} из {progress.total}
       </p>
 
-      <TaskCardForm
-        task={currentTask}
-        answer={currentAnswer}
-        onChange={replaceAnswer}
-      />
-
-      <div style={{ display: "flex", gap: "1rem", marginTop: "1rem" }}>
-        <button type="button" onClick={goPrev} disabled={currentIndex === 0}>
-          Назад
-        </button>
-        <button
-          type="button"
-          onClick={goNext}
-          // Ограничение возможности нажатия при условии
-          disabled={currentIndex === set.tasks.length - 1}
-        >
-          Далее
-        </button>
-      </div>
-
-      <button type="button" onClick={handleFinish}>
-        Завершить
-      </button>
+      {state.status === "submitted" ? (
+        <>
+          <p>Попытка завершена.</p>
+          <ReviewList set={set} answers={state.answers} />
+          <button type="button" onClick={() => dispatch({ type: "restart" })}>
+            Начать новую попытку
+          </button>
+        </>
+      ) : showReview ? (
+        <>
+          <ReviewList
+            set={set}
+            answers={state.answers}
+            onClear={(taskId) => dispatch({ type: "clear", taskId })}
+            canEdit={true}
+          />
+          <button type="button" onClick={() => setShowReview(false)}>
+            Вернуться к заданию
+          </button>
+        </>
+      ) : (
+        <>
+          <TaskCardForm
+            task={currentTask}
+            answer={currentAnswer}
+            onChange={(answer) => dispatch({ type: "answer", answer })}
+            onClear={(taskId) => dispatch({ type: "clear", taskId })}
+          />
+          <div style={{ display: "flex", gap: "1rem", marginTop: "1rem" }}>
+            <button
+              type="button"
+              onClick={() =>
+                dispatch({ type: "go", index: state.currentIndex - 1 })
+              }
+              disabled={state.currentIndex === 0}
+            >
+              Назад
+            </button>
+            <button
+              type="button"
+              onClick={() =>
+                dispatch({ type: "go", index: state.currentIndex + 1 })
+              }
+              disabled={state.currentIndex === set.tasks.length - 1}
+            >
+              Далее
+            </button>
+            <button type="button" onClick={handleFinish}>
+              Завершить
+            </button>
+            <button type="button" onClick={() => setShowReview(true)}>
+              Посмотреть обзор
+            </button>
+          </div>
+        </>
+      )}
     </section>
   );
 }

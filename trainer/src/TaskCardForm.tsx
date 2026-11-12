@@ -4,9 +4,10 @@ type TaskCardFormProps = {
   task: Task;
   answer: Answer | undefined;
   onChange: (answer: Answer) => void;
+  onClear: (taskId: string) => void;
 };
 
-export function TaskCardForm({ task, answer, onChange }: TaskCardFormProps) {
+export function TaskCardForm({ task, answer, onChange, onClear }: TaskCardFormProps) {
   return (
     <section>
       <p>
@@ -56,6 +57,12 @@ export function TaskCardForm({ task, answer, onChange }: TaskCardFormProps) {
             }
           />
         </label>
+      )}
+      
+      {answer && (
+        <button type="button" onClick={() => onClear(task.id)}>
+          Очистить ответ
+        </button>
       )}
     </section>
   );
