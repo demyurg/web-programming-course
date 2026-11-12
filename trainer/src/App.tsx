@@ -1,6 +1,13 @@
-import { useState } from "react";
+import { useReducer, useState } from "react";
 import type { Answer, Task, TrainingSet } from "./domain";
 import { countProgress, findTaskById, isAnswerFilled } from "./domain";
+import {
+  attemptReducer,
+  createAttempt,
+  findAnswer,
+  getUnfilledTasks,
+  isTaskAnswered,
+} from "./attempt";
 
 const webBasics: TrainingSet = {
   id: "web-basics",
@@ -44,21 +51,7 @@ const webBasics: TrainingSet = {
   ],
 };
 
-
-type AttemptStatus = "in-progress" | "submitted";
-
-function findAnswer(answers: Answer[], taskId: string): Answer | undefined {
-  return answers.find((answer) => answer.taskId === taskId);
-}
-
-function isTaskAnswered(answers: Answer[], taskId: string): boolean {
-  const answer = findAnswer(answers, taskId);
-  return answer !== undefined && isAnswerFilled(answer);
-}
-
-function upsertAnswer(answers: Answer[], next: Answer): Answer[] {
-  return [...answers.filter((answer) => answer.taskId !== next.taskId), next];
-}
+const initialAttempt = createAttempt();
 
 function describeAnswer(task: Task, answer: Answer | undefined): string {
   if (answer === undefined || !isAnswerFilled(answer)) {
@@ -105,12 +98,14 @@ type TaskCardProps = {
   task: Task;
   answer: Answer | undefined;
   onAnswer: (answer: Answer) => void;
+  onClear: () => void;
 };
 
-function TaskCard({ task, answer, onAnswer }: TaskCardProps) {
+function TaskCard({ task, answer, onAnswer, onClear }: TaskCardProps) {
   const selectedOptionId =
     answer?.kind === "single-choice" ? answer.optionId : undefined;
   const text = answer?.kind === "short-text" ? answer.text : "";
+  const canClear = answer !== undefined && isAnswerFilled(answer);
 
   return (
     <article className="task-card">
@@ -156,6 +151,9 @@ function TaskCard({ task, answer, onAnswer }: TaskCardProps) {
           />
         </label>
       )}
+      <button type="button" className="clear" disabled={!canClear} onClick={onClear}>
+        Очистить ответ
+      </button>
     </article>
   );
 }
@@ -163,10 +161,11 @@ function TaskCard({ task, answer, onAnswer }: TaskCardProps) {
 type OverviewProps = {
   set: TrainingSet;
   answers: Answer[];
-  onRestart: () => void;
+  editable: boolean;
+  onClear: (taskId: string) => void;
 };
 
-function Overview({ set, answers, onRestart }: OverviewProps) {
+function Overview({ set, answers, editable, onClear }: OverviewProps) {
   const progress = countProgress(set, answers);
 
   return (
@@ -184,35 +183,43 @@ function Overview({ set, answers, onRestart }: OverviewProps) {
             <p className="answer-text">
               {describeAnswer(task, findAnswer(answers, task.id))}
             </p>
+            {editable && isTaskAnswered(answers, task.id) && (
+              <button type="button" className="clear" onClick={() => onClear(task.id)}>
+                Очистить ответ
+              </button>
+            )}
           </li>
         ))}
       </ol>
-      <button type="button" onClick={onRestart}>
-        Начать новую попытку
-      </button>
     </section>
   );
 }
+
+type View = "task" | "overview";
 
 export default function App() {
   const tasks = webBasics.tasks;
   const firstId = tasks[0]?.id ?? "";
 
+  const [attempt, dispatch] = useReducer(attemptReducer, initialAttempt);
   const [selectedId, setSelectedId] = useState<string>(firstId);
-  const [answers, setAnswers] = useState<Answer[]>([]);
-  const [status, setStatus] = useState<AttemptStatus>("in-progress");
+  const [view, setView] = useState<View>("task");
 
-  // Всё ниже вычисляется из tasks, answers и selectedId, отдельно не хранится.
+  const { answers, status } = attempt;
+
   const selected = findTaskById(webBasics, selectedId);
   const index = tasks.findIndex((task) => task.id === selectedId);
   const prevTask = index > 0 ? tasks[index - 1] : undefined;
   const nextTask = index >= 0 ? tasks[index + 1] : undefined;
   const progress = countProgress(webBasics, answers);
-  const unfilled = tasks.filter((task) => !isTaskAnswered(answers, task.id));
+  const unfilled = getUnfilledTasks(webBasics, answers);
 
   function handleAnswer(answer: Answer) {
-    if (status === "submitted") return;
-    setAnswers((current) => upsertAnswer(current, answer));
+    dispatch({ type: "set-answer", answer });
+  }
+
+  function handleClear(taskId: string) {
+    dispatch({ type: "clear-answer", taskId });
   }
 
   function handleFinish() {
@@ -223,13 +230,13 @@ export default function App() {
       );
       if (!confirmed) return;
     }
-    setStatus("submitted");
+    dispatch({ type: "submit" });
   }
 
   function handleRestart() {
-    setAnswers([]);
-    setStatus("in-progress");
+    dispatch({ type: "restart" });
     setSelectedId(firstId);
+    setView("task");
   }
 
   return (
@@ -240,7 +247,17 @@ export default function App() {
       {tasks.length === 0 ? (
         <p>В модуле пока нет заданий.</p>
       ) : status === "submitted" ? (
-        <Overview set={webBasics} answers={answers} onRestart={handleRestart} />
+        <>
+          <Overview
+            set={webBasics}
+            answers={answers}
+            editable={false}
+            onClear={handleClear}
+          />
+          <button type="button" className="finish" onClick={handleRestart}>
+            Начать новую попытку
+          </button>
+        </>
       ) : (
         <>
           <p>
@@ -251,41 +268,58 @@ export default function App() {
               ? "Все задания заполнены."
               : `Не заполнены: ${unfilled.map((task) => task.id).join(", ")}`}
           </p>
-          <div className="layout">
-            <TaskList
-              tasks={tasks}
+          <button
+            type="button"
+            className="view-toggle"
+            onClick={() => setView(view === "task" ? "overview" : "task")}
+          >
+            {view === "task" ? "Обзор ответов" : "Вернуться к заданиям"}
+          </button>
+          {view === "overview" ? (
+            <Overview
+              set={webBasics}
               answers={answers}
-              selectedId={selectedId}
-              onSelect={setSelectedId}
+              editable={true}
+              onClear={handleClear}
             />
-            <div className="task-column">
-              {selected ? (
-                <TaskCard
-                  task={selected}
-                  answer={findAnswer(answers, selected.id)}
-                  onAnswer={handleAnswer}
-                />
-              ) : (
-                <p>Задание не выбрано.</p>
-              )}
-              <div className="nav">
-                <button
-                  type="button"
-                  disabled={prevTask === undefined}
-                  onClick={() => prevTask && setSelectedId(prevTask.id)}
-                >
-                  Назад
-                </button>
-                <button
-                  type="button"
-                  disabled={nextTask === undefined}
-                  onClick={() => nextTask && setSelectedId(nextTask.id)}
-                >
-                  Далее
-                </button>
+          ) : (
+            <div className="layout">
+              <TaskList
+                tasks={tasks}
+                answers={answers}
+                selectedId={selectedId}
+                onSelect={setSelectedId}
+              />
+              <div className="task-column">
+                {selected ? (
+                  <TaskCard
+                    task={selected}
+                    answer={findAnswer(answers, selected.id)}
+                    onAnswer={handleAnswer}
+                    onClear={() => handleClear(selected.id)}
+                  />
+                ) : (
+                  <p>Задание не выбрано.</p>
+                )}
+                <div className="nav">
+                  <button
+                    type="button"
+                    disabled={prevTask === undefined}
+                    onClick={() => prevTask && setSelectedId(prevTask.id)}
+                  >
+                    Назад
+                  </button>
+                  <button
+                    type="button"
+                    disabled={nextTask === undefined}
+                    onClick={() => nextTask && setSelectedId(nextTask.id)}
+                  >
+                    Далее
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
+          )}
           <button type="button" className="finish" onClick={handleFinish}>
             Завершить попытку
           </button>
