@@ -1,26 +1,14 @@
-import { useState } from "react";
+import { useReducer, useState } from "react";
 import type { Answer, Task } from "./domain";
+import {
+  attemptReducer,
+  emptyAttempt,
+  findAnswer,
+  getUnansweredTasks,
+  isAnswerFilled,
+} from "./attempt";
 import { mainSet } from "./training-data";
 import "./App.css";
-
-function isAnswerFilled(answer: Answer | undefined): boolean {
-  if (!answer) {
-    return false;
-  }
-
-  if (answer.kind === "short-text") {
-    return answer.text.trim() !== "";
-  }
-
-  return answer.optionId !== "";
-}
-
-function getUnansweredTasks(tasks: Task[], answers: Answer[]): Task[] {
-  return tasks.filter((task) => {
-    const answer = answers.find((a) => a.taskId === task.id);
-    return !isAnswerFilled(answer);
-  });
-}
 
 type TaskListProps = {
   tasks: Task[];
@@ -53,11 +41,11 @@ function TaskList({ tasks, selectedTaskId, onChoose }: TaskListProps) {
 type TaskCardProps = {
   task: Task;
   answer: Answer | undefined;
-  onChoose: (taskId: string, optionId: string) => void;
-  onText: (taskId: string, text: string) => void;
+  onAnswer: (answer: Answer) => void;
+  onClear: (taskId: string) => void;
 };
 
-function TaskCard({ task, answer, onChoose, onText }: TaskCardProps) {
+function TaskCard({ task, answer, onAnswer, onClear }: TaskCardProps) {
   const selectedOptionId =
     answer?.kind === "single-choice" ? answer.optionId : "";
   const text = answer?.kind === "short-text" ? answer.text : "";
@@ -91,7 +79,13 @@ function TaskCard({ task, answer, onChoose, onText }: TaskCardProps) {
                 type="radio"
                 name={task.id}
                 checked={selectedOptionId === option.id}
-                onChange={() => onChoose(task.id, option.id)}
+                onChange={() =>
+                  onAnswer({
+                    taskId: task.id,
+                    kind: "single-choice",
+                    optionId: option.id,
+                  })
+                }
               />
               {option.label}
             </label>
@@ -104,29 +98,51 @@ function TaskCard({ task, answer, onChoose, onText }: TaskCardProps) {
             id={"answer-" + task.id}
             rows={5}
             value={text}
-            onChange={(event) => onText(task.id, event.target.value)}
+            onChange={(event) =>
+              onAnswer({
+                taskId: task.id,
+                kind: "short-text",
+                text: event.target.value,
+              })
+            }
           />
         </div>
       )}
+
+      <button
+        type="button"
+        className="action-button clear-button"
+        onClick={() => onClear(task.id)}
+        disabled={!isAnswerFilled(answer)}
+      >
+        Очистить ответ
+      </button>
     </article>
   );
 }
 
-function Review({ tasks, answers }: { tasks: Task[]; answers: Answer[] }) {
+type ReviewProps = {
+  tasks: Task[];
+  answers: Answer[];
+  editable: boolean;
+  onClear: (taskId: string) => void;
+};
+
+function Review({ tasks, answers, editable, onClear }: ReviewProps) {
   return (
     <section className="task-card">
       <h2>Обзор ответов</h2>
       <ol className="review-list">
-        {tasks.map((task) => {
-          const answer = answers.find((a) => a.taskId === task.id);
+        {tasks.map((task, index) => {
+          const answer = findAnswer(answers, task.id);
           let shown = "Нет ответа";
 
           if (answer?.kind === "single-choice" && task.kind === "single-choice") {
             const option = task.options.find((o) => o.id === answer.optionId);
-            shown = option ? option.label : "Нет ответа";
+            shown = option?.label ?? shown;
           }
 
-          if (answer?.kind === "short-text" && answer.text.trim() !== "") {
+          if (answer?.kind === "short-text" && isAnswerFilled(answer)) {
             shown = answer.text;
           }
 
@@ -134,6 +150,17 @@ function Review({ tasks, answers }: { tasks: Task[]; answers: Answer[] }) {
             <li key={task.id}>
               <p className="review-prompt">{task.prompt}</p>
               <p className="review-answer">{shown}</p>
+              {editable && (
+                <button
+                  type="button"
+                  className="action-button clear-button"
+                  aria-label={"Очистить ответ на задание " + (index + 1)}
+                  onClick={() => onClear(task.id)}
+                  disabled={!isAnswerFilled(answer)}
+                >
+                  Очистить ответ
+                </button>
+              )}
             </li>
           );
         })}
@@ -146,27 +173,18 @@ export default function App() {
   const tasks = mainSet.tasks;
 
   const [selectedTaskId, setSelectedTaskId] = useState(tasks[0]?.id ?? "");
-  const [answers, setAnswers] = useState<Answer[]>([]);
-  const [status, setStatus] = useState<"in-progress" | "submitted">(
-    "in-progress",
-  );
+  const [attempt, dispatch] = useReducer(attemptReducer, emptyAttempt);
   const [showWarning, setShowWarning] = useState(false);
+  const [showReview, setShowReview] = useState(false);
 
   const selectedIndex = tasks.findIndex((task) => task.id === selectedTaskId);
   const selectedTask = tasks[selectedIndex];
 
-  const unanswered = getUnansweredTasks(tasks, answers);
+  const unanswered = getUnansweredTasks(tasks, attempt.answers);
   const filledCount = tasks.length - unanswered.length;
-
-  function saveChoice(taskId: string, optionId: string) {
-    const newAnswer: Answer = { taskId, kind: "single-choice", optionId };
-    setAnswers([...answers.filter((a) => a.taskId !== taskId), newAnswer]);
-  }
-
-  function saveText(taskId: string, text: string) {
-    const newAnswer: Answer = { taskId, kind: "short-text", text };
-    setAnswers([...answers.filter((a) => a.taskId !== taskId), newAnswer]);
-  }
+  const missingNumbers = unanswered
+    .map((task) => "№" + (tasks.indexOf(task) + 1))
+    .join(", ");
 
   function goPrev() {
     if (selectedIndex > 0) {
@@ -186,18 +204,13 @@ export default function App() {
       return;
     }
 
-    setStatus("submitted");
-  }
-
-  function confirmFinish() {
-    setShowWarning(false);
-    setStatus("submitted");
+    dispatch({ type: "submit" });
   }
 
   function startNewAttempt() {
-    setAnswers([]);
+    dispatch({ type: "restart" });
     setShowWarning(false);
-    setStatus("in-progress");
+    setShowReview(false);
     setSelectedTaskId(tasks[0]?.id ?? "");
   }
 
@@ -224,10 +237,7 @@ export default function App() {
               </p>
               {unanswered.length > 0 ? (
                 <p>
-                  Не заполнены:{" "}
-                  {unanswered
-                    .map((task) => "№" + (tasks.indexOf(task) + 1))
-                    .join(", ")}
+                  Не заполнены: {missingNumbers}
                 </p>
               ) : (
                 <p>Все задания заполнены</p>
@@ -235,9 +245,14 @@ export default function App() {
             </div>
           </section>
 
-          {status === "submitted" ? (
+          {attempt.status === "submitted" ? (
             <div>
-              <Review tasks={tasks} answers={answers} />
+              <Review
+                tasks={tasks}
+                answers={attempt.answers}
+                editable={false}
+                onClear={() => {}}
+              />
               <div className="actions">
                 <button
                   type="button"
@@ -250,29 +265,58 @@ export default function App() {
             </div>
           ) : (
             <div>
-              <TaskCard
-                task={selectedTask}
-                answer={answers.find((a) => a.taskId === selectedTask.id)}
-                onChoose={saveChoice}
-                onText={saveText}
-              />
+              {showReview ? (
+                <Review
+                  tasks={tasks}
+                  answers={attempt.answers}
+                  editable={true}
+                  onClear={(taskId) => dispatch({ type: "clear", taskId })}
+                />
+              ) : (
+                <TaskCard
+                  task={selectedTask}
+                  answer={findAnswer(attempt.answers, selectedTask.id)}
+                  onAnswer={(answer) => dispatch({ type: "answer", answer })}
+                  onClear={(taskId) => dispatch({ type: "clear", taskId })}
+                />
+              )}
+
               <div className="actions">
-                <button
-                  type="button"
-                  className="action-button"
-                  onClick={goPrev}
-                  disabled={selectedIndex === 0}
-                >
-                  Назад
-                </button>
-                <button
-                  type="button"
-                  className="action-button"
-                  onClick={goNext}
-                  disabled={selectedIndex === tasks.length - 1}
-                >
-                  Далее
-                </button>
+                {showReview ? (
+                  <button
+                    type="button"
+                    className="action-button"
+                    onClick={() => setShowReview(false)}
+                  >
+                    Вернуться к заданиям
+                  </button>
+                ) : (
+                  <>
+                    <button
+                      type="button"
+                      className="action-button"
+                      onClick={goPrev}
+                      disabled={selectedIndex === 0}
+                    >
+                      Назад
+                    </button>
+                    <button
+                      type="button"
+                      className="action-button"
+                      onClick={goNext}
+                      disabled={selectedIndex === tasks.length - 1}
+                    >
+                      Далее
+                    </button>
+                    <button
+                      type="button"
+                      className="action-button"
+                      onClick={() => setShowReview(true)}
+                    >
+                      Обзор ответов
+                    </button>
+                  </>
+                )}
                 <button
                   type="button"
                   className="action-button finish"
@@ -285,11 +329,7 @@ export default function App() {
               {showWarning && unanswered.length > 0 && (
                 <div className="warning" role="alert">
                   <p>
-                    Не заполнены задания:{" "}
-                    {unanswered
-                      .map((task) => "№" + (tasks.indexOf(task) + 1))
-                      .join(", ")}
-                    . Завершить попытку?
+                    Не заполнены задания: {missingNumbers}. Завершить попытку?
                   </p>
                   <button
                     type="button"
@@ -301,7 +341,7 @@ export default function App() {
                   <button
                     type="button"
                     className="action-button finish"
-                    onClick={confirmFinish}
+                    onClick={() => dispatch({ type: "submit" })}
                   >
                     Всё равно завершить
                   </button>
