@@ -5,6 +5,9 @@ type ReviewProps = {
   tasks: Task[];
   answers: Record<string, Answer>;
   progress: Progress;
+  submitted: boolean;
+  onClear: (taskId: string) => void;
+  onOpenTask: (taskId: string) => void;
   onRestart: () => void;
 };
 
@@ -22,10 +25,18 @@ function describeAnswer(task: Task, answer: Answer | undefined): string {
   return "Пропущено";
 }
 
-export function Review({ tasks, answers, progress, onRestart }: ReviewProps) {
+export function Review({
+  tasks,
+  answers,
+  progress,
+  submitted,
+  onClear,
+  onOpenTask,
+  onRestart,
+}: ReviewProps) {
   return (
     <section className="review">
-      <h2>Попытка завершена</h2>
+      <h2>{submitted ? "Попытка завершена" : "Обзор ответов"}</h2>
       <p>
         Заполнено: {progress.answered} из {progress.total}
       </p>
@@ -36,12 +47,28 @@ export function Review({ tasks, answers, progress, onRestart }: ReviewProps) {
               <strong>{task.id}:</strong> {task.prompt}
             </p>
             <p className="review-answer">{describeAnswer(task, answers[task.id])}</p>
+            {!submitted && (
+              <div className="review-actions">
+                <button type="button" onClick={() => onOpenTask(task.id)}>
+                  Изменить
+                </button>
+                <button
+                  type="button"
+                  disabled={answers[task.id] === undefined}
+                  onClick={() => onClear(task.id)}
+                >
+                  Очистить
+                </button>
+              </div>
+            )}
           </li>
         ))}
       </ol>
-      <button type="button" className="finish" onClick={onRestart}>
-        Начать новую попытку
-      </button>
+      {submitted && (
+        <button type="button" className="finish" onClick={onRestart}>
+          Начать новую попытку
+        </button>
+      )}
     </section>
   );
 }

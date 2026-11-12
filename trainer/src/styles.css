@@ -357,3 +357,52 @@ main > p {
 .review-answer {
   color: var(--muted);
 }
+
+.review-toggle {
+  padding: 12px 18px;
+  font: inherit;
+  font-weight: 700;
+  border: 2px solid var(--line);
+  border-bottom-width: 4px;
+  border-radius: 14px;
+  background: #ffffff;
+  cursor: pointer;
+}
+
+.review-toggle[aria-pressed="true"] {
+  background: var(--blue-light);
+  border-color: var(--blue);
+}
+
+.task-card .clear {
+  margin-top: 16px;
+  padding: 10px 16px;
+  font: inherit;
+  font-weight: 700;
+  border: 2px solid var(--line);
+  border-radius: 12px;
+  background: #ffffff;
+  cursor: pointer;
+}
+
+.task-card .clear:disabled,
+.review-actions button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.workspace .review {
+  grid-column: auto;
+}
+
+.review-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.review-actions button {
+  padding: 6px 12px;
+  font-size: 14px;
+  border-bottom-width: 2px;
+}

@@ -4,9 +4,10 @@ type TaskCardProps = {
   task: Task;
   answer: Answer | undefined;
   onAnswer: (answer: Answer) => void;
+  onClear: (taskId: string) => void;
 };
 
-export function TaskCard({ task, answer, onAnswer }: TaskCardProps) {
+export function TaskCard({ task, answer, onAnswer, onClear }: TaskCardProps) {
   return (
     <article className="task-card">
       <p>Тема: {task.topic}</p>
@@ -54,6 +55,14 @@ export function TaskCard({ task, answer, onAnswer }: TaskCardProps) {
           />
         </label>
       )}
+      <button
+        type="button"
+        className="clear"
+        disabled={answer === undefined}
+        onClick={() => onClear(task.id)}
+      >
+        Очистить ответ
+      </button>
     </article>
   );
 }
