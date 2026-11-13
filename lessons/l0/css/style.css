@@ -1,4 +1,4 @@
-/* Базовые стили стартового проекта. Основную стилизацию добавляет студент. */
+
 * {
     margin: 0;
     padding: 0;
@@ -6,10 +6,19 @@
 }
 
 :root {
-    color: #202124;
-    background: #f7f4ef;
-    font-family: Arial, sans-serif;
-    line-height: 1.6;
+    --color-bg: #f7f2ea;
+    --color-card: #fffdf9;
+    --color-text: #40352e;
+    --color-accent: #8b6b52;
+    --color-border: #e5d8c8;
+
+    --font-heading: Georgia, "Times New Roman", serif;
+    --font-body: Arial, Helvetica, sans-serif;
+
+    color: var(--color-text);
+    background: var(--color-bg);
+    font-family: var(--font-body);
+    line-height: 1.7;
 }
 
 html {
@@ -19,7 +28,7 @@ html {
 body {
     min-height: 100vh;
     padding: 24px;
-    background: #f7f4ef;
+    background: #ebd4ad;
     overflow-x: hidden;
 }
 
@@ -46,12 +55,12 @@ button {
 }
 
 .starter-note {
-    max-width: 720px;
+    max-width: 1024px;
     margin: 10vh auto;
     padding: 32px;
-    border: 1px dashed #b9a28e;
-    border-radius: 16px;
-    background: #fffdf9;
+    border: 1px dashed #f1f0ee;
+    border-radius: 25px;
+    background: #f7ede6;
     text-align: center;
 }
 
@@ -65,3 +74,99 @@ footer {
     color: #6d665e;
     text-align: center;
 }
+
+.gallery {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+.gallery-item img {
+    width: 100%;
+    height: 650px;
+    object-fit: cover;
+}
+
+.contacts {
+    max-width: 720px;
+    margin: 60px auto;
+    padding: 32px;
+    background: #fffaf3;
+    border: 1px solid #e5d5c2;
+    border-radius: 16px;
+    text-align: center;
+}
+
+.contacts h2 {
+    margin-bottom: 16px;
+    color: #704b35;
+}
+
+.contacts p {
+    margin-bottom: 12px;
+}
+
+.contacts a {
+    color: #8b5e3c;
+    text-decoration: none;
+}
+
+.contacts a:hover {
+    text-decoration: underline;
+}
+
+
+header {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 24px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 24px;
+    border-bottom: 1px solid var(--color-border);
+}
+
+header h1 {
+    margin: 0;
+    font-size: 30px;
+    letter-spacing: 0.5px;
+}
+
+nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 28px;
+}
+
+nav a {
+    color: var(--color-text);
+    text-decoration: none;
+    transition: color 0.25s ease;
+}
+
+nav a:hover {
+    color: var(--color-accent);
+}
+
+
+@media (max-width: 600px) {
+    .gallery {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+    }
+
+    .gallery-item img {
+        height: 180px;
+    }
+
+    body {
+        padding: 16px;
+    }
+
+    header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
+
