@@ -8,24 +8,48 @@
 </head>
 <body>
     <header>
-        <!-- TODO: добавьте навигацию по разделам страницы -->
+        <h1>Анна Аннушкина</h1>
+        <nav>
+            <a href="#about">Обо мне</a>
+            <a href="#gallery">Галерея</a>
+            <a href="#contacts">Контакты</a>
+        </nav>
     </header>
 
     <main>
-        <section class="starter-note" aria-labelledby="starter-title">
-            <h1 id="starter-title">Стартовая страница нулевого занятия</h1>
-            <p>Замените этот блок содержимым портфолио фотографа по заданию в README.</p>
+        <section id="about">
+            <h2>Обо мне</h2>
+            <img src="images/about.jpeg" alt="Анна Аннушкина" class="about-photo">
+            <p>Я профессиональный фотограф. Занимаюсь портретной и свадебной съёмкой, а также снимаю природу.</p>
+            <ul>
+                <li>Портретная съёмка</li>
+                <li>Свадебная съёмка</li>
+                <li>Съёмка природы</li>
+            </ul>
         </section>
 
-        <!-- TODO: добавьте раздел с информацией о фотографе -->
+        <section id="gallery">
+            <h2>Галерея</h2>
+            <div class="gallery">
+                <img src="images/portrait_1.jpg" alt="Портрет 1">
+                <img src="images/portrait_2.jpg" alt="Портрет 2">
+                <img src="images/wedding_1.jpg" alt="Свадьба 1">
+                <img src="images/wedding_2.jpg" alt="Свадьба 2">
+                <img src="images/nature_1.jpg" alt="Природа 1">
+                <img src="images/nature_2.jpg" alt="Природа 2">
+            </div>
+        </section>
 
-        <!-- TODO: добавьте галерею из локальных изображений -->
-
-        <!-- TODO: добавьте контактную информацию -->
+        <section id="contacts">
+            <h2>Контакты</h2>
+            <p>Телефон: +7 (983) 526-52-67</p>
+            <p>Email: anna@yandex.ru</p>
+            
+        </section>
     </main>
 
     <footer>
-        <!-- TODO: добавьте подвал страницы -->
+        <p> Анна Аннушкина. Все права защищены.</p>
     </footer>
 
     <script src="js/script.js" defer></script>
