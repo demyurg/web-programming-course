@@ -1,9 +1,9 @@
-import { useState } from "react";
+import { useReducer } from "react";
 import type { TrainingSet, Answer } from "./domain";
 import { TaskList } from "./TaskList";
 import { TaskCard } from "./TaskCard";
+import { setAnswer, clearAnswer, trySubmit, isAnswerFilled } from "./attemptRules";
 
-// Тестовые данные
 const mainSet: TrainingSet = {
   id: "set-1",
   title: "Основы TypeScript и React",
@@ -25,122 +25,93 @@ const mainSet: TrainingSet = {
   ],
 };
 
-// Тип для режима попытки
 type AttemptStatus = "in-progress" | "submitted";
 
-// Вспомогательная функция: проверен ли ответ
-function isAnswerFilled(answer: Answer | undefined): boolean {
-  if (!answer) return false;
-  if (answer.kind === "short-text") {
-    return answer.text.trim().length > 0;
+type AttemptState = {
+  answers: Answer[];
+  status: AttemptStatus;
+  currentIndex: number;
+  showReview: boolean;
+};
+
+type AttemptAction =
+  | { type: "SET_ANSWER"; payload: Answer }
+  | { type: "CLEAR_ANSWER"; payload: string }
+  | { type: "NEXT" }
+  | { type: "PREV" }
+  | { type: "JUMP"; payload: number }
+  | { type: "TOGGLE_REVIEW" }
+  | { type: "SUBMIT" }
+  | { type: "RESTART" };
+
+function attemptReducer(state: AttemptState, action: AttemptAction): AttemptState {
+  // ЗАЩИТА: Если попытка завершена, игнорируем всё, кроме RESTART
+  if (state.status === "submitted" && action.type !== "RESTART") {
+    return state;
   }
-  return true;
+
+  switch (action.type) {
+    case "SET_ANSWER":
+      return { ...state, answers: setAnswer(state.answers, action.payload) };
+    case "CLEAR_ANSWER":
+      return { ...state, answers: clearAnswer(state.answers, action.payload) };
+    case "NEXT":
+      return { ...state, currentIndex: Math.min(state.currentIndex + 1, mainSet.tasks.length - 1) };
+    case "PREV":
+      return { ...state, currentIndex: Math.max(state.currentIndex - 1, 0) };
+    case "JUMP":
+      return { ...state, currentIndex: Math.max(0, Math.min(action.payload, mainSet.tasks.length - 1)) };
+    case "TOGGLE_REVIEW":
+      return { ...state, showReview: !state.showReview };
+    case "SUBMIT":
+      return { ...state, status: "submitted", showReview: false };
+    case "RESTART":
+      return { answers: [], status: "in-progress", currentIndex: 0, showReview: false };
+    default:
+      return state;
+  }
 }
 
 export default function App() {
-  // Состояние: индекс текущего задания
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [state, dispatch] = useReducer(attemptReducer, {
+    answers: [],
+    status: "in-progress",
+    currentIndex: 0,
+    showReview: false,
+  });
 
-  // Состояние: массив ответов
-  const [answers, setAnswers] = useState<Answer[]>([]);
-
-  // Состояние: режим попытки
-  const [status, setStatus] = useState<AttemptStatus>("in-progress");
-
-  const currentTask = mainSet.tasks[currentIndex];
+  const currentTask = mainSet.tasks[state.currentIndex];
   const totalCount = mainSet.tasks.length;
 
-  // Функция: обновить или добавить ответ (НЕ МУТИРУЕМ!)
-  const updateAnswer = (answer: Answer) => {
-    setAnswers((prevAnswers) => {
-      const existingIndex = prevAnswers.findIndex((a) => a.taskId === answer.taskId);
-
-      if (existingIndex >= 0) {
-        // Заменяем существующий ответ (создаём новый массив!)
-        const newAnswers = [...prevAnswers];
-        newAnswers[existingIndex] = answer;
-        return newAnswers;
-      } else {
-        // Добавляем новый ответ
-        return [...prevAnswers, answer];
-      }
-    });
-  };
-
-  // Функция: получить ответ для задания
-  const getAnswer = (taskId: string): Answer | undefined => {
-    return answers.find((a) => a.taskId === taskId);
-  };
-
-  // ВЫЧИСЛЯЕМ прогресс (производное значение, не храним!)
   const filledCount = mainSet.tasks.filter((task) => {
-    const answer = getAnswer(task.id);
+    const answer = state.answers.find((a) => a.taskId === task.id);
     return isAnswerFilled(answer);
   }).length;
 
-  // Функция: перейти к следующему заданию
-  const goNext = () => {
-    if (currentIndex < totalCount - 1) {
-      setCurrentIndex(currentIndex + 1);
+  const handleSubmitClick = () => {
+    const result = trySubmit(mainSet.tasks, state.answers);
+    if (!result.ok) {
+      const ids = result.missingIds.join(", ");
+      const confirmed = window.confirm(`Не все задания заполнены. Пропущены: ${ids}. Всё равно завершить?`);
+      if (!confirmed) return;
     }
+    dispatch({ type: "SUBMIT" });
   };
 
-  // Функция: перейти к предыдущему заданию
-  const goBack = () => {
-    if (currentIndex > 0) {
-      setCurrentIndex(currentIndex - 1);
-    }
-  };
-
-  // Функция: завершить попытку
-  const finishAttempt = () => {
-    // Ищем пропущенные задания
-    const emptyTasks = mainSet.tasks.filter((task) => {
-      const answer = getAnswer(task.id);
-      return !isAnswerFilled(answer);
-    });
-
-    if (emptyTasks.length > 0) {
-      // Если есть пропуски — спрашиваем подтверждение
-      const ids = emptyTasks.map((t) => t.id).join(", ");
-      const confirmed = window.confirm(
-        `Не все задания заполнены. Пропущены: ${ids}. Всё равно завершить?`
-      );
-      if (!confirmed) return; // Отмена — ничего не делаем
-    }
-
-    // Завершаем попытку
-    setStatus("submitted");
-  };
-
-  // Функция: начать новую попытку
-  const restartAttempt = () => {
-    setAnswers([]);
-    setCurrentIndex(0);
-    setStatus("in-progress");
-  };
-
-  return (
-    <main style={{ maxWidth: "800px", margin: "40px auto", padding: "0 20px", fontFamily: "sans-serif" }}>
-      <h1>{mainSet.title}</h1>
-
-      {/* Прогресс */}
-      <p style={{ color: "#666", marginBottom: "20px" }}>
-        Прогресс: {filledCount} из {totalCount}
-      </p>
-
-      {/* Если попытка завершена — показываем обзор */}
-      {status === "submitted" ? (
+  // ЭКРАН 1: Попытка завершена
+  if (state.status === "submitted") {
+    return (
+      <main style={{ maxWidth: "800px", margin: "40px auto", padding: "0 20px", fontFamily: "sans-serif" }}>
+        <h1>{mainSet.title}</h1>
         <section style={{ background: "#f9f9f9", padding: "20px", borderRadius: "8px" }}>
           <h2>Попытка завершена</h2>
           <p>Ваши ответы:</p>
           <ul style={{ lineHeight: "1.8" }}>
             {mainSet.tasks.map((task) => {
-              const answer = getAnswer(task.id);
+              const answer = state.answers.find((a) => a.taskId === task.id);
               return (
                 <li key={task.id}>
-                  <strong>{task.topic}:</strong> {task.text}
-                  <br />
+                  <strong>{task.topic}:</strong> {task.text}<br />
                   <em>Ответ: </em>
                   {answer
                     ? answer.kind === "single-choice"
@@ -152,62 +123,116 @@ export default function App() {
             })}
           </ul>
           <button
-            onClick={restartAttempt}
+            onClick={() => dispatch({ type: "RESTART" })}
             style={{ marginTop: "20px", padding: "10px 20px", cursor: "pointer" }}
           >
             Новая попытка
           </button>
         </section>
-      ) : (
-        /* Если попытка в процессе — показываем задание */
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 2fr", gap: "30px" }}>
-          <aside>
-            <h2>Список заданий</h2>
-            <TaskList
-              tasks={mainSet.tasks}
-              currentIndex={currentIndex}
-              onSelect={setCurrentIndex}
-              answers={answers}
-            />
-          </aside>
+      </main>
+    );
+  }
 
-          <section>
-            <h2>Задание {currentIndex + 1} из {totalCount}</h2>
-            {currentTask && (
-              <TaskCard
-                task={currentTask}
-                answer={getAnswer(currentTask.id)}
-                onAnswerChange={updateAnswer}
-                disabled={false}
-              />
-            )}
+  // ЭКРАН 2: Экран обзора (ДО завершения)
+  if (state.showReview) {
+    return (
+      <main style={{ maxWidth: "800px", margin: "40px auto", padding: "0 20px", fontFamily: "sans-serif" }}>
+        <h1>Обзор ответов перед завершением</h1>
+        <p style={{ color: "#666", marginBottom: "20px" }}>Прогресс: {filledCount} из {totalCount}</p>
+        
+        <section style={{ background: "#fff", padding: "20px", borderRadius: "8px", border: "1px solid #ccc" }}>
+          {mainSet.tasks.map((task) => {
+            const answer = state.answers.find((a) => a.taskId === task.id);
+            const isFilled = isAnswerFilled(answer);
+            
+            return (
+              <div key={task.id} style={{ marginBottom: "20px", paddingBottom: "20px", borderBottom: "1px solid #eee" }}>
+                <h3>{isFilled ? "✅" : "⚠️"} {task.topic}</h3>
+                <p>{task.text}</p>
+                <div style={{ background: "#f4f4f4", padding: "10px", borderRadius: "4px", marginBottom: "10px" }}>
+                  <strong>Ваш ответ: </strong>
+                  {answer
+                    ? answer.kind === "single-choice"
+                      ? answer.optionId
+                      : answer.text || "(пусто)"
+                    : "(не отвечено)"}
+                </div>
+                <button
+                  onClick={() => dispatch({ type: "CLEAR_ANSWER", payload: task.id })}
+                  style={{ padding: "8px 16px", cursor: "pointer", color: "#d32f2f", background: "#fff", border: "1px solid #d32f2f", borderRadius: "4px" }}
+                >
+                  Очистить ответ
+                </button>
+              </div>
+            );
+          })}
+        </section>
 
-            {/* Кнопки навигации */}
-            <div style={{ marginTop: "20px", display: "flex", gap: "10px" }}>
-              <button
-                onClick={goBack}
-                disabled={currentIndex === 0}
-                style={{ padding: "10px 20px", cursor: "pointer" }}
-              >
-                Назад
-              </button>
-              <button
-                onClick={goNext}
-                disabled={currentIndex === totalCount - 1}
-                style={{ padding: "10px 20px", cursor: "pointer" }}
-              >
-                Далее
-              </button>
-              <button
-                onClick={finishAttempt}
-                style={{ padding: "10px 20px", marginLeft: "auto", cursor: "pointer" }}
-              >
-                Завершить
-              </button>
-            </div>
-          </section>
+        <div style={{ marginTop: "20px", display: "flex", gap: "10px" }}>
+          <button onClick={() => dispatch({ type: "TOGGLE_REVIEW" })} style={{ padding: "10px 20px", cursor: "pointer" }}>
+            ← Вернуться к заданиям
+          </button>
+          <button onClick={handleSubmitClick} style={{ padding: "10px 20px", marginLeft: "auto", cursor: "pointer", background: "#4caf50", color: "white", border: "none" }}>
+            Подтвердить и завершить
+          </button>
         </div>
-      )}
+      </main>
+    );
+  }
+
+  // ЭКРАН 3: Обычное прохождение
+  return (
+    <main style={{ maxWidth: "800px", margin: "40px auto", padding: "0 20px", fontFamily: "sans-serif" }}>
+      <h1>{mainSet.title}</h1>
+      <p style={{ color: "#666", marginBottom: "20px" }}>Прогресс: {filledCount} из {totalCount}</p>
+
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 2fr", gap: "30px" }}>
+        <aside>
+          <h2>Список заданий</h2>
+          <TaskList
+            tasks={mainSet.tasks}
+            currentIndex={state.currentIndex}
+            onSelect={(index) => dispatch({ type: "JUMP", payload: index })}
+            answers={state.answers}
+          />
+        </aside>
+
+        <section>
+          <h2>Задание {state.currentIndex + 1} из {totalCount}</h2>
+          {currentTask && (
+            <TaskCard
+              task={currentTask}
+              answer={state.answers.find((a) => a.taskId === currentTask.id)}
+              onAnswerChange={(answer) => dispatch({ type: "SET_ANSWER", payload: answer })}
+              onClearAnswer={() => dispatch({ type: "CLEAR_ANSWER", payload: currentTask.id })}
+            />
+          )}
+
+          <div style={{ marginTop: "20px", display: "flex", gap: "10px" }}>
+            <button
+              onClick={() => dispatch({ type: "PREV" })}
+              disabled={state.currentIndex === 0}
+              style={{ padding: "10px 20px", cursor: "pointer" }}
+            >
+              Назад
+            </button>
+            <button
+              onClick={() => dispatch({ type: "NEXT" })}
+              disabled={state.currentIndex === totalCount - 1}
+              style={{ padding: "10px 20px", cursor: "pointer" }}
+            >
+              Далее
+            </button>
+            <button
+              onClick={() => dispatch({ type: "TOGGLE_REVIEW" })}
+              style={{ padding: "10px 20px", marginLeft: "auto", cursor: "pointer" }}
+            >
+              Обзор и завершение
+            </button>
+          </div>
+        </section>
+      </div>
     </main>
   );
 }
+

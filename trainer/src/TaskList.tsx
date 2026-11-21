@@ -1,6 +1,6 @@
 import type { Task, Answer } from "./domain";
+import { isAnswerFilled } from "./attemptRules";
 
-// Тип пропсов для списка
 type TaskListProps = {
   tasks: Task[];
   currentIndex: number;
@@ -8,19 +8,8 @@ type TaskListProps = {
   answers: Answer[];
 };
 
-// Вспомогательная функция: проверен ли ответ
-function isAnswerFilled(answer: Answer | undefined): boolean {
-  if (!answer) return false;
-  if (answer.kind === "short-text") {
-    return answer.text.trim().length > 0;
-  }
-  return true;
-}
-
 export function TaskList({ tasks, currentIndex, onSelect, answers }: TaskListProps) {
-  if (tasks.length === 0) {
-    return <p>В этом модуле пока нет заданий.</p>;
-  }
+  if (tasks.length === 0) return <p>В этом модуле пока нет заданий.</p>;
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
@@ -41,10 +30,10 @@ export function TaskList({ tasks, currentIndex, onSelect, answers }: TaskListPro
               background: isSelected ? "#e7f1ff" : "#fff",
               cursor: "pointer",
               fontWeight: isSelected ? "bold" : "normal",
+              opacity: filled ? 1 : 0.6,
+              textDecoration: filled ? "none" : "underline dotted #999",
             }}
           >
-            {/* визуализация */}
-            {filled ? "✓ " : "○ "}
             {task.topic}: {task.text.substring(0, 30)}...
           </button>
         );

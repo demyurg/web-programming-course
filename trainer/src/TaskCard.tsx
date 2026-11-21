@@ -1,14 +1,13 @@
 import type { Task, Answer } from "./domain";
 
-// Тип пропсов для карточки
 type TaskCardProps = {
   task: Task;
   answer: Answer | undefined;
   onAnswerChange: (answer: Answer) => void;
-  disabled: boolean;
+  onClearAnswer: () => void;
 };
 
-export function TaskCard({ task, answer, onAnswerChange, disabled }: TaskCardProps) {
+export function TaskCard({ task, answer, onAnswerChange, onClearAnswer }: TaskCardProps) {
   return (
     <div style={{ padding: "20px", border: "1px solid #ccc", borderRadius: "8px", background: "#fff" }}>
       <h3 style={{ color: "#555", fontSize: "14px", textTransform: "uppercase" }}>
@@ -18,20 +17,18 @@ export function TaskCard({ task, answer, onAnswerChange, disabled }: TaskCardPro
         {task.text}
       </p>
 
-      {/* Показ кода, если есть */}
       {task.code && (
         <pre style={{ background: "#f4f4f4", padding: "10px", borderRadius: "4px", overflowX: "auto" }}>
           {task.code}
         </pre>
       )}
 
-      {/* Поле для ответа */}
       <div style={{ marginTop: "20px" }}>
         {task.kind === "single-choice" ? (
-          <fieldset disabled={disabled} style={{ border: "none", padding: 0 }}>
+          <fieldset style={{ border: "none", padding: 0 }}>
             <legend style={{ fontWeight: "bold", marginBottom: "10px" }}>Выберите вариант:</legend>
             {task.options.map((option) => (
-              <label key={option} style={{ display: "block", margin: "10px 0", cursor: disabled ? "default" : "pointer" }}>
+              <label key={option} style={{ display: "block", margin: "10px 0", cursor: "pointer" }}>
                 <input
                   type="radio"
                   name={`task-${task.id}`}
@@ -44,7 +41,6 @@ export function TaskCard({ task, answer, onAnswerChange, disabled }: TaskCardPro
                       optionId: option,
                     });
                   }}
-                  disabled={disabled}
                 />
                 {" "}{option}
               </label>
@@ -65,7 +61,6 @@ export function TaskCard({ task, answer, onAnswerChange, disabled }: TaskCardPro
                   text: e.target.value,
                 });
               }}
-              disabled={disabled}
               style={{
                 width: "100%",
                 minHeight: "100px",
@@ -76,6 +71,24 @@ export function TaskCard({ task, answer, onAnswerChange, disabled }: TaskCardPro
               }}
             />
           </div>
+        )}
+        
+        {/* Кнопка очистки появляется только если ответ уже есть */}
+        {answer && (
+          <button 
+            onClick={onClearAnswer}
+            style={{ 
+              marginTop: "15px", 
+              padding: "8px 16px", 
+              cursor: "pointer", 
+              color: "#d32f2f", 
+              background: "#fff", 
+              border: "1px solid #d32f2f", 
+              borderRadius: "4px" 
+            }}
+          >
+            Очистить ответ
+          </button>
         )}
       </div>
     </div>
