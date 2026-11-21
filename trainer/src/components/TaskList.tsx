@@ -4,7 +4,7 @@ type TaskListProps = {
   tasks: Task[];
   selectedId: string | undefined;
   onSelect: (id: string) => void;
-  unansweredIds: string[]; // <-- НОВОЕ
+  unansweredIds: string[]; 
 };
 
 export function TaskList({ tasks, selectedId, onSelect, unansweredIds }: TaskListProps) {

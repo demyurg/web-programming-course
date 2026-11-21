@@ -3,16 +3,23 @@ import { Task, Answer } from '../domain.js';
 type AnswerInputProps = {
   task: Task;
   currentAnswer: Answer | undefined;
-  isFinished: boolean;
+  canEdit: boolean;
   onChange: (answer: Answer) => void;
+  onClear: () => void;
 };
 
-export function AnswerInput({ task, currentAnswer, isFinished, onChange }: AnswerInputProps) {
-  // Вариант single-choice: радио-кнопки
+export function AnswerInput({
+  task,
+  currentAnswer,
+  canEdit,
+  onChange,
+  onClear,
+}: AnswerInputProps) {
   if (task.kind === 'single-choice') {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '16px' }}>
         <p style={{ margin: '0 0 8px', fontWeight: 'bold' }}>Выберите вариант:</p>
+
         {task.options.map((opt) => {
           const isChecked =
             currentAnswer?.kind === 'single-choice' && currentAnswer.optionId === opt.id;
@@ -23,7 +30,7 @@ export function AnswerInput({ task, currentAnswer, isFinished, onChange }: Answe
                 display: 'flex',
                 alignItems: 'center',
                 gap: '8px',
-                cursor: isFinished ? 'default' : 'pointer',
+                cursor: canEdit ? 'pointer' : 'default',
                 padding: '6px 10px',
                 border: isChecked ? '1px solid #007bff' : '1px solid transparent',
                 borderRadius: '4px',
@@ -35,20 +42,40 @@ export function AnswerInput({ task, currentAnswer, isFinished, onChange }: Answe
                 name={`task-${task.id}`}
                 value={opt.id}
                 checked={isChecked}
-                disabled={isFinished}
+                disabled={!canEdit}
                 onChange={() =>
-                  onChange({ taskId: task.id, kind: 'single-choice', optionId: opt.id })
+                  onChange({
+                    taskId: task.id,
+                    kind: 'single-choice',
+                    optionId: opt.id,
+                  })
                 }
               />
               {opt.label}
             </label>
           );
         })}
+
+        {currentAnswer && canEdit && (
+          <button
+            type="button"
+            onClick={onClear}
+            style={{
+              marginTop: '12px',
+              padding: '6px 12px',
+              background: '#ffc107',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer',
+            }}
+          >
+            Очистить ответ
+          </button>
+        )}
       </div>
     );
   }
 
-  // Вариант short-text: textarea
   const textValue = currentAnswer?.kind === 'short-text' ? currentAnswer.text : '';
 
   return (
@@ -64,14 +91,36 @@ export function AnswerInput({ task, currentAnswer, isFinished, onChange }: Answe
           border: '1px solid #ccc',
           borderRadius: '4px',
           resize: 'vertical',
+          boxSizing: 'border-box',
         }}
         value={textValue}
-        disabled={isFinished}
+        disabled={!canEdit}
         placeholder="Введите ваш ответ..."
         onChange={(e) =>
-          onChange({ taskId: task.id, kind: 'short-text', text: e.target.value })
+          onChange({
+            taskId: task.id,
+            kind: 'short-text',
+            text: e.target.value,
+          })
         }
       />
+
+      {currentAnswer && canEdit && (
+        <button
+          type="button"
+          onClick={onClear}
+          style={{
+            marginTop: '12px',
+            padding: '6px 12px',
+            background: '#ffc107',
+            border: 'none',
+            borderRadius: '4px',
+            cursor: 'pointer',
+          }}
+        >
+          Очистить ответ
+        </button>
+      )}
     </div>
   );
 }
