@@ -1,0 +1,209 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    color: #202124;
+    background: #f7f4ef;
+}
+
+main {
+    width: 100%;
+    min-height: 100vh;
+    padding: 24px;
+}
+
+h1 {
+    margin: 0 0 16px;
+    font-size: 30px;
+}
+
+h2 {
+    margin: 0 0 16px;
+    font-size: 22px;
+}
+
+h3 {
+    margin-bottom: 10px;
+    font-size: 17px;
+}
+
+p {
+    margin: 10px 0;
+}
+
+button {
+    margin: 6px 8px 6px 0;
+    padding: 10px 16px;
+    border: none;
+    border-radius: 8px;
+    background: #8b5e3c;
+    color: white;
+    font: inherit;
+    cursor: pointer;
+}
+
+button:hover:not(:disabled) {
+    background: #70482c;
+}
+
+button:disabled {
+    background: #c8c0b8;
+    cursor: not-allowed;
+}
+
+input[type="radio"] {
+    margin-right: 10px;
+    accent-color: #8b5e3c;
+}
+
+textarea {
+    display: block;
+    width: 100%;
+    min-height: 120px;
+    padding: 12px;
+    border: 1px solid #c9b9a8;
+    border-radius: 8px;
+    font: inherit;
+    resize: vertical;
+}
+
+textarea:focus-visible,
+button:focus-visible {
+    outline: 3px solid #b58a68;
+    outline-offset: 3px;
+}
+
+pre {
+    overflow-x: auto;
+    padding: 16px;
+    border-radius: 8px;
+    background: #f1ebe4;
+}
+
+section section {
+    margin-top: 16px;
+    padding: 16px;
+    border: 1px solid #e4d9cc;
+    border-radius: 10px;
+    background: #ffffff;
+}
+
+/*основная область*/
+
+.trainer-layout {
+    display: grid;
+    grid-template-columns: minmax(320px, 35%) minmax(0, 1fr);
+    gap: 24px;
+    margin-top: 24px;
+    align-items: start;
+}
+
+/*левая панель со списком заданий*/
+
+.trainer-sidebar {
+    min-width: 0;
+    padding: 24px;
+    background: #fffdf9;
+    border: 1px solid #e4d9cc;
+    border-radius: 12px;
+}
+
+.trainer-sidebar h2 {
+    margin: 0 0 20px;
+    font-size: 20px;
+}
+
+.trainer-sidebar ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.trainer-sidebar li {
+    margin-bottom: 10px;
+}
+
+.trainer-sidebar li:last-child {
+    margin-bottom: 0;
+}
+
+.trainer-sidebar li button {
+    display: block;
+    width: 100%;
+    margin: 0;
+    padding: 14px 16px;
+    text-align: left;
+    line-height: 1.5;
+    border-radius: 8px;
+}
+
+.trainer-sidebar li button.selected-task {
+    background: #70482c;
+    outline: 2px solid #b58a68;
+    outline-offset: 2px;
+}
+
+/*индикаторы выполнения заданий*/
+
+.task-status {
+    display: inline-block;
+    margin-right: 8px;
+    font-weight: bold;
+    color: #c9b9a8;
+}
+
+.task-status.answered {
+    color: #e8c98a;
+}
+
+/*правая область с выбранным заданием*/
+
+.trainer-content {
+    min-width: 0;
+    min-height: 400px;
+    padding: 32px;
+    background: #fffdf9;
+    border: 1px solid #e4d9cc;
+    border-radius: 12px;
+}
+
+.trainer-content > div:last-child {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 32px;
+}
+
+.trainer-content > div:last-child button {
+    margin: 0;
+}
+
+.trainer-content h2 {
+    margin: 0 0 20px;
+    font-size: 20px;
+}
+
+@media (max-width: 700px) {
+    main {
+        padding: 16px;
+    }
+
+    h1 {
+        font-size: 25px;
+    }
+
+    .trainer-layout {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    .trainer-sidebar,
+    .trainer-content {
+        padding: 16px;
+    }
+}
