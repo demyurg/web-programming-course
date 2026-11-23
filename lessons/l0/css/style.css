@@ -1,4 +1,3 @@
-/* Базовые стили стартового проекта. Основную стилизацию добавляет студент. */
 * {
     margin: 0;
     padding: 0;
@@ -6,8 +5,6 @@
 }
 
 :root {
-    color: #202124;
-    background: #f7f4ef;
     font-family: Arial, sans-serif;
     line-height: 1.6;
 }
@@ -19,7 +16,6 @@ html {
 body {
     min-height: 100vh;
     padding: 24px;
-    background: #f7f4ef;
     overflow-x: hidden;
 }
 
@@ -40,28 +36,355 @@ button {
     font: inherit;
 }
 
-:focus-visible {
-    outline: 3px solid #8b5e3c;
-    outline-offset: 3px;
-}
-
-.starter-note {
-    max-width: 720px;
-    margin: 10vh auto;
-    padding: 32px;
-    border: 1px dashed #b9a28e;
-    border-radius: 16px;
-    background: #fffdf9;
-    text-align: center;
-}
-
-.starter-note h1 {
-    margin-bottom: 12px;
-}
-
 footer {
-    max-width: 720px;
-    margin: 0 auto;
-    color: #6d665e;
+    margin-top: 24px;
+    padding: 25px;
+    background: #1a252f;
+    border-radius: 10px;
+    color: #d5d8dc;
     text-align: center;
 }
+
+header {
+    background: #1a252f;
+    height: 80px;
+    padding: 10px 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+}
+header img {
+    width: 90px;
+    height: 90px;
+    object-fit: contain
+}
+header nav {
+    margin-left: auto;
+}
+.burger {
+    display: none;
+    font-size: 24px;
+    background: none;
+    border: none;
+    color: #f8f9fa;
+    cursor: pointer;
+    
+}
+nav ul {
+    display: flex;
+    gap: 30px;
+    list-style: none; /*убираем маркер (точка), который по умолчанию*/
+}
+
+nav a {
+    color: #f8f9fa;
+    text-decoration: none;/*подчеркивание*/
+    font-size: 16px;
+
+}
+nav a:hover {
+    color: #5d6d7e;
+}
+#main {
+    min-height: 350px;
+    margin-top: 24px;
+    padding: 40px; /*отступ внутри блока*/
+    background: linear-gradient(135deg, #f8f9fa, #e9edf0);
+    border-radius: 10px;
+
+     display: flex;
+     align-items: center;
+}
+
+.main-content {
+    max-width: 700px; /*без ограничения по ширине текст может растянуться по экрану*/
+    flex: 1;
+    
+}
+.main-content h1 {
+    color: #1a252f;
+    font-size: 48px;
+    margin-bottom: 20px;
+
+}
+.main-content p {
+    color: #5d6d7e;
+    font-size: 20px;
+    margin-bottom: 30px;
+}
+.main-content a {
+    display: inline-block;
+    padding: 12px 24px;
+    border-radius: 6px;
+    background: #1a252f;
+    color: #f8f9fa;
+    font-size: 18px;
+    text-decoration: none;
+}
+.main-content a:hover {
+    background: #5d6d7e;
+    color: #1a252f;
+}
+
+.main-image {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+}
+.main-image img {
+    width: 400px;
+}
+#about {
+    padding: 40px;
+    background: #f8f9fa;
+    border-radius: 10px;
+
+    display: flex;
+    justify-content: space-between; /*раздвигает по бокам (без отступов от родительского контейнера)*/
+    align-items: center;
+    gap: 60px;
+}
+#about h2 {
+    color: #1a252f;
+    font-size: 36px;
+    margin-bottom: 20px;
+}
+.about-text {
+    max-width: 700px;
+    font-size: 18px;
+    color: #5d6d7e;
+    margin-bottom: 40px;
+}
+.about-stats {
+    display: flex; /*в одну строку все будет*/
+    gap: 60px;
+}
+
+.about-stats h3 {
+    color: #2c3e50;
+    font-size: 32px;
+}
+
+.about-stats p {
+    color: #5d6d7e;
+    font-size: 16px;
+}
+
+#gallery {
+    margin-top: 24px;
+    padding: 40px;
+    background: #f8f9fa;
+    border-radius: 10px;
+}
+
+#gallery h2 {
+    color: #1a252f;
+    font-size: 36px;
+    margin-bottom: 20px;
+}
+
+.gallery-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.gallery {
+    display: flex;
+    gap: 24px;
+    overflow: hidden;
+    scroll-behavior: smooth;
+    flex: 1;
+}
+.gallery img {
+    flex: 0 0 calc((100% - 48px) / 3);
+    width: calc((100% - 48px) / 3);
+    height: 300px;
+    object-fit: cover;
+}
+
+.gallery-button {
+    width: 45px;
+    height: 45px;
+    border: none;
+    border-radius: 50%;
+    background: #1a252f;
+    color: #f8f9fa;
+    font-size: 24px;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.gallery-button:hover {
+    background: #5d6d7e;
+}
+
+#communication {
+    margin-top: 24px;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 10px;
+}
+
+#communication h2 {
+    color: #1a252f;
+    font-size: 36px;
+    margin-bottom: 20px;
+}
+
+.contact-blocks {
+    display: flex;
+    gap: 30px;
+}
+
+.contact-block {
+    flex: 1;
+    padding: 30px;
+    background: #e9edf0;
+    border-radius: 10px;
+    overflow-wrap: break-word;
+}
+
+.contact-block h3 {
+    color: #1a252f;
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+.contacts p {
+    color: #1a252f;
+    font-size: 18px;
+    margin-bottom: 15px;
+}
+
+.contacts a {
+    color: #1a252f;
+    text-decoration: none;
+    font-size: 18px;
+    
+}
+.contacts a:hover {
+    color: #5d6d7e;
+}
+
+.social-links a {
+    display: block;
+    padding: 12px 15px;
+    margin-bottom: 10px;
+    background: #f8f9fa;
+    border-radius: 6px;
+    text-decoration: none;
+    color: #1a252f;
+    font-size: 18px;
+}
+
+.social-links a:hover {
+    background: #1a252f;
+    color: #f8f9fa;
+}
+
+@media (max-width: 767px) {
+    header {
+        height: auto;
+        padding: 10px 20px;
+        position: relative;
+        justify-content: space-between;
+    }
+
+    header img {
+        width: 70px;
+        height: 70px;
+    }
+
+    .burger {
+        display: block;
+        
+    }
+
+    nav {
+        position: absolute;
+        right: 20px;
+        top: 90px;
+    }
+    .nav-links {
+        display: none;
+        flex-direction: column;
+        gap: 10px;
+        position: absolute;
+        right: 0;
+        top: 100%;
+        padding: 10px;
+        background: #f8f9fa;
+        border: 1px solid #e5e8eb;
+        border-radius: 10px;
+    }
+
+    .nav-links.active {
+        display: flex;
+    }
+    .nav-links a{
+        color: #1a252f;
+    }
+    .nav-links a:hover {
+        color: #5d6d7e;
+    }
+
+    #main {
+        flex-direction: column;
+        padding: 30px 20px;
+        text-align: center;
+    }
+
+    .main-content h1 {
+        font-size: 32px;
+    }
+
+    .main-content p {
+        font-size: 18px;
+    }
+
+    .main-image img {
+        width: 220px;
+    }
+
+    #about {
+        flex-direction: column;
+        padding: 30px 20px;
+        gap: 30px;
+        text-align: center;
+    }
+
+    .about-text {
+        font-size: 16px;
+    }
+
+    .about-stats {
+        justify-content: center;
+        gap: 25px;
+    }
+
+    .about-stats h3 {
+        font-size: 26px;
+    }
+
+    #gallery {
+        padding: 30px 20px;
+    }
+    .gallery img {
+        flex: 0 0 100%;
+        width: 100%;
+        height: 300px; 
+    }
+    #communication {
+        padding: 30px 20px;
+    }
+
+    .contact-blocks {
+        flex-direction: column;
+    }
+
+    .contact-block {
+        padding: 20px;
+    }
+}
+
