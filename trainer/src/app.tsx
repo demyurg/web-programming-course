@@ -7,7 +7,7 @@ import {
   clearTaskAnswer, 
   submitAttempt,
   AttemptState, 
-  TrainingSet 
+  TrainingSet
 } from "./domain";
 import { TaskList } from "./components/taskList";
 import { TaskCard } from "./components/taskCard";

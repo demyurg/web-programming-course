@@ -106,12 +106,12 @@ export interface AttemptState {
   isSubmitted: boolean;
 }
 
-
 export type AttemptUpdateResult =
   | { ok: true; state: AttemptState }
   | { ok: false; message: string };
 
 
+  
 export function updateTaskAnswer(state: AttemptState, newAnswer: Answer): AttemptUpdateResult {
   if (state.isSubmitted) {
     return { ok: false, message: "Попытка уже завершена. Изменения запрещены." };
