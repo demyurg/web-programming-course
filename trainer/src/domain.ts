@@ -39,6 +39,29 @@ export type Attempt = {
   submitted: boolean;
 };
 
+export type ServerAttempt = {
+  id: string;
+  setId: string;
+  status: "in-progress" | "submitted";
+  answers: Answer[];
+};
+
+export type ResultItem = {
+  taskId: string;
+  status: "correct" | "incorrect" | "unanswered" | "pending-review";
+  score: number | null;
+  maxScore: number;
+  feedback: string;
+};
+
+export type Result = {
+  attemptId: string;
+  status: "graded" | "pending-review";
+  score: number | null;
+  maxScore: number;
+  items: ResultItem[];
+};
+
 export type TrainingSet = {
   id: string;
   title: string;

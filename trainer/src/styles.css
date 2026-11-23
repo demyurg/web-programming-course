@@ -213,3 +213,53 @@ li {
         padding: 12px;
     }
 }
+
+/* переключение разделов */
+
+.section-buttons {
+    display: flex;
+    gap: 10px;
+    margin: 20px 0;
+}
+
+.section-buttons button {
+    flex: 1;
+    width: auto;
+    margin-bottom: 0;
+    text-align: center;
+    border: 1px solid #d9e1e7;
+    background: #ffffff;
+    transition: 0.2s;
+}
+
+.section-buttons button.active {
+    background: #6842a6;
+    border-color: #6842a6;
+    color: #ffffff;
+}
+
+.section-buttons button.active:hover {
+    background: #523383;
+}
+
+.section-content {
+    margin-top: 20px;
+    padding: 20px;
+    border: 1px solid #e2e8ee;
+    border-radius: 10px;
+    background: #ffffff;
+}
+
+.section-content h2 {
+    margin-bottom: 16px;
+}
+
+@media (max-width: 600px) {
+    .section-buttons {
+        flex-direction: column;
+    }
+
+    .section-buttons button {
+        width: 100%;
+    }
+}
