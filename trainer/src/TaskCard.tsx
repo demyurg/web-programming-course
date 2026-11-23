@@ -1,59 +1,74 @@
-import type { Task, Answer } from "./domain";
+import React from "react";
+import { Task, Answer, Action } from "./types"; // ← было "../types", нужно "./types"
 
 type TaskCardProps = {
   task: Task;
-  answer: Answer | undefined;
-  onChange: (answer: Answer) => void;
+  answer?: Answer;
+  dispatch: React.Dispatch<Action>;
+  isSubmitted: boolean;
 };
 
-export function TaskCard({ task, answer, onChange }: TaskCardProps) {
+export function TaskCard({ task, answer, dispatch, isSubmitted }: TaskCardProps) {
+  const handleSetAnswer = (answerData: Answer) => {
+    dispatch({ type: "SET_ANSWER", answer: answerData });
+  };
+
+  const handleClear = () => {
+    dispatch({ type: "CLEAR_ANSWER", taskId: task.id });
+  };
+
   return (
-    <fieldset style={{ border: "1px solid #ccc", padding: 16, borderRadius: 8 }}>
-      <legend style={{ fontWeight: "bold", fontSize: "1.1em" }}>
-        {task.id} · {task.topic}
-      </legend>
-      
-      <p>{task.prompt}</p>
+    <div>
+      <h3 style={{ marginTop: 0 }}>Задание: {task.id}</h3>
+      <p style={{ fontSize: "1.1em", marginBottom: "15px" }}>{task.question}</p>
 
-      {task.code && (
-        <pre style={{ background: "#f4f4f4", padding: 12, borderRadius: 4, overflow: "auto" }}>
-          {task.code}
-        </pre>
-      )}
-
-      {task.kind === "single-choice" && (
-        <div role="radiogroup" aria-label={task.prompt}>
-          {task.options.map((option) => (
-            <label key={option.id} style={{ display: "block", margin: "8px 0", cursor: "pointer" }}>
+      {task.kind === "single-choice" && task.options && (
+        <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+          {task.options.map((opt) => (
+            <label
+              key={opt.id}
+              style={{ opacity: isSubmitted ? 0.6 : 1, cursor: isSubmitted ? "default" : "pointer" }}
+            >
               <input
                 type="radio"
-                name={`task-${task.id}`} // Группирует радио-кнопки по заданию
-                value={option.id}
-                checked={answer?.kind === "single-choice" && answer.optionId === option.id}
-                onChange={() =>
-                  onChange({ taskId: task.id, kind: "single-choice", optionId: option.id })
-                }
+                name={`task-${task.id}`}
+                value={opt.id}
+                checked={answer?.kind === "single-choice" && answer.optionId === opt.id}
+                onChange={() => handleSetAnswer({ taskId: task.id, kind: "single-choice", optionId: opt.id })}
+                disabled={isSubmitted}
+                style={{ marginRight: "8px" }}
               />
-              {" "}{option.label}
+              {opt.text}
             </label>
           ))}
         </div>
       )}
 
       {task.kind === "short-text" && (
-        <label style={{ display: "block", marginTop: 12 }}>
-          <span className="visually-hidden">Ваш ответ</span>
-          <textarea
-            value={answer?.kind === "short-text" ? answer.text : ""}
-            onChange={(event) =>
-              onChange({ taskId: task.id, kind: "short-text", text: event.target.value })
-            }
-            rows={5}
-            style={{ width: "100%", fontFamily: "inherit", fontSize: "inherit" }}
-            placeholder="Введите ответ..."
-          />
-        </label>
+        <textarea
+          value={answer?.kind === "short-text" ? answer.text : ""}
+          onChange={(e) => handleSetAnswer({ taskId: task.id, kind: "short-text", text: e.target.value })}
+          disabled={isSubmitted}
+          style={{
+            width: "100%", minHeight: "80px", padding: "8px", fontSize: "14px",
+            opacity: isSubmitted ? 0.6 : 1,
+          }}
+        />
       )}
-    </fieldset>
+
+      {!isSubmitted && (
+        <button
+          onClick={handleClear}
+          disabled={!answer}
+          style={{
+            marginTop: "15px", padding: "6px 12px",
+            cursor: answer ? "pointer" : "not-allowed",
+            background: "#f44336", color: "white", border: "none", borderRadius: "4px",
+          }}
+        >
+          Очистить ответ
+        </button>
+      )}
+    </div>
   );
 }

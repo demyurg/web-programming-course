@@ -1,10 +1,12 @@
-import type { Task, Answer } from "./domain";
+import React from "react";
+import { Task, Answer, Action } from "./types";
 import { TaskCard } from "./TaskCard";
 
 type TaskListProps = {
   task: Task;
-  answer: Answer | undefined;
-  onAnswerChange: (answer: Answer) => void;
+  answer?: Answer;
+  dispatch: React.Dispatch<Action>;
+  isSubmitted: boolean;
   onPrev: () => void;
   onNext: () => void;
   onFinish: () => void;
@@ -15,7 +17,8 @@ type TaskListProps = {
 export function TaskList({
   task,
   answer,
-  onAnswerChange,
+  dispatch,
+  isSubmitted,
   onPrev,
   onNext,
   onFinish,
@@ -24,19 +27,22 @@ export function TaskList({
 }: TaskListProps) {
   return (
     <div>
-      <TaskCard task={task} answer={answer} onChange={onAnswerChange} />
-      
+      <TaskCard
+        task={task}
+        answer={answer}
+        dispatch={dispatch}
+        isSubmitted={isSubmitted}
+      />
+
       <div style={{ display: "flex", gap: 8, marginTop: 16 }}>
-        <button type="button" onClick={onPrev} disabled={!canGoPrev}>
+        <button type="button" onClick={onPrev} disabled={!canGoPrev || isSubmitted}>
           ← Назад
         </button>
-        
-        {canGoNext ? (
-          <button type="button" onClick={onNext}>
-            Далее →
-          </button>
-        ) : (
-          <button type="button" onClick={onFinish} style={{ fontWeight: "bold" }}>
+        <button type="button" onClick={onNext} disabled={!canGoNext || isSubmitted}>
+          Вперёд →
+        </button>
+        {!isSubmitted && !canGoNext && (
+          <button type="button" onClick={onFinish}>
             Завершить
           </button>
         )}
