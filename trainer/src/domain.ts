@@ -109,8 +109,6 @@ export interface AttemptState {
 export type AttemptUpdateResult =
   | { ok: true; state: AttemptState }
   | { ok: false; message: string };
-
-
   
 export function updateTaskAnswer(state: AttemptState, newAnswer: Answer): AttemptUpdateResult {
   if (state.isSubmitted) {
@@ -136,5 +134,36 @@ export function clearTaskAnswer(state: AttemptState, taskId: string): AttemptUpd
 
 export function submitAttempt(state: AttemptState): AttemptState {
   return { ...state, isSubmitted: true };
+}
+
+export type ViewMode =
+  | { kind: 'task'; taskId: string }
+  | { kind: 'overview' };
+
+export type RequestState =
+  | { status: 'idle' }
+  | { status: 'loading' }
+  | { status: 'success' }
+  | { status: 'error'; message: string };
+
+export interface ServerAttempt {
+  id: string;
+  setId: string;
+  status: 'in-progress' | 'submitted' | 'pending-review';
+  answers: Answer[];
+}
+
+export interface TaskEvaluation {
+  taskId: string;
+  status: 'correct' | 'incorrect' | 'pending-review';
+  feedback?: string;
+}
+
+export interface AttemptResult {
+  attemptId: string;
+  status: 'submitted' | 'pending-review';
+  score: number | null;
+  maxScore: number;
+  items?: TaskEvaluation[];
 }
 
