@@ -1,4 +1,4 @@
-/* Базовые стили стартового проекта. Основную стилизацию добавляет студент. */
+
 * {
     margin: 0;
     padding: 0;
@@ -17,10 +17,10 @@ html {
 }
 
 body {
-    min-height: 100vh;
-    padding: 24px;
-    background: #f7f4ef;
-    overflow-x: hidden;
+    font-family: Arial, sans-serif; 
+    background-color: #f4f4f4;
+    color: #333;
+    margin: 0;
 }
 
 h1,
@@ -60,8 +60,78 @@ button {
 }
 
 footer {
-    max-width: 720px;
-    margin: 0 auto;
-    color: #6d665e;
     text-align: center;
+    background-color: #333333;
+    color: #ffffff;
+    padding: 15px;
+    margin-top: 20px;
+}
+
+
+
+
+header {
+    background-color: #ffffff;
+    text-align: center;
+    padding: 20px;
+    border-bottom: 2px solid #cccccc;
+}
+
+
+nav a {
+    text-decoration: none;
+    color: #333333;
+    margin: 0 15px;
+    font-size: 18px;
+}
+
+
+nav a:hover {
+    color: #d63384;
+}
+
+
+main {
+    width: 950px; 
+    margin: 0 auto; 
+    padding: 20px;
+    background-color: #ffffff;
+}
+
+
+h2 {
+    color: #d63384;
+    border-bottom: 1px solid #cccccc;
+    padding-bottom: 5px;
+}
+
+
+hr {
+    border: 0;
+    height: 1px;
+    background-color: #cccccc;
+    margin: 30px 0;
+}
+
+
+.gallery {
+    display: grid;
+    grid-template-columns: 300px 300px 300px; 
+    gap: 15px; 
+    justify-content: center; 
+}
+
+
+.gallery img {
+    width: 300px;
+    height: 200px;
+    border: 1px solid #999999;
+    object-fit: cover; 
+}
+
+
+
+
+footer small {
+    color: #aaaaaa;
 }
