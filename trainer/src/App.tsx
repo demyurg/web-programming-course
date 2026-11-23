@@ -1,171 +1,133 @@
-﻿import { useState, useReducer } from "react";
+﻿import { useState, useEffect } from "react";
 import type { TrainingSet, Task, Answer } from "./domain";
-import { getProgress } from "./domain";
 import { TaskList } from "./TaskList";
 import { TaskCard } from "./TaskCard";
-import { attemptReducer } from "./attempt";
-
-// Данные
-const task1: Task = {
-  id: "ts-1",
-  kind: "single-choice",
-  topic: "typescript",
-  prompt: "Что выведет этот JavaScript-код?",
-  code: 'console.log("10" * 5);',
-  options: [
-    { id: "a", label: "105" },
-    { id: "b", label: "50" },
-    { id: "c", label: "Ошибка" },
-  ],
-};
-
-const task2: Task = {
-  id: "react-1",
-  kind: "short-text",
-  topic: "react",
-  prompt: "Объясните, чем props компонента отличаются от его состояния.",
-};
-
-const trainingSet: TrainingSet = {
-  id: "web-basics",
-  title: "Основы веб-программирования",
-  tasks: [task1, task2],
-};
+import * as api from "./api/trainerApi";
 
 export default function App() {
+  const [trainingSet, setTrainingSet] = useState<TrainingSet | null>(null);
+  const [attemptId, setAttemptId] = useState<string | null>(null);
+  const [answers, setAnswers] = useState<Answer[]>([]);
   const [selectedId, setSelectedId] = useState("ts-1");
-  
-  // useReducer для ответов и статуса
-  const [attempt, dispatch] = useReducer(attemptReducer, {
-    answers: [],
-    isSubmitted: false,
-  });
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [result, setResult] = useState<any>(null);
 
-  // Локальное состояние для открытия обзора до завершения
-  const [isReviewMode, setIsReviewMode] = useState(false);
-
-  // Подсчёт прогресса через функцию из domain.ts
-  const progress = getProgress(trainingSet, attempt.answers);
-  const filledCount = progress.filled;
-
-  // Список пропущенных
-  const missedTasks: string[] = [];
-  for (const task of trainingSet.tasks) {
-    let isFilled = false;
-    for (const a of attempt.answers) {
-      if (a.taskId === task.id) {
-        if (a.kind === "single-choice") isFilled = true;
-        else if (a.kind === "short-text" && a.text.trim().length > 0) isFilled = true;
+  // При запуске загружаем данные
+  useEffect(() => {
+    async function init() {
+      try {
+        setIsLoading(true);
+        // Загружаем модуль
+        const data = await api.fetchTrainingSet("web-basics");
+        setTrainingSet(data);
+        
+        // Создаем попытку
+        const attempt = await api.createAttempt("web-basics");
+        setAttemptId(attempt.id);
+        setSelectedId(data.tasks[0].id);
+      } catch (err: any) {
+        setError(err.message);
+      } finally {
+        setIsLoading(false);
       }
     }
-    if (!isFilled) missedTasks.push(task.id);
+    init();
+  }, []);
+
+  // Сохранение ответа
+  async function handleSaveAnswer(newAnswer: Answer) {
+    if (!attemptId) return;
+    try {
+      setError(null);
+      // Оптимистичное обновление
+      const filtered = answers.filter((a) => a.taskId !== newAnswer.taskId);
+      setAnswers([...filtered, newAnswer]);
+      
+      // Отправка на сервер
+      await api.saveAnswer(attemptId, newAnswer);
+    } catch (err: any) {
+      setError("Не удалось сохранить ответ: " + err.message);
+    }
   }
 
-  function handleFinish() {
-    if (missedTasks.length > 0) {
-      const warning = "Вы не ответили на: " + missedTasks.join(", ") + ". Завершить?";
-      if (!window.confirm(warning)) return;
+  // Удаление ответа
+  async function handleClearAnswer(taskId: string) {
+    if (!attemptId) return;
+    try {
+      setError(null);
+      setAnswers(answers.filter((a) => a.taskId !== taskId));
+      await api.deleteAnswer(attemptId, taskId);
+    } catch (err: any) {
+      setError("Не удалось удалить ответ: " + err.message);
     }
-    dispatch({ type: "submit" });
-    setIsReviewMode(true); // Финальный экран
   }
 
-  function handleRestart() {
-    dispatch({ type: "restart" });
-    setSelectedId("ts-1");
-    setIsReviewMode(false);
+  // Завершение
+  async function handleFinish() {
+    if (!attemptId) return;
+    try {
+      setError(null);
+      setIsLoading(true);
+      await api.submitAttempt(attemptId);
+      const res = await api.fetchResult(attemptId);
+      setResult(res);
+      setIsSubmitted(true);
+    } catch (err: any) {
+      setError("Ошибка при завершении: " + err.message);
+    } finally {
+      setIsLoading(false);
+    }
   }
 
-  function getReviewText(task: Task, answersList: Answer[]): string {
-    let answer: Answer | undefined = undefined;
-    for (const a of answersList) {
-      if (a.taskId === task.id) {
-        answer = a;
-        break;
-      }
-    }
-    if (!answer) return "Нет ответа";
+  if (isLoading && !trainingSet) return <main><p>Загрузка модуля...</p></main>;
+  if (error) return <main><p style={{color: 'red'}}>{error}</p><button onClick={() => window.location.reload()}>Повторить</button></main>;
+  if (!trainingSet || !attemptId) return null;
 
-    if (answer.kind === "single-choice" && task.kind === "single-choice") {
-      for (const opt of task.options) {
-        if (opt.id === answer.optionId) return opt.label;
-      }
-      return answer.optionId;
-    }
-    if (answer.kind === "short-text") {
-      return answer.text.trim().length > 0 ? answer.text : "Пустой текст";
-    }
-    return "Нет ответа";
+  let selectedTask: Task | undefined = undefined;
+  for (const t of trainingSet.tasks) {
+    if (t.id === selectedId) { selectedTask = t; break; }
+  }
+  let currentAnswer: Answer | undefined = undefined;
+  for (const a of answers) {
+    if (a.taskId === selectedId) { currentAnswer = a; break; }
   }
 
-  // Экран обзора (до завершения или после)
-  if (isReviewMode || attempt.isSubmitted) {
-    const reviewItems = [];
-    for (const task of trainingSet.tasks) {
-      const text = getReviewText(task, attempt.answers);
-      reviewItems.push(
-        <div key={task.id} className="review-card">
-          <p><strong>{task.id}</strong>: {task.prompt}</p>
-          <p><em>Ваш ответ: {text}</em></p>
-          
-          {/* Кнопка очистки в обзоре (до завершения) */}
-          {!attempt.isSubmitted && (
-            <button 
-              onClick={() => dispatch({ type: "clear", taskId: task.id })}
-              className="btn-clear"
-            >
-              Удалить ответ
-            </button>
-          )}
-        </div>
-      );
-    }
-
+  // Экран результата (если завершено)
+  if (isSubmitted && result) {
     return (
       <main>
         <h1>{trainingSet.title}</h1>
-        <h2>{attempt.isSubmitted ? "Попытка завершена" : "Предварительный обзор"}</h2>
-        <p>Вы ответили на {filledCount} из {trainingSet.tasks.length}.</p>
-
-        <div className="review-list">{reviewItems}</div>
-
-        {!attempt.isSubmitted ? (
-          <div style={{ marginTop: "20px" }}>
-            <button onClick={() => setIsReviewMode(false)} className="btn-finish" style={{ marginRight: "10px", background: "gray" }}>
-              Вернуться к заданиям
-            </button>
-            <button onClick={handleFinish} className="btn-finish">
-              Завершить попытку
-            </button>
-          </div>
-        ) : (
-          <button onClick={handleRestart} className="btn-finish">
-            Начать новую попытку
-          </button>
-        )}
+        <h2>Результат</h2>
+        <p>Статус: {result.status === 'pending-review' ? 'Ожидает проверки' : 'Оценено'}</p>
+        <p>Баллы: {result.score !== null ? result.score : 'Ожидает проверки'} из {result.maxScore}</p>
+        
+        <div className="review-list">
+          {trainingSet.tasks.map((task) => {
+            const item = result.items.find((i: any) => i.taskId === task.id);
+            return (
+              <div key={task.id} className="review-card">
+                <p><strong>{task.id}</strong></p>
+                <p>Статус: {item ? item.status : 'Нет'}</p>
+                <p>Оценка: {item && item.score !== null ? item.score : 'Ожидает'}</p>
+              </div>
+            );
+          })}
+        </div>
+        <button onClick={() => window.location.reload()} className="btn-finish">
+          Начать заново
+        </button>
       </main>
     );
   }
 
   // Экран прохождения
-  let selectedTask: Task | undefined = undefined;
-  for (const t of trainingSet.tasks) {
-    if (t.id === selectedId) { selectedTask = t; break; }
-  }
-
-  let currentAnswer: Answer | undefined = undefined;
-  for (const a of attempt.answers) {
-    if (a.taskId === selectedId) { currentAnswer = a; break; }
-  }
-
   return (
     <main>
       <h1>{trainingSet.title}</h1>
-      <p>Прогресс: {filledCount} из {trainingSet.tasks.length}</p>
       
-      {missedTasks.length > 0 && (
-        <p className="missed-warning">Без ответа: {missedTasks.join(", ")}</p>
-      )}
+      {error && <p className="missed-warning">Ошибка: {error}</p>}
 
       <div className="task-layout">
         <TaskList
@@ -179,20 +141,21 @@ export default function App() {
             <TaskCard
               task={selectedTask}
               answer={currentAnswer}
-              onAnswerChange={(ans) => dispatch({ type: "save", answer: ans })}
-              onClear={() => dispatch({ type: "clear", taskId: selectedTask!.id })}
-              disabled={false}
+              onAnswerChange={handleSaveAnswer}
+              onClear={() => handleClearAnswer(selectedTask!.id)}
+              disabled={isLoading}
             />
           ) : (
             <p>Задание не найдено.</p>
           )}
           
           <div className="action-buttons">
-            <button onClick={() => setIsReviewMode(true)} className="btn-secondary">
-              Обзор ответов
-            </button>
-            <button onClick={handleFinish} className="btn-finish" style={{ marginTop: 0 }}>
-              Завершить попытку
+            <button 
+              onClick={handleFinish} 
+              className="btn-finish" 
+              disabled={isLoading}
+            >
+              {isLoading ? "Отправка..." : "Завершить попытку"}
             </button>
           </div>
         </div>
