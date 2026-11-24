@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useReducer } from "react";
+import { attemptReducer, initialAttemptState } from "./attempt";
 import { trainingSet } from "./data";
 import { isAnswerFilled, calcProgress } from "./domain";
 import type { Answer } from "./domain";
@@ -9,10 +10,10 @@ import { Review } from "./Review";
 type AttemptStatus = "in-progress" | "submitted"
 
 export default function App() {
-    const [answers, setAnswers] = useState<Answer[]>([])
+    const [attempt, dispatch] = useReducer(attemptReducer, initialAttemptState)
+    const { answers, status } = attempt
     const [currentIndex, setCurrentIndex] = useState(0)
-
-    const [status, setStatus] = useState<AttemptStatus>("in-progress")
+    const [isReviewOpen, setIsReviewOpen] = useState(false)
 
     const currentTask = trainingSet.tasks[currentIndex]
     const lastIndex = trainingSet.tasks.length - 1
@@ -20,7 +21,7 @@ export default function App() {
     const currentAnswer = answers.find((answer) => answer.taskId === currentTask.id)
     const progress = calcProgress(trainingSet, answers)
 
-    const unfilledTasks = trainingSet.tasks.filter((task) => {           // ← незаполненные
+    const unfilledTasks = trainingSet.tasks.filter((task) => {
         const answer = answers.find((answer) => answer.taskId === task.id)
         return answer === undefined || !isAnswerFilled(answer)
     })
@@ -45,11 +46,14 @@ export default function App() {
     }
 
     function saveAnswer(newAnswer: Answer) {
-        if (status === "submitted") return
+        dispatch({ type: "answerChanged", answer: newAnswer })
+    }
 
-        const newAnswers = answers.filter((answer) => answer.taskId !== newAnswer.taskId)
-
-        setAnswers([...newAnswers, newAnswer])
+    function clearAnswers(taskId: string) {
+        dispatch({
+            type: "answerCleared",
+            taskId
+        })
     }
 
     function finishAttempt() {
@@ -60,13 +64,13 @@ export default function App() {
             const ok = window.confirm(`Не заполнены задания: ${numbers}. Всё равно завершить?`)
             if (!ok) return
         }
-        setStatus("submitted")
+        dispatch({ type: "submitted" })
     }
 
     function startNewAttempt() {
-        setAnswers([])
+        dispatch({ type: "reset" })
         setCurrentIndex(0)
-        setStatus("in-progress")
+        setIsReviewOpen(false)
     }
 
     if (status === "submitted") {
@@ -78,6 +82,20 @@ export default function App() {
         )
     }
 
+    if (isReviewOpen) {
+        return (
+            <main>
+                <h1>{trainingSet.title}</h1>
+                <Review
+                    tasks={trainingSet.tasks}
+                    answers={answers}
+                    onBack={() => setIsReviewOpen(false)}
+                    onClear={clearAnswers}
+                />
+            </main>
+        )
+    }
+
     return (
         <main>
             <h1>{trainingSet.title} - {trainingSet.tasks.length} заданий</h1>
@@ -85,7 +103,7 @@ export default function App() {
             <TaskCard task={currentTask}
                 answer={currentAnswer}
                 onAnswer={saveAnswer}
-
+                onClear={clearAnswers}
             />
 
             <section>
@@ -111,7 +129,9 @@ export default function App() {
                 <span>Задание {currentIndex + 1} из {trainingSet.tasks.length}</span>
                 <button onClick={goNext} disabled={currentIndex === lastIndex}>Вперёд</button>
             </nav>
-
+            <button onClick={() => setIsReviewOpen(true)}>
+                Обзор ответов
+            </button>
             <button onClick={finishAttempt}>Завершить попытку</button>
         </main>
     )

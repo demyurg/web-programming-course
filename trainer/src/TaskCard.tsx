@@ -4,24 +4,24 @@ type TaskCardProps = {
     task: Task | undefined
     answer: Answer | undefined
     onAnswer: (answer: Answer) => void
-    
+    onClear: (taskId: string) => void    
 }
 
 type OptionListProps = {
     task: SingleChoiceTask
     answer: Answer | undefined
     onAnswer: (answer: Answer) => void
-    
+
 };
 
 type ShortTextFieldProps = {
     task: ShortTextTask
     answer: Answer | undefined
     onAnswer: (answer: Answer) => void
-    
+
 }
 
-function OptionList({ task, answer, onAnswer}: OptionListProps) {
+function OptionList({ task, answer, onAnswer }: OptionListProps) {
     return (
         <fieldset>
             <legend>Выберите вариант</legend>
@@ -34,7 +34,7 @@ function OptionList({ task, answer, onAnswer}: OptionListProps) {
                         onChange={() =>
                             onAnswer({ taskId: task.id, kind: "single-choice", optionId: option.id })
                         }
-                        
+
                     />
                     {option.label}
                 </label>
@@ -44,7 +44,7 @@ function OptionList({ task, answer, onAnswer}: OptionListProps) {
     )
 }
 
-function ShortTextField({ task, answer, onAnswer}: ShortTextFieldProps) {
+function ShortTextField({ task, answer, onAnswer }: ShortTextFieldProps) {
     return (
         <label>
             Ваш ответ
@@ -59,7 +59,7 @@ function ShortTextField({ task, answer, onAnswer}: ShortTextFieldProps) {
     )
 }
 
-export function TaskCard({ task, answer, onAnswer}: TaskCardProps) {
+export function TaskCard({ task, answer, onAnswer, onClear }: TaskCardProps) {
     if (task === undefined) return <p>Нет данных</p>
 
     return (
@@ -68,9 +68,15 @@ export function TaskCard({ task, answer, onAnswer}: TaskCardProps) {
             <h3>Вопрос: {task.prompt}</h3>
             {task.code && <pre>{task.code}</pre>}
             {task.kind === "single-choice" ?
-                <OptionList task={task} answer={answer} onAnswer={onAnswer}  /> :
+                <OptionList task={task} answer={answer} onAnswer={onAnswer} /> :
                 <ShortTextField task={task} answer={answer} onAnswer={onAnswer} />
             }
+            <button
+                onClick={() => onClear(task.id)}
+                disabled={answer === undefined}
+            >
+                Очистить ответ
+            </button>
         </article>
     )
 
