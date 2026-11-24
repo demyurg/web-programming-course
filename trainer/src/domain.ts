@@ -50,7 +50,7 @@ export function calculateProgress(tasks: Task[], answers: Answer[]): Progress {
     answers
       .filter((answer) => {
         if (answer.kind === "short-text") {
-          return answer.text.trim().length > 0;
+          return answer.text.length > 0;
         }
         return true;
       })
@@ -65,25 +65,26 @@ export function calculateProgress(tasks: Task[], answers: Answer[]): Progress {
   };
 }
 
-// НОВОЕ для L3: Неизменяемое обновление ответа
+
 export function updateAnswer(answers: Answer[], newAnswer: Answer): Answer[] {
   const others = answers.filter((a) => a.taskId !== newAnswer.taskId);
   
-  // Если текстовый ответ пустой или состоит из пробелов, удаляем его из массива
-  if (newAnswer.kind === "short-text" && newAnswer.text.trim() === "") {
+  
+  if (newAnswer.kind === "short-text" && newAnswer.text === "") {
     return others;
   }
   
   return [...others, newAnswer];
 }
 
-// НОВОЕ для L3: Получение ID незаполненных заданий
+
 export function getUnansweredTaskIds(tasks: Task[], answers: Answer[]): string[] {
   return tasks
     .filter((task) => {
       const answer = answers.find((a) => a.taskId === task.id);
       if (!answer) return true;
-      if (answer.kind === "short-text" && answer.text.trim() === "") return true; 
+      
+      if (answer.kind === "short-text" && answer.text === "") return true; 
       return false;
     })
     .map((t) => t.id);

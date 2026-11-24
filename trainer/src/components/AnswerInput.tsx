@@ -67,7 +67,11 @@ export function AnswerInput({ task, currentAnswer, isFinished, onChange }: Answe
         disabled={isFinished}
         placeholder="Введите ваш ответ..."
         onChange={(e) =>
-          onChange({ taskId: task.id, kind: 'short-text', text: e.target.value })
+          onChange({
+            taskId: task.id,
+            kind: 'short-text',
+            text: e.target.value
+        })
         }
       />
     </div>
