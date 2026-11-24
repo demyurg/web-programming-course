@@ -1,14 +1,175 @@
-<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>L4 — устойчивый черновик</title><style>:root{font:16px/1.5 system-ui,sans-serif;color:#f8fafc;background:#102a43}*{box-sizing:border-box}body{margin:0;overflow:hidden}.slide{display:none;min-height:calc(100vh - 72px);max-width:1100px;margin:auto;padding:clamp(28px,7vw,80px)}.slide.is-active{display:block}h1,h2{line-height:1.1;font-size:clamp(2rem,6vw,5rem)}p,li,pre{max-width:900px;font-size:clamp(1rem,1.7vw,1.35rem)}pre{padding:18px;overflow:auto;background:#061826;color:#b8f2e6;border-radius:12px}.accent{color:#67e8f9}.controls{position:fixed;bottom:0;left:0;right:0;display:flex;gap:8px;padding:12px;background:#061826}.controls button{padding:7px 12px;background:#164e63;color:#fff;border:1px solid #67e8f9;border-radius:7px}.progress{height:5px;flex:1;background:#164e63;margin-top:12px}.progress span{display:block;height:100%;background:#67e8f9;width:0}.counter{color:#cbd5e1}@media(max-width:700px){body{overflow:auto}.slide{min-height:calc(100vh - 64px);padding:28px 20px}}@media print{body{overflow:visible;background:#fff;color:#111}.slide,.slide.is-active{display:block;min-height:100vh;page-break-after:always}.controls{display:none}}</style></head><body><main>
-<section class="slide is-active"><p class="accent">L4 · черновик и границы состояния</p><h1>Восстановить, но не выдумать</h1><p>Reducer делает переходы явными, эффект синхронизирует состояние с браузером.</p></section>
-<section class="slide"><h2>Почему A3 нужно укрепить</h2><ul><li>Обновление уничтожает память React.</li><li>Разбросанные обработчики усложняют правила.</li><li>Чужой JSON нельзя принимать вслепую.</li></ul></section>
-<section class="slide"><h2>Reducer: события</h2><pre>dispatch({ type: "answerChanged", answer: next })</pre><p>Компонент сообщает событие, reducer решает новое состояние.</p></section>
-<section class="slide"><h2>Reducer должен быть чистым</h2><p>Одинаковые state и action дают одинаковый результат. Внутри нет <code>localStorage</code>, <code>fetch</code>, таймера, случайности и мутации.</p></section>
-<section class="slide"><h2>Эффект — граница</h2><pre>useEffect(() =&gt; localStorage.setItem(key, JSON.stringify(draft)), [key, draft])</pre><p>Синхронизация выполняется после отображения.</p></section>
-<section class="slide"><h2>Формат черновика</h2><pre>{ version: 1, setId, taskId, answers, status }</pre><p>Версия — миграция формата, <code>setId</code> — защита от чужого набора.</p></section>
-<section class="slide"><h2>JSON не равен типу</h2><ol><li>Получить строку или <code>null</code>.</li><li>Перехватить ошибку parse.</li><li>Проверить <code>unknown</code>.</li><li>Проверить все поля ответов.</li></ol></section>
-<section class="slide"><h2>Несовместимость видна</h2><p>«Нет черновика» и «черновик повреждён» — разные состояния. Сообщите причину и дайте явный сброс.</p></section>
-<section class="slide"><h2>Хранилище может отказать</h2><p>Квота или приватный режим могут бросить исключение. Ввод продолжается в памяти, пользователь видит предупреждение.</p></section>
-<section class="slide"><h2>Завершённая попытка</h2><p><code>submitted</code> можно показать, но нельзя восстановить как редактируемую. Новая попытка — отдельное явное действие.</p></section>
-<section class="slide"><h2>Демонстрация четырёх отказов</h2><ol><li>Ответить и обновить.</li><li>Записать <code>{</code>.</li><li>Подменить <code>setId</code>.</li><li>Продолжить ввод при отказе записи.</li></ol></section>
-<section class="slide"><h2>Граница L4</h2><p>Черновик — локальная страховка, не подтверждение сервера. В L5 появятся HTTP и серверные статусы.</p></section>
-</main><nav class="controls"><button id="home">Home</button><button id="prev">Назад</button><button id="next">Далее</button><button id="end">End</button><button id="print">Печать</button><div class="progress"><span></span></div><div class="counter"></div></nav><script>const slides=[...document.querySelectorAll('.slide')],bar=document.querySelector('.progress span'),counter=document.querySelector('.counter');let current=0;function show(n){current=Math.max(0,Math.min(n,slides.length-1));slides.forEach((s,i)=>s.classList.toggle('is-active',i===current));bar.style.width=`${(current+1)/slides.length*100}%`;counter.textContent=`${current+1} / ${slides.length}`}document.querySelector('#home').onclick=()=>show(0);document.querySelector('#prev').onclick=()=>show(current-1);document.querySelector('#next').onclick=()=>show(current+1);document.querySelector('#end').onclick=()=>show(slides.length-1);document.querySelector('#print').onclick=()=>window.print();document.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key===' ')show(current+1);if(e.key==='ArrowLeft')show(current-1);if(e.key==='Home')show(0);if(e.key==='End')show(slides.length-1)});show(0)</script></body></html>
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="data:,">
+  <title>L4 — Архитектура интерактивности: данные и логика</title>
+  <style>
+    :root { color-scheme: dark; font: 16px/1.5 system-ui, sans-serif; color: #f8fafc; background: #102a43; }
+    * { box-sizing: border-box; }
+    body { margin: 0; overflow: hidden; }
+    .slide { display: none; min-height: calc(100vh - 76px); max-width: 1120px; margin: auto; padding: clamp(28px, 6vw, 76px); }
+    .slide.is-active { display: flex; flex-direction: column; justify-content: center; }
+    h1, h2 { max-width: 1000px; margin: 0 0 22px; font-size: clamp(2rem, 5.5vw, 4.5rem); line-height: 1.08; }
+    p, li { max-width: 900px; font-size: clamp(1.08rem, 1.8vw, 1.45rem); }
+    li + li { margin-top: 10px; }
+    code, .accent { color: #67e8f9; }
+    .lead { color: #a5f3fc; }
+    .flow { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin: 12px 0 20px; color: #a5f3fc; font-size: clamp(1.05rem, 2vw, 1.55rem); font-weight: 700; }
+    .flow span { padding: 8px 12px; border: 1px solid #456178; border-radius: 10px; background: #16364e; }
+    pre { max-width: 900px; padding: 16px 18px; overflow: auto; border-radius: 10px; background: #061826; color: #d9f6f1; font-size: clamp(.9rem, 1.4vw, 1.2rem); white-space: pre-wrap; }
+    .note { color: #cbd5e1; font-size: clamp(.95rem, 1.5vw, 1.2rem); }
+    .controls { position: fixed; inset: auto 0 0; display: flex; align-items: center; gap: 8px; padding: 12px 16px; background: #061826; }
+    .controls button { min-width: 42px; padding: 7px 12px; color: #fff; background: #164e63; border: 1px solid #67e8f9; border-radius: 7px; font: inherit; cursor: pointer; }
+    .controls button:focus-visible { outline: 3px solid #facc15; outline-offset: 2px; }
+    .progress { height: 5px; flex: 1; background: #164e63; }
+    .progress span { display: block; height: 100%; width: 0; background: #67e8f9; transition: width .2s ease; }
+    .counter { min-width: 58px; color: #cbd5e1; text-align: right; }
+    @media (max-width: 700px) {
+      body { overflow: auto; }
+      .slide { min-height: calc(100vh - 68px); padding: 28px 20px; }
+      .controls { gap: 5px; padding: 10px; }
+      .controls button { min-width: 36px; padding: 6px 9px; }
+      .flow { gap: 6px; }
+      .flow span { padding: 6px 8px; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="slide is-active" aria-label="Архитектура интерактивности: данные и логика">
+      <p class="lead">L4 · TypeScript и React</p>
+      <h1>Архитектура интерактивности: данные и логика</h1>
+      <p>После L3: состояние и его владелец. Теперь — общие правила и связь частей.</p>
+    </section>
+
+    <section class="slide" aria-label="Одно действие — несколько мест">
+      <h2>Одно действие — несколько мест</h2>
+      <ul>
+        <li>Мы можем переименовать документ из списка или редактора.</li>
+        <li>Меню и горячая клавиша вызывают одну команду.</li>
+        <li>Правило имени должно оставаться общим.</li>
+      </ul>
+    </section>
+
+    <section class="slide" aria-label="Кто за что отвечает">
+      <h2>Кто за что отвечает</h2>
+      <div class="flow"><span>ввод</span><span>общее действие</span><span>результат</span></div>
+      <ul>
+        <li>Экран передаёт id документа и новое имя.</li>
+        <li>Логика возвращает новый список или отказ.</li>
+        <li>Сохранение в файл или хранилище — отдельная операция.</li>
+      </ul>
+    </section>
+
+    <section class="slide" aria-label="Проверка имени">
+      <h2>Проверка имени</h2>
+      <pre>checkDocumentName(name) → NameCheck</pre>
+      <ul>
+        <li>Ограничение длины задано в модели.</li>
+        <li>Список и редактор не выбирают его сами.</li>
+        <li>Результат — очищенное имя или причина отказа.</li>
+      </ul>
+    </section>
+
+    <section class="slide" aria-label="Результат переименования">
+      <h2>Результат переименования</h2>
+      <p><code>renameDocument(documents, id, name)</code></p>
+      <pre>type RenameResult =
+  | { ok: true; documents: DocumentRecord[] }
+  | { ok: false; message: string };</pre>
+      <p>Успех даёт новый список. При отказе старый список остаётся.</p>
+    </section>
+
+    <section class="slide" aria-label="Один путь в React">
+      <h2>Один путь в React</h2>
+      <div class="flow"><span>список / редактор</span><span>dispatch(rename)</span><span>reducer</span><span>результат</span></div>
+      <ul>
+        <li>Оба места передают id и новое имя.</li>
+        <li>Reducer вызывает <code>renameDocument</code>.</li>
+        <li>Оба места показывают один результат.</li>
+      </ul>
+    </section>
+
+    <section class="slide" aria-label="Действие пользователя и внешняя операция">
+      <h2>Действие пользователя и внешняя операция</h2>
+      <div class="flow"><span>«Сохранить» → обработчик</span><span>useEffect → синхронизация</span></div>
+      <ul>
+        <li>Явное сохранение запускается из обработчика.</li>
+        <li>Эффект синхронизирует React с внешней системой.</li>
+        <li>Отказ записи не должен стирать ввод.</li>
+      </ul>
+    </section>
+
+    <section class="slide" aria-label="Меняем одну часть приложения">
+      <h2>Меняем одну часть приложения</h2>
+      <pre>saveDocument(document) → SaveResult</pre>
+      <ul>
+        <li>Локальная запись и учебный отказ имеют один вход.</li>
+        <li>Правила имени и данные документа сохраняются.</li>
+        <li>HTTP потребует ожидания ответа и новых состояний на L5.</li>
+      </ul>
+    </section>
+
+    <section class="slide" aria-label="Context и библиотеки состояния">
+      <h2>Context и библиотеки состояния</h2>
+      <ul>
+        <li>Context доставляет данные по дереву; он не владеет ими.</li>
+        <li>Redux и Zustand помогают организовать общее состояние по-разному.</li>
+        <li>Для небольшого приложения могут подойти <code>useState</code> или <code>useReducer</code>.</li>
+      </ul>
+    </section>
+
+    <section class="slide" aria-label="Применение в A4 и следующий шаг">
+      <h2>Применение в A4 и следующий шаг</h2>
+      <ul>
+        <li>Очистка из карточки и обзора меняет одни и те же ответы.</li>
+        <li><code>submitted</code> запрещает изменения и в интерфейсе, и в логике.</li>
+        <li>В L5 по <code>attemptId</code> запрашивается подтверждённый <code>Attempt</code>.</li>
+      </ul>
+      <p class="note">HTTP — способ обмена сообщениями, а не место хранения. P5 проверяет A4.</p>
+    </section>
+  </main>
+
+  <nav class="controls" aria-label="Навигация по слайдам">
+    <button id="home" type="button" aria-label="В начало" title="В начало">|&lt;</button>
+    <button id="prev" type="button" aria-label="Назад" title="Назад">&lt;</button>
+    <button id="next" type="button" aria-label="Далее" title="Далее">&gt;</button>
+    <button id="end" type="button" aria-label="В конец" title="В конец">&gt;|</button>
+    <div class="progress" aria-hidden="true"><span></span></div>
+    <output class="counter" aria-live="polite"></output>
+  </nav>
+  <script>
+    const slides = [...document.querySelectorAll(".slide")];
+    const progress = document.querySelector(".progress span");
+    const counter = document.querySelector(".counter");
+    let current = 0;
+
+    function show(index) {
+      current = Math.max(0, Math.min(index, slides.length - 1));
+      slides.forEach((slide, slideIndex) => {
+        const active = slideIndex === current;
+        slide.classList.toggle("is-active", active);
+        slide.setAttribute("aria-hidden", String(!active));
+      });
+      progress.style.width = `${((current + 1) / slides.length) * 100}%`;
+      counter.textContent = `${current + 1} / ${slides.length}`;
+    }
+
+    document.querySelector("#home").addEventListener("click", () => show(0));
+    document.querySelector("#prev").addEventListener("click", () => show(current - 1));
+    document.querySelector("#next").addEventListener("click", () => show(current + 1));
+    document.querySelector("#end").addEventListener("click", () => show(slides.length - 1));
+    document.addEventListener("keydown", (event) => {
+      if (event.target instanceof HTMLInputElement || event.target instanceof HTMLTextAreaElement) return;
+      if (event.key === "ArrowRight" || event.key === " ") show(current + 1);
+      if (event.key === "ArrowLeft") show(current - 1);
+      if (event.key === "Home") show(0);
+      if (event.key === "End") show(slides.length - 1);
+    });
+
+    show(0);
+  </script>
+</body>
+</html>

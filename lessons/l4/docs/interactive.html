@@ -1,14 +1,201 @@
-<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>L4 — Сохранение черновика</title><style>body{font:18px/1.5 system-ui;max-width:880px;margin:auto;padding:24px;background:#edf5f2;color:#172e35}section{padding:20px;background:white;border-radius:10px;margin:20px 0}textarea{width:95%;min-height:110px;font:inherit}button{font:inherit;margin:5px;padding:9px}pre{white-space:pre-wrap;overflow-wrap:anywhere}</style></head><body><p><a href="../README.md">Задание</a> · <a href="GUIDE.md">Гайд</a></p><h1>Заметка и хранилище</h1><p>Небольшой пример заметки с версией формата. Он хранит только собственный ключ l4-note-demo. Обработка начинается после явного действия.</p>
-<section><h2>Переход состояния</h2><label>Текст заметки<textarea id="answer"></textarea></label><button id="save">Изменить ответ</button><button id="submit">Завершить</button><button id="reset">Сбросить</button><pre id="state"></pre></section>
-<section><h2>Чтение и проверка</h2><button id="restore">Восстановить</button><button id="corrupt">Повредить хранилище</button><button id="incompatible">Другая версия</button><label><input id="deny" type="checkbox">Симулировать отказ хранилища</label><p id="message" aria-live="polite"></p></section>
-<script>
-const $=id=>document.getElementById(id),key='l4-note-demo';const fresh=()=>({version:1,text:'',status:'in-progress'});let state=fresh();
-function reducer(s,a){if(a.type==='reset')return fresh();if(s.status==='submitted')return s;if(a.type==='changed')return {...s,text:a.text};if(a.type==='submit')return {...s,status:'submitted'};return s}
-function storage(){if($('deny').checked)throw Error('storage unavailable');return localStorage}
-function render(){$('answer').value=state.text;$('answer').disabled=state.status==='submitted';$('save').disabled=state.status==='submitted';$('submit').disabled=state.status==='submitted';$('state').textContent=JSON.stringify(state,null,2)}
-function persist(){try{storage().setItem(key,JSON.stringify(state));$('message').textContent='Состояние сохранено.'}catch{$('message').textContent='Запись недоступна. Изменение осталось в памяти.'}}
-$('save').onclick=()=>{state=reducer(state,{type:'changed',text:$('answer').value});persist();render()};$('submit').onclick=()=>{state=reducer(state,{type:'changed',text:$('answer').value});state=reducer(state,{type:'submit'});persist();render()};
-$('restore').onclick=()=>{try{const raw=storage().getItem(key);if(raw===null){$('message').textContent='Сохранённой заметки нет.';return}const v=JSON.parse(raw);if(!v||typeof v!=='object'||Array.isArray(v)||v.version!==1||typeof v.text!=='string'||!['in-progress','submitted'].includes(v.status)){throw Error('invalid')}state={version:1,text:v.text,status:v.status};$('message').textContent='Заметка восстановлена.';render()}catch{$('message').textContent='Чтение невозможно или формат несовместим. Текущее состояние не изменено; доступен явный сброс.'}};
-function writeBad(value){try{storage().setItem(key,value);$('message').textContent='Учебные данные записаны. Нажмите «Восстановить».'}catch{$('message').textContent='Хранилище недоступно; данные не записаны.'}}
-$('corrupt').onclick=()=>writeBad('{');$('incompatible').onclick=()=>writeBad(JSON.stringify({version:2,text:'старый формат',status:'in-progress'}));$('reset').onclick=()=>{state=reducer(state,{type:'reset'});try{storage().removeItem(key);$('message').textContent='Состояние и сохранённая заметка сброшены.'}catch{$('message').textContent='Сброшена память; хранилище сейчас недоступно.'}render()};render();
-</script></body></html>
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="data:,">
+  <title>L4 — общие правила и путь действия</title>
+  <style>
+    :root { color-scheme: light; font: 16px/1.55 system-ui, sans-serif; color: #17323a; background: #edf5f2; }
+    * { box-sizing: border-box; }
+    body { max-width: 1080px; margin: 0 auto; padding: 24px; }
+    a { color: #075985; }
+    section { margin: 20px 0; padding: clamp(18px, 3vw, 26px); background: #fff; border: 1px solid #d6e4df; border-radius: 14px; box-shadow: 0 5px 20px #17323a0d; }
+    h1, h2, h3 { line-height: 1.2; }
+    h1 { font-size: clamp(1.9rem, 5vw, 3rem); }
+    h2 { font-size: clamp(1.35rem, 3vw, 1.8rem); }
+    p, li { max-width: 850px; }
+    textarea, input, select { width: 100%; min-height: 42px; padding: 9px 11px; border: 1px solid #78909c; border-radius: 8px; font: inherit; }
+    textarea { min-height: 100px; resize: vertical; }
+    button { min-height: 42px; margin: 5px 6px 5px 0; padding: 8px 12px; border: 1px solid #256779; border-radius: 8px; background: #e0f2f1; color: #12343d; font: inherit; cursor: pointer; }
+    button:hover { background: #c9ece8; }
+    button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 3px solid #0e7490; outline-offset: 2px; }
+    label { display: grid; gap: 6px; font-weight: 650; }
+    .callout { padding: 12px 14px; border-left: 4px solid #0e7490; background: #ecfeff; }
+    .muted { color: #52666d; }
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+    .subpanel { min-width: 0; padding: 16px; border: 1px solid #d6e4df; border-radius: 10px; background: #f8fbfa; }
+    .subpanel h3 { margin-top: 0; }
+    .path { min-height: 3em; margin: 12px 0; padding: 10px 12px; border-radius: 8px; color: #064e3b; background: #ecfdf5; font-weight: 650; }
+    .message { min-height: 2em; margin: 12px 0 0; font-weight: 650; }
+    .status-error { color: #9f1239; }
+    .status-ok { color: #166534; }
+    pre { min-height: 72px; padding: 13px; overflow: auto; overflow-wrap: anywhere; white-space: pre-wrap; border-radius: 8px; background: #102a43; color: #d9f6f1; }
+    code { color: #075985; }
+    @media (max-width: 700px) {
+      body { padding: 14px; }
+      .grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <p><a href="../README.md">Задание A4</a> · <a href="GUIDE.md">Гайд</a> · <a href="slides-standalone/slides.html">Слайды</a></p>
+  <h1>Общие правила и путь действия</h1>
+  <p class="callout"><strong>Это автономная модель на обычном JavaScript.</strong> Она показывает распределение обязанностей и путь действия. Это не React-приложение и не готовая реализация A4.</p>
+
+  <section aria-labelledby="rename-heading">
+    <h2 id="rename-heading">Одно правило — два входа</h2>
+    <p>Вы можете отправить новое имя из условного списка или редактора. Оба обработчика вызывают одну функцию проверки и обновляют одну модель документа.</p>
+    <p class="path" id="rename-path" aria-live="polite">Список → обработчик → правило имени → данные → отображение</p>
+    <div class="grid">
+      <form class="subpanel" id="list-form">
+        <h3>Список</h3>
+        <label for="list-name">Новое имя из списка</label>
+        <input id="list-name" value="Планы недели">
+        <button type="submit">Переименовать</button>
+      </form>
+      <form class="subpanel" id="editor-form">
+        <h3>Редактор</h3>
+        <label for="editor-name">Новое имя в редакторе</label>
+        <input id="editor-name" value="Планы недели">
+        <button type="submit">Переименовать</button>
+      </form>
+    </div>
+    <p><strong>Документ:</strong> <span id="document-name">План</span></p>
+    <p><strong>Предел:</strong> <span id="limit">20</span> символов</p>
+    <button id="change-limit" type="button">Изменить предел на 10</button>
+    <button id="reset-name" type="button">Сбросить документ до короткого имени «План»</button>
+    <p class="message" id="rename-message" aria-live="polite">«Планы недели» содержит 12 символов и проходит при пределе 20.</p>
+  </section>
+
+  <section aria-labelledby="save-heading">
+    <h2 id="save-heading">Внешняя операция возвращает результат</h2>
+    <p>Кнопка запускает сохранение явно. Переключите учебный результат операции и проверьте, что отказ не стирает текст.</p>
+    <label for="document-text">Текст открытого документа</label>
+    <textarea id="document-text">Подготовить материалы к следующей неделе.</textarea>
+    <label for="save-mode">Результат учебной реализации</label>
+    <select id="save-mode">
+      <option value="saved">Запись принята</option>
+      <option value="rejected">Запись отклонена</option>
+    </select>
+    <button id="save-document" type="button">Сохранить документ</button>
+    <p class="message" id="save-message" aria-live="polite">Текст изменяется в модели работающей программы.</p>
+    <h3>Данные в памяти модели</h3>
+    <pre id="state" aria-live="polite"></pre>
+    <p class="muted">В этой модели нет React, реального сервера и готового кода тренажёра. В L5 сетевой запрос потребует ожидания ответа и дополнительных состояний.</p>
+  </section>
+
+  <script>
+    const state = {
+      documents: [{ id: "weekly-plan", name: "План", text: "Подготовить материалы к следующей неделе." }],
+      nameLimit: 20,
+      savedText: null,
+    };
+
+    const $ = (selector) => document.querySelector(selector);
+
+    function getDocument() {
+      return state.documents[0];
+    }
+
+    function checkDocumentName(value, limit) {
+      const name = value.trim();
+      if (name.length === 0) return { ok: false, reason: "empty" };
+      if (name.length > limit) return { ok: false, reason: "too-long" };
+      return { ok: true, name };
+    }
+
+    function renameDocument(documents, id, proposedName, limit) {
+      const check = checkDocumentName(proposedName, limit);
+      if (!check.ok) {
+        const message = check.reason === "empty"
+          ? "Введите непустое имя."
+          : `Имя длиннее ${limit} символов.`;
+        return { ok: false, message };
+      }
+      if (!documents.some((item) => item.id === id)) {
+        return { ok: false, message: "Документ не найден. Список не изменён." };
+      }
+      return {
+        ok: true,
+        documents: documents.map((item) => item.id === id ? { ...item, name: check.name } : item),
+      };
+    }
+
+    function render() {
+      const current = getDocument();
+      $("#document-name").textContent = current.name;
+      $("#limit").textContent = state.nameLimit;
+      $("#state").textContent = JSON.stringify({ ...current, savedText: state.savedText }, null, 2);
+    }
+
+    function handleRename(source, input) {
+      const current = getDocument();
+      const result = renameDocument(state.documents, current.id, input.value, state.nameLimit);
+      $("#rename-path").textContent = `${source} → обработчик → правило имени → данные → отображение`;
+      const message = $("#rename-message");
+
+      if (!result.ok) {
+        message.textContent = `${result.message} Документ не изменён.`;
+        message.className = "message status-error";
+        return;
+      }
+
+      state.documents = result.documents;
+      message.textContent = `Имя обновлено: «${getDocument().name}».`;
+      message.className = "message status-ok";
+      render();
+    }
+
+    $("#list-form").addEventListener("submit", (event) => {
+      event.preventDefault();
+      handleRename("Список", $("#list-name"));
+    });
+
+    $("#editor-form").addEventListener("submit", (event) => {
+      event.preventDefault();
+      handleRename("Редактор", $("#editor-name"));
+    });
+
+    $("#change-limit").addEventListener("click", () => {
+      state.nameLimit = state.nameLimit === 20 ? 10 : 20;
+      $("#change-limit").textContent = `Изменить предел на ${state.nameLimit === 20 ? 10 : 20}`;
+      $("#rename-message").textContent = `Правило теперь ограничивает имя ${state.nameLimit} символами. Сохранённый документ не изменён автоматически.`;
+      $("#rename-message").className = "message";
+      render();
+    });
+
+    $("#reset-name").addEventListener("click", () => {
+      state.documents = state.documents.map((item) => item.id === getDocument().id ? { ...item, name: "План" } : item);
+      $("#rename-message").textContent = "Документ явно сброшен до имени «План». Теперь можно проверить новое ограничение.";
+      $("#rename-message").className = "message";
+      render();
+    });
+
+    $("#document-text").addEventListener("input", (event) => {
+      state.documents = state.documents.map((item) => item.id === getDocument().id ? { ...item, text: event.target.value } : item);
+      $("#save-message").textContent = "Текст изменён в памяти модели; запись ещё не запускалась.";
+      $("#save-message").className = "message";
+      render();
+    });
+
+    $("#save-document").addEventListener("click", () => {
+      const result = $("#save-mode").value === "saved"
+        ? { ok: true }
+        : { ok: false, message: "Запись отклонена. Текст остался в редакторе." };
+
+      if (result.ok) {
+        state.savedText = getDocument().text;
+        $("#save-message").textContent = "Учебная операция приняла текст.";
+        $("#save-message").className = "message status-ok";
+      } else {
+        $("#save-message").textContent = result.message;
+        $("#save-message").className = "message status-error";
+      }
+      render();
+    });
+
+    render();
+  </script>
+</body>
+</html>

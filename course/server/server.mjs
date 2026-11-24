@@ -67,12 +67,12 @@ export function createServer() {
     try {
       if (req.method === 'GET' && parts.join('/') === 'api/sets') return json(res, 200, [{ id: trainingSet.id, title: trainingSet.title, taskCount: publicTasks.length }], origin);
       if (req.method === 'GET' && parts.length === 3 && parts[0] === 'api' && parts[1] === 'sets') {
-        if (parts[2] !== trainingSet.id) return error(res, 404, 'NOT_FOUND', 'Набор не найден.', origin);
+        if (parts[2] !== trainingSet.id) return error(res, 404, 'NOT_FOUND', 'Модуль не найден.', origin);
         return json(res, 200, { id: trainingSet.id, title: trainingSet.title, tasks: publicTasks }, origin);
       }
       if (req.method === 'POST' && parts.join('/') === 'api/attempts') {
         const body = await readJson(req);
-        if (Object.keys(body).length !== 1 || body.setId !== trainingSet.id) return error(res, 400, 'INVALID_BODY', 'setId должен ссылаться на существующий набор.', origin);
+        if (Object.keys(body).length !== 1 || body.setId !== trainingSet.id) return error(res, 400, 'INVALID_BODY', 'setId должен ссылаться на существующий модуль.', origin);
         const attempt = { id: crypto.randomUUID(), setId: trainingSet.id, status: 'in-progress', answers: [] };
         attempts.set(attempt.id, attempt); return json(res, 201, attemptView(attempt), origin);
       }

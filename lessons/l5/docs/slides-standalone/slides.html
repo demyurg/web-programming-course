@@ -1,20 +1,221 @@
-<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>L5 — HTTP</title>
-<style>:root{font-family:system-ui;color:#f4efe8;background:#20252b}*{box-sizing:border-box}body{margin:0;overflow:hidden}.deck{min-height:100vh}.slide{display:none;min-height:calc(100vh - 72px);max-width:1100px;margin:auto;padding:clamp(28px,6vw,80px)}.slide.is-active{display:block}h1,h2{line-height:1.05;max-width:900px}h1{font-size:clamp(2.4rem,7vw,5.6rem)}h2{font-size:clamp(1.9rem,5vw,4rem)}p,li{font-size:clamp(1rem,1.6vw,1.35rem);line-height:1.45}pre{background:#121519;color:#f5ca91;padding:1rem;overflow:auto;max-width:900px}.tag{color:#f5ca91}.controls{position:fixed;bottom:0;left:0;right:0;padding:12px 20px;background:#121519;display:flex;gap:10px;align-items:center}.controls button{color:#fff;background:transparent;border:1px solid #78818d;padding:.45rem .75rem;cursor:pointer}.counter{margin-left:auto;color:#b8c0c8}@media(max-width:650px){body{overflow:auto}.slide{padding:30px 20px 90px}pre{font-size:.78rem}}@media print{body{overflow:visible;background:#fff;color:#111}.slide,.slide.is-active{display:block;min-height:0;page-break-after:always;color:#111}.controls{display:none}pre{color:#111;background:#eee}}</style></head><body><main class="deck">
-<section class="slide is-active"><p class="tag">L5 · около 55 минут содержательной части</p><h1>HTTP: путь ответа</h1><p>От поля формы к подтверждённой попытке и результату сервера.</p></section>
-<section class="slide"><h2>Зачем нужен сервер</h2><ul><li>локальное поле — намерение пользователя;</li><li>Attempt — подтверждённое состояние;</li><li>Result — решение сервера.</li></ul></section>
-<section class="slide"><h2>Что такое запрос</h2><p>Метод, URL, заголовки и тело. Ответ содержит статус, заголовки и тело.</p><pre>const response = await fetch(url);
-if (!response.ok) throw new Error(String(response.status));</pre></section>
-<section class="slide"><h2>Promise и fetch</h2><p>Ошибка сети отклоняет Promise. HTTP 400/500 требуют явной проверки response.ok.</p></section>
-<section class="slide"><h2>JSON без лишних полей</h2><pre>{"taskId":"ts-1","kind":"single-choice","optionId":"b"}</pre><p>Идентификатор задания, вид ответа и значение из контракта.</p></section>
-<section class="slide"><h2>PUT сохраняет ответ</h2><p>Повторный PUT для taskId заменяет ответ. Позиция на экране не является идентификатором.</p></section>
-<section class="slide"><h2>DELETE очищает ответ</h2><p>Повторное удаление допустимо. Это отдельное действие, а не пустой Answer.</p></section>
-<section class="slide"><h2>Жизненный цикл Attempt</h2><p>POST создать → PUT сохранить → GET прочитать → POST submit → GET result.</p></section>
-<section class="slide"><h2>Submit закрывает редактирование</h2><p>После submitted изменения получают 409. Повторный submit возвращает тот же результат.</p></section>
-<section class="slide"><h2>Result не равен локальному счёту</h2><p>pending-review и score: null нужно показать явно. Клиент не подменяет оценивание.</p></section>
-<section class="slide"><h2>Ошибка — часть интерфейса</h2><p>Оставить ввод, показать причину, дать повтор. Не очищать поле в catch.</p></section>
-<section class="slide"><h2>Network как доказательство</h2><p>Проверяем метод, URL, payload, статус и response.</p></section>
-<section class="slide"><h2>Контракт A5</h2><p>GET set, POST attempt, PUT/DELETE answer, POST submit, GET result.</p></section>
-<section class="slide"><h2>Демонстрация</h2><p>GET → PUT → повтор PUT → X-Demo-Fail: 1 → повтор без заголовка.</p></section>
-<section class="slide"><h2>Задание A5</h2><p>Соберите сквозной сценарий и сдайте его на P6. Сегодня P5 проверяет A4.</p></section>
-</main><nav class="controls"><button id="prev">Назад</button><button id="next">Далее</button><button id="print">Печать</button><span class="counter" id="counter"></span></nav>
-<script>(()=>{const slides=[...document.querySelectorAll('.slide')];let i=0;const render=()=>{slides.forEach((s,n)=>s.classList.toggle('is-active',n===i));document.getElementById('counter').textContent=(i+1)+' / '+slides.length};const move=d=>{i=Math.max(0,Math.min(slides.length-1,i+d));render()};document.getElementById('prev').onclick=()=>move(-1);document.getElementById('next').onclick=()=>move(1);document.getElementById('print').onclick=()=>window.print();document.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key===' ')move(1);if(e.key==='ArrowLeft')move(-1);if(e.key==='Home'){i=0;render()}if(e.key==='End'){i=slides.length-1;render()}});render()})();</script></body></html>
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>L5 — Как общаются программы</title>
+  <style>
+    :root { font-family: system-ui, sans-serif; color: #f3f5f7; background: #101722; }
+    * { box-sizing: border-box; }
+    body { margin: 0; }
+    .deck { min-height: 100vh; }
+    .slide { display: none; width: min(1200px, 100%); min-height: calc(100vh - 72px); margin: auto; padding: clamp(28px, 5vw, 72px); }
+    .slide.is-active { display: flex; flex-direction: column; justify-content: center; gap: 1.3rem; }
+    h1, h2, p, ul { margin: 0; }
+    h1 { font-size: clamp(2.8rem, 7vw, 6rem); line-height: 1.06; }
+    h2 { font-size: clamp(2rem, 5vw, 4.2rem); line-height: 1.1; }
+    p, li { font-size: clamp(1.1rem, 1.8vw, 1.6rem); line-height: 1.4; }
+    ul { padding-left: 1.25em; }
+    li + li { margin-top: .45rem; }
+    .eyebrow { color: #8fd3e8; font-size: 1rem; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; }
+    .lead { max-width: 850px; color: #cfdae4; font-size: clamp(1.3rem, 2.3vw, 2rem); }
+    .accent { color: #ffd37b; }
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; width: 100%; }
+    .grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .card { padding: 1.3rem; border: 1px solid #526579; border-radius: 16px; background: #1c2938; }
+    .card h3 { margin: 0 0 .55rem; color: #8fd3e8; font-size: clamp(1.2rem, 2vw, 1.7rem); }
+    .card p, .card li { font-size: clamp(1rem, 1.5vw, 1.3rem); }
+    .flow { display: flex; align-items: center; gap: .8rem; flex-wrap: wrap; }
+    .flow .card { flex: 1 1 220px; }
+    .arrow { color: #ffd37b; font-size: clamp(1.7rem, 3vw, 2.5rem); }
+    .callout { padding: 1rem 1.25rem; border-left: 5px solid #ffd37b; background: #253344; font-size: clamp(1.1rem, 1.7vw, 1.5rem); }
+    .small { color: #c1cfdb; font-size: clamp(1rem, 1.35vw, 1.15rem); }
+    .wire { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 1rem; }
+    .wire .arrow { text-align: center; }
+    .stack { display: grid; gap: .45rem; max-width: 850px; }
+    .stack div { padding: .55rem 1rem; border: 1px solid #526579; border-radius: 8px; background: #1c2938; font-size: clamp(1rem, 1.5vw, 1.3rem); }
+    code { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; color: #ffd37b; }
+    .controls { position: fixed; inset: auto 0 0; min-height: 72px; display: flex; align-items: center; gap: .6rem; padding: .7rem 1.1rem; background: #090e16; border-top: 1px solid #455266; }
+    .controls button { min-width: 3.2rem; min-height: 2.8rem; border: 1px solid #788da6; border-radius: 8px; background: #202d3e; color: white; font: inherit; font-size: 1.4rem; cursor: pointer; }
+    .controls button:disabled { opacity: .35; cursor: default; }
+    .controls button:focus-visible { outline: 3px solid #ffd37b; }
+    .counter { margin-left: auto; color: #bdcbd8; }
+    @media (max-width: 700px) {
+      .slide { padding: 24px 20px 90px; }
+      .slide.is-active { justify-content: flex-start; }
+      .grid, .grid.three, .wire { grid-template-columns: 1fr; }
+      .wire .arrow { transform: rotate(90deg); }
+      .flow .arrow { display: none; }
+      .controls { position: sticky; }
+    }
+  </style>
+</head>
+<body>
+<main class="deck">
+  <section class="slide is-active">
+    <p class="eyebrow">L5 · TypeScript и React</p>
+    <h1>Как общаются программы</h1>
+    <p class="lead">Сообщения, протоколы и ответы. HTTP как основной пример.</p>
+  </section>
+
+  <section class="slide">
+    <h2>Когда данные нужны нескольким клиентам</h2>
+    <div class="grid">
+      <div class="card"><h3>Внутри клиента</h3><p>Его части вызывают функции друг друга.</p></div>
+      <div class="card"><h3>Общие данные</h3><p>Сервер принимает изменения и возвращает подтверждённое состояние.</p></div>
+    </div>
+    <p class="callout">Как клиент сообщит серверу о действии и поймёт его ответ?</p>
+  </section>
+
+  <section class="slide">
+    <h2>Протокол — общие правила</h2>
+    <div class="flow">
+      <div class="card"><h3>Сообщение</h3><p><code>STATUS</code> — где его конец?</p></div>
+      <span class="arrow">→</span>
+      <div class="card"><h3>Порядок</h3><p>Когда можно послать следующую команду?</p></div>
+      <span class="arrow">→</span>
+      <div class="card"><h3>Ответ</h3><p>Что означают <code>OK</code> и <code>BUSY</code>?</p></div>
+    </div>
+    <p class="small">Обе стороны должны одинаково понимать правила обмена.</p>
+  </section>
+
+  <section class="slide">
+    <h2>Разные вопросы, разные уровни</h2>
+    <div class="stack">
+      <div>Передача данных: TCP, UDP</div>
+      <div>Доступ программы к сети: сокетный API</div>
+      <div>Смысл сообщений: HTTP, WebSocket</div>
+      <div>Запись данных: JSON и другие форматы</div>
+      <div>Устройство сервиса: конкретный API, REST или RPC</div>
+    </div>
+    <p class="small">JSON, HTTP и <code>fetch</code> могут работать вместе: они не заменяют друг друга.</p>
+  </section>
+
+  <section class="slide">
+    <h2>Связь ещё не объясняет команду</h2>
+    <div class="wire">
+      <div class="card"><h3>Отправитель</h3><p>Передал байты <code>STATUS</code></p></div>
+      <span class="arrow">→</span>
+      <div class="card"><h3>Получатель</h3><p>Ждёт перевод строки, чтобы понять: команда закончилась.</p></div>
+    </div>
+    <p class="callout">Данные дошли. Договорённости о границе сообщения нет.</p>
+  </section>
+
+  <section class="slide">
+    <h2>HTTP: запрос и ответ</h2>
+    <div class="grid">
+      <div class="card"><h3>Запрос</h3><p>Метод <code>GET</code><br>Адрес <code>/books/42</code><br>Заголовки · тело при необходимости</p></div>
+      <div class="card"><h3>Ответ</h3><p>Статус <code>200</code><br>Заголовки<br>Тело с данными книги</p></div>
+    </div>
+    <p class="small">Клиент начинает обмен. Полученный ответ ещё нужно прочитать и проверить.</p>
+  </section>
+
+  <section class="slide">
+    <h2>HTTP и договор конкретного API</h2>
+    <div class="grid">
+      <div class="card"><h3>Общее для HTTP</h3><p>Методы, заголовки, статусы и форма обмена.</p></div>
+      <div class="card"><h3>Правила каталога</h3><p>Адрес <code>/books/42</code>, поле <code>bookId</code>, значение ошибок.</p></div>
+    </div>
+    <p class="callout"><code>200</code> означает успешный HTTP-ответ; пригодность данных клиент проверяет отдельно.</p>
+    <p class="small">REST — подход к устройству сервиса вокруг ресурсов; HTTP API не обязательно следует ему полностью.</p>
+  </section>
+
+  <section class="slide">
+    <h2>Описание API и код</h2>
+    <div class="grid">
+      <div class="card"><h3>Сначала описание</h3><p>Описание API → реализация сервера и клиента</p></div>
+      <div class="card"><h3>Сначала код</h3><p>Реализация сервера → описание API</p></div>
+    </div>
+    <p class="callout">OpenAPI — стандартный формат описания HTTP API. Orval создаёт по нему типы и функции клиента.</p>
+    <p class="small">В обоих случаях описание сверяют с работой сервера.</p>
+  </section>
+
+  <section class="slide">
+    <h2>Другие способы договориться</h2>
+    <div class="grid">
+      <div class="card"><h3>WebSocket</h3><p>Обе стороны посылают сообщения в установленной связи. Например, совместное редактирование.</p></div>
+      <div class="card"><h3>gRPC</h3><p>Описанные вызовы и типы между службами. Обычно работает поверх HTTP/2.</p></div>
+    </div>
+    <p class="small">Каждый способ требует обработки разрыва связи и ошибок.</p>
+  </section>
+
+  <section class="slide">
+    <h2>Ответ потерялся. Что мы знаем?</h2>
+    <div class="flow">
+      <div class="card"><h3>1</h3><p>Задание на печать отправлено.</p></div>
+      <span class="arrow">→</span>
+      <div class="card"><h3>2</h3><p>Служба приняла его.</p></div>
+      <span class="arrow">→</span>
+      <div class="card"><h3>3</h3><p>Подтверждение не дошло.</p></div>
+    </div>
+    <p class="callout">У клиента нет подтверждения. Слепой повтор может создать второе задание.</p>
+  </section>
+
+  <section class="slide">
+    <h2>Четыре вопроса доверия</h2>
+    <div class="grid">
+      <div class="card"><h3>Передача</h3><p>Защищено ли соединение?</p></div>
+      <div class="card"><h3>Личность</h3><p>Кто обратился?</p></div>
+      <div class="card"><h3>Право</h3><p>Можно ли ему выполнить действие?</p></div>
+      <div class="card"><h3>Данные</h3><p>Корректен ли запрос?</p></div>
+    </div>
+    <p class="small">Скрытая кнопка и типы TypeScript не заменяют проверки на сервере.</p>
+  </section>
+
+  <section class="slide">
+    <h2>Теперь — наш тренажёр</h2>
+    <div class="flow">
+      <div class="card"><h3>Ввод</h3><p>Человек меняет ответ.</p></div>
+      <span class="arrow">→</span>
+      <div class="card"><h3>Отправка</h3><p>Браузер обращается к учебному API.</p></div>
+      <span class="arrow">→</span>
+      <div class="card"><h3>Подтверждение</h3><p>Сервер подтверждает сохранение или сообщает об отказе.</p></div>
+    </div>
+    <p class="callout">Отправленный ответ ещё нельзя назвать сохранённым.</p>
+  </section>
+
+  <section class="slide">
+    <h2>Задание A5</h2>
+    <p class="lead">Свяжем тренажёр с готовым локальным HTTP API.</p>
+    <ul>
+      <li>Договор сообщений — в контракте API.</li>
+      <li>Ожидание, подтверждение и ошибка видны в интерфейсе.</li>
+      <li>Результат приходит от сервера.</li>
+    </ul>
+    <p class="small">A5 проверяется на P6.</p>
+  </section>
+</main>
+<nav class="controls" aria-label="Навигация по слайдам">
+  <button id="first" aria-label="В начало">|&lt;</button>
+  <button id="prev" aria-label="Назад">&lt;</button>
+  <button id="next" aria-label="Далее">&gt;</button>
+  <button id="last" aria-label="В конец">&gt;|</button>
+  <span class="counter" id="counter" aria-live="polite"></span>
+</nav>
+<script>
+  (() => {
+    const slides = [...document.querySelectorAll('.slide')];
+    const buttons = Object.fromEntries(['first', 'prev', 'next', 'last'].map(id => [id, document.getElementById(id)]));
+    let index = 0;
+    function render() {
+      slides.forEach((slide, n) => slide.classList.toggle('is-active', n === index));
+      document.getElementById('counter').textContent = `${index + 1} / ${slides.length}`;
+      buttons.first.disabled = buttons.prev.disabled = index === 0;
+      buttons.next.disabled = buttons.last.disabled = index === slides.length - 1;
+    }
+    function go(nextIndex) { index = Math.max(0, Math.min(slides.length - 1, nextIndex)); render(); }
+    buttons.first.onclick = () => go(0);
+    buttons.prev.onclick = () => go(index - 1);
+    buttons.next.onclick = () => go(index + 1);
+    buttons.last.onclick = () => go(slides.length - 1);
+    document.addEventListener('keydown', event => {
+      if (event.key === 'ArrowRight' || event.key === ' ') { event.preventDefault(); go(index + 1); }
+      if (event.key === 'ArrowLeft') go(index - 1);
+      if (event.key === 'Home') go(0);
+      if (event.key === 'End') go(slides.length - 1);
+    });
+    render();
+  })();
+</script>
+</body>
+</html>

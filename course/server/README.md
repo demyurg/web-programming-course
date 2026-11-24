@@ -16,7 +16,7 @@ node course/server/server.mjs
 node --test course/server/server.test.mjs
 ```
 
-Команды одинаковы для Linux/macOS и Windows PowerShell. Данные загружаются из [`course/data/training-set.json`](../data/training-set.json).
+Команды одинаковы для Linux/macOS и Windows PowerShell. Данные текущего учебного модуля загружаются из [`course/data/training-set.json`](../data/training-set.json).
 
 ## Ограничения
 
@@ -24,6 +24,7 @@ node --test course/server/server.test.mjs
 - Аутентификации нет; любой локальный клиент может обращаться к API.
 - Попытки хранятся ephemeral — только в памяти процесса и исчезают после перезапуска.
 - Сервер не предоставляет ручное оценивание ответов `short-text`; такие ответы получают `pending-review`.
+- Текущая версия сервера работает с одним фиксированным модулем и не назначает варианты заданий. Ротация вариантов относится к будущему контрольному серверу.
 - Официальные ключи и закрытый банк заданий не входят в репозиторий.
 
 ## Учебная ошибка
