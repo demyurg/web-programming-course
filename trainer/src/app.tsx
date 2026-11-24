@@ -129,9 +129,12 @@ export default function App() {
     setActionState({ status: "loading" });
     try {
       const submittedAttempt = await trainerApi.submitAttempt(attempt.id, simulateFail);
-      setAttempt(submittedAttempt);
-      const attemptResult = await trainerApi.getResult(submittedAttempt.id);
+      setAttempt({ ...attempt, ...submittedAttempt, id: attempt.id });
+
+
+      const attemptResult = await trainerApi.getResult(attempt.id);
       setResult(attemptResult);
+
       setViewMode({ kind: "overview" });
       setActionState({ status: "success" });
     } catch (err) {
@@ -141,7 +144,6 @@ export default function App() {
       });
     }
   };
-
 
   const handleRestart = async () => {
     if (!trainingSet) return;
