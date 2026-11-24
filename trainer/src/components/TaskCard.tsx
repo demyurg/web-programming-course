@@ -5,10 +5,14 @@ type TaskCardProps = {
   answer: Answer | undefined;
   onAnswer: (answer: Answer) => void;
   onClear: (taskId: string) => void;
+  onSave: () => void;
   disabled: boolean;
+  canEdit: boolean;
+  dirty: boolean;
+  confirmed: boolean;
 };
 
-export default function TaskCard({ task, answer, onAnswer, onClear, disabled }: TaskCardProps) {
+export default function TaskCard({ task, answer, onAnswer, onClear, onSave, disabled, canEdit, dirty, confirmed }: TaskCardProps) {
   return (
     <article className="task-card" aria-labelledby="task-prompt">
       <div className="card-meta"><span className="topic-badge">{task.topic}</span><span>{task.kind === "single-choice" ? "Один вариант" : "Короткий текст"}</span></div>
@@ -22,8 +26,18 @@ export default function TaskCard({ task, answer, onAnswer, onClear, disabled }: 
           </label>)}
         </fieldset>
       ) : <div className="text-field"><label htmlFor="answer-text">Ваш ответ</label><textarea id="answer-text" rows={6} disabled={disabled} value={answer?.kind === "short-text" ? answer.text : ""} onChange={(event) => onAnswer({ taskId: task.id, kind: "short-text", text: event.target.value })} placeholder="Напишите ответ своими словами" /></div>}
-      {answer && !disabled && (
-        <div className="actions"><button type="button" onClick={() => onClear(task.id)}>Очистить ответ</button></div>
+      {canEdit && (
+        <>
+          <p role="status">{dirty
+            ? "Изменения не сохранены на сервере."
+            : confirmed ? "Ответ сохранён на сервере." : "Ответа на сервере нет."}</p>
+          <div className="actions">
+            <button className="primary-button" type="button" disabled={disabled || !dirty} onClick={onSave}>
+              Сохранить ответ
+            </button>
+            {answer && <button type="button" disabled={disabled} onClick={() => onClear(task.id)}>Очистить ответ</button>}
+          </div>
+        </>
       )}
     </article>
   );
