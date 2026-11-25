@@ -458,51 +458,61 @@ body {
 .error-button:hover {
   background: #f6f8fa;
 }
-/* Дополнения для A4 */
-.module-header {
+
+/* дополнения A5 */
+.screen-note {
+  color: #57606a;
+  padding: 20px 0;
+}
+.set-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 16px;
+  flex-direction: column;
+  gap: 8px;
+  max-width: 420px;
 }
-
-.task-card-actions {
-  margin-top: 14px;
-  display: flex;
-  justify-content: flex-end;
-}
-
-.review-item-answer-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-}
-
-.review-item-answer {
-  flex: 1;
-}
-
-.review-actions {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-}
-
-.clear-button {
-  padding: 6px 12px;
+.set-preview {
+  background: #fff;
   border: 1px solid #d0d7de;
-  border-radius: 6px;
-  background: #ffffff;
-  color: #cf222e;
-  cursor: pointer;
-  font: inherit;
-  font-size: 0.85rem;
-  transition: background 0.15s, border-color 0.15s;
+  border-radius: 10px;
+  padding: 20px;
 }
-
-.clear-button:hover {
-  background: #ffebe9;
-  border-color: #cf222e;
+.save-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin: 12px 0;
+}
+.save-status {
+  font-size: 0.9rem;
+}
+.save-saving {
+  color: #57606a;
+}
+.save-saved {
+  color: #1a7f37;
+}
+.save-error {
+  color: #cf222e;
+}
+.fail-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  color: #57606a;
+  font-size: 0.9rem;
+}
+.result-box {
+  background: #ddf4ff;
+  border: 1px solid #54aeff;
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+}
+.result-box p {
+  margin: 4px 0;
 }

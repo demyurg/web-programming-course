@@ -1,89 +1,47 @@
-import type { Answer, Draft, Task } from "./domain.js";
+import type { Answer } from "./domain.js";
 
 export type AttemptStatus = "in-progress" | "submitted";
 
-export type State = {
+export type AttemptState = {
   answers: Answer[];
   currentIndex: number;
   status: AttemptStatus;
-  storageError: string | null;
-  draftError: string | null;
 };
 
-export type Action =
+export type AttemptAction =
   | { type: "answerChanged"; answer: Answer }
-  | { type: "answerCleared"; taskId: string }
+  | { type: "answerRemoved"; taskId: string }
   | { type: "moved"; index: number }
-  | { type: "restored"; draft: Draft; tasks: readonly Task[] }
-  | { type: "reset" }
   | { type: "submitted" }
-  | { type: "storageFailed"; message: string }
-  | { type: "draftCorrupted" };
+  | { type: "reset" };
+
+export function createInitialAttempt(): AttemptState {
+  return { answers: [], currentIndex: 0, status: "in-progress" };
+}
 
 function replaceAnswer(current: readonly Answer[], next: Answer): Answer[] {
-  return [...current.filter((item) => item.taskId !== next.taskId), next];
+  return [...current.filter((a) => a.taskId !== next.taskId), next];
 }
 
-function removeAnswer(current: readonly Answer[], taskId: string): Answer[] {
-  return current.filter((item) => item.taskId !== taskId);
-}
-
-export function createInitialState(tasks: readonly Task[]): State {
-  return {
-    answers: [],
-    currentIndex: 0,
-    status: "in-progress",
-    storageError: null,
-    draftError: null,
-  };
-}
-
-export function reducer(state: State, action: Action): State {
+export function attemptReducer(
+  state: AttemptState,
+  action: AttemptAction,
+): AttemptState {
+  if (state.status === "submitted" && action.type !== "reset") return state;
   switch (action.type) {
-    case "answerChanged": {
-      if (state.status === "submitted") return state;
+    case "answerChanged":
+      return { ...state, answers: replaceAnswer(state.answers, action.answer) };
+    case "answerRemoved":
       return {
         ...state,
-        answers: replaceAnswer(state.answers, action.answer),
+        answers: state.answers.filter((a) => a.taskId !== action.taskId),
       };
-    }
-    case "answerCleared": {
-      if (state.status === "submitted") return state;
-      return {
-        ...state,
-        answers: removeAnswer(state.answers, action.taskId),
-      };
-    }
-    case "moved": {
-      if (state.status === "submitted") return state;
+    case "moved":
       return { ...state, currentIndex: action.index };
-    }
-    case "restored": {
-      const restoredIndex = action.tasks.findIndex(
-        (task) => task.id === action.draft.taskId,
-      );
-      return {
-        ...state,
-        answers: action.draft.answers,
-        currentIndex: restoredIndex >= 0 ? restoredIndex : 0,
-        status: action.draft.status,
-        draftError: null,
-      };
-    }
-    case "reset":
-      return {
-        answers: [],
-        currentIndex: 0,
-        status: "in-progress",
-        storageError: state.storageError,
-        draftError: null,
-      };
     case "submitted":
       return { ...state, status: "submitted" };
-    case "storageFailed":
-      return { ...state, storageError: action.message };
-    case "draftCorrupted":
-      return { ...state, draftError: "Черновик повреждён или несовместим" };
+    case "reset":
+      return createInitialAttempt();
     default:
       return state;
   }
