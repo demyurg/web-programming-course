@@ -1,62 +1,88 @@
 import { useState } from "react";
-import type { Answer, TrainingSet } from "./domain";
-import { findTaskById, countProgress } from "./domain";
+import type { Answer } from "./domain";
+import { countProgress, findTaskById } from "./domain";
+import { webBasics } from "./data/training-set";
 import { TaskList } from "./components/TaskList";
-import { TaskCard } from "./components/TaskCard";
-
-const webBasics: TrainingSet = {
-  id: "web-basics",
-  title: "Основы веб-программирования",
-  tasks: [
-    {
-      id: "ts-1",
-      kind: "single-choice",
-      topic: "typescript",
-      prompt: "Что выведет этот JavaScript-код?",
-      code: 'console.log("10" * 5);',
-      options: [
-        { id: "a", label: "105" },
-        { id: "b", label: "50" },
-        { id: "c", label: "Ошибка" },
-      ],
-    },
-    {
-      id: "ts-2",
-      kind: "single-choice",
-      topic: "typescript",
-      prompt: "Что возвращает find, если элемент не найден?",
-      options: [
-        { id: "a", label: "undefined" },
-        { id: "b", label: "Пустой массив" },
-        { id: "c", label: "false" },
-      ],
-    },
-    {
-      id: "react-1",
-      kind: "short-text",
-      topic: "react",
-      prompt: "Объясните, чем props компонента отличаются от его состояния.",
-    },
-    {
-      id: "http-1",
-      kind: "short-text",
-      topic: "http",
-      prompt: "Что нужно проверить в ответе fetch перед использованием JSON?",
-    },
-  ],
-};
+import { AnswerField } from "./components/AnswerField";
 
 export function App() {
-  const [selectedId, setSelectedId] = useState<string | null>(
-    webBasics.tasks[0]?.id ?? null,
+  const [answers, setAnswers] = useState<Answer[]>([]);
+  const [selectedId, setSelectedId] = useState<string>(
+    webBasics.tasks[0]?.id ?? "",
   );
+  const [submitted, setSubmitted] = useState(false);
 
-  const selectedTask = selectedId
-    ? findTaskById(webBasics.tasks, selectedId)
-    : undefined;
-
-  const answers: Answer[] = [];
   const progress = countProgress(webBasics, answers);
+
+  function handleRestart() {
+    setAnswers([]);
+    setSelectedId(webBasics.tasks[0]?.id ?? "");
+    setSubmitted(false);
+  }
+
+  function handleFinish() {
+    if (progress.missing.length > 0) {
+      const ok = window.confirm(
+        `Не отвечено: ${progress.missing.join(", ")}. Завершить?`,
+      );
+      if (!ok) return;
+    }
+    setSubmitted(true);
+  }
+
+  if (submitted) {
+    return (
+      <main className="app">
+        <h1 className="app__title">{webBasics.title}</h1>
+        <section className="review">
+          <h2>Обзор попытки</h2>
+          <ul>
+            {webBasics.tasks.map((task) => {
+              const answer = answers.find((a) => a.taskId === task.id);
+              return (
+                <li key={task.id} className="review__item">
+                  <span className="review__id">{task.id}</span>
+                  {progress.missing.includes(task.id) ? (
+                    <span className="review__value review__value--empty">
+                      нет ответа
+                    </span>
+                  ) : answer?.kind === "single-choice" ? (
+                    <span className="review__value">
+                      вариант: {answer.optionId}
+                    </span>
+                  ) : answer?.kind === "short-text" ? (
+                    <span className="review__value">{answer.text}</span>
+                  ) : null}
+                </li>
+              );
+            })}
+          </ul>
+          <button
+            type="button"
+            className="btn btn--primary"
+            onClick={handleRestart}
+          >
+            Начать новую попытку
+          </button>
+        </section>
+      </main>
+    );
+  }
+
+  const currentTask = findTaskById(webBasics.tasks, selectedId);
+  const currentAnswer = answers.find((a) => a.taskId === selectedId);
+  const currentIndex = webBasics.tasks.findIndex((t) => t.id === selectedId);
+  const prevTask =
+    currentIndex > 0 ? webBasics.tasks[currentIndex - 1] : undefined;
+  const nextTask =
+    currentIndex >= 0 ? webBasics.tasks[currentIndex + 1] : undefined;
+
+  function replaceAnswer(next: Answer) {
+    setAnswers((current) => [
+      ...current.filter((a) => a.taskId !== next.taskId),
+      next,
+    ]);
+  }
 
   return (
     <main className="app">
@@ -76,12 +102,43 @@ export function App() {
           selectedId={selectedId}
           onSelect={setSelectedId}
         />
+
         <section aria-label="Текущее задание">
-          {selectedTask ? (
-            <TaskCard task={selectedTask} />
+          {currentTask ? (
+            <AnswerField
+              task={currentTask}
+              answer={currentAnswer}
+              onChange={replaceAnswer}
+            />
           ) : (
             <p className="muted">Выберите задание.</p>
           )}
+
+          <div className="nav-buttons">
+            <button
+              type="button"
+              className="btn"
+              onClick={() => prevTask && setSelectedId(prevTask.id)}
+              disabled={!prevTask}
+            >
+              Назад
+            </button>
+            <button
+              type="button"
+              className="btn"
+              onClick={() => nextTask && setSelectedId(nextTask.id)}
+              disabled={!nextTask}
+            >
+              Далее
+            </button>
+            <button
+              type="button"
+              className="btn btn--primary"
+              onClick={handleFinish}
+            >
+              Завершить
+            </button>
+          </div>
         </section>
       </div>
     </main>

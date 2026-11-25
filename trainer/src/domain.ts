@@ -48,13 +48,24 @@ export function filterTasksByTopic(tasks: Task[], topic: string): Task[] {
 export function countProgress(
   set: TrainingSet,
   answers: Answer[],
-): { filled: number; total: number } {
+): { filled: number; total: number; missing: string[] } {
   const total = set.tasks.length;
-  const filled = set.tasks.reduce((n, task) => {
-  const a = answers.find(x => x.taskId === task.id);
-  if (!a) return n;
-  if (a.kind === "single-choice") return a.optionId ? n + 1 : n;
-  return a.text.trim().length > 0 ? n + 1 : n;
-}, 0);
-return { filled, total };
+  const missing: string[] = [];
+  let filled = 0;
+
+  for (const task of set.tasks) {
+    const answer = answers.find((a) => a.taskId === task.id);
+
+    const ok =
+      answer !== undefined &&
+      ((task.kind === "single-choice" && answer.kind === "single-choice") ||
+        (task.kind === "short-text" &&
+          answer.kind === "short-text" &&
+          answer.text.trim() !== ""));
+
+    if (ok) filled += 1;
+    else missing.push(task.id);
+  }
+
+  return { filled, total, missing };
 }

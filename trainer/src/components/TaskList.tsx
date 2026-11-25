@@ -1,12 +1,12 @@
 import type { Task } from "../domain";
 
-type TaskListProps = {
+type Props = {
   tasks: Task[];
-  selectedId: string | null;
+  selectedId: string;
   onSelect: (id: string) => void;
 };
 
-export function TaskList({ tasks, selectedId, onSelect }: TaskListProps) {
+export function TaskList({ tasks, selectedId, onSelect }: Props) {
   if (tasks.length === 0) {
     return <p className="muted">В этом наборе пока нет заданий.</p>;
   }
@@ -21,7 +21,7 @@ export function TaskList({ tasks, selectedId, onSelect }: TaskListProps) {
               type="button"
               className="task-list__item"
               onClick={() => onSelect(task.id)}
-              aria-pressed={task.id === selectedId}
+              aria-current={task.id === selectedId}
             >
               <span className="task-list__id">{task.id}</span>
               {task.prompt}
