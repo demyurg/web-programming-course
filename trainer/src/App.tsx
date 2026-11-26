@@ -1,13 +1,6 @@
-import { useReducer, useState } from "react";
-import type { Answer } from "./domain";
+import { useState } from "react";
 import { findTaskById } from "./domain";
-import { webBasics } from "./data";
-import {
-  attemptReducer,
-  createAttempt,
-  getMissingTasks,
-  getProgress,
-} from "./attempt";
+import { useTrainer } from "./hooks/useTrainer";
 import { TaskList } from "./TaskList";
 import { TaskCard } from "./TaskCard";
 import { Progress } from "./Progress";
@@ -16,85 +9,140 @@ import { Review } from "./Review";
 type View = "task" | "review";
 
 export default function App() {
-  const [attempt, dispatch] = useReducer(attemptReducer, webBasics, createAttempt);
-
-  const set = attempt.set;
-  const firstId = set.tasks[0]?.id ?? "";
-  const [selectedId, setSelectedId] = useState<string>(firstId);
+  const trainer = useTrainer();
+  const [selectedId, setSelectedId] = useState("");
   const [view, setView] = useState<View>("task");
 
-  const progress = getProgress(attempt);
-  const missingTasks = getMissingTasks(attempt);
+  const busy = trainer.isActionLoading;
 
-  const selectedTask = findTaskById(set, selectedId);
-  const index = set.tasks.findIndex((task) => task.id === selectedId);
-  const prevTask = set.tasks[index - 1];
-  const nextTask = set.tasks[index + 1];
+  // Сообщения об ошибках и успешных запросах
+  const messages = (
+    <>
+      {trainer.errorMessage && (
+        <div className="warning" role="alert"
+          style={{ borderColor: "red", background: "#ffebee", gridColumn: "1 / -1" }}>
+          <p style={{ color: "darkred" }}>{trainer.errorMessage}</p>
 
-  function saveAnswer(answer: Answer) {
-    dispatch({ type: "answer", answer });
+          {trainer.retry && (
+            <button disabled={busy} onClick={trainer.retry}>
+              Повторить
+            </button>
+          )}
+        </div>
+      )}
+
+      {trainer.successMessage && (
+        <p role="status" style={{ color: "green", gridColumn: "1 / -1" }}>
+          {trainer.successMessage}
+        </p>
+      )}
+    </>
+  );
+
+  // Загрузка тренажёра
+  if (trainer.isLoading) {
+    return <main><h2>Загрузка тренажёра...</h2></main>;
   }
 
-  function clearAnswer(taskId: string) {
-    dispatch({ type: "clear", taskId });
-  }
-
-  function openTask(taskId: string) {
-    setSelectedId(taskId);
-    setView("task");
-  }
-
-  function startNewAttempt() {
-    dispatch({ type: "restart" });
-    setSelectedId(firstId);
-    setView("task");
-  }
-
-  if (set.tasks.length === 0) {
+  // Восстановление или создание попытки
+  if (!trainer.set || !trainer.attempt) {
     return (
-      <main>
-        <h1>{set.title}</h1>
-        <p>В модуле пока нет заданий.</p>
+      <main style={{ padding: 20 }}>
+        <h2>{trainer.set?.title || "Тренажёр"}</h2>
+
+        {messages}
+        <p>{trainer.notice}</p>
+
+        {trainer.set && trainer.notice && (
+          <button disabled={busy} onClick={trainer.restart}>
+            Начать новую попытку
+          </button>
+        )}
       </main>
     );
   }
 
-  if (attempt.status === "submitted") {
+  const tasks = trainer.tasks;
+  const currentId = selectedId || tasks[0]?.id || "";
+  const selectedTask = findTaskById(trainer.set, currentId);
+
+  const index = tasks.findIndex(t => t.id === currentId);
+  const prevTask = tasks[index - 1];
+  const nextTask = tasks[index + 1];
+
+  function openTask(id: string) {
+    if (busy || trainer.retry) return;
+    setSelectedId(id);
+    setView("task");
+  }
+
+  function finishAttempt() {
+    if (trainer.missingTasks.length > 0) {
+      const confirmed = window.confirm(
+        "Не все задания заполнены. Завершить попытку?"
+      );
+
+      if (!confirmed) return;
+    }
+
+    trainer.submit();
+  }
+
+  // Завершённая попытка
+  if (trainer.attempt.status === "submitted") {
     return (
       <main>
-        <h1>{set.title}</h1>
-        <Review
-          tasks={set.tasks}
-          answers={attempt.answers}
-          progress={progress}
-          submitted={true}
-          onClear={clearAnswer}
-          onOpenTask={openTask}
-          onRestart={startNewAttempt}
-        />
+        <h1>{trainer.set.title}</h1>
+        {messages}
+
+        {trainer.result ? (
+          <Review
+            tasks={tasks}
+            answers={trainer.answersRecord}
+            progress={trainer.progress}
+            submitted={true}
+            result={trainer.result}
+            onClear={trainer.clearAnswer}
+            onOpenTask={openTask}
+            onRestart={trainer.restart}
+            isActionLoading={busy}
+          />
+        ) : (
+          <p>Попытка завершена. Результат пока не получен.</p>
+        )}
       </main>
     );
   }
+
+  const locked = busy || trainer.retry !== null;
 
   return (
     <main>
-      <h1>{set.title}</h1>
-      <p>Заданий: {set.tasks.length}</p>
+      <h1>{trainer.set.title}</h1>
+      <p>Заданий: {tasks.length}</p>
+
+      {messages}
 
       <aside className="sidebar">
-        <Progress progress={progress} missingTasks={missingTasks} />
+        <Progress
+          progress={trainer.progress}
+          missingTasks={trainer.missingTasks}
+        />
+
         <button
           type="button"
           className="review-toggle"
           aria-pressed={view === "review"}
+          disabled={locked}
           onClick={() => setView(view === "review" ? "task" : "review")}
         >
           {view === "review" ? "← К заданию" : "Обзор ответов"}
         </button>
+
         <TaskList
-          tasks={set.tasks}
-          selectedId={view === "task" ? selectedId : ""}
-          missingIds={missingTasks.map((task) => task.id)}
+          tasks={tasks}
+          selectedId={view === "task" ? currentId : ""}
+          missingIds={trainer.missingTasks.map(task => task.id)}
           onSelect={openTask}
         />
       </aside>
@@ -102,39 +150,45 @@ export default function App() {
       <section className="workspace">
         {view === "review" ? (
           <Review
-            tasks={set.tasks}
-            answers={attempt.answers}
-            progress={progress}
+            tasks={tasks}
+            answers={trainer.answersRecord}
+            progress={trainer.progress}
             submitted={false}
-            onClear={clearAnswer}
+            onClear={trainer.clearAnswer}
             onOpenTask={openTask}
-            onRestart={startNewAttempt}
+            onRestart={trainer.restart}
+            isActionLoading={locked}
           />
         ) : (
           <>
-            {selectedTask === undefined ? (
-              <p>Задание не выбрано.</p>
-            ) : (
+            {selectedTask ? (
               <TaskCard
+                key={`${trainer.attempt.id}-${selectedTask.id}`}
                 task={selectedTask}
-                answer={attempt.answers[selectedTask.id]}
-                onAnswer={saveAnswer}
-                onClear={clearAnswer}
+                answer={trainer.answersRecord[selectedTask.id]}
+                onAnswer={trainer.saveAnswer}
+                onClear={trainer.clearAnswer}
+                onDemoFail={ans => trainer.saveAnswer(ans, true)}
+                disabled={locked}
+                submitted={false}
               />
+            ) : (
+              <p>Задание не выбрано.</p>
             )}
 
             <div className="nav">
               <button
                 type="button"
-                disabled={prevTask === undefined}
-                onClick={() => prevTask && setSelectedId(prevTask.id)}
+                disabled={!prevTask || locked}
+                onClick={() => prevTask && openTask(prevTask.id)}
               >
                 ← Назад
               </button>
+
               <button
                 type="button"
-                disabled={nextTask === undefined}
-                onClick={() => nextTask && setSelectedId(nextTask.id)}
+                disabled={!nextTask || locked}
+                onClick={() => nextTask && openTask(nextTask.id)}
               >
                 Далее →
               </button>
@@ -142,31 +196,14 @@ export default function App() {
           </>
         )}
 
-        {attempt.status === "confirming" ? (
-          <div className="warning" role="alert">
-            {missingTasks.length > 0 ? (
-              <p>
-                Не заполнены задания:{" "}
-                {missingTasks.map((task) => task.id).join(", ")}. Завершить
-                попытку?
-              </p>
-            ) : (
-              <p>Все задания заполнены. Завершить попытку?</p>
-            )}
-            <button type="button" onClick={() => dispatch({ type: "confirm-finish" })}>
-              Да, завершить
-            </button>
-            <button type="button" onClick={() => dispatch({ type: "cancel-finish" })}>
-              Вернуться к заданиям
-            </button>
-          </div>
-        ) : (
+        {view !== "review" && (
           <button
             type="button"
             className="finish"
-            onClick={() => dispatch({ type: "request-finish" })}
+            disabled={locked}
+            onClick={finishAttempt}
           >
-            Завершить попытку
+            {busy ? "Загрузка..." : "Завершить попытку"}
           </button>
         )}
       </section>
