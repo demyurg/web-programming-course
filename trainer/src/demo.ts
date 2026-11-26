@@ -5,52 +5,7 @@ import {
   filterTasksByTopic,
   getProgress,
 } from "./domain.js";
-
-
-const trainingSet: TrainingSet = {
-  id: "web-basics",
-  title: "Основы веб-программирования",
-  
-tasks: [
-  {
-    id: "ts-1",
-    kind: "single-choice",
-    topic: "typescript",
-    prompt: "Что выведет этот JavaScript-код?",
-    code: 'console.log("10" * 5);',
-    options: [
-      { id: "a", label: "105" },
-      { id: "b", label: "50" },
-      { id: "c", label: "Ошибка" },
-    ],
-  },
-  {
-    id: "ts-2",
-    kind: "single-choice",
-    topic: "typescript",
-    prompt: "Что возвращает find, если элемент не найден?",
-    options: [
-      { id: "a", label: "undefined" },
-      { id: "b", label: "Пустой массив" },
-      { id: "c", label: "false" },
-    ],
-  },
-  {
-    id: "react-1",
-    kind: "short-text",
-    topic: "react",
-    prompt: "Объясните, чем props компонента отличаются от его состояния.",
-  },
-  {
-    id: "http-1",
-    kind: "short-text",
-    topic: "http",
-    prompt: "Что нужно проверить в ответе fetch перед использованием JSON?",
-  },
-],
-
-};
-
+import { trainingSet } from "./data.js";
 
 const answers: Answer[] = [
   {
@@ -64,7 +19,6 @@ const answers: Answer[] = [
     text: "Props передаются компоненту, а состояние хранится внутри него.",
   },
 ];
-
 
 console.log("Набор заданий:", trainingSet.title);
 console.log("Количество заданий:", trainingSet.tasks.length);
@@ -100,7 +54,6 @@ const emptyTrainingSet: TrainingSet = {
   tasks: [],
 };
 
-
 console.log("Поиск задания ts-1:");
 console.log(findTaskById(trainingSet, "ts-1"));
 
@@ -118,8 +71,6 @@ console.log(getProgress(trainingSet, answers));
 
 console.log("Прогресс пустого набора:");
 console.log(getProgress(emptyTrainingSet, []));
-
-
 
 console.log("Проверка ответа из пробелов:");
 console.log(
