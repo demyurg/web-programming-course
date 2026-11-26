@@ -1,0 +1,273 @@
+:root {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  line-height: 1.5;
+  color: #172033;
+  background-color: #f5f7fb;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+}
+
+main {
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 20px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  box-sizing: border-box; 
+}
+
+h1 {
+  font-size: 1.8rem;
+  margin-top: 0;
+  margin-bottom: 20px;
+  color: #1a202c;
+  word-wrap: break-word; 
+}
+
+.progress-container {
+  margin-bottom: 24px;
+}
+
+.progress-text {
+  font-size: 0.9rem;
+  color: #555;
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+progress {
+  width: 100%;
+  height: 10px;
+  border-radius: 5px;
+  border: none;
+  background-color: #e2e8f0;
+  display: block;
+}
+
+progress::-webkit-progress-bar {
+  background-color: #e2e8f0;
+  border-radius: 5px;
+}
+
+progress::-webkit-progress-value {
+  background-color: #3b82f6;
+  border-radius: 5px;
+  transition: width 0.3s ease;
+}
+
+progress::-moz-progress-bar {
+  background-color: #3b82f6;
+  border-radius: 5px;
+}
+
+/* Список заданий */
+.task-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  list-style: none;
+  padding: 0;
+  margin: 0 0 24px 0;
+}
+
+.task-list button {
+  padding: 8px 16px;
+  border: 1px solid #cbd5e1;
+  background: white;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.task-list button:hover {
+  background: #f8fafc;
+  border-color: #94a3b8;
+}
+
+.task-list button.active {
+  border-color: #3b82f6;
+  background: #eff6ff;
+  color: #1d4ed8;
+  font-weight: bold;
+}
+
+.task-list button.filled {
+  border-color: #10b981;
+  background: #ecfdf5;
+}
+
+.task-card {
+  padding: 24px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background: #fafafa;
+  margin-bottom: 24px;
+  box-sizing: border-box;
+}
+
+.task-card p {
+  margin-top: 0;
+  margin-bottom: 12px;
+  word-wrap: break-word;
+}
+
+.task-card pre {
+  background: #1e293b;
+  color: #e2e8f0;
+  padding: 12px;
+  border-radius: 6px;
+  overflow-x: auto; 
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+.task-card fieldset {
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  padding: 16px;
+  margin: 0;
+}
+
+.task-card legend {
+  font-weight: bold;
+  padding: 0 8px;
+}
+
+.task-card label {
+  display: flex;
+  align-items: flex-start; 
+  gap: 8px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  word-wrap: break-word;
+}
+
+.task-card textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-family: inherit;
+  resize: vertical;
+  min-height: 100px;
+  margin-top: 8px;
+}
+
+.controls {
+  display: flex;
+  flex-wrap: wrap; 
+  gap: 12px;
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid #e2e8f0;
+}
+
+.controls button {
+  padding: 10px 20px;
+  font-size: 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  border: none;
+  transition: background 0.2s ease;
+  flex: 1;
+  min-width: 100px;
+}
+
+.controls button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  background: #e2e8f0;
+  color: #1e293b;
+}
+.btn-secondary:hover:not(:disabled) {
+  background: #cbd5e1;
+}
+
+.btn-primary {
+  background: #3b82f6;
+  color: white;
+}
+.btn-primary:hover:not(:disabled) {
+  background: #2563eb;
+}
+
+.btn-success {
+  background: #10b981;
+  color: white;
+}
+.btn-success:hover:not(:disabled) {
+  background: #059669;
+}
+
+.review-list {
+  list-style: none;
+  padding: 0;
+}
+
+.review-item {
+  padding: 16px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  background: white;
+  word-wrap: break-word;
+}
+
+.review-status {
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+.review-status.filled {
+  color: #10b981;
+}
+
+.review-status.empty {
+  color: #ef4444;
+}
+
+.hint-text {
+  display: block;
+  color: #666;
+  margin-top: 8px;
+  font-size: 0.85rem;
+}
+
+@media (max-width: 600px) {
+  main {
+    margin: 15px auto;
+    padding: 15px;
+    border-radius: 8px;
+  }
+
+  h1 {
+    font-size: 1.4rem;
+  }
+
+  .task-card {
+    padding: 15px;
+  }
+
+  .controls {
+    flex-direction: column;
+  }
+
+  .controls button {
+    width: 100%;
+    flex: none;
+  }
+  
+  .btn-success {
+    margin-left: 0;
+  }
+}
