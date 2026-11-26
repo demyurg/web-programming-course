@@ -43,6 +43,20 @@ h1 {
   font-weight: bold;
 }
 
+.demo-fail-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  padding: 8px 12px;
+  border: 1px solid #d5dce7;
+  border-radius: 10px;
+  background: #fff;
+  font-size: 14px;
+  color: #49566b;
+  cursor: pointer;
+}
+
 .workspace {
   display: grid;
   grid-template-columns: 260px 1fr;
@@ -99,6 +113,15 @@ h1 {
   font-weight: bold;
 }
 
+.task-topic-label {
+  flex: 1;
+}
+
+.task-saved-mark {
+  color: #1f7a4c;
+  font-weight: bold;
+}
+
 .task-card h2 {
   margin-top: 28px;
 }
@@ -107,20 +130,49 @@ h1 {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
+  align-items: center;
 }
 
 .topic,
-.task-kind {
+.task-kind,
+.sync-badge {
   padding: 6px 10px;
   border-radius: 20px;
+  font-size: 13px;
+}
+
+.topic {
   background: #edf3ff;
   color: #365c99;
-  font-size: 13px;
 }
 
 .task-kind {
   background: #f0f2f5;
   color: #596579;
+}
+
+.sync-badge {
+  margin-left: auto;
+}
+
+.sync-badge.saved {
+  background: #e6f6ee;
+  color: #1f7a4c;
+}
+
+.sync-badge.dirty {
+  background: #fff4db;
+  color: #8a5a00;
+}
+
+.sync-badge.loading {
+  background: #edf3ff;
+  color: #365c99;
+}
+
+.sync-badge.neutral {
+  background: #f0f2f5;
+  color: #68758a;
 }
 
 .task-card p {
@@ -136,27 +188,6 @@ h1 {
   color: #f2f5fa;
   white-space: pre-wrap;
   overflow-wrap: anywhere;
-}
-
-.options {
-  margin-top: 28px;
-}
-
-.options li {
-  margin: 10px 0;
-  line-height: 1.6;
-}
-
-.text-task-note {
-  margin-top: 28px;
-  padding: 16px;
-  border-radius: 12px;
-  background: #f4f6fa;
-  color: #596579;
-}
-
-.empty-state {
-  text-align: center;
 }
 
 .options {
@@ -199,6 +230,30 @@ h1 {
   resize: vertical;
 }
 
+.field-hint {
+  margin: 8px 0 0;
+  font-size: 13px;
+  color: #8a5a00;
+}
+
+.card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.empty-state {
+  text-align: center;
+}
+
+.notice-text {
+  max-width: 620px;
+  margin: 12px auto 20px;
+  color: #49566b;
+  line-height: 1.6;
+}
+
 .progress {
   margin-top: 20px;
   padding-top: 16px;
@@ -229,6 +284,7 @@ h1 {
 
 .action-button:disabled {
   border-color: #c9d1de;
+  background: #f5f7fa;
   color: #9aa5b5;
   cursor: not-allowed;
 }
@@ -237,6 +293,34 @@ h1 {
   margin-left: auto;
   background: #426db2;
   color: #fff;
+}
+
+.action-button.finish:disabled {
+  background: #c9d1de;
+  color: #fff;
+}
+
+.action-button.primary {
+  padding: 10px 20px;
+  border-color: #426db2;
+  background: #426db2;
+  color: #fff;
+  font-weight: bold;
+}
+
+.action-button.primary:hover:not(:disabled) {
+  background: #365c99;
+}
+
+.action-button.primary:disabled {
+  border-color: #c9d1de;
+  background: #c9d1de;
+  color: #fff;
+}
+
+.action-button:focus-visible {
+  outline: 3px solid #91b7f4;
+  outline-offset: 3px;
 }
 
 .review-list li {
@@ -249,8 +333,51 @@ h1 {
 }
 
 .review-answer {
-  margin: 4px 0 0;
+  margin: 4px 0 8px;
   white-space: pre-wrap;
+}
+
+.result-summary {
+  margin: 16px 0 24px;
+  padding: 16px;
+  border: 1px solid #c6d7f5;
+  border-radius: 12px;
+  background: #f4f8ff;
+}
+
+.result-summary p {
+  margin: 6px 0;
+}
+
+.result-item {
+  margin: 8px 0 0;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: #f4f6fa;
+  font-size: 14px;
+}
+
+.result-item p {
+  margin: 4px 0;
+}
+
+.result-item.status-correct {
+  border-left: 4px solid #1f7a4c;
+  background: #eef9f3;
+}
+
+.result-item.status-incorrect {
+  border-left: 4px solid #c0392b;
+  background: #fdf2f2;
+}
+
+.result-item.status-pending-review {
+  border-left: 4px solid #d48806;
+  background: #fff9eb;
+}
+
+.result-item.status-unanswered {
+  border-left: 4px solid #8c99ad;
 }
 
 .warning {
@@ -274,21 +401,23 @@ h1 {
   margin-left: 0;
 }
 
-.action-button.primary {
-  padding: 12px 24px;
-  border-color: #426db2;
-  background: #426db2;
-  color: #fff;
-  font-weight: bold;
+.error-box {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin-top: 16px;
+  padding: 14px 16px;
+  border: 1px solid #e2a2a2;
+  border-radius: 12px;
+  background: #fff2f2;
+  color: #9e2a2b;
+  text-align: left;
 }
 
-.action-button.primary:hover {
-  background: #365c99;
-}
-
-.action-button:focus-visible {
-  outline: 3px solid #91b7f4;
-  outline-offset: 3px;
+.error-box p {
+  flex: 1 1 240px;
+  margin: 0;
 }
 
 @media (max-width: 1023px) {
@@ -342,5 +471,9 @@ h1 {
 
   .code-block {
     padding: 14px;
+  }
+
+  .sync-badge {
+    margin-left: 0;
   }
 }

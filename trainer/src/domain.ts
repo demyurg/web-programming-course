@@ -40,6 +40,51 @@ export type TrainingSet = {
   tasks: Task[];
 };
 
+export type TrainingSetSummary = {
+  id: string;
+  title: string;
+  taskCount: number;
+};
+
+export type AttemptStatus = "in-progress" | "submitted";
+
+export type ServerAttempt = {
+  id: string;
+  setId: string;
+  status: AttemptStatus;
+  answers: Answer[];
+};
+
+export type ResultItemStatus =
+  | "correct"
+  | "incorrect"
+  | "unanswered"
+  | "pending-review";
+
+export type ResultItem = {
+  taskId: string;
+  status: ResultItemStatus;
+  score: number | null;
+  maxScore: number;
+  feedback: string;
+};
+
+export type AttemptResultStatus = "graded" | "pending-review";
+
+export type AttemptResult = {
+  attemptId: string;
+  status: AttemptResultStatus;
+  score: number | null;
+  maxScore: number;
+  items: ResultItem[];
+};
+
+export type RequestState =
+  | { status: "idle" }
+  | { status: "loading" }
+  | { status: "success" }
+  | { status: "error"; message: string };
+
 export function findTask(tasks: Task[], id: string): Task | undefined {
   return tasks.find((task) => task.id === id);
 }

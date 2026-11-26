@@ -1,256 +1,300 @@
-import { useReducer, useState } from "react";
-import type { Answer, Task } from "./domain";
+import { useEffect, useState } from "react";
+import type {
+  Answer,
+  AttemptResult,
+  RequestState,
+  ServerAttempt,
+  TrainingSet,
+} from "./domain";
+import { findAnswer, getUnansweredTasks, isSameAnswer } from "./attempt";
 import {
-  attemptReducer,
-  emptyAttempt,
-  findAnswer,
-  getUnansweredTasks,
-  isAnswerFilled,
-} from "./attempt";
-import { mainSet } from "./training-data";
+  ApiError,
+  createAttempt,
+  deleteAnswer,
+  getAttempt,
+  getAttemptResult,
+  getSetById,
+  getSets,
+  saveAnswer,
+  submitAttempt,
+} from "./api/trainerApi";
+import { TaskList } from "./components/TaskList";
+import { TaskCard } from "./components/TaskCard";
+import { AttemptReview } from "./components/AttemptReview";
 import "./App.css";
 
-type TaskListProps = {
-  tasks: Task[];
-  selectedTaskId: string;
-  onChoose: (id: string) => void;
-};
+const ATTEMPT_ID_KEY = "trainer_attempt_id";
 
-function TaskList({ tasks, selectedTaskId, onChoose }: TaskListProps) {
-  return (
-    <nav className="task-list" aria-label="Список заданий">
-      {tasks.map((task, index) => (
-        <button
-          key={task.id}
-          type="button"
-          className={
-            task.id === selectedTaskId
-              ? "task-button selected"
-              : "task-button"
-          }
-          onClick={() => onChoose(task.id)}
-        >
-          <span className="task-number">{index + 1}</span>
-          <span>{task.topic}</span>
-        </button>
-      ))}
-    </nav>
-  );
-}
-
-type TaskCardProps = {
-  task: Task;
-  answer: Answer | undefined;
-  onAnswer: (answer: Answer) => void;
-  onClear: (taskId: string) => void;
-};
-
-function TaskCard({ task, answer, onAnswer, onClear }: TaskCardProps) {
-  const selectedOptionId =
-    answer?.kind === "single-choice" ? answer.optionId : "";
-  const text = answer?.kind === "short-text" ? answer.text : "";
-
-  return (
-    <article className="task-card">
-      <div className="task-meta">
-        <span className="topic">{task.topic}</span>
-        <span className="task-kind">
-          {task.kind === "single-choice"
-            ? "Выбор ответа"
-            : "Текстовое задание"}
-        </span>
-      </div>
-
-      <h2>Условие задания</h2>
-      <p>{task.prompt}</p>
-
-      {task.code && (
-        <pre className="code-block">
-          <code>{task.code}</code>
-        </pre>
-      )}
-
-      {task.kind === "single-choice" ? (
-        <fieldset className="options">
-          <legend>Варианты ответа</legend>
-          {task.options.map((option) => (
-            <label key={option.id} className="option">
-              <input
-                type="radio"
-                name={task.id}
-                checked={selectedOptionId === option.id}
-                onChange={() =>
-                  onAnswer({
-                    taskId: task.id,
-                    kind: "single-choice",
-                    optionId: option.id,
-                  })
-                }
-              />
-              {option.label}
-            </label>
-          ))}
-        </fieldset>
-      ) : (
-        <div className="text-answer">
-          <label htmlFor={"answer-" + task.id}>Ваш ответ</label>
-          <textarea
-            id={"answer-" + task.id}
-            rows={5}
-            value={text}
-            onChange={(event) =>
-              onAnswer({
-                taskId: task.id,
-                kind: "short-text",
-                text: event.target.value,
-              })
-            }
-          />
-        </div>
-      )}
-
-      <button
-        type="button"
-        className="action-button clear-button"
-        onClick={() => onClear(task.id)}
-        disabled={!isAnswerFilled(answer)}
-      >
-        Очистить ответ
-      </button>
-    </article>
-  );
-}
-
-type ReviewProps = {
-  tasks: Task[];
-  answers: Answer[];
-  editable: boolean;
-  onClear: (taskId: string) => void;
-};
-
-function Review({ tasks, answers, editable, onClear }: ReviewProps) {
-  return (
-    <section className="task-card">
-      <h2>Обзор ответов</h2>
-      <ol className="review-list">
-        {tasks.map((task, index) => {
-          const answer = findAnswer(answers, task.id);
-          let shown = "Нет ответа";
-
-          if (answer?.kind === "single-choice" && task.kind === "single-choice") {
-            const option = task.options.find((o) => o.id === answer.optionId);
-            shown = option?.label ?? shown;
-          }
-
-          if (answer?.kind === "short-text" && isAnswerFilled(answer)) {
-            shown = answer.text;
-          }
-
-          return (
-            <li key={task.id}>
-              <p className="review-prompt">{task.prompt}</p>
-              <p className="review-answer">{shown}</p>
-              {editable && (
-                <button
-                  type="button"
-                  className="action-button clear-button"
-                  aria-label={"Очистить ответ на задание " + (index + 1)}
-                  onClick={() => onClear(task.id)}
-                  disabled={!isAnswerFilled(answer)}
-                >
-                  Очистить ответ
-                </button>
-              )}
-            </li>
-          );
-        })}
-      </ol>
-    </section>
-  );
+function toDraftMap(answers: Answer[]): Record<string, Answer> {
+  const map: Record<string, Answer> = {};
+  for (const a of answers) map[a.taskId] = a;
+  return map;
 }
 
 export default function App() {
-  const tasks = mainSet.tasks;
+  const [trainingSet, setTrainingSet] = useState<TrainingSet | null>(null);
+  const [attempt, setAttempt] = useState<ServerAttempt | null>(null);
+  const [result, setResult] = useState<AttemptResult | null>(null);
+  const [drafts, setDrafts] = useState<Record<string, Answer>>({});
 
-  const [selectedTaskId, setSelectedTaskId] = useState(tasks[0]?.id ?? "");
-  const [attempt, dispatch] = useReducer(attemptReducer, emptyAttempt);
-  const [showWarning, setShowWarning] = useState(false);
+  const [selectedTaskId, setSelectedTaskId] = useState("");
   const [showReview, setShowReview] = useState(false);
+  const [showWarning, setShowWarning] = useState(false);
+  const [demoFail, setDemoFail] = useState(false);
 
-  const selectedIndex = tasks.findIndex((task) => task.id === selectedTaskId);
-  const selectedTask = tasks[selectedIndex];
+  const [initState, setInitState] = useState<RequestState>({ status: "loading" });
+  const [restoreNotice, setRestoreNotice] = useState<string | null>(null);
+  const [actionState, setActionState] = useState<RequestState>({ status: "idle" });
+  const [retryAction, setRetryAction] = useState<(() => void) | null>(null);
 
-  const unanswered = getUnansweredTasks(tasks, attempt.answers);
-  const filledCount = tasks.length - unanswered.length;
-  const missingNumbers = unanswered
-    .map((task) => "№" + (tasks.indexOf(task) + 1))
-    .join(", ");
+  const isBusy = actionState.status === "loading";
 
-  function goPrev() {
-    if (selectedIndex > 0) {
-      setSelectedTaskId(tasks[selectedIndex - 1].id);
+  function resetActionError() {
+    setActionState({ status: "idle" });
+    setRetryAction(null);
+  }
+
+  async function runAction(
+    fn: (useDemoFail: boolean) => Promise<void>,
+    useDemoFail = demoFail,
+  ) {
+    setActionState({ status: "loading" });
+    setRetryAction(null);
+    try {
+      await fn(useDemoFail);
+      setActionState({ status: "success" });
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Ошибка при обращении к серверу.";
+      setActionState({ status: "error", message });
+      setRetryAction(() => () => {
+        setDemoFail(false);
+        void runAction(fn, false);
+      });
     }
   }
 
-  function goNext() {
-    if (selectedIndex < tasks.length - 1) {
-      setSelectedTaskId(tasks[selectedIndex + 1].id);
+  async function loadInitialData() {
+    setInitState({ status: "loading" });
+    setRestoreNotice(null);
+
+    try {
+      const sets = await getSets();
+      if (sets.length === 0) throw new Error("На сервере нет учебных модулей.");
+
+      const loadedSet = await getSetById(sets[0].id);
+      setTrainingSet(loadedSet);
+      setSelectedTaskId((id) => id || loadedSet.tasks[0]?.id || "");
+
+      const savedId = localStorage.getItem(ATTEMPT_ID_KEY);
+      if (!savedId) {
+        setRestoreNotice(
+          "Сохранённого attemptId нет — восстановить подтверждённую попытку нельзя. Начните новую попытку.",
+        );
+        setInitState({ status: "success" });
+        return;
+      }
+
+      try {
+        const restored = await getAttempt(savedId);
+        setAttempt(restored);
+        setDrafts(toDraftMap(restored.answers));
+
+        if (restored.status === "submitted") {
+          setResult(await getAttemptResult(restored.id));
+          setShowReview(true);
+        }
+      } catch (err) {
+        if (err instanceof ApiError && err.status === 404) {
+          localStorage.removeItem(ATTEMPT_ID_KEY);
+          setAttempt(null);
+          setResult(null);
+          setDrafts({});
+          setRestoreNotice(
+            "Подтверждённую попытку не удалось восстановить: сервер её не находит. Начните новую попытку.",
+          );
+        } else {
+          throw err;
+        }
+      }
+
+      setInitState({ status: "success" });
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Не удалось загрузить данные.";
+      setInitState({ status: "error", message });
     }
   }
 
-  function finish() {
-    if (unanswered.length > 0) {
-      setShowWarning(true);
+  useEffect(() => {
+    void loadInitialData();
+  }, []);
+
+  function startNewAttempt() {
+    if (!trainingSet) return;
+    void runAction(async (fail) => {
+      const created = await createAttempt(trainingSet.id, fail);
+      localStorage.setItem(ATTEMPT_ID_KEY, created.id);
+      setAttempt(created);
+      setResult(null);
+      setDrafts({});
+      setRestoreNotice(null);
+      setShowReview(false);
+      setShowWarning(false);
+      setSelectedTaskId(trainingSet.tasks[0]?.id ?? "");
+    });
+  }
+
+  function handleSave(answer: Answer) {
+    if (!attempt || attempt.status === "submitted") return;
+    void runAction(async (fail) => {
+      const updated = await saveAnswer(attempt.id, answer, fail);
+      setAttempt(updated);
+      const confirmed = findAnswer(updated.answers, answer.taskId);
+      if (confirmed) setDrafts((prev) => ({ ...prev, [answer.taskId]: confirmed }));
+    });
+  }
+
+  function handleClear(taskId: string) {
+    if (!attempt || attempt.status === "submitted") return;
+
+    if (!findAnswer(attempt.answers, taskId)) {
+      setDrafts((prev) => {
+        const next = { ...prev };
+        delete next[taskId];
+        return next;
+      });
       return;
     }
 
-    dispatch({ type: "submit" });
+    void runAction(async (fail) => {
+      const updated = await deleteAnswer(attempt.id, taskId, fail);
+      setAttempt(updated);
+      setDrafts((prev) => {
+        const next = { ...prev };
+        delete next[taskId];
+        return next;
+      });
+    });
   }
 
-  function startNewAttempt() {
-    dispatch({ type: "restart" });
-    setShowWarning(false);
-    setShowReview(false);
-    setSelectedTaskId(tasks[0]?.id ?? "");
+  function handleSubmit() {
+    if (!attempt || attempt.status === "submitted") return;
+    void runAction(async (fail) => {
+      const serverResult = await submitAttempt(attempt.id, fail);
+      setResult(serverResult);
+      setAttempt((prev) => (prev ? { ...prev, status: "submitted" } : prev));
+      setShowWarning(false);
+      setShowReview(true);
+    });
   }
+
+  if (initState.status === "loading") {
+    return (
+      <main className="app">
+        <section className="empty-state">
+          <h2>Загрузка учебного модуля...</h2>
+        </section>
+      </main>
+    );
+  }
+
+  if (initState.status === "error" || !trainingSet) {
+    return (
+      <main className="app">
+        <section className="empty-state">
+          <h2>Не удалось загрузить данные</h2>
+          <p>{initState.status === "error" ? initState.message : "Модуль не найден."}</p>
+          <button type="button" className="action-button primary" onClick={() => void loadInitialData()}>
+            Повторить загрузку
+          </button>
+        </section>
+      </main>
+    );
+  }
+
+  const tasks = trainingSet.tasks;
+  const selectedIndex = tasks.findIndex((t) => t.id === selectedTaskId);
+  const selectedTask = tasks[selectedIndex] ?? tasks[0];
+  const confirmedAnswers = attempt?.answers ?? [];
+  const unanswered = getUnansweredTasks(tasks, confirmedAnswers);
+  const missingNumbers = unanswered.map((t) => "№" + (tasks.indexOf(t) + 1)).join(", ");
+  const hasUnsavedChanges = tasks.some(
+    (t) => !isSameAnswer(drafts[t.id], findAnswer(confirmedAnswers, t.id)),
+  );
+
+  const errorBanner = actionState.status === "error" && (
+    <div className="error-box" role="alert">
+      <p>{actionState.message}</p>
+      {retryAction && (
+        <button type="button" className="action-button" onClick={retryAction} disabled={isBusy}>
+          Повторить
+        </button>
+      )}
+    </div>
+  );
 
   return (
     <main className="app">
       <header className="app-header">
-        <h1>{mainSet.title}</h1>
-        <p className="subtitle">Учебный модуль - {tasks.length} заданий</p>
+        <h1>{trainingSet.title}</h1>
+        <p className="subtitle">
+          Учебный модуль · {tasks.length} заданий
+          {attempt ? ` · Попытка: ${attempt.id}` : ""}
+        </p>
+        <label className="demo-fail-toggle">
+          <input
+            type="checkbox"
+            checked={demoFail}
+            onChange={(e) => setDemoFail(e.target.checked)}
+            disabled={isBusy}
+          />
+          Имитировать ошибку сервера 500 (X-Demo-Fail: 1)
+        </label>
       </header>
 
-      {selectedTask ? (
+      {!attempt ? (
+        <section className="empty-state">
+          <h2>Нет активной попытки</h2>
+          {restoreNotice && <p className="notice-text">{restoreNotice}</p>}
+          <button
+            type="button"
+            className="action-button primary"
+            onClick={startNewAttempt}
+            disabled={isBusy}
+          >
+            {isBusy ? "Создание попытки..." : "Начать новую попытку"}
+          </button>
+          {errorBanner}
+        </section>
+      ) : (
         <div className="workspace">
           <section className="sidebar">
             <p className="section-label">Содержание модуля</p>
             <TaskList
               tasks={tasks}
-              selectedTaskId={selectedTaskId}
-              onChoose={setSelectedTaskId}
+              selectedTaskId={selectedTask.id}
+              confirmedAnswers={confirmedAnswers}
+              onChoose={(id) => {
+                setSelectedTaskId(id);
+                setShowReview(false);
+                resetActionError();
+              }}
             />
-
             <div className="progress">
               <p>
-                Заполнено: {filledCount} из {tasks.length}
+                Подтверждено сервером: {tasks.length - unanswered.length} из {tasks.length}
               </p>
-              {unanswered.length > 0 ? (
-                <p>
-                  Не заполнены: {missingNumbers}
-                </p>
-              ) : (
-                <p>Все задания заполнены</p>
-              )}
+              <p>{unanswered.length > 0 ? `Не заполнены: ${missingNumbers}` : "Все задания подтверждены"}</p>
             </div>
           </section>
 
           {attempt.status === "submitted" ? (
             <div>
-              <Review
+              <AttemptReview
                 tasks={tasks}
-                answers={attempt.answers}
+                answers={confirmedAnswers}
                 editable={false}
+                isBusy={isBusy}
+                result={result}
                 onClear={() => {}}
               />
               <div className="actions">
@@ -258,26 +302,41 @@ export default function App() {
                   type="button"
                   className="action-button primary"
                   onClick={startNewAttempt}
+                  disabled={isBusy}
                 >
-                  Начать новую попытку
+                  {isBusy ? "Создание попытки..." : "Начать новую попытку"}
                 </button>
               </div>
+              {errorBanner}
             </div>
           ) : (
             <div>
               {showReview ? (
-                <Review
-                  tasks={tasks}
-                  answers={attempt.answers}
-                  editable={true}
-                  onClear={(taskId) => dispatch({ type: "clear", taskId })}
-                />
+                <>
+                  <AttemptReview
+                    tasks={tasks}
+                    answers={confirmedAnswers}
+                    editable={true}
+                    isBusy={isBusy}
+                    result={null}
+                    onClear={handleClear}
+                  />
+                  {errorBanner}
+                </>
               ) : (
                 <TaskCard
                   task={selectedTask}
-                  answer={findAnswer(attempt.answers, selectedTask.id)}
-                  onAnswer={(answer) => dispatch({ type: "answer", answer })}
-                  onClear={(taskId) => dispatch({ type: "clear", taskId })}
+                  draftAnswer={drafts[selectedTask.id]}
+                  confirmedAnswer={findAnswer(confirmedAnswers, selectedTask.id)}
+                  isBusy={isBusy}
+                  actionState={actionState}
+                  onChangeDraft={(answer) => {
+                    setDrafts((prev) => ({ ...prev, [answer.taskId]: answer }));
+                    if (actionState.status === "error") resetActionError();
+                  }}
+                  onSave={handleSave}
+                  onClear={handleClear}
+                  onRetry={retryAction}
                 />
               )}
 
@@ -287,6 +346,7 @@ export default function App() {
                     type="button"
                     className="action-button"
                     onClick={() => setShowReview(false)}
+                    disabled={isBusy}
                   >
                     Вернуться к заданиям
                   </button>
@@ -295,16 +355,22 @@ export default function App() {
                     <button
                       type="button"
                       className="action-button"
-                      onClick={goPrev}
-                      disabled={selectedIndex === 0}
+                      onClick={() => {
+                        setSelectedTaskId(tasks[selectedIndex - 1].id);
+                        resetActionError();
+                      }}
+                      disabled={selectedIndex === 0 || isBusy}
                     >
                       Назад
                     </button>
                     <button
                       type="button"
                       className="action-button"
-                      onClick={goNext}
-                      disabled={selectedIndex === tasks.length - 1}
+                      onClick={() => {
+                        setSelectedTaskId(tasks[selectedIndex + 1].id);
+                        resetActionError();
+                      }}
+                      disabled={selectedIndex === tasks.length - 1 || isBusy}
                     >
                       Далее
                     </button>
@@ -312,6 +378,7 @@ export default function App() {
                       type="button"
                       className="action-button"
                       onClick={() => setShowReview(true)}
+                      disabled={isBusy}
                     >
                       Обзор ответов
                     </button>
@@ -320,28 +387,37 @@ export default function App() {
                 <button
                   type="button"
                   className="action-button finish"
-                  onClick={finish}
+                  onClick={() =>
+                    unanswered.length > 0 || hasUnsavedChanges
+                      ? setShowWarning(true)
+                      : handleSubmit()
+                  }
+                  disabled={isBusy}
                 >
-                  Завершить попытку
+                  {isBusy ? "Отправка..." : "Завершить попытку"}
                 </button>
               </div>
 
-              {showWarning && unanswered.length > 0 && (
+              {showWarning && (
                 <div className="warning" role="alert">
                   <p>
-                    Не заполнены задания: {missingNumbers}. Завершить попытку?
+                    {unanswered.length > 0 && `Не сохранены задания: ${missingNumbers}. `}
+                    {hasUnsavedChanges && "Есть несохранённые изменения. "}
+                    Завершить попытку?
                   </p>
                   <button
                     type="button"
                     className="action-button"
                     onClick={() => setShowWarning(false)}
+                    disabled={isBusy}
                   >
                     Вернуться к заданиям
                   </button>
                   <button
                     type="button"
                     className="action-button finish"
-                    onClick={() => dispatch({ type: "submit" })}
+                    onClick={handleSubmit}
+                    disabled={isBusy}
                   >
                     Всё равно завершить
                   </button>
@@ -350,11 +426,6 @@ export default function App() {
             </div>
           )}
         </div>
-      ) : (
-        <section className="empty-state">
-          <h2>Задания отсутствуют</h2>
-          <p>В этом учебном модуле пока нет заданий.</p>
-        </section>
       )}
     </main>
   );
