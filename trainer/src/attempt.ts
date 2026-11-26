@@ -12,7 +12,11 @@ export type AttemptAction =
   | { type: "set-answer"; answer: Answer }
   | { type: "clear-answer"; taskId: string }
   | { type: "submit" }
-  | { type: "restart" };
+  | { type: "restart" }
+  | { type: "load"; attempt: Attempt }; 
+
+// Сохранён ли ответ на сервере.
+export type SyncStatus = "empty" | "saved" | "unsaved";
 
 
 export function createAttempt(): Attempt {
@@ -30,6 +34,40 @@ export function isTaskAnswered(answers: Answer[], taskId: string): boolean {
 
 export function getUnfilledTasks(set: TrainingSet, answers: Answer[]): Task[] {
   return set.tasks.filter((task) => !isTaskAnswered(answers, task.id));
+}
+
+export function answersEqual(a: Answer, b: Answer): boolean {
+  if (a.taskId !== b.taskId) return false;
+  if (a.kind === "single-choice") {
+    return b.kind === "single-choice" && a.optionId === b.optionId;
+  }
+  return b.kind === "short-text" && a.text === b.text;
+}
+
+export function getSyncStatus(
+  local: Answer | undefined,
+  confirmed: Answer | undefined,
+): SyncStatus {
+  if (local === undefined || !isAnswerFilled(local)) {
+    return confirmed === undefined ? "empty" : "unsaved";
+  }
+  return confirmed !== undefined && answersEqual(local, confirmed)
+    ? "saved"
+    : "unsaved";
+}
+
+export function getUnsavedTaskIds(
+  set: TrainingSet,
+  local: Answer[],
+  confirmed: Answer[],
+): string[] {
+  return set.tasks
+    .filter(
+      (task) =>
+        getSyncStatus(findAnswer(local, task.id), findAnswer(confirmed, task.id)) ===
+        "unsaved",
+    )
+    .map((task) => task.id);
 }
 
 export function setAnswer(attempt: Attempt, answer: Answer): Attempt {
@@ -56,6 +94,7 @@ export function submitAttempt(attempt: Attempt): Attempt {
   return { ...attempt, status: "submitted" };
 }
 
+
 export function attemptReducer(attempt: Attempt, action: AttemptAction): Attempt {
   switch (action.type) {
     case "set-answer":
@@ -66,5 +105,7 @@ export function attemptReducer(attempt: Attempt, action: AttemptAction): Attempt
       return submitAttempt(attempt);
     case "restart":
       return createAttempt();
+    case "load":
+      return action.attempt;
   }
 }

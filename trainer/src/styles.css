@@ -65,13 +65,28 @@ main {
   margin-top: 12px;
 }
 
+button {
+  font: inherit;
+}
+
+button:disabled {
+  cursor: not-allowed;
+}
+
 .nav button,
 .finish,
 .view-toggle,
+.actions button,
 .clear {
   padding: 8px 16px;
-  font: inherit;
   cursor: pointer;
+}
+
+.nav button:disabled,
+.finish:disabled,
+.actions button:disabled,
+.clear:disabled {
+  cursor: not-allowed;
 }
 
 .view-toggle {
@@ -80,6 +95,40 @@ main {
 
 .clear {
   margin-top: 8px;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.actions button {
+  margin-top: 0;
+}
+
+.status {
+  margin: 8px 0;
+}
+
+.error {
+  color: #b00020;
+}
+
+.notice {
+  padding: 8px 12px;
+  border: 1px solid currentColor;
+}
+
+.legend {
+  font-size: 0.9rem;
+}
+
+.demo-fail {
+  display: block;
+  margin-bottom: 12px;
+  font-size: 0.9rem;
 }
 
 .finish {
@@ -91,4 +140,9 @@ main {
   white-space: pre-wrap;
   overflow-wrap: anywhere;
   margin: 4px 0 8px;
+}
+
+.result-item {
+  margin: 0 0 4px;
+  overflow-wrap: anywhere;
 }
