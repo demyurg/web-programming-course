@@ -1,6 +1,6 @@
 import { countProgress, findTaskById, filterTasksByTopic } from "./domain";
-import { attemptReducer, readDraft } from "./domain";
-import type { Answer, Draft, TrainingSet } from "./domain";
+import { attemptReducer, buildReview } from "./domain";
+import type { Answer, Attempt, TrainingSet } from "./domain";
 
 const set1: TrainingSet = {
   id: "web-basics",
@@ -67,9 +67,9 @@ console.log("Прогресс set2 + answers:", countProgress(set2, answers));
 console.log("Набор не изменился:", JSON.stringify(set1.tasks) === beforeTasks);
 console.log("Ответы не изменились:", JSON.stringify(answers) === beforeAnswers);
 
+// ===== A4: правило попытки проверяется без React =====
 
-const start: Draft = {
-  version: 1,
+const start: Attempt = {
   setId: set1.id,
   taskId: "ts-1",
   answers: [],
@@ -91,9 +91,32 @@ console.log("answerCleared removes:", afterClear.answers.length === 0);
 
 const submitted = attemptReducer(afterSet, { type: "submitted" });
 console.log("submitted:", submitted.status === "submitted");
+
 const afterEdit = attemptReducer(submitted, {
   type: "answerChanged",
   answer: { taskId: "ts-1", kind: "single-choice", optionId: "a" },
 });
 console.log("submitted rejects edit:", afterEdit === submitted);
 
+const afterClearSubmitted = attemptReducer(submitted, {
+  type: "answerCleared",
+  taskId: "ts-1",
+});
+console.log("submitted rejects clear:", afterClearSubmitted === submitted);
+
+// ===== A4: обзор показывает все задания попытки =====
+
+const review = buildReview(set1, afterSet.answers);
+console.log("review rows:", review.length === set1.tasks.length);
+console.log("review ts-1:", review.find((r) => r.taskId === "ts-1")?.value);
+console.log(
+  "review react-1 пусто:",
+  review.find((r) => r.taskId === "react-1")?.value === "",
+);
+
+// Обзор читает те же данные: очистка из любого места отражается в обзоре.
+const reviewAfterClear = buildReview(set1, afterClear.answers);
+console.log(
+  "review после очистки ts-1 пусто:",
+  reviewAfterClear.find((r) => r.taskId === "ts-1")?.value === "",
+);

@@ -265,3 +265,52 @@ body {
 .review__id { font-family: ui-monospace, Menlo, monospace; font-size: 0.85rem; color: var(--muted); }
 .review__value--empty { color: var(--muted); font-style: italic; }
 
+.task-list__row {
+  display: grid;
+  gap: 6px;
+  padding-bottom: 8px;
+  border-bottom: 1px dashed var(--border);
+}
+
+.task-list__row:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.task-list__answer {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+  align-items: center;
+  padding: 6px 10px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--surface-soft);
+  font-size: 0.9rem;
+}
+
+.task-list__value {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  color: var(--text);
+}
+
+.task-list__value--empty {
+  color: var(--muted);
+  font-style: italic;
+}
+
+.btn--small {
+  padding: 4px 10px;
+  font-size: 0.85rem;
+}
+
+.task-card__actions {
+  margin-top: 16px;
+  display: flex;
+  gap: 10px;
+}
+
+.task-card .textarea-wrap {
+  margin-top: 16px;
+}

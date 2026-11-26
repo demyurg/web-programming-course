@@ -8,13 +8,7 @@ type Props = {
   onClear: () => void;
 };
 
-export function AnswerField({
-  task,
-  answer,
-  submitted,
-  onChange,
-  onClear,
-}: Props) {
+export function AnswerField({ task, answer, submitted, onChange, onClear }: Props) {
   return (
     <article className="task-card">
       <header>
@@ -71,10 +65,12 @@ export function AnswerField({
       )}
 
       {!submitted && answer && (
-        <button type="button" className="btn" onClick={onClear}>
-          Очистить ответ
-        </button>
-      )}
+  <div className="task-card__actions">
+    <button type="button" className="btn" onClick={onClear}>
+      Очистить ответ
+    </button>
+  </div>
+)}
     </article>
   );
 }
