@@ -334,10 +334,19 @@ button:disabled {
 }
 
 .task-navigation,
-.finish-actions {
+.finish-actions,
+.draft-review-actions,
+.review-item-actions {
     display: flex;
-    justify-content: space-between;
+    flex-wrap: wrap;
+    align-items: center;
     gap: 10px;
+}
+
+.task-navigation,
+.finish-actions,
+.draft-review-actions {
+    justify-content: space-between;
     margin-top: 20px;
 }
 
@@ -387,6 +396,34 @@ button:disabled {
     background: #264b94;
 }
 
+.secondary-button {
+    padding: 9px 14px;
+    border: 1px solid #aaa;
+    background: #fff;
+    cursor: pointer;
+}
+
+.secondary-button:hover:not(:disabled) {
+    background: #f1f1f1;
+}
+
+.clear-answer-button {
+    margin-top: 16px;
+}
+
+.answer-save-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+    margin-top: 16px;
+}
+
+.answer-save-row > span {
+    color: #555;
+    font-size: 14px;
+}
+
 .submitted-view {
     padding: 24px;
     border: 1px solid #ccc;
@@ -433,6 +470,10 @@ button:disabled {
 
 .review-item p.is-unanswered {
     color: #666;
+}
+
+.review-item-actions {
+    margin-top: 12px;
 }
 
 .text-task-note,
