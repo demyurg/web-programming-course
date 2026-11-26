@@ -1,4 +1,4 @@
-import type { Task, Answer } from "./domain";
+import type { Task, Answer } from "../domain";
 
 type TaskCardFormProps = {
   task: Task;
@@ -7,7 +7,7 @@ type TaskCardFormProps = {
   onClear: (taskId: string) => void;
 };
 
-export function TaskCardForm({ task, answer, onChange, onClear }: TaskCardFormProps) {
+export function TaskCard({ task, answer, onChange, onClear }: TaskCardFormProps) {
   return (
     <section>
       <p>

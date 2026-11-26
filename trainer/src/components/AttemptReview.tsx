@@ -1,4 +1,4 @@
-import type { Answer, TrainingSet } from "./domain";
+import type { Answer, TrainingSet } from "../domain";
 
 type ReviewListProps = {
   set: TrainingSet;
@@ -7,7 +7,7 @@ type ReviewListProps = {
   canEdit?: boolean;
 };
 
-export function ReviewList({ set, answers, onClear, canEdit }: ReviewListProps) {
+export function AttemptReview({ set, answers, onClear, canEdit }: ReviewListProps) {
   return (
     <ol>
       {set.tasks.map((task) => {

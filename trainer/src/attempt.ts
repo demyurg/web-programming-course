@@ -84,3 +84,10 @@ export function attemptReducer(
     }
   }
 }
+
+// Состояние HTTP-запроса (для блокировки кнопок)
+export type RequestState = 
+  | { status: "idle" }
+  | { status: "loading" }
+  | { status: "success" }
+  | { status: "error"; message: string };
