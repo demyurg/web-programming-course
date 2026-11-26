@@ -1,0 +1,148 @@
+body {
+  font-family: system-ui, sans-serif;
+  margin: 0;
+  line-height: 1.5;
+}
+
+main {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+.layout {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+}
+
+.task-list {
+  flex: 1 1 260px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.task-list button {
+  width: 100%;
+  text-align: left;
+  padding: 8px 12px;
+  font: inherit;
+  cursor: pointer;
+}
+
+.task-list button[aria-pressed="true"] {
+  font-weight: bold;
+  outline: 2px solid currentColor;
+}
+
+.task-column {
+  flex: 2 1 320px;
+  min-width: 0;
+}
+
+.task-card pre {
+  white-space: pre-wrap;
+  overflow-x: auto;
+  padding: 12px;
+  background: #eee;
+  color: #111;
+}
+
+.task-card textarea {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  font: inherit;
+}
+
+.nav {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+button {
+  font: inherit;
+}
+
+button:disabled {
+  cursor: not-allowed;
+}
+
+.nav button,
+.finish,
+.view-toggle,
+.actions button,
+.clear {
+  padding: 8px 16px;
+  cursor: pointer;
+}
+
+.nav button:disabled,
+.finish:disabled,
+.actions button:disabled,
+.clear:disabled {
+  cursor: not-allowed;
+}
+
+.view-toggle {
+  margin: 8px 0 16px;
+}
+
+.clear {
+  margin-top: 8px;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.actions button {
+  margin-top: 0;
+}
+
+.status {
+  margin: 8px 0;
+}
+
+.error {
+  color: #b00020;
+}
+
+.notice {
+  padding: 8px 12px;
+  border: 1px solid currentColor;
+}
+
+.legend {
+  font-size: 0.9rem;
+}
+
+.demo-fail {
+  display: block;
+  margin-bottom: 12px;
+  font-size: 0.9rem;
+}
+
+.finish {
+  display: block;
+  margin-top: 24px;
+}
+
+.answer-text {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  margin: 4px 0 8px;
+}
+
+.result-item {
+  margin: 0 0 4px;
+  overflow-wrap: anywhere;
+}
