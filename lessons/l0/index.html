@@ -1,33 +1,108 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Анна Аннушкина - Фотограф</title>
-    <link rel="stylesheet" href="css/style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Фотограф Барнаул/ Анна Аннушкина</title>
+  <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <header>
-        <!-- TODO: добавьте навигацию по разделам страницы -->
-    </header>
+  <header>
+     <img src="images/logo.png" alt="Анна Аннушкина">
+     <button class="burger">☰</button>
+    <nav>
+        <ul class="nav-links">
+        <li><a href="#main">Главная</a></li>
+        <li><a href="#about">Обо мне</a></li>
+        <li><a href="#gallery">Галерея</a></li>
+        <li><a href="#communication">Контакты</a></li>
+        </ul>
+    </nav>
+  </header>
+  <main>
+    <section id="main">
+      <div class="main-content"> 
+        <h1> Захватываю моменты, создаю воспоминания </h1>
+        <p>Профессиональная фотосъемка портретов и свадеб</p>
+        <a href="#gallery"> Посмотреть работы </a>
+      </div>
+      <div class="main-image">
+        <img src="images/camera.png" alt="Фотоаппарат">
+      </div>
+    </section>
+    <section id="about">
+      <div class="about-info">
+        <h2>Обо мне</h2>
+        <p class="about-text">Меня зовут Анна Аннушкина. Я профессиональный фотограф,
+          из Барнаула, специализируюсь на портретной и свадебной съёмке.
+          Также люблю фотографировать природу и сохранять
+          красивые моменты в кадре.</p>
+        
+        <div class="about-stats">
+        <div>
+            <h3>200+</h3>
+            <p>свадеб</p>
+        </div>
+        <div>
+            <h3>500+</h3>
+            <p>портретов</p>
+        </div>
+        <div>
+            <h3>5</h3>
+            <p>лет опыта</p>
+        </div>
+        </div>
+      </div>
+      <div class="about-fhoto">
+        <img src="images/about.jpeg" alt="Фотограф">
 
-    <main>
-        <section class="starter-note" aria-labelledby="starter-title">
-            <h1 id="starter-title">Стартовая страница нулевого занятия</h1>
-            <p>Замените этот блок содержимым портфолио фотографа по заданию в README.</p>
-        </section>
+      </div>
+    </section>
+    <section id="gallery">
+      <h2>Галерея работ</h2>
 
-        <!-- TODO: добавьте раздел с информацией о фотографе -->
+    <div class="gallery-wrapper">
+    <button class="gallery-button gallery-past">←</button>
+      <div class="gallery">
+          <img src="images/portrait_1.jpg" alt="Портретная съёмка">
+          <img src="images/portrait_2.jpg" alt="Портретная съёмка">
+          <img src="images/wedding_1.jpg" alt="Свадебная съёмка">
+          <img src="images/wedding_2.jpg" alt="Свадебная съёмка">
+          <img src="images/nature_1.jpg" alt="Фотография природы">
+          <img src="images/nature_2.jpg" alt="Фотография природы">
+      </div>
+    <button class="gallery-button gallery-next">→</button>
 
-        <!-- TODO: добавьте галерею из локальных изображений -->
+    </div>
+    </section>
+<section id="communication">
+    <h2>Контакты</h2>
 
-        <!-- TODO: добавьте контактную информацию -->
-    </main>
+    <div class="contact-blocks">
+        <div class="contact-block">
+            <h3>Связаться со мной</h3>
 
-    <footer>
-        <!-- TODO: добавьте подвал страницы -->
-    </footer>
+            <div class="contacts">
+                <p>Телефон: <a href="tel:+79045679235">+7 (904) 567-92-35</a></p>
+                <p>Email: <a href="mailto:anna_annushkina@example.com">anna_annushkina@example.com</a></p>
+                <p>Город: Барнаул</p>
+            </div>
+        </div>
 
-    <script src="js/script.js" defer></script>
+        <div class="contact-block">
+            <h3>Социальные сети</h3>
+
+            <div class="social-links">
+                <a href="#">Вконтакте</a>
+                <a href="#">Телеграм</a>
+            </div>
+        </div>
+    </div>
+</section>
+  </main>
+  <footer>
+    <p>© 2026 Анна Аннушкина. Все права защищены</p>
+  </footer>
+  <script src="js/script.js"></script>
 </body>
 </html>
