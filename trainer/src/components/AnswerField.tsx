@@ -3,10 +3,18 @@ import type { Answer, Task } from "../domain";
 type Props = {
   task: Task;
   answer: Answer | undefined;
+  submitted: boolean;
   onChange: (next: Answer) => void;
+  onClear: () => void;
 };
 
-export function AnswerField({ task, answer, onChange }: Props) {
+export function AnswerField({
+  task,
+  answer,
+  submitted,
+  onChange,
+  onClear,
+}: Props) {
   return (
     <article className="task-card">
       <header>
@@ -27,6 +35,7 @@ export function AnswerField({ task, answer, onChange }: Props) {
               <input
                 type="radio"
                 name={task.id}
+                disabled={submitted}
                 checked={
                   answer?.kind === "single-choice" &&
                   answer.optionId === option.id
@@ -48,6 +57,7 @@ export function AnswerField({ task, answer, onChange }: Props) {
           <label htmlFor={`answer-${task.id}`}>Ваш ответ</label>
           <textarea
             id={`answer-${task.id}`}
+            disabled={submitted}
             value={answer?.kind === "short-text" ? answer.text : ""}
             onChange={(event) =>
               onChange({
@@ -58,6 +68,12 @@ export function AnswerField({ task, answer, onChange }: Props) {
             }
           />
         </div>
+      )}
+
+      {!submitted && answer && (
+        <button type="button" className="btn" onClick={onClear}>
+          Очистить ответ
+        </button>
       )}
     </article>
   );

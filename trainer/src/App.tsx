@@ -1,23 +1,64 @@
-import { useState } from "react";
-import type { Answer } from "./domain";
-import { countProgress, findTaskById } from "./domain";
+import { useEffect, useReducer, useState } from "react";
+import type { Answer, Draft } from "./domain";
+import { attemptReducer, countProgress, findTaskById, readDraft } from "./domain";
+import { loadRaw, removeRaw, saveRaw } from "./storage";
 import { webBasics } from "./data/training-set";
 import { TaskList } from "./components/TaskList";
 import { AnswerField } from "./components/AnswerField";
 
+const STORAGE_KEY = `trainer-draft:${webBasics.id}`;
+
+function initialDraft(): Draft {
+  return {
+    version: 1,
+    setId: webBasics.id,
+    taskId: webBasics.tasks[0]?.id ?? "",
+    answers: [],
+    status: "in-progress",
+  };
+}
+
 export function App() {
-  const [answers, setAnswers] = useState<Answer[]>([]);
-  const [selectedId, setSelectedId] = useState<string>(
-    webBasics.tasks[0]?.id ?? "",
-  );
-  const [submitted, setSubmitted] = useState(false);
+  const [draft, dispatch] = useReducer(attemptReducer, undefined, initialDraft);
+  const [notice, setNotice] = useState<string | null>(null);
+  const [storageBroken, setStorageBroken] = useState(false);
+  const [hydrated, setHydrated] = useState(false);
 
-  const progress = countProgress(webBasics, answers);
 
-  function handleRestart() {
-    setAnswers([]);
-    setSelectedId(webBasics.tasks[0]?.id ?? "");
-    setSubmitted(false);
+  useEffect(() => {
+    const raw = loadRaw(STORAGE_KEY);
+    const result = readDraft(raw, webBasics);
+    if (result.kind === "ok") {
+      dispatch({ type: "restored", draft: result.draft });
+    } else if (result.kind === "invalid" || result.kind === "foreign") {
+      setNotice(`${result.message} Нажмите «Сбросить черновик».`);
+    }
+    setHydrated(true);
+  }, []);
+
+  useEffect(() => {
+    if (!hydrated) return;
+    if (!saveRaw(STORAGE_KEY, JSON.stringify(draft))) {
+      setStorageBroken(true);
+    }
+  }, [draft, hydrated]);
+
+  const progress = countProgress(webBasics, draft.answers);
+  const currentTask = findTaskById(webBasics.tasks, draft.taskId);
+  const currentAnswer = draft.answers.find((a) => a.taskId === draft.taskId);
+  const currentIndex = webBasics.tasks.findIndex((t) => t.id === draft.taskId);
+  const prevTask = currentIndex > 0 ? webBasics.tasks[currentIndex - 1] : undefined;
+  const nextTask = currentIndex >= 0 ? webBasics.tasks[currentIndex + 1] : undefined;
+  const submitted = draft.status === "submitted";
+
+  function handleReset() {
+    removeRaw(STORAGE_KEY);
+    dispatch({
+      type: "reset",
+      setId: webBasics.id,
+      firstTaskId: webBasics.tasks[0]?.id ?? "",
+    });
+    setNotice(null);
   }
 
   function handleFinish() {
@@ -27,61 +68,7 @@ export function App() {
       );
       if (!ok) return;
     }
-    setSubmitted(true);
-  }
-
-  if (submitted) {
-    return (
-      <main className="app">
-        <h1 className="app__title">{webBasics.title}</h1>
-        <section className="review">
-          <h2>Обзор попытки</h2>
-          <ul>
-            {webBasics.tasks.map((task) => {
-              const answer = answers.find((a) => a.taskId === task.id);
-              return (
-                <li key={task.id} className="review__item">
-                  <span className="review__id">{task.id}</span>
-                  {progress.missing.includes(task.id) ? (
-                    <span className="review__value review__value--empty">
-                      нет ответа
-                    </span>
-                  ) : answer?.kind === "single-choice" ? (
-                    <span className="review__value">
-                      вариант: {answer.optionId}
-                    </span>
-                  ) : answer?.kind === "short-text" ? (
-                    <span className="review__value">{answer.text}</span>
-                  ) : null}
-                </li>
-              );
-            })}
-          </ul>
-          <button
-            type="button"
-            className="btn btn--primary"
-            onClick={handleRestart}
-          >
-            Начать новую попытку
-          </button>
-        </section>
-      </main>
-    );
-  }
-
-  const currentTask = findTaskById(webBasics.tasks, selectedId);
-  const currentAnswer = answers.find((a) => a.taskId === selectedId);
-  const currentIndex = webBasics.tasks.findIndex((t) => t.id === selectedId);
-  const prevTask =
-    currentIndex > 0 ? webBasics.tasks[currentIndex - 1] : undefined;
-  const nextTask =
-    currentIndex >= 0 ? webBasics.tasks[currentIndex + 1] : undefined;
-
-  function replaceAnswer(next: Answer) {
-    setAnswers((current) => [
-      ...current.filter((a) => a.taskId !== next.taskId),
-      next,
-    ]);
+    dispatch({ type: "submitted" });
   }
 
   return (
@@ -89,18 +76,29 @@ export function App() {
       <header>
         <h1 className="app__title">{webBasics.title}</h1>
         <p className="app__subtitle">
-          Всего заданий: <strong>{webBasics.tasks.length}</strong> · Прогресс:{" "}
-          <strong>
-            {progress.filled} из {progress.total}
-          </strong>
+          Прогресс: <strong>{progress.filled} из {progress.total}</strong>
+          {submitted && " · попытка завершена"}
         </p>
+        {storageBroken && (
+          <p className="muted">
+            Черновик не сохраняется: хранилище недоступно. Ввод продолжается.
+          </p>
+        )}
+        {notice && (
+          <p className="notice">
+            {notice}{" "}
+            <button type="button" className="btn" onClick={handleReset}>
+              Сбросить черновик
+            </button>
+          </p>
+        )}
       </header>
 
       <div className="layout">
         <TaskList
           tasks={webBasics.tasks}
-          selectedId={selectedId}
-          onSelect={setSelectedId}
+          selectedId={draft.taskId}
+          onSelect={(id) => dispatch({ type: "moved", taskId: id })}
         />
 
         <section aria-label="Текущее задание">
@@ -108,7 +106,13 @@ export function App() {
             <AnswerField
               task={currentTask}
               answer={currentAnswer}
-              onChange={replaceAnswer}
+              submitted={submitted}
+              onChange={(next: Answer) =>
+                dispatch({ type: "answerChanged", answer: next })
+              }
+              onClear={() =>
+                dispatch({ type: "answerCleared", taskId: currentTask.id })
+              }
             />
           ) : (
             <p className="muted">Выберите задание.</p>
@@ -118,7 +122,7 @@ export function App() {
             <button
               type="button"
               className="btn"
-              onClick={() => prevTask && setSelectedId(prevTask.id)}
+              onClick={() => prevTask && dispatch({ type: "moved", taskId: prevTask.id })}
               disabled={!prevTask}
             >
               Назад
@@ -126,17 +130,22 @@ export function App() {
             <button
               type="button"
               className="btn"
-              onClick={() => nextTask && setSelectedId(nextTask.id)}
+              onClick={() => nextTask && dispatch({ type: "moved", taskId: nextTask.id })}
               disabled={!nextTask}
             >
               Далее
             </button>
-            <button
-              type="button"
-              className="btn btn--primary"
-              onClick={handleFinish}
-            >
-              Завершить
+            {!submitted && (
+              <button
+                type="button"
+                className="btn btn--primary"
+                onClick={handleFinish}
+              >
+                Завершить
+              </button>
+            )}
+            <button type="button" className="btn" onClick={handleReset}>
+              Сбросить черновик
             </button>
           </div>
         </section>
