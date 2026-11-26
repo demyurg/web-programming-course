@@ -8,20 +8,56 @@
 </head>
 <body>
     <header>
-        <!-- TODO: добавьте навигацию по разделам страницы -->
+        <h1> Анна Аннушкина</h1>
+        <nav> 
+               <a href="#about">Обо мне</a>
+               <a href="#portfolio">Портфолио</a>
+               <a href="#contacts">Контакты</a>
+        </nav>
     </header>
 
     <main>
-        <section class="starter-note" aria-labelledby="starter-title">
-            <h1 id="starter-title">Стартовая страница нулевого занятия</h1>
-            <p>Замените этот блок содержимым портфолио фотографа по заданию в README.</p>
+        <section id="about" class="starter-note" aria-labelledby="starter-title">
+            <h2 id="starter-title">Обо мне</h2>
+            <img src="images/about.jpg" alt="Обо мне">
+            <p>Я Анна Аннушкина, фотограф, который любит живые эмоции больше идеальных поз. Снимаю уже более пяти лет: 
+                тёплый свет, случайный смех, объятия и взгляды — всё то, что делает день вашим.
+                На моих съёмках можно быть собой, а фотографии через годы будут возвращать вас в тот самый момент.</p>
         </section>
 
-        <!-- TODO: добавьте раздел с информацией о фотографе -->
+        <section id="portfolio" aria-labelledby="portfolio-title">
+                <h2 id="portfolio-title">Мои работы</h2>
+                <div class="gallery"> 
+                     <div class="gallery-item">
+                        <img src="images/portrait1.jpg" alt="Портрет"> 
+                     </div> 
+                     <div class="gallery-item">
+                        <img src="images/portrait2.jpg" alt="Портрет"> 
+                     </div>
+                     <div class="gallery-item">
+                        <img src="images/nature1.jpg" alt="Природа"> 
+                     </div>
+                     <div class="gallery-item">
+                        <img src="images/nature2.jpg" alt="Природа">
+                     </div>
+                     <div class="gallery-item">
+                        <img src="images/wedding1.jpg" alt="Свадьба"> 
+                     </div>
+                     <div class="gallery-item">
+                        <img src="images/wedding2.jpg" alt="Свадьба">
+                     </div>
+                 </div>
+        </section>
 
-        <!-- TODO: добавьте галерею из локальных изображений -->
+        <section id="contacts" class="contacts" aria-labelledby="contacts-title">
+            <h2 id="contacts-title">Контакты</h2>
+            <p>Хотите сохранить свои особенные моменты? Буду рада знакомству!</p>
+            <p>Email: <a href="mailto:anna.photo@example.com">anna.photo@example.com</a></p>
+            <p>Телефон: <a href="tel:+79030581295">+7 (800) 555-35-35</a></p>
+            <p>Instagram: <a href="https://www.instagram.com/">anna.photo</a></p>
+        </section>
 
-        <!-- TODO: добавьте контактную информацию -->
+       
     </main>
 
     <footer>
