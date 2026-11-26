@@ -4,6 +4,7 @@ type TaskCardProps = {
   task: Task;
   answer?: Answer;
   onAnswerChange?: (answer: Answer) => void;
+  onClearAnswer?: () => void;
   readOnly?: boolean;
 };
 
@@ -11,6 +12,7 @@ export function TaskCard({
   task,
   answer,
   onAnswerChange,
+  onClearAnswer,
   readOnly = false,
 }: TaskCardProps) {
   const handleSingleChoiceChange = (optionId: string) => {
@@ -71,6 +73,17 @@ export function TaskCard({
             placeholder="Введите ответ..."
             rows={4}
           />
+        </div>
+      )}
+      {!readOnly && onClearAnswer && (
+        <div className="task-actions">
+          <button
+            type="button"
+            onClick={onClearAnswer}
+            disabled={answer === undefined}
+          >
+            Сбросить ответ
+          </button>
         </div>
       )}
     </article>

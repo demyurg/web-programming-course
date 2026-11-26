@@ -61,6 +61,44 @@ h1 {
   overflow-x: auto;
 }
 
+.task-actions {
+  margin-top: 1rem;
+}
+
+.task-actions button {
+  font: inherit;
+  cursor: pointer;
+}
+
+.review-warning {
+  margin: 0 0 1rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid currentColor;
+  border-radius: 0.5rem;
+}
+
+.review-warning p,
+.review-warning ul {
+  margin: 0;
+}
+
+.review-warning ul {
+  margin-top: 0.5rem;
+  padding-left: 1.25rem;
+}
+
+.attempt-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  flex-wrap: wrap;
+}
+
+.attempt-actions button {
+  font: inherit;
+  cursor: pointer;
+}
+
 .storage-notice {
   margin: 0 0 1rem;
   padding: 0.75rem 1rem;

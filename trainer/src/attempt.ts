@@ -3,7 +3,7 @@ import type { Answer, Task, TaskId, TrainingSet } from "./domain";
 
 export const DRAFT_VERSION = 1 as const;
 
-export type AttemptStatus = "in-progress" | "submitted";
+export type AttemptStatus = "in-progress" | "review" | "submitted";
 
 export type Draft = {
   version: typeof DRAFT_VERSION;
@@ -15,9 +15,12 @@ export type Draft = {
 
 export type AttemptAction =
   | { type: "answerChanged"; answer: Answer }
+  | { type: "answerCleared"; taskId: TaskId }
   | { type: "moved"; taskId: TaskId }
   | { type: "restored"; draft: Draft }
   | { type: "reset"; draft: Draft }
+  | { type: "reviewed" }
+  | { type: "returned" }
   | { type: "submitted" };
 
 export type AttemptState = Draft;
@@ -52,18 +55,20 @@ export function createAttemptReducer(tasks: readonly Task[]) {
   return (state: AttemptState, action: AttemptAction): AttemptState => {
     switch (action.type) {
       case "answerChanged": {
-        if (state.status === "submitted") return state;
+        if (state.status !== "in-progress") return state;
 
         const answer = action.answer;
         const task = taskById.get(answer.taskId);
 
         if (!task || task.kind !== answer.kind) return state;
 
-        if (
-          answer.kind === "single-choice" &&
-          !task.options.some(option => option.id === answer.optionId)
-        ) {
-          return state;
+        if (task.kind === "single-choice") {
+          if (
+            answer.kind !== "single-choice" ||
+            !task.options.some(option => option.id === answer.optionId)
+          ) {
+            return state;
+          }
         }
 
         const exists = state.answers.some(
@@ -79,16 +84,40 @@ export function createAttemptReducer(tasks: readonly Task[]) {
         return { ...state, answers };
       }
 
+      case "answerCleared": {
+        // Сброс отдельного ответа разрешён и на экране проверки.
+        if (state.status === "submitted") return state;
+        if (!taskById.has(action.taskId)) return state;
+
+        const answers = state.answers.filter(
+          item => item.taskId !== action.taskId
+        );
+
+        return answers.length === state.answers.length
+          ? state
+          : { ...state, answers };
+      }
+
       case "moved":
+        if (state.status !== "in-progress") return state;
+
         return taskById.has(action.taskId)
           ? { ...state, taskId: action.taskId }
-          : state.taskId === action.taskId
-            ? state
-            : state;
+          : state;
 
       case "restored":
       case "reset":
         return action.draft;
+
+      case "reviewed":
+        return state.status === "in-progress"
+          ? { ...state, status: "review" }
+          : state;
+
+      case "returned":
+        return state.status === "review"
+          ? { ...state, status: "in-progress" }
+          : state;
 
       case "submitted":
         return state.status === "submitted"
@@ -144,7 +173,11 @@ export function parseDraft(raw: string, set: TrainingSet): DraftValidation {
     );
   }
 
-  if (data.status !== "in-progress" && data.status !== "submitted") {
+  if (
+    data.status !== "in-progress" &&
+    data.status !== "review" &&
+    data.status !== "submitted"
+  ) {
     return invalid(
       "invalid-status",
       "Черновик повреждён: неизвестный статус попытки."

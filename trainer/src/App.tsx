@@ -4,6 +4,7 @@ import {
   findAnswer,
   isAnswerFilled,
   type Answer,
+  type TaskId,
 } from "./domain";
 import { trainingSet } from "./set";
 import { TaskCard } from "./components/TaskCard";
@@ -124,6 +125,23 @@ export default function App() {
 
   const progress = countProgress(trainingSet, state.answers);
 
+  const unfilledTasks = tasks.flatMap((task, index) => {
+    const answer = findAnswer(state.answers, task.id);
+
+    return !answer || !isAnswerFilled(answer)
+      ? [`${index + 1}. ${task.prompt}`]
+      : [];
+  });
+
+  // Общий обработчик сброса одного ответа.
+  // Его вызывают и кнопка в TaskCard, и кнопки в обзоре ответов.
+  const handleClearAnswer = (taskId: TaskId) => {
+    dispatch({
+      type: "answerCleared",
+      taskId,
+    });
+  };
+
   // Переход между заданиями
   const moveTo = (index: number) => {
     if (index >= 0 && index < totalTasks) {
@@ -134,33 +152,25 @@ export default function App() {
     }
   };
 
-  // Завершение попытки
-  const handleFinish = () => {
-    if (state.status === "submitted") return;
+  // Промежуточная проверка ответов
+  const handleReview = () => {
+    dispatch({ type: "reviewed" });
+  };
 
-    const unfilled = tasks.flatMap((task, index) => {
-      const answer = findAnswer(state.answers, task.id);
+  // Возврат к редактированию с экрана проверки
+  const handleReturn = () => {
+    dispatch({ type: "returned" });
+  };
 
-      return !answer || !isAnswerFilled(answer)
-        ? [`${index + 1}. ${task.prompt}`]
-        : [];
-    });
-
-    if (
-      unfilled.length > 0 &&
-      !window.confirm(
-        "Есть незаполненные задания:\n" +
-          unfilled.map(task => "- " + task).join("\n") +
-          "\n\nЗавершить попытку?"
-      )
-    ) {
-      return;
-    }
-
+  // Подтверждение ответов и переход в submitted
+  const handleConfirm = () => {
     dispatch({ type: "submitted" });
   };
 
-  // Явный сброс черновика
+  // Общий обработчик полного сброса.
+  // Его вызывают две разные по смыслу кнопки:
+  // «Сбросить черновик и начать заново» на экране проверки
+  // и «Начать новую попытку» на экране завершённой попытки.
   const handleReset = () => {
     const result = removeDraft();
 
@@ -216,19 +226,34 @@ export default function App() {
     );
   }
 
-  // Завершённая попытка
-  if (state.status === "submitted") {
+  // Проверка ответов или завершённая попытка
+  if (state.status === "review" || state.status === "submitted") {
     return (
       <main>
         {storageBanner}
 
         <header>
           <h1>{trainingSet.title}</h1>
-          <p>Попытка завершена</p>
+          <p>
+            {state.status === "review"
+              ? "Проверка ответов"
+              : "Попытка завершена"}
+          </p>
           <p>
             Прогресс: {progress.filled} / {progress.total}
           </p>
         </header>
+
+        {state.status === "review" && unfilledTasks.length > 0 && (
+          <div className="review-warning" role="status">
+            <p>Незаполненные задания:</p>
+            <ul>
+              {unfilledTasks.map(task => (
+                <li key={task}>{task}</li>
+              ))}
+            </ul>
+          </div>
+        )}
 
         <section>
           <h2>Обзор ответов</h2>
@@ -287,16 +312,42 @@ export default function App() {
                     )}
                   </div>
                 )}
+
+                {state.status === "review" && (
+                  <div className="task-actions">
+                    <button
+                      type="button"
+                      onClick={() => handleClearAnswer(task.id)}
+                      disabled={answer === undefined}
+                    >
+                      Сбросить ответ
+                    </button>
+                  </div>
+                )}
               </article>
             );
           })}
         </section>
 
-        <div style={{ marginTop: "1rem" }}>
-          <button type="button" onClick={handleReset}>
-            Начать новую попытку
-          </button>
-        </div>
+        {state.status === "review" ? (
+          <div className="attempt-actions">
+            <button type="button" onClick={handleConfirm}>
+              Подтвердить ответы
+            </button>
+            <button type="button" onClick={handleReturn}>
+              Вернуться к ответам
+            </button>
+            <button type="button" onClick={handleReset}>
+              Сбросить черновик и начать заново
+            </button>
+          </div>
+        ) : (
+          <div className="attempt-actions">
+            <button type="button" onClick={handleReset}>
+              Начать новую попытку
+            </button>
+          </div>
+        )}
       </main>
     );
   }
@@ -325,6 +376,7 @@ export default function App() {
           onAnswerChange={(answer: Answer) =>
             dispatch({ type: "answerChanged", answer })
           }
+          onClearAnswer={() => handleClearAnswer(currentTask.id)}
           readOnly={false}
         />
       ) : (
@@ -356,8 +408,8 @@ export default function App() {
           </button>
         )}
 
-        <button type="button" onClick={handleFinish}>
-          Завершить попытку
+        <button type="button" onClick={handleReview}>
+          Просмотреть ответы
         </button>
       </div>
     </main>
