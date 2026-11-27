@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>L6 — интерактивные проверки</title>
+  <title>L6 — наблюдаем и проверяем поведение</title>
   <style>
     body{font:18px/1.5 system-ui;max-width:900px;margin:auto;padding:24px;background:#edf5f0;color:#182d26}
     section{background:white;padding:24px;margin:20px 0;border-radius:12px}button,input{font:inherit;padding:8px;margin:5px;max-width:100%}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#edf1ef;padding:14px}code{background:#e8efeb;padding:2px 4px;border-radius:4px}
@@ -11,8 +11,9 @@
 </head>
 <body>
   <p><a href="../README.md">Задание</a> · <a href="GUIDE.md">Гайд</a> · <a href="CHEATSHEET.md">Справка</a></p>
-  <h1>Исполняемые ожидания</h1>
-  <p>Примеры выполняют JavaScript-проверки внутри страницы, без Vitest и без сети. Они показывают смысл ожиданий; настоящие тесты проекта запускаются после настройки командой <code>npm test</code>.</p>
+  <h1>Наблюдаем и проверяем поведение</h1>
+  <p>Сначала сравните ожидаемый и фактический результат, затем объясните возможную причину. Примеры выполняют JavaScript-проверки внутри страницы, без Vitest и без сети. Они не подтверждают работу полного приложения с настоящим API; тесты проекта можно запускать после настройки командой <code>npm test</code>.</p>
+  <p>Для собственной проверки выбирайте важное действие вашего тренажёра, у которого можно назвать вход, ожидаемый результат и заметное нарушение. Примеры ниже показывают форму проверки, а не обязательный набор тестов A6.</p>
   <section>
     <h2>Перед запуском тестов</h2>
     <p>Vitest — раннер, RTL — библиотека пользовательских проверок, jsdom — тестовый DOM, mock — контролируемая замена API. При <code>globals: false</code> тесты импортируют API Vitest явно, а setup-файл вызывает <code>afterEach(cleanup)</code>.</p>
