@@ -11,7 +11,7 @@ export type Attempt = {
   setId: string;
   status: 'draft' | 'submitted' | 'pending-review';
   answers: AnswerPayload[];
-  trainingSet: TrainingSet; 
+  trainingSet?: TrainingSet; 
 };
 
 async function request<T>(url: string, options: RequestInit = {}): Promise<T> {

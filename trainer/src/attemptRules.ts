@@ -1,5 +1,5 @@
 import { type Answer, updateAnswer } from './domain.js';
-import { type Attempt } from './api/trainerApi.js'; 
+import { type Attempt } from './api/trainerApi.js';
 
 export type AttemptStatus = 'draft' | 'submitted';
 
@@ -16,7 +16,7 @@ export type AttemptAction =
   | { type: 'SUBMIT' }
   | { type: 'SELECT_TASK'; taskId: string }
   | { type: 'SET_VIEW_MODE'; mode: 'task' | 'review' }
-  | { type: 'SYNC_FROM_SERVER'; attempt: Attempt }; 
+  | { type: 'SYNC_FROM_SERVER'; attempt: Attempt };
 
 export function attemptReducer(state: AttemptState, action: AttemptAction): AttemptState {
   if (
@@ -45,16 +45,18 @@ export function attemptReducer(state: AttemptState, action: AttemptAction): Atte
       return { ...state, selectedTaskId: action.taskId, viewMode: 'task' };
     case 'SET_VIEW_MODE':
       return { ...state, viewMode: action.mode };
-    case 'SYNC_FROM_SERVER': 
+    case 'SYNC_FROM_SERVER': {
+      const trainingSet = action.attempt.trainingSet;
+      const tasks = trainingSet?.tasks ?? [];
+
       return {
         ...state,
-        answers: action.attempt.answers as Answer[],
+        answers: action.attempt.answers ?? [],
         status: action.attempt.status === 'submitted' ? 'submitted' : 'draft',
         viewMode: action.attempt.status === 'submitted' ? 'review' : 'task',
-        selectedTaskId:
-          state.selectedTaskId ??
-          action.attempt.trainingSet.tasks[0]?.id,
+        selectedTaskId: state.selectedTaskId ?? tasks[0]?.id,
       };
+    }
     default:
       return state;
   }
